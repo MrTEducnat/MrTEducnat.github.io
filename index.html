@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercices I2D</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<style>
+:root {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --side: #efede6;
+  --text: #1f1e1c;
+  --muted: #6b6a65;
+  --border: #dcd9d0;
+  --accent: #185fa5;
+  --accent-bg: #e6f1fb;
+  --val: #854f0b;
+  --val-bg: #faeeda;
+  --ok: #27500a;
+  --ok-bg: #eaf3de;
+  --ok-border: #639922;
+  --code-bg: #f1efe8;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1b1a;
+    --surface: #242422;
+    --side: #20201e;
+    --text: #ecebe6;
+    --muted: #a3a29b;
+    --border: #3a3a37;
+    --accent: #85b7eb;
+    --accent-bg: #0c447c;
+    --val: #fac775;
+    --val-bg: #4a3209;
+    --ok: #c0dd97;
+    --ok-bg: #1f3309;
+    --ok-border: #639922;
+    --code-bg: #2c2c2a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1b1a;
+  --surface: #242422;
+  --side: #20201e;
+  --text: #ecebe6;
+  --muted: #a3a29b;
+  --border: #3a3a37;
+  --accent: #85b7eb;
+  --accent-bg: #0c447c;
+  --val: #fac775;
+  --val-bg: #4a3209;
+  --ok: #c0dd97;
+  --ok-bg: #1f3309;
+  --ok-border: #639922;
+  --code-bg: #2c2c2a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); min-height: 100vh; }
+
+/* Barre latérale */
+.sidebar {
+  background: var(--side);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.sidebar h1 { font-size: 18px; font-weight: 600; margin: 0 8px 4px; }
+.sidebar .sub { font-size: 13px; color: var(--muted); margin: 0 8px 16px; }
+.nav a {
+  display: block; text-decoration: none; color: var(--text);
+  padding: 8px 10px; border-radius: 8px; margin-bottom: 2px;
+}
+.nav a:hover { background: var(--border); }
+.nav a.on { background: var(--accent-bg); color: var(--accent); }
+.nav .seq { font-size: 12px; color: var(--muted); display: block; }
+.nav a.on .seq { color: var(--accent); }
+.nav .ex { font-size: 14px; font-weight: 500; }
+
+/* Barre du haut (mobile) */
+.topbar { display: none; }
+
+/* Contenu */
+main { padding: 32px 24px 48px; }
+.card {
+  max-width: 780px; margin: 0 auto;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 24px 28px;
+}
+.crumb { font-size: 13px; color: var(--muted); }
+.card h2 { font-size: 22px; font-weight: 600; margin: 2px 0 4px; }
+.support { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+.v {
+  background: var(--val-bg); color: var(--val);
+  padding: 1px 5px; border-radius: 5px; white-space: nowrap; font-weight: 500;
+}
+ol.q { padding-left: 22px; margin: 12px 0 0; }
+ol.q li { margin-bottom: 4px; }
+pre.code {
+  background: var(--code-bg); border-radius: 8px; padding: 12px 14px;
+  font-size: 14px; line-height: 1.5; overflow-x: auto; margin: 12px 0;
+}
+.btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+button {
+  font: inherit; font-size: 15px; cursor: pointer;
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px;
+}
+button:hover { background: var(--side); }
+button.primary { border-color: var(--accent); color: var(--accent); }
+.correction {
+  margin-top: 20px; padding: 14px 18px;
+  background: var(--ok-bg); border-left: 4px solid var(--ok-border);
+}
+.correction[hidden] { display: none; }
+.correction h3 { font-size: 15px; font-weight: 600; color: var(--ok); margin: 0 0 8px; }
+.step { margin-bottom: 12px; }
+.step:last-child { margin-bottom: 0; }
+.step .lab { font-size: 14px; font-weight: 600; color: var(--ok); }
+.step p { margin: 2px 0; }
+.mdisp { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+.pager { display: flex; justify-content: space-between; gap: 10px; max-width: 780px; margin: 16px auto 0; }
+.pager button { font-size: 14px; }
+
+@media (max-width: 860px) {
+  .layout { display: block; }
+  .topbar {
+    display: flex; align-items: center; gap: 10px;
+    position: sticky; top: 0; z-index: 5;
+    background: var(--side); border-bottom: 1px solid var(--border); padding: 10px 16px;
+  }
+  .topbar span { font-weight: 600; }
+  .sidebar {
+    position: fixed; left: 0; top: 0; z-index: 10; width: 290px; max-width: 85vw;
+    transform: translateX(-100%); transition: transform .2s;
+  }
+  .sidebar.open { transform: none; }
+  .shade { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 9; }
+  .shade[hidden] { display: none; }
+  main { padding: 16px 16px 40px; }
+  .card { padding: 18px 16px; }
+  .card h2 { font-size: 19px; }
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button id="menuBtn" aria-label="Ouvrir le menu">☰</button>
+  <span>Exercices I2D</span>
+</div>
+<div class="shade" id="shade" hidden></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <h1>Exercices I2D</h1>
+    <p class="sub">1re STI2D · un exercice par séquence</p>
+    <div class="nav" id="nav"></div>
+  </nav>
+  <main>
+    <article class="card" id="card"></article>
+    <div class="pager">
+      <button id="prevBtn">← Précédent</button>
+      <button id="nextBtn">Suivant →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+// ---------- Outils ----------
+const rnd = (a, b, step = 1) => {
+  const n = Math.round((b - a) / step);
+  return +(a + step * Math.floor(Math.random() * (n + 1))).toFixed(6);
+};
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+// Nombre au format français (texte)
+const fr = (x, d = 2) => Number(x).toLocaleString('fr-FR', { maximumFractionDigits: d });
+// Nombre au format français (LaTeX)
+const tx = (x, d = 2) => fr(x, d).replace(',', '{,}').replace(/[\u202f\u00a0]/g, '\\,');
+// Écriture scientifique en LaTeX
+const sci = (x, d = 2) => {
+  const e = Math.floor(Math.log10(Math.abs(x)));
+  return `${tx(x / 10 ** e, d)} \\times 10^{${e}}`;
+};
+// Valeur surlignée dans l'énoncé
+const v = (x, unit = '', d = 2) => `<span class="v">${typeof x === 'number' ? fr(x, d) : x}${unit ? '\u00a0' + unit : ''}</span>`;
+// Formules
+const m = t => `<span class="m" data-tex="${t.replace(/"/g, '&quot;')}"></span>`;
+const M = t => `<div class="m mdisp" data-d="1" data-tex="${t.replace(/"/g, '&quot;')}"></div>`;
+const u = s => `\\,\\text{${s}}`;
+
+// ---------- Exercices ----------
+const EXOS = [
+  {
+    seq: 'Séquence 1 · Du besoin à la solution technique',
+    title: 'Chaîne de puissance d\'un vélo électrique',
+    support: 'Système support : Pédalite',
+    gen() {
+      const P = rnd(200, 500, 10), e1 = rnd(0.90, 0.98, 0.01), e2 = rnd(0.75, 0.90, 0.01), e3 = rnd(0.85, 0.95, 0.01);
+      const eta = e1 * e2 * e3, Pu = P * eta, Pp = P - Pu;
+      return {
+        statement: `
+          <p>La chaîne de puissance du vélo à assistance électrique est composée d'une batterie qui fournit
+          ${v(P, 'W')}, d'un variateur de rendement ${v(e1)}, d'un moteur de rendement ${v(e2)}
+          et d'un réducteur de rendement ${v(e3)}.</p>
+          <ol class="q">
+            <li>Calculer le rendement global ${m('\\eta')} de la chaîne de puissance.</li>
+            <li>En déduire la puissance mécanique disponible à la roue.</li>
+            <li>Calculer la puissance perdue dans la chaîne.</li>
+          </ol>`,
+        steps: [
+          ['1. Rendement global', 'Les rendements des éléments en série se multiplient :' +
+            M(`\\eta = \\eta_1 \\times \\eta_2 \\times \\eta_3 = ${tx(e1)} \\times ${tx(e2)} \\times ${tx(e3)} = \\boxed{${tx(eta, 3)}}`)],
+          ['2. Puissance à la roue',
+            M(`P_u = \\eta \\times P_{bat} = ${tx(eta, 3)} \\times ${tx(P)} = \\boxed{${tx(Pu, 1)}${u('W')}}`)],
+          ['3. Pertes',
+            M(`P_{pertes} = P_{bat} - P_u = ${tx(P)} - ${tx(Pu, 1)} = \\boxed{${tx(Pp, 1)}${u('W')}}`) +
+            `<p>Ces pertes sont principalement dissipées sous forme de chaleur.</p>`]
+        ]
+      };
+    }
+  },
+  {
+    seq: 'Séquence 2 · Gestion des ressources',
+    title: 'Consommation d\'une box internet',
+    support: 'Système support : objets numériques',
+    gen() {
+      const P = rnd(8, 25, 1), prix = rnd(0.18, 0.30, 0.01);
+      const h = 24 * 365, Ewh = P * h, Ekwh = Ewh / 1000, EJ = Ewh * 3600, cout = Ekwh * prix;
+      return {
+        statement: `
+          <p>Une box internet reste branchée 24 h sur 24, toute l'année (365 jours).
+          Sa puissance moyenne est de ${v(P, 'W')}. Le prix du kilowattheure est de ${v(prix.toFixed(2).replace('.', ','), '€')}.</p>
+          <ol class="q">
+            <li>Calculer la durée de fonctionnement sur un an, en heures.</li>
+            <li>Calculer l'énergie consommée en un an, en Wh puis en kWh.</li>
+            <li>Convertir cette énergie en joules.</li>
+            <li>Calculer le coût annuel de fonctionnement de la box.</li>
+          </ol>`,
+        steps: [
+          ['1. Durée', M(`t = 24 \\times 365 = \\boxed{${tx(h)}${u('h')}}`)],
+          ['2. Énergie',
+            M(`E = P \\times t = ${tx(P)} \\times ${tx(h)} = ${tx(Ewh)}${u('Wh')} = \\boxed{${tx(Ekwh, 2)}${u('kWh')}}`)],
+          ['3. Conversion en joules', `<p>1 Wh = 3 600 J, donc :</p>` +
+            M(`E = ${tx(Ewh)} \\times 3\\,600 = \\boxed{${sci(EJ)}${u('J')}}`)],
+          ['4. Coût', M(`\\text{Coût} = ${tx(Ekwh, 2)} \\times ${prix.toFixed(2).replace('.', '{,}')} = \\boxed{${cout.toFixed(2).replace('.', '{,}')}${u('€')}}`)]
+        ]
+      };
+    }
+  },
+  {
+    seq: 'Séquence 3 · Mobilité et transport',
+    title: 'Vitesse de l\'extrémité d\'un bras robotisé',
+    support: 'Système support : bras robotisé',
+    gen() {
+      const N = rnd(10, 60, 2), R = rnd(0.20, 0.60, 0.05);
+      const w = 2 * Math.PI * N / 60, V = R * w, t = (Math.PI / 2) / w;
+      return {
+        statement: `
+          <p>La base d'un bras robotisé tourne autour d'un axe vertical à la vitesse de ${v(N, 'tr/min')}.
+          La pince se trouve à ${v(R, 'm', 2)} de l'axe de rotation.</p>
+          <ol class="q">
+            <li>Convertir la vitesse de rotation en rad/s.</li>
+            <li>Calculer la vitesse linéaire de la pince, en m/s.</li>
+            <li>Combien de temps faut-il au bras pour tourner d'un quart de tour (90°) ?</li>
+          </ol>`,
+        steps: [
+          ['1. Vitesse angulaire',
+            M(`\\omega = \\frac{2\\pi \\times N}{60} = \\frac{2\\pi \\times ${tx(N)}}{60} = \\boxed{${tx(w, 3)}${u('rad/s')}}`)],
+          ['2. Vitesse linéaire',
+            M(`V = R \\times \\omega = ${tx(R)} \\times ${tx(w, 3)} = \\boxed{${tx(V, 3)}${u('m/s')}}`)],
+          ['3. Durée d\'un quart de tour', `<p>Un quart de tour correspond à ${m('\\theta = \\frac{\\pi}{2}')} rad :</p>` +
+            M(`t = \\frac{\\theta}{\\omega} = \\frac{\\pi / 2}{${tx(w, 3)}} = \\boxed{${tx(t, 2)}${u('s')}}`)]
+        ]
+      };
+    }
+  },
+  {
+    seq: 'Séquence 4 · Énergie électrique et transition énergétique',
+    title: 'Autonomie d\'un robot aspirateur',
+    support: 'Système support : batterie du robot aspirateur',
+    gen() {
+      const U = pick([10.8, 14.4, 18]), Q = rnd(2, 5.2, 0.1), P = rnd(25, 60, 1);
+      const E = U * Q, I = P / U, th = Q / I, tmin = th * 60;
+      return {
+        statement: `
+          <p>La batterie d'un robot aspirateur a une tension nominale de ${v(U, 'V', 1)}
+          et une capacité de ${v(Q, 'Ah', 1)}. En fonctionnement, le robot absorbe une puissance de ${v(P, 'W')}.</p>
+          <ol class="q">
+            <li>Calculer l'énergie stockée dans la batterie, en Wh.</li>
+            <li>Calculer l'intensité du courant fourni par la batterie.</li>
+            <li>En déduire l'autonomie du robot, en heures puis en minutes.</li>
+          </ol>`,
+        steps: [
+          ['1. Énergie stockée', M(`E = U \\times Q = ${tx(U, 1)} \\times ${tx(Q, 1)} = \\boxed{${tx(E, 1)}${u('Wh')}}`)],
+          ['2. Courant', M(`P = U \\times I \\;\\Rightarrow\\; I = \\frac{P}{U} = \\frac{${tx(P)}}{${tx(U, 1)}} = \\boxed{${tx(I, 2)}${u('A')}}`)],
+          ['3. Autonomie',
+            M(`t = \\frac{E}{P} = \\frac{${tx(E, 1)}}{${tx(P)}} = ${tx(th, 2)}${u('h')}`) +
+            M(`t = ${tx(th, 2)} \\times 60 = \\boxed{${tx(Math.round(tmin))}${u('min')}}`) +
+            `<p>On obtient le même résultat avec ${m('t = Q / I')}.</p>`]
+        ]
+      };
+    }
+  },
+  {
+    seq: 'Séquence 5 · Capter et mesurer',
+    title: 'Conversion analogique-numérique',
+    support: 'Système support : chaîne d\'acquisition (Hémo-mixer)',
+    gen() {
+      const n = pick([8, 10, 12]), Vref = pick([3.3, 5]);
+      const nb = 2 ** n, q = Vref / nb;
+      const Uin = rnd(0.2, Vref - 0.2, 0.01), N = Math.floor(Uin / q);
+      const bin = N.toString(2).padStart(n, '0').replace(/(?=(\d{4})+$)/g, ' ').trim();
+      const hex = N.toString(16).toUpperCase().padStart(Math.ceil(n / 4), '0');
+      return {
+        statement: `
+          <p>Un capteur délivre une tension ${v(Uin, 'V')} vers un convertisseur analogique-numérique (CAN)
+          de ${v(n, 'bits')}, dont la plage d'entrée va de 0 à ${v(Vref, 'V', 1)}.
+          On prendra le quantum ${m('q = V_{ref} / 2^n')}.</p>
+          <ol class="q">
+            <li>Combien de valeurs différentes le CAN peut-il produire ?</li>
+            <li>Calculer le quantum ${m('q')} en mV.</li>
+            <li>Calculer la valeur numérique ${m('N')} en sortie du CAN (partie entière).</li>
+            <li>Écrire ${m('N')} en binaire sur ${n} bits puis en hexadécimal.</li>
+          </ol>`,
+        steps: [
+          ['1. Nombre de valeurs', M(`2^{${n}} = \\boxed{${tx(nb)}}`) +
+            `<p>Les valeurs vont de 0 à ${fr(nb - 1)}.</p>`],
+          ['2. Quantum', M(`q = \\frac{${tx(Vref, 1)}}{${tx(nb)}} = ${tx(q, 6)}${u('V')} \\approx \\boxed{${tx(q * 1000, 3)}${u('mV')}}`)],
+          ['3. Valeur numérique', M(`N = \\left\\lfloor \\frac{U}{q} \\right\\rfloor = \\left\\lfloor \\frac{${tx(Uin)}}{${tx(q, 6)}} \\right\\rfloor = \\left\\lfloor ${tx(Uin / q, 2)} \\right\\rfloor = \\boxed{${N}}`)],
+          ['4. Binaire et hexadécimal',
+            M(`${N}_{10} = \\boxed{\\texttt{${bin.replace(/ /g, '\\ ')}}_{2}} = \\boxed{\\texttt{${hex}}_{16}}`) +
+            `<p>Pour l'hexadécimal, on regroupe les bits par paquets de 4 en partant de la droite.</p>`]
+        ]
+      };
+    }
+  },
+  {
+    seq: 'Séquence 6 · Transmettre la puissance',
+    title: 'Motoréducteur d\'un robot mBot',
+    support: 'Système support : robot mBot (réducteurs)',
+    gen() {
+      const Nm = rnd(6000, 15000, 500), Cm = rnd(0.004, 0.012, 0.001), k = pick([30, 48, 60, 100]);
+      const eta = rnd(0.60, 0.85, 0.01), R = rnd(0.025, 0.035, 0.001);
+      const wm = 2 * Math.PI * Nm / 60, Pm = Cm * wm, Ns = Nm / k, ws = wm / k, Ps = eta * Pm, Cs = Ps / ws, V = R * ws;
+      return {
+        statement: `
+          <p>Le moteur d'une roue du robot tourne à ${v(Nm, 'tr/min', 0)} et fournit un couple de
+          ${v(Cm, 'N·m', 3)}. Il entraîne la roue à travers un réducteur de rapport ${v('1/' + k)}
+          et de rendement ${v(eta)}. Le rayon de la roue est de ${v(R * 1000, 'mm', 0)}.</p>
+          <ol class="q">
+            <li>Calculer la vitesse angulaire du moteur puis la puissance mécanique qu'il fournit.</li>
+            <li>Calculer la vitesse de rotation de la roue en tr/min et en rad/s.</li>
+            <li>Calculer la puissance puis le couple disponibles sur la roue.</li>
+            <li>En déduire la vitesse de déplacement du robot, en m/s.</li>
+          </ol>`,
+        steps: [
+          ['1. Moteur',
+            M(`\\omega_m = \\frac{2\\pi \\times ${tx(Nm, 0)}}{60} = ${tx(wm, 1)}${u('rad/s')}`) +
+            M(`P_m = C_m \\times \\omega_m = ${tx(Cm, 3)} \\times ${tx(wm, 1)} = \\boxed{${tx(Pm, 2)}${u('W')}}`)],
+          ['2. Roue',
+            M(`N_s = \\frac{N_m}{${k}} = \\frac{${tx(Nm, 0)}}{${k}} = \\boxed{${tx(Ns, 1)}${u('tr/min')}}`) +
+            M(`\\omega_s = \\frac{2\\pi \\times ${tx(Ns, 1)}}{60} = \\boxed{${tx(ws, 2)}${u('rad/s')}}`)],
+          ['3. Puissance et couple de sortie',
+            M(`P_s = \\eta \\times P_m = ${tx(eta)} \\times ${tx(Pm, 2)} = \\boxed{${tx(Ps, 2)}${u('W')}}`) +
+            M(`C_s = \\frac{P_s}{\\omega_s} = \\frac{${tx(Ps, 2)}}{${tx(ws, 2)}} = \\boxed{${tx(Cs, 3)}\\,\\text{N}\\cdot\\text{m}}`) +
+            `<p>Le réducteur diminue la vitesse mais multiplie le couple.</p>`],
+          ['4. Vitesse du robot',
+            M(`V = R \\times \\omega_s = ${tx(R, 3)} \\times ${tx(ws, 2)} = \\boxed{${tx(V, 2)}${u('m/s')}}`)]
+        ]
+      };
+    }
+  },
+  {
+    seq: 'Séquence 7 · Coder et piloter',
+    title: 'Exécuter un programme à la main',
+    support: 'Initiation à la programmation en Python',
+    gen() {
+      const n = rnd(12, 30, 1), k = rnd(2, 5, 1);
+      const vals = []; for (let i = 1; i <= n; i++) if (i % k === 0) vals.push(i);
+      const s = vals.reduce((a, b) => a + b, 0);
+      const partial = []; let acc = 0; vals.forEach(x => { acc += x; partial.push(acc); });
+      return {
+        statement: `
+          <p>On considère le programme Python suivant :</p>
+<pre class="code">n = <span class="v">${n}</span>
+k = <span class="v">${k}</span>
+s = 0
+for i in range(1, n + 1):
+    if i % k == 0:
+        s = s + i
+print(s)</pre>
+          <p>Rappel : <code>i % k</code> donne le reste de la division de <code>i</code> par <code>k</code>.</p>
+          <ol class="q">
+            <li>Quelles valeurs prend la variable <code>i</code> ?</li>
+            <li>Pour quelles valeurs de <code>i</code> la condition <code>i % k == 0</code> est-elle vraie ?</li>
+            <li>Combien de fois l'instruction <code>s = s + i</code> est-elle exécutée ?</li>
+            <li>Quelle valeur le programme affiche-t-il ?</li>
+          </ol>`,
+        steps: [
+          ['1. Valeurs de i', `<p><code>range(1, n + 1)</code> produit les entiers de 1 à ${n} inclus.</p>`],
+          ['2. Condition vraie', `<p>La condition est vraie quand <code>i</code> est un multiple de ${k} :</p>` +
+            M(`i \\in \\{${vals.join(';\\ ')}\\}`)],
+          ['3. Nombre d\'exécutions', M(`\\boxed{${vals.length}}\\ \\text{fois}`)],
+          ['4. Valeur affichée', `<p>Évolution de <code>s</code> : 0 → ${partial.join(' → ')}</p>` +
+            M(`s = ${vals.join(' + ')} = \\boxed{${s}}`)]
+        ]
+      };
+    }
+  },
+  {
+    seq: 'Séquence 8 · Éco-conception, matériaux et habitat',
+    title: 'Essai de traction sur une éprouvette',
+    support: 'Système support : éprouvettes, matériaux courants',
+    gen() {
+      const mat = pick([
+        { nom: 'acier S235', E: 210, Re: 235 },
+        { nom: 'aluminium 6060', E: 69, Re: 150 },
+        { nom: 'PLA imprimé en 3D', E: 3.5, Re: 50 }
+      ]);
+      const d = rnd(4, 10, 1), L0 = rnd(50, 100, 10);
+      const S = Math.PI * d * d / 4;
+      const F = Math.max(10, Math.round(S * mat.Re * rnd(0.3, 1.2, 0.05) / 10) * 10);
+      const sig = F / S, elas = sig < mat.Re;
+      const Emp = mat.E * 1000, eps = sig / Emp, dL = eps * L0;
+      return {
+        statement: `
+          <p>Une éprouvette cylindrique en ${v(mat.nom)} a un diamètre de ${v(d, 'mm')} et une longueur
+          initiale de ${v(L0, 'mm')}. On lui applique un effort de traction de ${v(F, 'N', 0)}.</p>
+          <p>Caractéristiques du matériau : module d'Young ${m('E')} = ${v(mat.E, 'GPa', 1)},
+          limite élastique ${m('R_e')} = ${v(mat.Re, 'MPa')}.</p>
+          <ol class="q">
+            <li>Calculer la section ${m('S')} de l'éprouvette en mm².</li>
+            <li>Calculer la contrainte normale ${m('\\sigma')} en MPa.</li>
+            <li>L'éprouvette reste-t-elle dans le domaine élastique ?</li>
+            <li>Si oui, calculer l'allongement ${m('\\Delta L')} de l'éprouvette.</li>
+          </ol>`,
+        steps: [
+          ['1. Section', M(`S = \\frac{\\pi d^2}{4} = \\frac{\\pi \\times ${d}^2}{4} = \\boxed{${tx(S, 2)}\\,\\text{mm}^2}`)],
+          ['2. Contrainte', `<p>Avec F en N et S en mm², σ est en N/mm², c'est-à-dire en MPa.</p>` +
+            M(`\\sigma = \\frac{F}{S} = \\frac{${tx(F, 0)}}{${tx(S, 2)}} = \\boxed{${tx(sig, 1)}${u('MPa')}}`)],
+          ['3. Domaine élastique',
+            M(`\\sigma = ${tx(sig, 1)}${u('MPa')} ${elas ? '<' : '\\geq'} R_e = ${tx(mat.Re)}${u('MPa')}`) +
+            `<p>${elas ? 'La contrainte est inférieure à la limite élastique : l\'éprouvette reste dans le domaine élastique.'
+              : 'La contrainte dépasse la limite élastique : l\'éprouvette se déforme de façon permanente. La loi de Hooke ne s\'applique plus.'}</p>`],
+          ['4. Allongement', elas
+            ? `<p>Loi de Hooke, avec E = ${fr(Emp)} MPa :</p>` +
+              M(`\\varepsilon = \\frac{\\sigma}{E} = \\frac{${tx(sig, 1)}}{${tx(Emp)}} = ${sci(eps, 3)}`) +
+              M(`\\Delta L = \\varepsilon \\times L_0 = ${sci(eps, 3)} \\times ${L0} = \\boxed{${tx(dL, 3)}${u('mm')}}`)
+            : `<p>Hors du domaine élastique, on ne peut pas calculer l'allongement avec la loi de Hooke.</p>`]
+        ]
+      };
+    }
+  }
+];
+
+// ---------- Affichage ----------
+const nav = document.getElementById('nav');
+const card = document.getElementById('card');
+let current = 0;
+
+function renderMath(root) {
+  root.querySelectorAll('.m').forEach(el => {
+    const tex = el.dataset.tex;
+    if (window.katex) {
+      katex.render(tex, el, { displayMode: !!el.dataset.d, throwOnError: false });
+    } else {
+      el.textContent = tex;
+    }
+  });
+}
+
+function buildNav() {
+  nav.innerHTML = EXOS.map((e, i) =>
+    `<a href="#s${i + 1}" data-i="${i}"><span class="seq">${e.seq}</span><span class="ex">${e.title}</span></a>`
+  ).join('');
+}
+
+function show(i) {
+  current = i;
+  const e = EXOS[i], data = e.gen();
+  card.innerHTML = `
+    <div class="crumb">${e.seq}</div>
+    <h2>${e.title}</h2>
+    <p class="support">${e.support}</p>
+    ${data.statement}
+    <div class="btns">
+      <button id="newBtn">↻ Nouvelles valeurs</button>
+      <button id="ansBtn" class="primary" aria-expanded="false">Afficher la réponse</button>
+    </div>
+    <section class="correction" id="corr" hidden>
+      <h3>Correction</h3>
+      ${data.steps.map(([lab, body]) => `<div class="step"><div class="lab">${lab}</div>${body}</div>`).join('')}
+    </section>`;
+  renderMath(card);
+  document.getElementById('newBtn').onclick = () => show(current);
+  const ans = document.getElementById('ansBtn'), corr = document.getElementById('corr');
+  ans.onclick = () => {
+    corr.hidden = !corr.hidden;
+    ans.textContent = corr.hidden ? 'Afficher la réponse' : 'Masquer la réponse';
+    ans.setAttribute('aria-expanded', String(!corr.hidden));
+  };
+  nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', +a.dataset.i === i));
+  document.getElementById('prevBtn').style.visibility = i > 0 ? 'visible' : 'hidden';
+  document.getElementById('nextBtn').style.visibility = i < EXOS.length - 1 ? 'visible' : 'hidden';
+}
+
+function fromHash() {
+  const n = parseInt(location.hash.replace('#s', ''), 10);
+  show(n >= 1 && n <= EXOS.length ? n - 1 : 0);
+  closeMenu();
+  window.scrollTo(0, 0);
+}
+
+// Menu mobile
+const sidebar = document.getElementById('sidebar'), shade = document.getElementById('shade');
+function closeMenu() { sidebar.classList.remove('open'); shade.hidden = true; }
+document.getElementById('menuBtn').onclick = () => { sidebar.classList.add('open'); shade.hidden = false; };
+shade.onclick = closeMenu;
+
+document.getElementById('prevBtn').onclick = () => { location.hash = '#s' + current; };
+document.getElementById('nextBtn').onclick = () => { location.hash = '#s' + (current + 2); };
+window.addEventListener('hashchange', fromHash);
+
+buildNav();
+fromHash();
+</script>
+</body>
+</html>
