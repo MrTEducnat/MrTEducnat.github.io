@@ -456,6 +456,7 @@ const EXOS = [
       H('5. Écriture scientifique') +
       P(`Un nombre s'écrit ${m('a \\times 10^n')} avec ${m('1 \\leq a < 10')}. Exemples : 10 000 m = 10⁴ m = 10 km ; 0,003 s = 3 × 10⁻³ s = 3 ms.`) +
       M('10^a \\times 10^b = 10^{a+b} \\qquad \\frac{10^a}{10^b} = 10^{a-b} \\qquad (10^a)^b = 10^{a \\times b}') +
+      P(`avec ${m('a')} et ${m('b')} deux exposants entiers, positifs ou négatifs.`) +
       H('6. Produit en croix') +
       P('Il permet de passer d\'une unité à l\'autre quand on connaît une correspondance. Si 1 cal = 4,18 J, alors :') + M('100\\,\\text{J} = \\frac{100 \\times 1}{4{,}18} \\approx 23{,}9\\,\\text{cal}') +
       H('7. Méthode de résolution') +
@@ -481,15 +482,17 @@ const EXOS = [
       EX('Exemple', P('100 mL d\'un liquide pèsent 184 g. On convertit : m = 0,184 kg et V = 0,1 L = 10⁻⁴ m³.') + M('\\rho = \\frac{0{,}184}{10^{-4}} = 1\\,840\\,\\text{kg/m}^3')) +
       H('3. Poids') +
       P('Le poids est la force exercée par la Terre sur un corps. Ne pas le confondre avec la masse : le poids est en newtons, la masse en kilogrammes.') +
-      M(`P = m \\times g \\qquad g \\approx 9{,}81${u('N/kg')}`) + P('Une personne de 80 kg a un poids de 80 × 9,81 ≈ 785 N.') +
+      M('P = m \\times g') + P(`avec ${m('P')} le poids en N, ${m('m')} la masse en kg et ${m('g')} l'intensité de la pesanteur, environ 9,81 N/kg sur Terre.`) + P('Une personne de 80 kg a un poids de 80 × 9,81 ≈ 785 N.') +
       H('4. Pression') +
       P('La pression est une force répartie sur une surface :') + M('p = \\frac{F}{S}') + P(`avec ${m('p')} en Pa, ${m('F')} en N et ${m('S')} en m².`) +
       P('Plus la surface d\'appui est grande, plus la pression est faible (raquettes à neige, fondations d\'un mur). Rappel : 1 bar = 10⁵ Pa.') +
       H('5. Rendement') +
       P('Toute conversion d\'énergie s\'accompagne de pertes (le plus souvent de la chaleur). Le rendement compare la puissance utile à la puissance absorbée :') +
       M('\\eta = \\frac{P_u}{P_a} \\qquad P_{pertes} = P_a - P_u') +
+      P(`avec ${m('\\eta')} le rendement (sans unité), ${m('P_u')} la puissance utile fournie en sortie, ${m('P_a')} la puissance absorbée en entrée et ${m('P_{pertes}')} les pertes, toutes trois en W.`) +
       P('Le rendement n\'a pas d\'unité et vaut toujours moins de 1 (ou 100 %). Pour une chaîne de constituants placés les uns après les autres, les rendements se multiplient :') +
       M('\\eta_{global} = \\eta_1 \\times \\eta_2 \\times \\eta_3 \\times \\dots') +
+      P(`avec ${m('\\eta_1')}, ${m('\\eta_2')}, ${m('\\eta_3')}… les rendements de chaque constituant de la chaîne.`) +
       EX('Exemple', P('Batterie (η = 0,95), variateur (0,97), moteur (0,85) et réducteur (0,9) :') + M('\\eta = 0{,}95 \\times 0{,}97 \\times 0{,}85 \\times 0{,}9 \\approx 0{,}70') +
         P('Pour 100 W utiles, il faut donc fournir 100 / 0,70 ≈ 143 W.')) +
       BOX(P('v = d / Δt ; ρ = m / V ; P = m·g ; p = F / S ; η = Pu / Pa.', 'Les rendements d\'une chaîne se multiplient, ils ne s\'additionnent pas.'))
@@ -556,7 +559,7 @@ const EXOS = [
     body:
       H('1. Énergie et puissance') +
       P('La puissance est la quantité d\'énergie transférée par unité de temps. Avec une même quantité d\'énergie, on peut utiliser beaucoup de puissance pendant peu de temps, ou peu de puissance pendant longtemps :') +
-      M(`E = P \\times \\Delta t`) + table(['Si P est en…', 'et Δt en…', 'alors E est en…'], [['W', 's', 'J'], ['W', 'h', 'Wh'], ['kW', 'h', 'kWh']]) +
+      M(`E = P \\times \\Delta t`) + P(`avec ${m('E')} l'énergie, ${m('P')} la puissance et ${m('\\Delta t')} la durée. Les unités vont ensemble :`) + table(['Si P est en…', 'et Δt en…', 'alors E est en…'], [['W', 's', 'J'], ['W', 'h', 'Wh'], ['kW', 'h', 'kWh']]) +
       P('On utilise le Wh ou le kWh pour l\'électricité car le joule est une unité trop petite : un foyer consomme de l\'ordre de 10 000 kWh par an, soit 3,6 × 10¹⁰ J.') +
       H('2. Convertir les durées') +
       P('Les durées doivent être en heures décimales pour un calcul en Wh : 1 h 30 min = 1,5 h ; 45 min = 45 / 60 = 0,75 h ; 10 min ≈ 0,167 h. Attention : 1,5 h ne fait pas 1 h 50 min.') +
@@ -691,10 +694,10 @@ const EXOS = [
       H('2. Rotation') +
       P('Un angle se mesure en tours, en degrés ou en radians : 1 tour = 360° = 2π rad. La vitesse de rotation s\'exprime :') +
       UL('en <b>tours par minute</b> (tr/min), notée N ;', 'en <b>radians par seconde</b> (rad/s), notée ω et appelée vitesse angulaire.') +
-      M('\\omega = \\frac{2 \\pi N}{60}') + P('Inversement :') + M('N = \\frac{60\\, \\omega}{2 \\pi}') +
+      M('\\omega = \\frac{2 \\pi N}{60}') + P(`avec ${m('\\omega')} en rad/s et ${m('N')} en tr/min : on multiplie par 2π pour passer des tours aux radians et on divise par 60 pour passer des minutes aux secondes.`) + P('Inversement :') + M('N = \\frac{60\\, \\omega}{2 \\pi}') +
       H('3. Lien entre rotation et translation') +
       P('Pour une roue, une poulie ou une pale de rayon R (en m) :') +
-      UL(`distance parcourue en un tour : ${m('d = 2 \\pi R = \\pi D')} ;`, `distance parcourue pour un angle θ en radians : ${m('d = R \\times \\theta')} ;`, 'vitesse linéaire d\'un point situé à la distance R de l\'axe :') +
+      UL(`distance parcourue en un tour : ${m('d = 2 \\pi R = \\pi D')}, avec D le diamètre en m ;`, `distance parcourue pour un angle θ en radians : ${m('d = R \\times \\theta')} ;`, 'vitesse linéaire d\'un point situé à la distance R de l\'axe :') +
       M('V = R \\times \\omega') + P(`avec ${m('V')} en m/s, ${m('R')} en m et ${m('\\omega')} en rad/s.`) +
       EX('Exemple : pale d\'éolienne', P('Une pale de 40 m tourne à 14 tr/min :') + M('\\omega = \\frac{2 \\pi \\times 14}{60} = 1{,}47\\,\\text{rad/s}') +
         M('V = 40 \\times 1{,}47 = 58{,}6\\,\\text{m/s} \\approx 211\\,\\text{km/h}')) +
@@ -719,18 +722,19 @@ const EXOS = [
         extra: (X, Y) => `<line class="c3" x1="${X(0)}" y1="${Y(325)}" x2="${X(40)}" y2="${Y(325)}"/><text x="${X(26)}" y="${Y(345)}" style="font-size:14px">Umax = 325 V</text>`, cap: 'Tension du secteur : 230 V efficaces, 50 Hz (T = 20 ms)' }) +
       P('Une tension sinusoïdale est caractérisée par :') +
       UL(`sa <b>période</b> T (en s) et sa <b>fréquence</b> ${m('f = 1/T')} (en Hz) ;`, 'son <b>amplitude</b> Umax (valeur maximale) ;', 'sa <b>valeur efficace</b> U : la tension continue qui produirait le même effet (le même échauffement).') +
-      M('U = \\frac{U_{max}}{\\sqrt{2}}') + P('Cette relation n\'est valable que pour une sinusoïde.') +
+      M('U = \\frac{U_{max}}{\\sqrt{2}}') + P(`avec ${m('U')} la valeur efficace et ${m('U_{max}')} l'amplitude, toutes deux en V. Cette relation n'est valable que pour une sinusoïde.`) +
       H('3. Monophasé et triphasé') +
       P('En triphasé, l\'alternateur délivre trois sinusoïdes de même fréquence et de même amplitude, décalées de 120°. Le réseau français est en 230 V / 400 V, 50 Hz :') +
       UL('V = 230 V : tension simple, entre une phase et le neutre ;', 'U = 400 V : tension composée, entre deux phases.') + M('U = \\sqrt{3} \\times V') +
+      P(`avec ${m('U')} la tension composée et ${m('V')} la tension simple, en V efficaces : 400 ≈ 1,73 × 230.`) +
       H('4. Puissance électrique') +
       table(['Alimentation', 'Puissance (W)'], [['Continu', 'P = U × I'], ['Alternatif monophasé', 'P = V × I × cos φ'], ['Alternatif triphasé', 'P = √3 × U × I × cos φ']]) +
-      P('cos φ est le <b>facteur de puissance</b> (φ : déphasage entre la tension et le courant). On mesure la puissance avec un wattmètre.') +
+      P('avec P la puissance en W, U ou V la tension en V (valeur efficace en alternatif : V entre phase et neutre, U entre deux phases), I l\'intensité du courant en A (valeur efficace en alternatif) et cos φ le <b>facteur de puissance</b>, sans unité (φ : déphasage entre la tension et le courant). On mesure la puissance avec un wattmètre.') +
       EX('Exemple : moteur de 750 W', M('\\text{Continu 24 V :}\\quad I = \\frac{750}{24} = 31{,}3\\,\\text{A}') +
         M('\\text{Monophasé, } \\cos\\varphi = 0{,}8 :\\quad I = \\frac{750}{230 \\times 0{,}8} = 4{,}08\\,\\text{A}') +
         M('\\text{Triphasé, } \\cos\\varphi = 0{,}85 :\\quad I = \\frac{750}{\\sqrt{3} \\times 400 \\times 0{,}85} = 1{,}27\\,\\text{A}')) +
       H('5. Le transport de l\'électricité') +
-      UL('On transporte en triphasé : c\'est le meilleur compromis entre puissance transportée et coût.', `On élève la tension (jusqu'à 400 kV) pour réduire le courant et donc les pertes par effet Joule ${m('P_J = R \\times I^2')}.`,
+      UL('On transporte en triphasé : c\'est le meilleur compromis entre puissance transportée et coût.', `On élève la tension (jusqu'à 400 kV) pour réduire le courant et donc les pertes par effet Joule ${m('P_J = R \\times I^2')}, avec P<sub>J</sub> les pertes en W, R la résistance des câbles en Ω et I le courant en A.`,
         'Les câbles sont en aluminium (plus léger et moins cher que le cuivre) et nus, sans isolant, pour ne pas les alourdir.') +
       H('6. Dangers et protections') +
       P('La gravité d\'une électrocution dépend du trajet du courant dans le corps, de son intensité et de sa durée : quelques dizaines de milliampères pendant quelques dizaines de millisecondes suffisent à être en danger.') +
@@ -755,7 +759,10 @@ const EXOS = [
         'Les panneaux n\'aiment pas la chaleur : environ 0,4 % de rendement en moins par degré.') +
       H('3. Puissance crête et rendement') +
       P('Les panneaux sont testés dans les <b>conditions standard</b> : irradiance de 1 000 W/m² et cellules à 25 °C. La puissance maximale mesurée est la <b>puissance crête</b>, en watts-crête (Wc).') +
-      M('\\eta = \\frac{P_{crête}}{1\\,000 \\times S} \\qquad P = \\text{irradiance} \\times S \\times \\eta') +
+      M('\\eta = \\frac{P_{crête}}{1\\,000 \\times S}') +
+      P(`avec ${m('\\eta')} le rendement du panneau (sans unité), ${m('P_{crête}')} sa puissance crête en W, 1 000 W/m² l'irradiance des conditions standard et ${m('S')} la surface du panneau en m².`) +
+      P('Connaissant le rendement, on calcule la puissance fournie pour n\'importe quelle irradiance :') + M('P = IR \\times S \\times \\eta') +
+      P(`avec ${m('P')} la puissance fournie en W, ${m('IR')} l'irradiance reçue en W/m², ${m('S')} en m² et ${m('\\eta')} sans unité.`) +
       P('Le rendement des panneaux courants est de l\'ordre de 15 à 20 %.') +
       EX('Exemple', P('Un panneau de 0,85 m², de rendement 16,5 %, reçoit 900 W/m² :') + M('P = 900 \\times 0{,}85 \\times 0{,}165 = 126\\,\\text{W}')) +
       H('4. Associer des panneaux') +
@@ -777,13 +784,15 @@ const EXOS = [
       UL('<b>Tension nominale</b> U (V) : tension en fonctionnement normal.', '<b>Capacité</b> Q (Ah) : quantité d\'électricité disponible. 1 Ah, c\'est 1 A pendant 1 h, ou 2 A pendant 30 min.') +
       M('E = Q \\times U') + P(`avec ${m('E')} en Wh, ${m('Q')} en Ah et ${m('U')} en V.`) + P('L\'autonomie (durée de décharge) vaut :') +
       M('\\Delta t = \\frac{Q}{I} = \\frac{E}{P}') +
+      P(`avec ${m('\\Delta t')} l'autonomie en h, ${m('Q')} la capacité en Ah, ${m('I')} le courant débité en A, ${m('E')} l'énergie stockée en Wh et ${m('P')} la puissance consommée en W.`) +
       EX('Exemples', P('Batterie 12 V, 7 Ah : E = 12 × 7 = 84 Wh.', 'Téléphone 3,7 V, 4 600 mAh : E = 3,7 × 4,6 ≈ 17 Wh. Avec un chargeur de 67 W, la recharge durerait en théorie 17 / 67 ≈ 0,25 h ≈ 15 min ; en réalité le constructeur annonce 39 min car la puissance de charge baisse en fin de charge.')) +
       P('Pour préserver une batterie lithium-ion : éviter de descendre sous 20 % et de dépasser 80 %, privilégier des charges courtes et répétées.') +
       H('3. Associer des accumulateurs') +
       table(['Montage', 'Tension', 'Capacité', 'Énergie'], [['Série', 'les tensions s\'ajoutent', 'celle d\'un élément', 'somme des énergies'], ['Parallèle', 'celle d\'un élément', 'les capacités s\'ajoutent', 'somme des énergies']]) +
       EX('Exemple : deux éléments 3,7 V et 800 mAh', P('En série : U = 7,4 V, Q = 0,8 Ah, E = 5,92 Wh. En parallèle : U = 3,7 V, Q = 1,6 Ah, E = 5,92 Wh. L\'énergie totale est la même.')) +
       H('4. Énergie massique et volumique') +
-      P('Pour un véhicule ou un objet portable, on compare l\'énergie stockée par kilogramme ou par m³ :') + M('E_m = \\frac{E}{m}\\ (\\text{Wh/kg}) \\qquad E_V = \\frac{E}{V}\\ (\\text{Wh/m}^3)') +
+      P('Pour un véhicule ou un objet portable, on compare l\'énergie stockée par kilogramme ou par m³ :') + M('E_m = \\frac{E}{m} \\qquad E_V = \\frac{E}{V}') +
+      P(`avec ${m('E_m')} l'énergie massique en Wh/kg, ${m('E_V')} l'énergie volumique en Wh/m³, ${m('E')} l'énergie stockée en Wh, ${m('m')} la masse en kg et ${m('V')} le volume en m³.`) +
       EX('Exemple : pile 9 V, 500 mAh, 45,6 g, 47,5 × 25,5 × 16,5 mm', P('E = 9 × 0,5 = 4,5 Wh ; V ≈ 20 cm³ = 20 × 10⁻⁶ m³.') + M('E_m = \\frac{4{,}5}{0{,}0456} = 98{,}7\\,\\text{Wh/kg} \\qquad E_V = \\frac{4{,}5}{20 \\times 10^{-6}} = 225\\,\\text{kWh/m}^3') +
         P('Pour un détecteur de fumée de 0,30 mW : Δt = 4,5 / 0,0003 = 15 000 h, soit environ 625 jours.')) +
       H('5. Impact environnemental') +
@@ -807,9 +816,10 @@ const EXOS = [
       P('Le transformateur abaisse la tension, le pont de diodes la redresse, le condensateur la lisse et le régulateur la stabilise.') +
       H('3. Le transformateur') +
       P('Il ne fonctionne qu\'en alternatif. Le rapport des tensions est égal au rapport des nombres de spires :') + M('\\frac{U_2}{U_1} = \\frac{N_2}{N_1}') +
+      P(`avec ${m('U_1')} la tension d'entrée (au primaire) et ${m('U_2')} la tension de sortie (au secondaire), en V, ${m('N_1')} et ${m('N_2')} les nombres de spires des bobines primaire et secondaire.`) +
       P('Si N2 < N1, il abaisse la tension. Son rendement est très bon (souvent plus de 95 %).') +
       H('4. Le hacheur et la commande PWM') +
-      P('Le hacheur découpe une tension continue en créneaux : la tension moyenne en sortie vaut α × U, où α est le rapport cyclique du signal PWM. C\'est ainsi qu\'on règle la vitesse d\'un moteur ou la luminosité d\'une LED.') +
+      P('Le hacheur découpe une tension continue en créneaux : la tension moyenne en sortie vaut α × U, où U est la tension continue d\'entrée et α le rapport cyclique du signal PWM (sans unité, entre 0 et 1). C\'est ainsi qu\'on règle la vitesse d\'un moteur ou la luminosité d\'une LED.') +
       H('5. Les schémas fluidiques') +
       P('En hydraulique et en pneumatique, on représente aussi les circuits par des symboles normalisés : pompe ou compresseur (Alimenter), distributeur (Distribuer), vérin ou moteur hydraulique (Convertir), canalisations et appareils de mesure. On y retrouve la même logique que pour la chaîne de puissance électrique.') +
       BOX(P('Redresseur : AC → DC ; onduleur : DC → AC ; hacheur : DC → DC réglable ; transformateur : AC → AC.', 'U2 / U1 = N2 / N1 pour un transformateur.'))
@@ -834,9 +844,10 @@ const EXOS = [
       H('4. Signal PWM et rapport cyclique') +
       P('Un signal PWM (modulation de largeur d\'impulsion) est un signal carré dont la durée à l\'état haut peut varier. Le <b>rapport cyclique</b> vaut :') +
       M('\\alpha = \\frac{t_{haut}}{T}') +
+      P(`avec ${m('\\alpha')} le rapport cyclique (sans unité ou en %), ${m('t_{haut}')} la durée passée à l'état haut pendant une période et ${m('T')} la période, dans la même unité.`) +
       graph({ x0: 0, x1: 30, dx: 5, y0: 0, y1: 6, dy: 1, w: 420, h: 220, xlab: 't (ms)', ylab: 'u (V)',
         series: [{ pts: [[0, 0], [0, 5], [2.5, 5], [2.5, 0], [10, 0], [10, 5], [12.5, 5], [12.5, 0], [20, 0], [20, 5], [22.5, 5], [22.5, 0], [30, 0]] }], cap: 'T = 10 ms et 2,5 ms à l\'état haut : α = 25 %' }) +
-      P('On l\'utilise pour commander la vitesse d\'un moteur ou la luminosité d\'une LED : la tension moyenne vaut α × Umax.') +
+      P('On l\'utilise pour commander la vitesse d\'un moteur ou la luminosité d\'une LED : la tension moyenne vaut α × Umax, où Umax est la tension à l\'état haut.') +
       H('5. Harmoniques et filtres') +
       P('Un signal périodique non sinusoïdal est la somme d\'une sinusoïde de même fréquence (le <b>fondamental</b>) et de sinusoïdes de fréquences multiples 2f, 3f… (les <b>harmoniques</b>). Un filtre laisse passer certaines fréquences et en atténue d\'autres :') +
       UL('<b>passe-bas</b> : garde les basses fréquences (supprime le bruit rapide) ;', '<b>passe-haut</b> : garde les hautes fréquences ;', '<b>passe-bande</b> : garde une bande de fréquences.') +
@@ -853,7 +864,8 @@ const EXOS = [
       UL('<b>Actifs</b> : ils produisent eux-mêmes un signal électrique. Effet thermoélectrique (thermocouple), piézoélectrique (déformation → charges électriques), photoélectrique (lumière → courant, photodiode).',
         '<b>Passifs</b> : leur résistance (ou leur capacité) varie avec la grandeur mesurée. Il faut les alimenter. Exemples : sonde PT100, thermistance, jauge de contrainte.') +
       P('Sonde <b>PT100</b> : résistance de platine qui vaut 100 Ω à 0 °C et augmente avec la température :') +
-      M('R_T = R_0 \\,(1 + A \\cdot T) \\qquad R_0 = 100\\,\\Omega,\\ A = 3{,}9 \\times 10^{-3}\\ {}^\\circ\\text{C}^{-1}') +
+      M('R_T = R_0 \\,(1 + A \\cdot T)') +
+      P(`avec ${m('R_T')} la résistance de la sonde en Ω à la température ${m('T')} en °C, ${m('R_0')} = 100 Ω sa résistance à 0 °C et ${m('A')} = 3,9 × 10⁻³ °C⁻¹ le coefficient de température du platine.`) +
       P('À 50 °C : R = 100 × (1 + 3,9 × 10⁻³ × 50) = 119,5 Ω.') +
       H('3. Capteur à sortie en tension') +
       P('Beaucoup de capteurs donnent une tension proportionnelle à la grandeur mesurée. On l\'exploite avec un produit en croix.') +
@@ -893,9 +905,16 @@ const EXOS = [
       H('7. Opérations logiques bit à bit') +
       P('On applique ET, OU… bit par bit à deux mots binaires. Le ET sert de <b>masque</b> pour isoler des bits : 1011 0110 ET 0000 1111 = 0000 0110.') +
       H('8. Débit et durée de transmission') +
-      P('Le débit s\'exprime en bit/s. Pour un fichier de taille donnée en octets :') + M('\\Delta t = \\frac{\\text{taille (octets)} \\times 8}{\\text{débit (bit/s)}}') +
-      EX('Exemple', P('Un fichier de 5 Mo avec un débit de 20 Mbit/s : Δt = 5 × 10⁶ × 8 / (20 × 10⁶) = 2 s.')) +
-      BOX(P('N bits : 2<sup>N</sup> valeurs, de 0 à 2<sup>N</sup> − 1.', '1 octet = 8 bits ; ne pas confondre b (bit) et B (byte, octet).'))
+      P('Le <b>débit</b> D est le nombre de bits transmis chaque seconde :') + M('D = \\frac{N}{\\Delta t}') +
+      P(`avec ${m('D')} en bit/s, ${m('N')} le nombre de bits transmis et ${m('\\Delta t')} la durée de la transmission en s.`) +
+      P('Pour trouver la durée de transmission d\'un fichier, on isole Δt :') + M('\\Delta t = \\frac{N}{D}') +
+      P('<b>Attention aux unités</b> : la taille d\'un fichier est donnée en <b>octets</b> (o, ou B en anglais), alors que le débit est donné en <b>bits</b> par seconde. Il faut donc convertir la taille en bits en la multipliant par 8, puisque 1 octet = 8 bits.') +
+      table(['Taille du fichier', 'Débit'], [['1 ko = 10³ octets', '1 kbit/s = 10³ bit/s'], ['1 Mo = 10⁶ octets', '1 Mbit/s = 10⁶ bit/s'], ['1 Go = 10⁹ octets', '1 Gbit/s = 10⁹ bit/s']]) +
+      EX('Exemple : fichier de 5 Mo téléchargé avec un débit de 20 Mbit/s',
+        P('1. Taille en octets : 5 Mo = 5 × 10⁶ octets.', '2. Taille en bits : N = 5 × 10⁶ × 8 = 4 × 10⁷ bits.', '3. Débit en bit/s : D = 20 × 10⁶ bit/s.', '4. Durée :') +
+        M('\\Delta t = \\frac{N}{D} = \\frac{4 \\times 10^7}{20 \\times 10^6} = 2\\,\\text{s}')) +
+      BOX(P('N bits : 2<sup>N</sup> valeurs, de 0 à 2<sup>N</sup> − 1.', '1 octet = 8 bits ; ne pas confondre b (bit) et B (byte, octet).',
+        'Durée de transmission : Δt = N / D, avec N en bits (taille en octets × 8) et D en bit/s.'))
   },
   {
     chap: 5,
@@ -911,7 +930,8 @@ const EXOS = [
       P('Exemple : à Fe = 44,1 kHz, Te = 1 / 44 100 ≈ 22,7 µs.') +
       H('3. Résolution et quantum') +
       P('Un CAN de n bits peut fournir 2<sup>n</sup> valeurs différentes : c\'est sa <b>résolution</b>. Le <b>quantum</b> q est la plus petite variation de tension qui change la valeur binaire en sortie :') +
-      M('q = \\frac{\\Delta V_e}{2^n} \\qquad \\Delta V_e = V_{max} - V_{min} \\text{ (pleine échelle)}') +
+      M('q = \\frac{\\Delta V_e}{2^n} \\qquad \\Delta V_e = V_{max} - V_{min}') +
+      P(`avec ${m('q')} le quantum en V, ${m('\\Delta V_e')} la pleine échelle en V, ${m('V_{max}')} et ${m('V_{min}')} les tensions d'entrée maximale et minimale du CAN en V, et ${m('n')} le nombre de bits.`) +
       graph({ x0: 0, x1: 8, dx: 1, y0: 0, y1: 7, dy: 1, w: 420, h: 260, xlab: 'Ve (V)', ylab: 'N', fy: y => y.toString(2).padStart(3, '0'),
         series: [{ pts: [0, 1, 2, 3, 4, 5, 6, 7].flatMap(k => [[k, k], [k + 1, k]]) }], cap: 'CAN 3 bits, pleine échelle 8 V : q = 8 / 2³ = 1 V' }) +
       P('Plus le nombre de bits est grand, plus le quantum est petit et plus la valeur numérique est proche de la valeur réelle.') +
@@ -920,7 +940,8 @@ const EXOS = [
       H('4. Temps de conversion') +
       P('C\'est la durée nécessaire pour convertir une valeur (de 10⁻⁹ à 10⁻³ s). Plus il est court, plus on peut prendre d\'échantillons… et plus le fichier obtenu est gros.') +
       H('5. Taille d\'un fichier numérisé') +
-      M('\\text{débit (bit/s)} = F_e \\times n \\times \\text{nombre de voies}') +
+      M('D = F_e \\times n \\times k') +
+      P(`avec ${m('D')} le débit en bit/s, ${m('F_e')} la fréquence d'échantillonnage en Hz (échantillons par seconde), ${m('n')} le nombre de bits par échantillon et ${m('k')} le nombre de voies (1 en mono, 2 en stéréo).`) +
       EX('Exemple : son de qualité CD', P('44,1 kHz, 16 bits, stéréo (2 voies) : 44 100 × 16 × 2 = 1 411 200 bit/s. Une minute occupe 1 411 200 × 60 / 8 ≈ 10,6 Mo. Le format MP3 compresse ce débit à 128 kbit/s, soit environ 11 fois moins.')) +
       BOX(P('q = (Vmax − Vmin) / 2<sup>n</sup>.', 'Te = 1 / Fe ; débit = Fe × n × nombre de voies.'))
   },
@@ -936,13 +957,14 @@ const EXOS = [
       H('2. Les forces') +
       P('Une force est un vecteur : direction, sens, norme (valeur en newtons, N) et point d\'application. On utilise aussi le décanewton : 1 daN = 10 N.') +
       P('<b>Principe des actions réciproques</b> : si A exerce une force sur B, alors B exerce sur A une force de même direction, de même norme et de sens opposé.') + M('\\vec F_{A/B} = -\\vec F_{B/A}') +
-      UL(`<b>Poids</b> : ${m('P = m \\times g')}, vertical, vers le bas, appliqué au centre de gravité.`, `<b>Force d'un fluide sur un piston</b> : ${m('F = p \\times S')} (p en Pa, S en m²).`,
+      UL(`<b>Poids</b> : ${m('P = m \\times g')} (P en N, m en kg, g ≈ 9,81 N/kg), vertical, vers le bas, appliqué au centre de gravité.`, `<b>Force d'un fluide sur un piston</b> : ${m('F = p \\times S')}, avec F la force en N, p la pression en Pa et S la surface du piston en m².`,
         '<b>Charge répartie</b> q (en N/m) sur une longueur L : elle équivaut à une force q × L appliquée au milieu de la longueur.') +
       EX('Exemple : vérin sous 3 bars', P('Piston Ø 40 mm, tige Ø 20 mm, p = 3 × 10⁵ Pa.') + M('F_{sortie} = p \\times \\frac{\\pi D^2}{4} = 3 \\times 10^5 \\times \\frac{\\pi \\times 0{,}04^2}{4} = 377\\,\\text{N}') +
         P('En rentrée, la tige réduit la surface utile : F = p × (π × 0,04² / 4 − π × 0,02² / 4) = 283 N.')) +
       H('3. Le moment d\'une force') +
       P('Le moment traduit la capacité d\'une force à faire tourner un corps autour d\'un point. Il s\'exprime en N·m :') +
       M('M_A(\\vec F) = \\pm\\, L \\times F') +
+      P(`avec ${m('M_A(\\vec F)')} le moment de la force au point A en N·m, ${m('L')} le bras de levier en m et ${m('F')} la valeur de la force en N.`) +
       P('L est le <b>bras de levier</b> : la distance entre le point A et la <b>droite d\'action</b> de la force (et non la distance entre A et le point d\'application). Le moment est positif si la force fait tourner dans le sens trigonométrique (inverse des aiguilles d\'une montre), négatif sinon.') +
       H('4. Principe fondamental de la statique (PFS)') +
       P('Un corps est en <b>équilibre</b> s\'il n\'a ni translation ni rotation. Alors :') +
@@ -974,9 +996,11 @@ const EXOS = [
       H('2. Le module') +
       P('Les dimensions d\'une roue à denture droite sont fixées par son <b>module</b> m (en mm) et son nombre de dents Z (entier) :') +
       M('d = m \\times Z \\qquad a = \\frac{d_1 + d_2}{2} = \\frac{m\\,(Z_1 + Z_2)}{2}') +
+      P(`avec ${m('d')} le diamètre primitif en mm, ${m('m')} le module en mm, ${m('Z')} le nombre de dents, ${m('a')} l'entraxe en mm ; les indices 1 et 2 désignent les deux roues de l'engrenage.`) +
       P('d est le diamètre primitif et a l\'entraxe. Deux roues ne peuvent engrener que si elles ont le <b>même module</b>.') +
       H('3. Rapport de transmission') +
       M('r = \\frac{N_{sortie}}{N_{entrée}} = \\frac{\\omega_{sortie}}{\\omega_{entrée}} = \\frac{Z_{menante}}{Z_{menée}}') +
+      P(`avec ${m('r')} le rapport de transmission (sans unité), ${m('N')} les vitesses de rotation en tr/min ou ${m('\\omega')} en rad/s (la même unité en haut et en bas), ${m('Z_{menante}')} le nombre de dents de la roue menante et ${m('Z_{menée}')} celui de la roue menée.`) +
       UL('r < 1 : <b>réducteur</b> (après un moteur, pour réduire la vitesse et augmenter le couple) ;', 'r > 1 : <b>multiplicateur</b> (éolienne, pour augmenter la vitesse de la génératrice).') +
       EX('Exemple : pétrin', P('Un moteur à 480 tr/min doit entraîner une pale à 30 tr/min : r = 30 / 480 = 0,0625. Avec un pignon de 10 dents : Zmenée = 10 / 0,0625 = 160 dents. Avec m = 3, la roue mesure 3 × 160 = 480 mm : trop grande pour une cuve de 450 mm, il faut plusieurs étages.')) +
       H('4. Cascade et train d\'engrenages') +
@@ -987,6 +1011,7 @@ const EXOS = [
       H('5. Couple et puissance') +
       P('En rotation, la puissance vaut P = C × ω (C en N·m, ω en rad/s). Un réducteur conserve la puissance aux pertes près :') +
       M('P_s = \\eta \\times P_e \\qquad C_s = \\frac{\\eta \\times C_e}{r}') +
+      P(`avec ${m('P_e')} et ${m('P_s')} les puissances en entrée et en sortie du réducteur en W, ${m('C_e')} et ${m('C_s')} les couples en entrée et en sortie en N·m, ${m('\\eta')} le rendement du réducteur et ${m('r')} son rapport de transmission (tous deux sans unité).`) +
       P('Réduire la vitesse augmente donc le couple disponible.') +
       BOX(P('r = Z menante / Z menée = N sortie / N entrée.', 'Train : r = produit des Z menantes / produit des Z menées. d = m × Z.'))
   },
@@ -1006,12 +1031,14 @@ const EXOS = [
       M('F_{traction} = F_{fluidique} + F_{roulement} + F_{gravité} + m \\times a') +
       H('3. Puissance nécessaire') +
       M(`P_{traction} = F_{traction} \\times V \\qquad P_{moteur} = \\frac{P_{traction}}{\\eta_{transmission}}`) +
+      P(`avec ${m('P_{traction}')} la puissance nécessaire au déplacement en W, ${m('F_{traction}')} la force de traction en N, ${m('V')} la vitesse en m/s, ${m('P_{moteur}')} la puissance utile que doit fournir le moteur en W et ${m('\\eta_{transmission}')} le rendement de la transmission (sans unité).`) +
       EX('Exemple : véhicule de 2 095 kg en montée de 5°', P('Données : S = 2,33 m², Cx = 0,29, ρ = 1,24 kg/m³, Cr = 0,01, V = 27,7 m/s, a = 4 m/s².') +
         M('F_{fluidique} = \\tfrac{1}{2} \\times 0{,}29 \\times 1{,}24 \\times 2{,}33 \\times 27{,}7^2 = 321\\,\\text{N}') + M('F_{roulement} = 0{,}01 \\times 2\\,095 \\times 9{,}81 = 206\\,\\text{N}') +
         M('F_{gravité} = 2\\,095 \\times 9{,}81 \\times \\sin 5^\\circ = 1\\,791\\,\\text{N}') + M('F_{traction} = 321 + 206 + 1\\,791 + 2\\,095 \\times 4 = 10\\,698\\,\\text{N}') +
         M('P = 10\\,698 \\times 27{,}7 \\approx 296\\,\\text{kW}')) +
       H('4. Puissance en rotation') +
       P('Pour un arbre qui tourne, la puissance mécanique est le produit du couple par la vitesse angulaire :') + M('P = C \\times \\omega') +
+      P(`avec ${m('P')} la puissance en W, ${m('C')} le couple en N·m et ${m('\\omega')} la vitesse angulaire en rad/s.`) +
       P('Exemple : un moteur de portail fournit 2 N·m à 1 500 tr/min : ω = 157 rad/s, P = 2 × 157 ≈ 314 W.') +
       BOX(P('Translation : P = F × V ; rotation : P = C × ω.', 'F traction = traînée + roulement + gravité + m × a.'))
   },
@@ -1156,6 +1183,7 @@ print(niveau)`) +
       H('3. Chaleur et température') +
       P('La chaleur Q est l\'énergie apportée à un corps qui augmente sa température. Elle va toujours du plus chaud vers le plus froid.') +
       M('Q = m \\times c \\times \\Delta T') +
+      P(`avec ${m('Q')} la chaleur reçue en J, ${m('m')} la masse en kg, ${m('c')} la capacité thermique massique en J/(kg·K) et ${m('\\Delta T')} l'écart entre les températures finale et initiale, en K ou en °C.`) +
       P('c est la capacité thermique massique, en J/(kg·K) : 4 180 pour l\'eau, environ 900 pour l\'aluminium, 450 pour l\'acier. Un écart de température a la même valeur en °C et en K ; pour une température, T (K) = θ (°C) + 273.') +
       P('La chaleur se transmet par <b>conduction</b> (dans la matière), <b>convection</b> (par un fluide en mouvement) et <b>rayonnement</b>. Un matériau qui conduit mal la chaleur est un isolant.') +
       EX('Exemple', P('Chauffer 2 L d\'eau de 20 °C à 100 °C : Q = 2 × 4 180 × 80 = 668 800 J ≈ 0,19 kWh.')) +
@@ -1175,11 +1203,11 @@ print(niveau)`) +
       H('2. L\'essai de traction') +
       P('On tire de plus en plus fort sur une <b>éprouvette</b> normalisée et on relève son allongement. On calcule :') +
       M(`\\sigma = \\frac{F}{S_0} \\qquad \\varepsilon = \\frac{\\Delta L}{L_0}`) +
-      P('σ est la <b>contrainte</b> (en Pa, ou en MPa = N/mm²) et ε l\'<b>allongement relatif</b> (sans unité).') +
+      P('avec σ la <b>contrainte</b> (en Pa, ou en MPa = N/mm²), F l\'effort de traction en N, S<sub>0</sub> la section initiale de l\'éprouvette (en m², ou en mm² pour obtenir des MPa), ε l\'<b>allongement relatif</b> (sans unité), ΔL l\'allongement et L<sub>0</sub> la longueur initiale, dans la même unité.') +
       graph({ x0: 0, x1: 25, dx: 5, y0: 0, y1: 500, dy: 100, w: 420, h: 260, xlab: 'ε (%)', ylab: 'σ (MPa)',
-        series: [{ pts: [[0, 0], [0.17, 350], ...curve(e => 350 + 110 * Math.sin(Math.min(1, (e - 0.17) / 14) * Math.PI / 2) - (e > 15 ? (e - 15) ** 2 * 1.4 : 0), 0.17, 21, 120)] }],
-        extra: (X, Y) => `<text x="${X(1)}" y="${Y(320)}" style="font-size:14px">Re</text><text x="${X(13)}" y="${Y(475)}" style="font-size:14px">Rm</text><text x="${X(19.5)}" y="${Y(340)}" style="font-size:14px">rupture</text>`,
-        cap: 'Allure de la courbe d\'un acier : domaine élastique (droite) puis domaine plastique' }) +
+        series: [{ pts: [[0, 0], [4, 350], ...curve(e => 350 + 110 * Math.sin(Math.min(1, (e - 4) / 11) * Math.PI / 2) - (e > 15 ? (e - 15) ** 2 * 1.4 : 0), 4, 21, 120)] }],
+        extra: (X, Y) => `<text x="${X(4.4)}" y="${Y(325)}" style="font-size:14px">Re</text><text x="${X(13)}" y="${Y(475)}" style="font-size:14px">Rm</text><text x="${X(19.5)}" y="${Y(340)}" style="font-size:14px">rupture</text><text x="${X(2.4)}" y="${Y(150)}" style="font-size:14px">pente = E</text>`,
+        cap: 'Allure d\'une courbe de traction (E ≈ 9 GPa) : domaine élastique (droite) puis domaine plastique' }) +
       UL('<b>Domaine élastique</b> : la pièce reprend sa forme quand on la relâche. La contrainte est proportionnelle à l\'allongement : c\'est la <b>loi de Hooke</b>.', '<b>Re</b> : limite élastique, au-delà la déformation devient permanente.',
         '<b>Rm</b> : résistance maximale avant la rupture.') +
       M('\\sigma = E \\times \\varepsilon') +
@@ -1188,6 +1216,7 @@ print(niveau)`) +
         P('L\'allongement vaut ΔL = 6,1 × 10⁻⁴ × 1 000 = 0,61 mm.')) +
       H('3. Mesurer E par la flèche') +
       P('Pour une éprouvette de section carrée h × h, encastrée à une extrémité et tirée à l\'autre par une force F, la flèche f vaut :') + M('f = \\frac{4\\,F\\,L^3}{E\\,h^4} \\quad \\Rightarrow \\quad E = \\frac{4\\,F\\,L^3}{f\\,h^4}') +
+      P(`avec ${m('f')} la flèche en m, ${m('F')} la force en N, ${m('L')} la longueur de l'éprouvette en m, ${m('h')} le côté de sa section en m et ${m('E')} le module de Young en Pa.`) +
       H('4. Les propriétés à connaître') +
       UL('<b>Élasticité</b> : aptitude à reprendre sa forme initiale.', '<b>Plasticité</b> : aptitude à garder la forme donnée par une déformation (pâte à modeler).', '<b>Ductilité</b> : capacité à se déformer beaucoup avant de rompre.',
         '<b>Rigidité</b> : résistance à la déformation (module de Young élevé).', '<b>Dureté</b> : résistance à l\'usure et à la pénétration.') +
