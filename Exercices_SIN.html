@@ -1,0 +1,1574 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercices SIN</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<style>
+:root {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --side: #efede6;
+  --text: #1f1e1c;
+  --muted: #6b6a65;
+  --border: #dcd9d0;
+  --accent: #185fa5;
+  --accent-bg: #e6f1fb;
+  --val: #854f0b;
+  --val-bg: #faeeda;
+  --ok: #27500a;
+  --ok-bg: #eaf3de;
+  --ok-border: #639922;
+  --code-bg: #f1efe8;
+  --bad-bg: #fcebeb;
+  --bad-border: #e24b4a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1b1a;
+    --surface: #242422;
+    --side: #20201e;
+    --text: #ecebe6;
+    --muted: #a3a29b;
+    --border: #3a3a37;
+    --accent: #85b7eb;
+    --accent-bg: #0c447c;
+    --val: #fac775;
+    --val-bg: #4a3209;
+    --ok: #c0dd97;
+    --ok-bg: #1f3309;
+    --ok-border: #639922;
+    --code-bg: #2c2c2a;
+    --bad-bg: #3d1414;
+    --bad-border: #e24b4a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1b1a;
+  --surface: #242422;
+  --side: #20201e;
+  --text: #ecebe6;
+  --muted: #a3a29b;
+  --border: #3a3a37;
+  --accent: #85b7eb;
+  --accent-bg: #0c447c;
+  --val: #fac775;
+  --val-bg: #4a3209;
+  --ok: #c0dd97;
+  --ok-bg: #1f3309;
+  --ok-border: #639922;
+  --code-bg: #2c2c2a;
+  --bad-bg: #3d1414;
+  --bad-border: #e24b4a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); min-height: 100vh; }
+
+/* Barre latérale */
+.sidebar {
+  background: var(--side);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.sidebar h1 { font-size: 18px; font-weight: 600; margin: 0 8px 4px; }
+.sidebar .sub { font-size: 13px; color: var(--muted); margin: 0 8px 16px; }
+.chap { margin-bottom: 2px; }
+.chap-btn {
+  display: flex; align-items: flex-start; gap: 8px; width: 100%;
+  text-align: left; border: 0; border-radius: 8px; padding: 8px 8px;
+  line-height: 1.35;
+}
+.chap-btn:hover { background: var(--border); }
+.chap-btn .arrow { flex: none; margin-top: 10px; color: var(--muted); transition: transform .15s; }
+.chap-btn[aria-expanded="true"] .arrow { transform: rotate(180deg); }
+.chap-btn.on .seq, .chap-btn.on .arrow { color: var(--accent); }
+.nav .seq { font-size: 12px; color: var(--muted); display: block; }
+.nav .ex { font-size: 14px; font-weight: 500; }
+.exlist { padding: 2px 0 6px 32px; }
+.exlist[hidden] { display: none; }
+.exlist a {
+  display: block; text-decoration: none; color: var(--text); font-size: 14px;
+  padding: 6px 10px; border-radius: 0 8px 8px 0; border-left: 2px solid var(--border);
+}
+.exlist a:hover { background: var(--border); }
+.exlist a.on { background: var(--accent-bg); color: var(--accent); border-left-color: var(--accent); }
+
+/* Barre du haut (mobile) */
+.topbar { display: none; }
+
+/* Contenu */
+main { padding: 32px 24px 48px; }
+.card {
+  max-width: 780px; margin: 0 auto;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 24px 28px;
+}
+.crumb { font-size: 13px; color: var(--muted); }
+.card h2 { font-size: 22px; font-weight: 600; margin: 2px 0 4px; }
+.support { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+.v {
+  background: var(--val-bg); color: var(--val);
+  padding: 1px 5px; border-radius: 5px; white-space: nowrap; font-weight: 500;
+}
+ol.q { padding-left: 22px; margin: 12px 0 0; }
+ol.q li { margin-bottom: 4px; }
+pre.code {
+  background: var(--code-bg); border-radius: 8px; padding: 12px 14px;
+  font-size: 14px; line-height: 1.5; overflow-x: auto; margin: 12px 0;
+}
+.btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+button {
+  font: inherit; font-size: 15px; cursor: pointer;
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px;
+}
+button:hover { background: var(--side); }
+button.primary { border-color: var(--accent); color: var(--accent); }
+.correction {
+  margin-top: 20px; padding: 14px 18px;
+  background: var(--ok-bg); border-left: 4px solid var(--ok-border);
+}
+.correction[hidden] { display: none; }
+.correction h3 { font-size: 15px; font-weight: 600; color: var(--ok); margin: 0 0 8px; }
+.step { margin-bottom: 12px; }
+.step:last-child { margin-bottom: 0; }
+.step .lab { font-size: 14px; font-weight: 600; color: var(--ok); }
+.step p { margin: 2px 0; }
+.mdisp { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+/* QCM */
+ol.qcm { padding-left: 22px; margin: 12px 0 0; }
+ol.qcm > li { margin-bottom: 14px; }
+ol.qcm > li > p { margin: 0 0 6px; }
+ol.qcm label {
+  display: flex; align-items: flex-start; gap: 8px; cursor: pointer;
+  padding: 6px 10px; margin-bottom: 4px; border: 1px solid var(--border); border-radius: 8px;
+}
+ol.qcm label:hover { background: var(--side); }
+ol.qcm input { margin-top: 5px; accent-color: var(--accent); }
+ol.qcm label.good { border-color: var(--ok-border); background: var(--ok-bg); }
+ol.qcm label.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+.score { font-weight: 600; color: var(--ok); margin: 0 0 10px; }
+.score:empty { display: none; }
+
+/* Tableaux et schémas */
+table.t { border-collapse: collapse; margin: 10px 0; font-size: 15px; }
+table.t th, table.t td { border: 1px solid var(--border); padding: 4px 10px; text-align: center; }
+table.t th { background: var(--side); font-weight: 600; }
+.tw { overflow-x: auto; }
+figure.fig { margin: 12px 0; text-align: center; }
+figure.fig svg { width: 100%; max-width: 560px; height: auto; }
+figure.fig svg.small { max-width: 220px; }
+svg.sym { display: block; width: 150px; height: auto; margin: 6px 0; }
+figure.fig svg.leds { max-width: 400px; }
+figcaption { font-size: 13px; color: var(--muted); }
+svg text { fill: var(--text); font-size: 12px; font-family: inherit; }
+svg text.lab { fill: var(--muted); font-size: 12px; }
+svg .grid { stroke: var(--border); stroke-width: 1; }
+svg .ax { stroke: var(--muted); stroke-width: 1.4; }
+svg .c1 { fill: none; stroke: var(--accent); stroke-width: 2.2; }
+svg .c2 { fill: none; stroke: var(--val); stroke-width: 2; }
+svg .c3 { fill: none; stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 5 4; }
+svg .pt { fill: var(--val); }
+svg .line { stroke: var(--text); stroke-width: 2; fill: none; }
+svg .thin { stroke: var(--text); stroke-width: 1.2; fill: none; }
+svg .fillv { fill: var(--val-bg); stroke: var(--val); stroke-width: 1.5; }
+svg .arrow { stroke: var(--accent); stroke-width: 2.4; fill: none; }
+svg .arrowv { stroke: var(--val); stroke-width: 2.4; fill: none; }
+svg .flow { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 1; }
+svg .loss { fill: var(--val-bg); stroke: var(--val); stroke-width: 1; }
+svg .ledon { fill: #e5484d; stroke: var(--text); }
+svg .ledoff { fill: var(--side); stroke: var(--muted); }
+
+.pager { display: flex; justify-content: space-between; gap: 10px; max-width: 780px; margin: 16px auto 0; }
+.pager button { font-size: 14px; }
+
+@media (max-width: 860px) {
+  .layout { display: block; }
+  .topbar {
+    display: flex; align-items: center; gap: 10px;
+    position: sticky; top: 0; z-index: 5;
+    background: var(--side); border-bottom: 1px solid var(--border); padding: 10px 16px;
+  }
+  .topbar span { font-weight: 600; }
+  .sidebar {
+    position: fixed; left: 0; top: 0; z-index: 10; width: 290px; max-width: 85vw;
+    transform: translateX(-100%); transition: transform .2s;
+  }
+  .sidebar.open { transform: none; }
+  .shade { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 9; }
+  .shade[hidden] { display: none; }
+  main { padding: 16px 16px 40px; }
+  .card { padding: 18px 16px; }
+  .card h2 { font-size: 19px; }
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button id="menuBtn" aria-label="Ouvrir le menu">☰</button>
+  <span>Exercices SIN</span>
+</div>
+<div class="shade" id="shade" hidden></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <h1>Exercices SIN</h1>
+    <p class="sub">Terminale STI2D SIN · exercices à valeurs aléatoires</p>
+    <div class="nav" id="nav"></div>
+  </nav>
+  <main>
+    <article class="card" id="card"></article>
+    <div class="pager">
+      <button id="prevBtn">← Précédent</button>
+      <button id="nextBtn">Suivant →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+// ---------- Outils ----------
+const rnd = (a, b, step = 1) => {
+  const n = Math.round((b - a) / step);
+  return +(a + step * Math.floor(Math.random() * (n + 1))).toFixed(6);
+};
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+// Nombre au format français (texte)
+const fr = (x, d = 2) => Number(x).toLocaleString('fr-FR', { maximumFractionDigits: d });
+// Nombre au format français (LaTeX)
+const tx = (x, d = 2) => fr(x, d).replace(',', '{,}').replace(/[\u202f\u00a0]/g, '\\,');
+// Nombre avec un nombre fixe de décimales (texte / LaTeX)
+const frf = (x, d) => Number(x).toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const txf = (x, d) => frf(x, d).replace(',', '{,}').replace(/[  ]/g, '\\,');
+// Écriture scientifique en LaTeX
+const sci = (x, d = 2) => {
+  let e = Math.floor(Math.log10(Math.abs(x)));
+  if (Math.abs(+(x / 10 ** e).toFixed(d)) >= 10) e++;
+  return `${tx(x / 10 ** e, d)} \\times 10^{${e}}`;
+};
+// Nombre avec s chiffres significatifs : décimal si raisonnable, sinon scientifique
+const tn = (x, s = 3) => {
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e-3 && a < 1e6) return tx(x, Math.max(0, s - 1 - Math.floor(Math.log10(a))));
+  return sci(x, s - 1);
+};
+const fn = (x, s = 3) => {
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  return fr(x, Math.max(0, s - 1 - Math.floor(Math.log10(a))));
+};
+const deg = a => a * Math.PI / 180;
+const G = 9.81;
+// Valeur surlignée dans l'énoncé
+const v = (x, unit = '', d = 2) => `<span class="v">${typeof x === 'number' ? fr(x, d) : x}${unit ? '\u00a0' + unit : ''}</span>`;
+// Formules
+const m = t => `<span class="m" data-tex="${t.replace(/"/g, '&quot;')}"></span>`;
+const M = t => `<div class="m mdisp" data-d="1" data-tex="${t.replace(/"/g, '&quot;')}"></div>`;
+// Unité en LaTeX (gère ², ³, ·, °, µ)
+const u = s => '\\,\\text{' + s.replace(/%/g, '\\%').replace(/²/g,'}^2\\text{').replace(/³/g, '}^3\\text{')
+  .replace(/·/g, '}\\cdot\\text{').replace(/°/g, '}{}^\\circ\\text{').replace(/[µμ]/g, '}\\mu\\text{') + '}';
+
+// Numération : octet en hexadécimal, mot binaire sur w bits, police machine en LaTeX
+const H2 = x => x.toString(16).toUpperCase().padStart(2, '0');
+const BW = (x, w = 8) => x.toString(2).padStart(w, '0');
+const tt = s => `\\texttt{${String(s).replace(/ /g, '\\ ')}}`;
+const grp4 = s => s.replace(/(?=(\d{4})+$)/g, ' ').trim();
+
+// Chronogramme logique : cells = [{l: 0|1, t: 'étiquette'}], repos à l'état haut avant et après
+function wave(cells, cap = '') {
+  const cw = Math.min(46, 500 / (cells.length + 2)), x0 = 30, hi = 24, lo = 64, W = x0 * 2 + cw * (cells.length + 2);
+  let pts = `${x0},${hi} ${x0 + cw},${hi}`, x = x0 + cw, lab = '';
+  cells.forEach(c => {
+    const y = c.l ? hi : lo;
+    pts += ` ${x},${y} ${x + cw},${y}`;
+    lab += `<line class="grid" x1="${x}" y1="14" x2="${x}" y2="${lo + 6}"/><text x="${x + cw / 2}" y="${lo + 22}" text-anchor="middle">${c.t}</text>`;
+    x += cw;
+  });
+  pts += ` ${x},${hi} ${x + cw},${hi}`;
+  lab += `<line class="grid" x1="${x}" y1="14" x2="${x}" y2="${lo + 6}"/>`;
+  return fig(`<svg viewBox="0 0 ${W} 100" role="img">${lab}<polyline class="c1" points="${pts}"/>
+    <text x="4" y="${hi + 4}">1</text><text x="4" y="${lo + 4}">0</text></svg>`, cap);
+}
+
+// Liste des questions d'un énoncé
+const ol =(...items) => `<ol class="q">${items.map(i => `<li>${i}</li>`).join('')}</ol>`;
+// Tableau HTML : en-têtes puis lignes
+const table = (head, rows) => `<div class="tw"><table class="t"><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr>${
+  rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const euro = x => frf(x, 2) + ' €';
+const teuro = x => txf(x, 2) + u('€');
+
+// ---------- Tirages ----------
+const shuffle = arr => {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+};
+const sample = (arr, n) => shuffle(arr).slice(0, n);
+
+// ---------- QCM ----------
+// Banque : [question, bonne réponse, [mauvaises réponses], explication]
+const QCM_N = 5;
+function qcm(bank, n = QCM_N) {
+  const id = 'q' + Math.random().toString(36).slice(2, 8);
+  const items = sample(bank, Math.min(n, bank.length)).map(([q, ok, bad, ex]) => {
+    const choices = shuffle([ok, ...sample(bad.filter(b => b !== ok), 3)]);
+    return { q, ok, ex, choices, k: choices.indexOf(ok) };
+  });
+  return {
+    qcm: true,
+    statement: `<p>Choisir la bonne réponse pour chaque question.</p>
+      <ol class="qcm">${items.map((it, i) => `<li data-ok="${it.k}"><p>${it.q}</p>${it.choices.map((c, j) =>
+        `<label><input type="radio" name="${id}${i}" value="${j}"> <span>${c}</span></label>`).join('')}</li>`).join('')}</ol>`,
+    steps: items.map((it, i) => [`${i + 1}. ${it.ok}`, it.ex ? `<p>${it.ex}</p>` : ''])
+  };
+}
+// Questions construites à partir de couples (élément, réponse)
+const fromPairs = (pairs, fmt, ex) =>
+  pairs.map(([a, b]) => [fmt(a), b, [...new Set(pairs.map(p => p[1]))], ex ? ex(a, b) : '']);
+// Exercice QCM
+const Q = (chap, title, support, bank) => ({ chap, title, support, gen: () => qcm(typeof bank === 'function' ? bank() : bank) });
+
+// ---------- Schémas SVG ----------
+const fig = (svg, cap = '') => `<figure class="fig">${svg}${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
+// Graphique gradué : o = {x0, x1, dx, y0, y1, dy, xlab, ylab, series: [{pts, cls}], extra(X, Y), nolab}
+function graph(o) {
+  const W = o.w || 560, H = o.h || 270, L = 50, R = 16, T = 14, B = 34;
+  const X = x => +(L + (x - o.x0) / (o.x1 - o.x0) * (W - L - R)).toFixed(1);
+  const Y = y => +(H - B - (y - o.y0) / (o.y1 - o.y0) * (H - T - B)).toFixed(1);
+  const fx = o.fx || (x => fr(x, 3)), fy = o.fy || (y => fr(y, 3));
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="graph" role="img">`;
+  const nx = Math.round((o.x1 - o.x0) / o.dx), ny = Math.round((o.y1 - o.y0) / o.dy);
+  for (let i = 0; i <= nx; i++) {
+    const x = o.x0 + i * o.dx;
+    s += `<line class="grid" x1="${X(x)}" y1="${T}" x2="${X(x)}" y2="${H - B}"/>`;
+    if (!o.nolab) s += `<text x="${X(x)}" y="${H - B + 15}" text-anchor="middle">${fx(x)}</text>`;
+  }
+  for (let i = 0; i <= ny; i++) {
+    const y = o.y0 + i * o.dy;
+    s += `<line class="grid" x1="${L}" y1="${Y(y)}" x2="${W - R}" y2="${Y(y)}"/>`;
+    if (!o.nolab) s += `<text x="${L - 6}" y="${Y(y) + 4}" text-anchor="end">${fy(y)}</text>`;
+  }
+  if (o.y0 < 0 && o.y1 > 0) s += `<line class="ax" x1="${L}" y1="${Y(0)}" x2="${W - R}" y2="${Y(0)}"/>`;
+  s += `<line class="ax" x1="${L}" y1="${T}" x2="${L}" y2="${H - B}"/><line class="ax" x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/>`;
+  if (o.xlab) s += `<text x="${W - R}" y="${H - 4}" text-anchor="end" class="lab">${o.xlab}</text>`;
+  if (o.ylab) s += `<text x="${L + 6}" y="${T + 12}" class="lab">${o.ylab}</text>`;
+  (o.series || []).forEach(se => {
+    s += `<polyline class="${se.cls || 'c1'}" points="${se.pts.map(([x, y]) => X(x) + ',' + Y(y)).join(' ')}"/>`;
+  });
+  if (o.extra) s += o.extra(X, Y);
+  return fig(s + '</svg>', o.cap);
+}
+// Échantillonne une fonction pour un graphique
+const curve = (f, x0, x1, n = 400) => Array.from({ length: n + 1 }, (_, i) => { const x = x0 + (x1 - x0) * i / n; return [x, f(x)]; });
+// Diagramme de Sankey en ligne : étapes [{name, val}] (val peut être '?') ; les pertes partent vers le bas
+function sankey(stages, vals, unit) {
+  const W = 560, H = 220, top = 40, x0 = 20, x1 = W - 20, seg = (x1 - x0) / stages.length;
+  const k = 90 / vals[0];
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="sankey" role="img">`;
+  stages.forEach((st, i) => {
+    const h = vals[i] * k, xa = x0 + i * seg;
+    s += `<rect class="flow" x="${xa}" y="${top}" width="${seg}" height="${h}"/>`;
+    s += `<text x="${xa + 6}" y="${top - 18}" class="lab">${st.name}</text><text x="${xa + 6}" y="${top - 4}">${st.label}</text>`;
+    if (i < stages.length - 1) {
+      const lw = Math.max(4, (vals[i] - vals[i + 1]) * k), xb = xa + seg;
+      s += `<rect class="loss" x="${xb - lw}" y="${top + vals[i + 1] * k}" width="${lw}" height="${H - 30 - top - vals[i + 1] * k}"/>`;
+      s += `<text x="${xb - lw / 2}" y="${H - 12}" text-anchor="middle">${stages[i].loss}</text>`;
+    }
+  });
+  return fig(s + '</svg>', unit);
+}
+
+// ---------- Chapitres ----------
+const CHAPITRES = [
+  'Chaîne d\'information et SysML',
+  'Acquisition et capteurs',
+  'Conditionnement et conversion analogique-numérique',
+  'Représentation de l\'information',
+  'Liaisons série et bus de terrain',
+  'Réseaux informatiques',
+  'Traitement et programmation',
+  'Objets connectés et transmission sans fil'
+];
+
+// ---------- Exercices (chap = numéro du chapitre) ----------
+const EXOS = [
+  // ===================== Chapitre 1 =====================
+  Q(1, 'Acquérir, traiter, communiquer', 'BO 2.4.1 · annales : éolienne 2025, qualité de l\'air 2026…', () => [
+    ...fromPairs([['un capteur de température DS18B20', 'Acquérir'], ['un anémomètre', 'Acquérir'], ['un lecteur de badges RFID', 'Acquérir'],
+      ['un codeur absolu', 'Acquérir'], ['un écran tactile utilisé pour saisir une consigne', 'Acquérir'], ['une carte Arduino', 'Traiter'],
+      ['un automate programmable', 'Traiter'], ['une carte Raspberry Pi', 'Traiter'], ['un microcontrôleur ESP32', 'Traiter'],
+      ['un module Wi-Fi', 'Communiquer'], ['un afficheur LCD', 'Communiquer'], ['un buzzer d\'alarme', 'Communiquer'],
+      ['un routeur 4G', 'Communiquer'], ['un module XBee', 'Communiquer']], a => `À quelle fonction de la chaîne d'information appartient ${a} ?`)
+      .map(q => { q[2] = ['Acquérir', 'Traiter', 'Communiquer']; return q; }),
+    ['La fonction Acquérir a pour rôle :', 'de prélever une information et de la rendre exploitable par le traitement', ['de calculer une consigne', 'd\'envoyer les données au serveur', 'd\'alimenter le système'], ''],
+    ['La fonction Traiter :', 'élabore des ordres ou des données à partir des informations acquises', ['mesure une grandeur physique', 'convertit l\'énergie électrique', 'transmet l\'énergie mécanique'], ''],
+    ['La fonction Communiquer :', 'transmet les informations vers l\'utilisateur, d\'autres systèmes ou la chaîne d\'énergie', ['mesure une température', 'stocke l\'énergie', 'filtre le signal du capteur'], '']
+  ]),
+  Q(1, 'Nature des signaux dans un IBD', 'BO 3.4.1 · annales : vélodrome 2023, supercapacités 2024', () => [
+    ...fromPairs([['la tension de sortie d\'un thermocouple', 'analogique'], ['le courant d\'une boucle 4-20 mA', 'analogique'],
+      ['la tension aux bornes d\'une thermistance CTN', 'analogique'], ['la sortie d\'un capteur de lumière (photodiode)', 'analogique'],
+      ['la sortie d\'un détecteur de présence', 'logique'], ['l\'état d\'un bouton poussoir', 'logique'], ['la commande d\'un relais', 'logique'],
+      ['l\'état d\'un capteur de fin de course', 'logique'], ['les données circulant sur un bus I2C', 'numérique'], ['une trame Modbus', 'numérique'],
+      ['la valeur N en sortie d\'un CAN', 'numérique'], ['une trame Wi-Fi', 'numérique']], a => `Quelle est la nature de ${a} ?`)
+      .map(q => { q[2] = ['analogique', 'logique', 'numérique']; return q; }),
+    ['Un signal logique (TOR) :', 'ne peut prendre que deux états (0 ou 1)', ['varie de façon continue', 'est une suite d\'octets', 'est toujours sinusoïdal'], ''],
+    ['Un signal numérique :', 'est une suite de valeurs codées en binaire', ['ne prend que deux états à un instant donné et n\'a aucune valeur codée', 'varie de façon continue', 'est forcément analogique'], '']
+  ]),
+  Q(1, 'Diagrammes SysML', 'BO 1.2.2 et 3.4.2', [
+    ['Quel diagramme décrit les exigences du cahier des charges ?', 'le diagramme d\'exigences (req)', ['le diagramme de séquence (sd)', 'le diagramme d\'états (stm)', 'le diagramme de blocs internes (ibd)'], ''],
+    ['Quel diagramme décrit les services rendus par le système à ses acteurs ?', 'le diagramme de cas d\'utilisation (uc)', ['le diagramme de blocs internes (ibd)', 'le diagramme d\'états (stm)', 'le diagramme d\'activités (act)'], ''],
+    ['Quel diagramme décrit le déroulement temporel des échanges entre éléments ?', 'le diagramme de séquence (sd)', ['le diagramme de définition de blocs (bdd)', 'le diagramme d\'exigences (req)', 'le diagramme de cas d\'utilisation (uc)'], ''],
+    ['Quel diagramme décrit les différents états d\'un système et les événements qui le font changer d\'état ?', 'le diagramme d\'états (stm)', ['le diagramme de séquence (sd)', 'le diagramme de blocs internes (ibd)', 'le diagramme d\'exigences (req)'], ''],
+    ['Quel diagramme montre les flux (énergie, information, matière) entre les constituants ?', 'le diagramme de blocs internes (ibd)', ['le diagramme de cas d\'utilisation (uc)', 'le diagramme d\'états (stm)', 'le diagramme de séquence (sd)'], ''],
+    ['Quel diagramme décrit la structure (la composition) du système ?', 'le diagramme de définition de blocs (bdd)', ['le diagramme de séquence (sd)', 'le diagramme d\'états (stm)', 'le diagramme d\'activités (act)'], ''],
+    ['Le diagramme d\'activités est l\'équivalent SysML :', 'd\'un algorigramme', ['d\'un schéma électrique', 'd\'une table de vérité', 'd\'un chronogramme'], ''],
+    ['Dans un diagramme de séquence, une flèche horizontale représente :', 'un message échangé entre deux éléments', ['un flux d\'énergie', 'une exigence', 'un état'], ''],
+    ['Dans le cycle en V, la branche descendante correspond :', 'à l\'analyse du besoin, la spécification et la conception', ['aux tests et à la validation', 'à la fabrication en série', 'au recyclage'], ''],
+    ['IVVQ signifie :', 'intégration, vérification, validation, qualification', ['informatique, vidéo, voix, quantification', 'interface, valeur, volume, qualité', 'installation, vente, vérification, quantité'], '']
+  ]),
+  {
+    chap: 1,
+    title: 'Parcours d\'un diagramme d\'états',
+    support: 'BO 3.4.2 · annales : serrure RFID 2021, turbine WECU 2025',
+    gen() {
+      const tempo = rnd(3, 8, 1), maxE = pick([2, 3]);
+      const T = {
+        'Verrouillé': { 'badge valide': 'Déverrouillé', 'badge invalide': 'Refus' },
+        'Refus': { [`retour après 2 s`]: 'Verrouillé', 'badge invalide (essai max atteint)': 'Alarme' },
+        'Déverrouillé': { 'porte ouverte': 'Porte ouverte', [`${tempo} s écoulées`]: 'Verrouillé' },
+        'Porte ouverte': { 'porte fermée': 'Verrouillé' },
+        'Alarme': { 'code gardien saisi': 'Verrouillé' }
+      };
+      let s = 'Verrouillé', inv = 0; const trace = [];
+      for (let k = 0; k < rnd(5, 7, 1); k++) {
+        let evs = Object.keys(T[s]);
+        if (s === 'Verrouillé') evs = ['badge valide', 'badge invalide'];
+        if (s === 'Refus') evs = [inv >= maxE ? 'badge invalide (essai max atteint)' : 'retour après 2 s'];
+        const e = pick(evs);
+        if (e === 'badge invalide') inv++;
+        if (e === 'badge valide' || e === 'code gardien saisi') inv = 0;
+        const n = T[s][e]; trace.push([s, e, n]); s = n;
+      }
+      const evList = trace.map(t => t[1].replace(' (essai max atteint)', ''));
+      return {
+        statement: `<p>Le fonctionnement d'une serrure à badge RFID est décrit par les transitions suivantes (état initial : Verrouillé).
+          Au bout de ${v(maxE)} badges invalides consécutifs, un nouveau badge invalide déclenche l'alarme.</p>` +
+          table(['État de départ', 'Événement', 'État d\'arrivée'], [['Verrouillé', 'badge valide', 'Déverrouillé'], ['Verrouillé', 'badge invalide', 'Refus'],
+            ['Refus', 'retour après 2 s', 'Verrouillé'], ['Refus', `badge invalide (${maxE + 1}e essai)`, 'Alarme'], ['Déverrouillé', 'porte ouverte', 'Porte ouverte'],
+            ['Déverrouillé', `${tempo} s écoulées`, 'Verrouillé'], ['Porte ouverte', 'porte fermée', 'Verrouillé'], ['Alarme', 'code gardien saisi', 'Verrouillé']]) +
+          `<p>On observe la suite d'événements : ${v(evList.join(' → '))}.</p>` +
+          ol('Donner la succession des états parcourus.', 'Dans quel état se trouve la serrure à la fin ?', 'Quel diagramme SysML est utilisé pour décrire ce comportement ?'),
+        steps: [
+          ['1. États parcourus', table(['État', 'Événement', 'Nouvel état'], trace)],
+          ['2. État final', `<p>La serrure est dans l'état <b>${s}</b>.</p>`],
+          ['3. Diagramme', '<p>Le diagramme d\'états (stm).</p>']
+        ]
+      };
+    }
+  },
+  // ===================== Chapitre 2 =====================
+  Q(2, 'Caractéristiques d\'un capteur', 'BO 2.4.2', [
+    ['L\'étendue de mesure d\'un capteur est :', 'l\'intervalle entre la plus petite et la plus grande valeur mesurable', ['la plus petite variation détectable', 'le rapport sortie / entrée', 'l\'écart avec la valeur vraie'], ''],
+    ['La sensibilité d\'un capteur est :', 'le rapport entre la variation de la sortie et la variation de l\'entrée', ['la plus petite variation détectable', 'l\'étendue de mesure', 'sa précision'], 'Par exemple 10 mV/°C.'],
+    ['La résolution d\'un capteur ou d\'une chaîne de mesure est :', 'la plus petite variation de la grandeur mesurée que l\'on peut détecter', ['la valeur maximale mesurable', 'la vitesse de réponse', 'la tension d\'alimentation'], ''],
+    ['La précision (ou tolérance) d\'un capteur indique :', 'l\'écart maximal possible entre la valeur mesurée et la valeur vraie', ['le nombre de bits du CAN', 'la plage de mesure', 'la sensibilité'], ''],
+    ['Un capteur est linéaire si :', 'sa caractéristique sortie = f(entrée) est une droite', ['sa sortie est numérique', 'il est alimenté en continu', 'il a une grande étendue de mesure'], ''],
+    ['La fonction de transfert d\'un capteur est :', 'la relation entre la grandeur mesurée et le signal de sortie', ['le protocole de communication', 'son schéma de câblage', 'son prix'], ''],
+    ['Une grandeur d\'influence est :', 'une grandeur autre que la grandeur mesurée qui modifie la mesure', ['la grandeur mesurée', 'le signal de sortie', 'la tension pleine échelle'], 'Exemple : la température pour un capteur de pression.'],
+    ['Un capteur « intelligent » :', 'intègre traitement et communication numérique (bus)', ['n\'a pas besoin d\'alimentation', 'donne toujours un signal 4-20 mA', 'n\'a pas de fonction de transfert'], ''],
+    ['Pour choisir un capteur, on vérifie d\'abord :', 'que son étendue de mesure couvre les valeurs à mesurer', ['sa couleur', 'son nombre de broches', 'le nom du fabricant'], '']
+  ]),
+  {
+    chap: 2,
+    title: 'Capteur à sortie linéaire',
+    support: 'BO 2.4.2 · annales : pyranomètre 2024, caisson hyperbare 2026',
+    gen() {
+      const c = pick([
+        { n: 'capteur de pression', g: 'p', u: 'bar', e: [0, pick([4, 6, 10])], s: [0.5, 4.5], su: 'V' },
+        { n: 'pyranomètre (irradiance)', g: 'E', u: 'W/m²', e: [0, pick([1500, 2000])], s: [0, pick([5, 10])], su: 'V' },
+        { n: 'capteur de CO₂', g: 'C', u: 'ppm', e: [0, pick([2000, 5000])], s: [0, pick([3.3, 5, 10])], su: 'V' },
+        { n: 'capteur d\'humidité', g: 'HR', u: '%', e: [0, 100], s: [pick([0, 1]), pick([3.3, 5])], su: 'V' }]);
+      const a = (c.s[1] - c.s[0]) / (c.e[1] - c.e[0]), b = c.s[0] - a * c.e[0];
+      const E1 = +(c.e[1] * rnd(0.15, 0.85, 0.05)).toFixed(2), S1 = a * E1 + b, S2 = +(rnd(c.s[0] + 0.1 * (c.s[1] - c.s[0]), c.s[1] - 0.1 * (c.s[1] - c.s[0]), 0.01)).toFixed(2), E2 = (S2 - b) / a;
+      return {
+        statement: `<p>Un ${c.n} a une étendue de mesure de ${v(c.e[0], c.u)} à ${v(c.e[1], c.u)}. Sa sortie varie linéairement de
+          ${v(c.s[0], c.su, 1)} à ${v(c.s[1], c.su, 1)}.</p>` +
+          ol('Calculer la sensibilité a du capteur.', 'Écrire la fonction de transfert S = a × ' + c.g + ' + b.',
+            `Quelle tension délivre le capteur pour ${v(E1, c.u)} ?`, `Quelle grandeur mesure-t-on pour une tension de ${v(S2, c.su)} ?`),
+        steps: [
+          ['1. Sensibilité', M(`a = \\frac{\\Delta S}{\\Delta ${c.g}} = \\frac{${tx(c.s[1], 1)} - ${tx(c.s[0], 1)}}{${tx(c.e[1])} - ${c.e[0]}} = \\boxed{${tn(a, 4)}${u(c.su + '/' + c.u)}}`)],
+          ['2. Fonction de transfert', M(`b = S_{min} - a \\times ${c.g}_{min} = ${tx(b, 2)}${u(c.su)} \\qquad S = ${tn(a, 4)} \\times ${c.g} + ${tx(b, 2)}`)],
+          ['3. Tension', M(`S = ${tn(a, 4)} \\times ${tx(E1, 2)} + ${tx(b, 2)} = \\boxed{${tx(S1, 3)}${u(c.su)}}`)],
+          ['4. Grandeur mesurée', M(`${c.g} = \\frac{S - b}{a} = \\frac{${tx(S2, 2)} - ${tx(b, 2)}}{${tn(a, 4)}} = \\boxed{${tn(E2, 4)}${u(c.u)}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Boucle de courant 4-20 mA',
+    support: 'Annales : vélodrome 2023',
+    gen() {
+      const Tmin = pick([-50, -20, -10, 0]), Tmax = pick([50, 80, 100, 150]), R = 250;
+      const T1 = rnd(Tmin + 5, Tmax - 5, 0.5), I2 = rnd(5, 19, 0.01);
+      const a = 16 / (Tmax - Tmin), I1 = 4 + a * (T1 - Tmin), T2 = Tmin + (I2 - 4) / a;
+      return {
+        statement: `<p>Un transmetteur de température délivre un courant de 4 mA pour ${v(Tmin, '°C')} et de 20 mA pour ${v(Tmax, '°C')},
+          proportionnel entre les deux. Le courant traverse une résistance de ${v(R, 'Ω')} à l'entrée de l'automate.</p>` +
+          ol('Pourquoi le zéro de la mesure correspond-il à 4 mA et non à 0 mA ?', `Calculer le courant pour ${v(T1, '°C', 1)}.`,
+            `L'automate mesure ${v(I2, 'mA')}. Quelle est la température ?`, 'Quelle plage de tension obtient-on aux bornes de la résistance ?'),
+        steps: [
+          ['1. Zéro vivant', '<p>Un courant inférieur à 4 mA (0 mA) signale une coupure de la boucle : on distingue ainsi un défaut d\'une mesure au minimum. Le courant n\'est pas perturbé par la longueur des câbles.</p>'],
+          ['2. Courant', M(`I = 4 + \\frac{16}{${Tmax} - (${Tmin})} \\times (${tx(T1, 1)} - (${Tmin})) = \\boxed{${tx(I1, 2)}${u('mA')}}`)],
+          ['3. Température', M(`T = ${Tmin} + \\frac{${tx(I2, 2)} - 4}{16} \\times (${Tmax} - (${Tmin})) = \\boxed{${tx(T2, 1)}${u('°C')}}`)],
+          ['4. Tension', M(`U = R \\times I : \\quad 250 \\times 0{,}004 = \\boxed{1${u('V')}} \\quad \\text{à} \\quad 250 \\times 0{,}020 = \\boxed{5${u('V')}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Thermistance CTN et pont diviseur',
+    support: 'Annales : supercapacités 2024, centre aquatique 2025',
+    gen() {
+      const R25 = pick([10, 47, 100]), B = pick([3435, 3950, 4250]), Rf = R25, Vcc = pick([3.3, 5]), n = pick([10, 12]);
+      const Rt = T => R25 * Math.exp(B * (1 / (T + 273.15) - 1 / 298.15));
+      const Ts = [0, 10, 20, 25, 30, 35, 40, 50], T = pick([0, 10, 20, 30, 35, 40, 50]);
+      const R = Rt(T), U = Vcc * R / (R + Rf), N = Math.floor(U / (Vcc / 2 ** n));
+      return {
+        statement: `<p>Une thermistance CTN de ${v(R25, 'kΩ')} à 25 °C est montée en pont diviseur avec une résistance fixe R = ${v(Rf, 'kΩ')},
+          sous ${v(Vcc, 'V', 1)}. La tension U<sub>T</sub> est prise aux bornes de la CTN. Extrait de la documentation :</p>` +
+          table(['T (°C)', ...Ts], [['R<sub>CTN</sub> (kΩ)', ...Ts.map(t => fr(Rt(t), 2))]]) +
+          ol(`Relever R<sub>CTN</sub> à ${v(T, '°C')}.`, 'Calculer la tension U<sub>T</sub> = V<sub>cc</sub> × R<sub>CTN</sub> / (R<sub>CTN</sub> + R).',
+            `Cette tension est convertie par un CAN ${n} bits de pleine échelle ${Vcc} V. Calculer le quantum puis la valeur N.`, 'Quand la température augmente, U<sub>T</sub> augmente-t-elle ou diminue-t-elle ?'),
+        steps: [
+          ['1. Résistance', M(`R_{CTN}(${T}^\\circ\\text{C}) = \\boxed{${tx(R, 2)}${u('kΩ')}}`)],
+          ['2. Tension', M(`U_T = ${tx(Vcc, 1)} \\times \\frac{${tx(R, 2)}}{${tx(R, 2)} + ${Rf}} = \\boxed{${tx(U, 3)}${u('V')}}`)],
+          ['3. Conversion', M(`q = \\frac{${tx(Vcc, 1)}}{2^{${n}}} = ${tx(Vcc / 2 ** n * 1000, 3)}${u('mV')} \\qquad N = \\left\\lfloor \\frac{${tx(U, 3)}}{${tx(Vcc / 2 ** n, 6)}} \\right\\rfloor = \\boxed{${N}}`)],
+          ['4. Sens de variation', '<p>CTN = coefficient de température négatif : sa résistance diminue quand la température augmente, donc U<sub>T</sub> <b>diminue</b>.</p>']
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Mesure de courant par shunt',
+    support: 'Annales : station hydrogène 2022, Trambus 2023',
+    gen() {
+      const In = pick([50, 100, 200, 300, 500]), Un = pick([50, 60, 75, 100]), I1 = +(In * rnd(0.2, 0.9, 0.05)).toFixed(0), U2 = rnd(5, Un - 5, 0.1);
+      const R = Un / 1000 / In, U1 = R * I1, P = R * In * In, I2 = U2 / 1000 / R;
+      return {
+        statement: `<p>Un shunt est marqué ${v(`${In} A / ${Un} mV`)} : il délivre ${Un} mV lorsqu'il est traversé par ${In} A.</p>` +
+          ol('Calculer la résistance du shunt.', `Quelle tension mesure-t-on pour un courant de ${v(I1, 'A')} ?`,
+            'Calculer la puissance dissipée dans le shunt au courant nominal.', `On mesure ${v(U2, 'mV', 1)}. Quel est le courant ?`),
+        steps: [
+          ['1. Résistance', M(`R = \\frac{U}{I} = \\frac{${tx(Un / 1000, 3)}}{${In}} = \\boxed{${sci(R, 2)}\\,\\Omega} = ${tx(R * 1e6, 1)}${u('µΩ')}`)],
+          ['2. Tension', M(`U = R \\times I = ${sci(R, 2)} \\times ${I1} = \\boxed{${tx(U1 * 1000, 2)}${u('mV')}}`)],
+          ['3. Puissance', M(`P = R \\times I^2 = ${sci(R, 2)} \\times ${In}^2 = \\boxed{${tx(P, 2)}${u('W')}}`) + '<p>Elle est faible : le shunt perturbe peu le circuit.</p>'],
+          ['4. Courant', M(`I = \\frac{U}{R} = \\frac{${tx(U2 / 1000, 4)}}{${sci(R, 2)}} = \\boxed{${tx(I2, 1)}${u('A')}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Codeur absolu',
+    support: 'Annales : éolienne 2025 (orientation de la nacelle)',
+    gen() {
+      const n = pick([10, 12, 13, 14]), k = pick([1, 4, 10, 25]), N = rnd(1, 2 ** n - 1, 1);
+      const pos = 2 ** n, res = 360 / pos, resN = res / k, ang = N * res;
+      return {
+        statement: `<p>Un codeur absolu monotour de ${v(n, 'bits')} mesure l'orientation d'une nacelle. Il est entraîné par un engrenage :
+          il fait ${v(k, k > 1 ? 'tours' : 'tour')} quand la nacelle fait un tour.</p>` +
+          ol('Combien de positions le codeur peut-il distinguer sur un tour ?', 'Calculer sa résolution angulaire (plus petit angle mesurable par le codeur).',
+            'En déduire le plus petit angle mesurable sur la nacelle.', `Le codeur renvoie N = ${v(N)}. Quel angle (sur le codeur) cela représente-t-il ?`),
+        steps: [
+          ['1. Positions', M(`2^{${n}} = \\boxed{${tx(pos)}\\ \\text{positions}}`)],
+          ['2. Résolution du codeur', M(`\\frac{360^\\circ}{${tx(pos)}} = \\boxed{{${tn(res, 4)}}^\\circ}`)],
+          ['3. Résolution sur la nacelle', k === 1 ? '<p>Le codeur tourne comme la nacelle : même résolution.</p>' + M(`\\boxed{{${tn(res, 4)}}^\\circ}`)
+            : M(`\\frac{{${tn(res, 4)}}^\\circ}{${k}} = \\boxed{{${tn(resN, 4)}}^\\circ}`) + '<p>La démultiplication améliore la résolution.</p>'],
+          ['4. Angle', M(`\\theta = N \\times ${tn(res, 4)} = ${N} \\times ${tn(res, 4)} = \\boxed{${tx(ang, 2)}^\\circ}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Code Gray et OU exclusif',
+    support: 'Annales : éolienne 2025 (conversion Gray → binaire)',
+    gen() {
+      const n = 8, b = rnd(1, 255, 1), g = b ^ (b >> 1), b2 = rnd(1, 255, 1), g2 = b2 ^ (b2 >> 1);
+      const gs = BW(g, n), bs = BW(b, n), rows = [];
+      let prev = 0;
+      for (let i = 0; i < n; i++) { const gi = +gs[i], bi = i === 0 ? gi : prev ^ gi; rows.push([`B${n - 1 - i}`, i === 0 ? `G${n - 1} = ${gi}` : `B${n - i} ⊕ G${n - 1 - i} = ${prev} ⊕ ${gi}`, bi]); prev = bi; }
+      return {
+        statement: `<p>Un codeur absolu transmet sa position en code Gray : d'une position à la suivante, un seul bit change.
+          La conversion Gray → binaire se fait bit par bit à partir du poids fort : B<sub>7</sub> = G<sub>7</sub> puis B<sub>i</sub> = B<sub>i+1</sub> ⊕ G<sub>i</sub>
+          (⊕ : OU exclusif, qui vaut 1 si les deux bits sont différents).</p>` +
+          ol(`Convertir le code Gray ${v(gs)} en binaire.`, 'Donner la valeur décimale correspondante.',
+            `Pour convertir du binaire en Gray, on utilise G = B ⊕ (B décalé d'un bit vers la droite). Convertir ${v(BW(b2, n))} en Gray.`),
+        steps: [
+          ['1. Gray → binaire', table(['Bit', 'Calcul', 'Valeur'], rows) + M(`${tt(gs)}_{Gray} = ${tt(bs)}_2`)],
+          ['2. Décimal', M(`${tt(bs)}_2 = \\boxed{${b}}`)],
+          ['3. Binaire → Gray', M(`\\begin{aligned}&${tt(BW(b2, n))}\\\\ \\oplus\\ &${tt(BW(b2 >> 1, n))}\\\\ =\\ &\\boxed{${tt(BW(g2, n))}}\\end{aligned}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Anémomètre à ultrasons',
+    support: 'Annales : Polynésie 2026 (vitesse et direction du vent)',
+    gen() {
+      const d = 0.2, c = 340, vN = rnd(1, 15, 0.5), vE = rnd(1, 15, 0.5);
+      const t = vv => [d / (c + vv) * 1e6, d / (c - vv) * 1e6];
+      const [n1, n2] = t(vN).map(x => +x.toFixed(2)), [e1, e2] = t(vE).map(x => +x.toFixed(2));
+      const vn = d / 2 * (1 / (n1 * 1e-6) - 1 / (n2 * 1e-6)), ve = d / 2 * (1 / (e1 * 1e-6) - 1 / (e2 * 1e-6));
+      const V = Math.hypot(vn, ve), th = Math.atan(ve / vn) * 180 / Math.PI;
+      return {
+        statement: `<p>Un anémomètre à ultrasons mesure le temps de vol d'une impulsion entre deux transducteurs distants de d = 0,2 m, dans un sens puis dans l'autre.
+          La vitesse du vent sur un axe vaut :</p>` + M('v = \\frac{d}{2}\\left(\\frac{1}{t_1} - \\frac{1}{t_2}\\right)') +
+          `<p>Mesures (en µs) : axe Nord-Sud t<sub>1</sub> = ${v(n1, 'µs')}, t<sub>2</sub> = ${v(n2, 'µs')} ; axe Est-Ouest t<sub>1</sub> = ${v(e1, 'µs')}, t<sub>2</sub> = ${v(e2, 'µs')}.</p>` +
+          ol('Calculer la composante du vent sur l\'axe Nord-Sud.', 'Calculer la composante sur l\'axe Est-Ouest.',
+            'En déduire la vitesse du vent en m/s puis en km/h.', 'Calculer l\'angle θ de la direction du vent par rapport à l\'axe Nord-Sud (tan θ = v<sub>EO</sub> / v<sub>NS</sub>).'),
+        steps: [
+          ['1. Axe Nord-Sud', M(`v_{NS} = 0{,}1 \\times \\left(\\frac{1}{${tx(n1, 2)} \\times 10^{-6}} - \\frac{1}{${tx(n2, 2)} \\times 10^{-6}}\\right) = \\boxed{${tx(vn, 2)}${u('m/s')}}`)],
+          ['2. Axe Est-Ouest', M(`v_{EO} = 0{,}1 \\times \\left(\\frac{1}{${tx(e1, 2)} \\times 10^{-6}} - \\frac{1}{${tx(e2, 2)} \\times 10^{-6}}\\right) = \\boxed{${tx(ve, 2)}${u('m/s')}}`)],
+          ['3. Vitesse du vent', M(`V = \\sqrt{v_{NS}^2 + v_{EO}^2} = \\sqrt{${tx(vn, 2)}^2 + ${tx(ve, 2)}^2} = \\boxed{${tx(V, 2)}${u('m/s')}} = \\boxed{${tx(V * 3.6, 1)}${u('km/h')}}`)],
+          ['4. Direction', M(`\\theta = \\arctan\\left(\\frac{${tx(ve, 2)}}{${tx(vn, 2)}}\\right) = \\boxed{${tx(th, 1)}^\\circ}`)]
+        ]
+      };
+    }
+  },
+  // ===================== Chapitre 3 =====================
+  {
+    chap: 3,
+    title: 'Gain d\'amplification',
+    support: 'Annales : pesage des granulés 2021, thermocouple WECU 2025',
+    gen() {
+      const S = rnd(1, 3, 0.5), Ua = pick([5, 10]), Cn = pick([500, 1000, 2000]), Upe = pick([3.3, 5, 10]), n = pick([10, 12]);
+      const Smax = S * Ua, A = Upe / (Smax / 1000), mx = +(Cn * rnd(0.2, 0.9, 0.05)).toFixed(0);
+      const Us = Smax * mx / Cn, Ua2 = A * Us / 1000, N = Math.floor(Ua2 / (Upe / 2 ** n));
+      return {
+        statement: `<p>Un capteur de pesage de capacité nominale ${v(Cn, 'kg')} a une sensibilité de ${v(S, 'mV/V', 1)} et est alimenté sous ${v(Ua, 'V')}.
+          Son signal doit être amplifié pour être converti par un CAN ${n} bits de pleine échelle ${v(Upe, 'V', 1)}.</p>` +
+          ol('Calculer la tension délivrée par le capteur à la charge nominale.', 'Justifier la présence d\'un amplificateur.',
+            'Calculer le gain A pour que la charge nominale corresponde à la pleine échelle du CAN.', `Pour une masse de ${v(mx, 'kg')}, calculer la tension en sortie de l'amplificateur et la valeur N.`),
+        steps: [
+          ['1. Tension nominale', M(`U_{max} = ${tx(S, 1)} \\times ${Ua} = \\boxed{${tx(Smax, 1)}${u('mV')}}`)],
+          ['2. Pourquoi amplifier', `<p>Quelques mV n'utiliseraient qu'une infime partie de la plage du CAN (0 à ${fr(Upe, 1)} V) : la résolution serait très mauvaise.</p>`],
+          ['3. Gain', M(`A = \\frac{U_{pe}}{U_{max}} = \\frac{${tx(Upe, 1)}}{${tx(Smax / 1000, 4)}} = \\boxed{${tx(A, 0)}}`)],
+          ['4. Mesure', M(`U_{capteur} = ${tx(Smax, 1)} \\times \\frac{${mx}}{${Cn}} = ${tx(Us, 3)}${u('mV')} \\qquad U_{ampli} = ${tx(A, 0)} \\times ${tx(Us / 1000, 6)} = ${tx(Ua2, 3)}${u('V')}`) +
+            M(`N = \\left\\lfloor \\frac{${tx(Ua2, 3)}}{${tx(Upe, 1)} / 2^{${n}}} \\right\\rfloor = \\boxed{${N}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 3,
+    title: 'Adaptateur de dynamique',
+    support: 'Annales : complexe sportif CIME 2024',
+    gen() {
+      const Tmin = pick([-20, -10, 0]), Tmax = pick([40, 50, 60, 80]), s = 10, Upe = pick([3.3, 5]), n = pick([10, 12]);
+      const V1min = s * Tmin / 1000, V1max = s * Tmax / 1000, a = Upe / (V1max - V1min), b = -a * V1min;
+      const T = rnd(Tmin + 2, Tmax - 2, 0.5), V1 = s * T / 1000, V2 = a * V1 + b, N = Math.floor(V2 / (Upe / 2 ** n));
+      return {
+        statement: `<p>Un capteur de température délivre ${m('V_{s1}')} = 10 mV/°C × T (0 V à 0 °C). On veut mesurer de ${v(Tmin, '°C')} à ${v(Tmax, '°C')}.
+          Un adaptateur de dynamique transforme ${m('V_{s1}')} en ${m('V_{s2} = a \\cdot V_{s1} + b')} pour couvrir exactement la plage 0 à ${v(Upe, 'V', 1)} du CAN (${n} bits).</p>` +
+          ol(`Calculer les valeurs minimale et maximale de ${m('V_{s1}')}.`, 'Calculer a et b.', `Calculer ${m('V_{s1}')} et ${m('V_{s2}')} pour ${v(T, '°C', 1)}.`, 'En déduire la valeur N du CAN.'),
+        steps: [
+          ['1. Plage de V<sub>s1</sub>', M(`V_{s1\\,min} = 0{,}01 \\times (${Tmin}) = ${tx(V1min, 2)}${u('V')} \\qquad V_{s1\\,max} = 0{,}01 \\times ${Tmax} = ${tx(V1max, 2)}${u('V')}`)],
+          ['2. Coefficients', M(`a = \\frac{${tx(Upe, 1)} - 0}{${tx(V1max, 2)} - (${tx(V1min, 2)})} = \\boxed{${tx(a, 3)}} \\qquad b = -a \\times V_{s1\\,min} = \\boxed{${tx(b, 3)}${u('V')}}`)],
+          ['3. Tensions', M(`V_{s1} = 0{,}01 \\times ${tx(T, 1)} = ${tx(V1, 3)}${u('V')} \\qquad V_{s2} = ${tx(a, 3)} \\times ${tx(V1, 3)} + ${tx(b, 3)} = \\boxed{${tx(V2, 3)}${u('V')}}`)],
+          ['4. Valeur N', M(`N = \\left\\lfloor \\frac{${tx(V2, 3)}}{${tx(Upe, 1)} / ${2 ** n}} \\right\\rfloor = \\boxed{${N}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 3,
+    title: 'Filtre passe-bas du premier ordre',
+    support: 'BO 2.4.2 : filtrage passe-bas pour lisser une mesure ou atténuer le bruit',
+    gen() {
+      const R = pick([1, 2.2, 4.7, 10, 22, 47]) * 1000, C = pick([10e-9, 47e-9, 100e-9, 220e-9, 470e-9, 1e-6]), k = pick([5, 10, 20, 50]);
+      const fc = 1 / (2 * Math.PI * R * C), fp = fc * k, Gp = 1 / Math.sqrt(1 + k * k), GdB = 20 * Math.log10(Gp);
+      const lx = Math.floor(Math.log10(fc)) - 2, gdb = x => -10 * Math.log10(1 + (10 ** x / fc) ** 2);
+      const g = graph({ x0: lx, x1: lx + 5, dx: 1, y0: -50, y1: 5, dy: 5, xlab: 'f (Hz, échelle log)', ylab: 'G (dB)', fx: x => fn(10 ** x, 1), fy: y => y % 10 === 0 ? fr(y) : '',
+        series: [{ pts: curve(gdb, lx, lx + 5), cls: 'c1' }], extra: (X, Y) => `<line class="c3" x1="${X(lx)}" y1="${Y(-3)}" x2="${X(lx + 5)}" y2="${Y(-3)}"/>` });
+      const Cs = C >= 1e-6 ? `${fr(C * 1e6)} µF` : `${fr(C * 1e9)} nF`;
+      return {
+        statement: `<p>Un filtre RC passe-bas (R = ${v(fr(R / 1000, 1) + ' kΩ')}, C = ${v(Cs)}) lisse la mesure d'un capteur.
+          Son gain vaut ${m('G = \\dfrac{1}{\\sqrt{1 + (f / f_c)^2}}')} avec ${m('f_c = \\dfrac{1}{2 \\pi R C}')}. Le graphique donne son gain en dB.</p>${g}` +
+          ol('Calculer la fréquence de coupure f<sub>c</sub>.', 'Que vaut le gain à la fréquence de coupure, en valeur et en dB ?',
+            `Un parasite a une fréquence ${k} fois plus grande que f<sub>c</sub>. Calculer le gain à cette fréquence et l'atténuation en dB (G<sub>dB</sub> = 20 log G).`,
+            'Quel est le rôle de ce filtre ?'),
+        steps: [
+          ['1. Fréquence de coupure', M(`f_c = \\frac{1}{2\\pi \\times ${tx(R)} \\times ${sci(C, 1)}} = \\boxed{${tn(fc, 3)}${u('Hz')}}`)],
+          ['2. Gain à f<sub>c</sub>', M(`G = \\frac{1}{\\sqrt{2}} \\approx 0{,}707 \\qquad G_{dB} = 20 \\log(0{,}707) = \\boxed{-3${u('dB')}}`)],
+          ['3. Parasite', M(`f = ${tn(fp, 3)}${u('Hz')} \\qquad G = \\frac{1}{\\sqrt{1 + ${k}^2}} = ${tx(Gp, 4)} \\qquad G_{dB} = \\boxed{${tx(GdB, 1)}${u('dB')}}`) +
+            `<p>Le parasite est divisé par ${fr(1 / Gp, 1)} environ.</p>`],
+          ['4. Rôle', '<p>Il laisse passer les basses fréquences (le signal utile, lent) et atténue les hautes fréquences (le bruit).</p>']
+        ]
+      };
+    }
+  },
+  {
+    chap: 3,
+    title: 'Convertisseur analogique-numérique',
+    support: 'BO 2.4.2 · presque tous les sujets d\'annales',
+    gen() {
+      const n = pick([8, 10, 12, 16]), pl = pick([[0, 3.3], [0, 5], [0, 10], [-10, 10]]), dV = pl[1] - pl[0], q = dV / 2 ** n;
+      const U = rnd(pl[0] + 0.1, pl[1] - 0.1, 0.001), N = Math.floor((U - pl[0]) / q), N2 = rnd(1, 2 ** n - 1, 1), U2 = pl[0] + N2 * q;
+      return {
+        statement: `<p>Un CAN ${v(n, 'bits')} accepte en entrée des tensions de ${v(pl[0], 'V')} à ${v(pl[1], 'V', 1)}.
+          On prend ${m('q = \\dfrac{V_{max} - V_{min}}{2^n}')} et ${m('N = \\left\\lfloor \\dfrac{U - V_{min}}{q} \\right\\rfloor')}.</p>` +
+          ol('Donner la tension pleine échelle et le nombre de valeurs possibles en sortie.', 'Calculer le quantum q.',
+            `Calculer N pour ${v(U, 'V', 3)}.`, `Quelle tension correspond à N = ${v(N2)} ?`, 'Quelle est l\'erreur maximale due à la quantification ?'),
+        steps: [
+          ['1. Pleine échelle', M(`\\Delta V = ${tx(pl[1], 1)} - (${pl[0]}) = ${tx(dV, 1)}${u('V')} \\qquad 2^{${n}} = \\boxed{${tx(2 ** n)}\\ \\text{valeurs}}`)],
+          ['2. Quantum', M(`q = \\frac{${tx(dV, 1)}}{${tx(2 ** n)}} = \\boxed{${tn(q * 1000, 4)}${u('mV')}}`)],
+          ['3. Valeur N', M(`N = \\left\\lfloor \\frac{${tx(U, 3)} - (${pl[0]})}{${tn(q, 4)}} \\right\\rfloor = \\left\\lfloor ${tx((U - pl[0]) / q, 2)} \\right\\rfloor = \\boxed{${N}}`)],
+          ['4. Tension', M(`U = V_{min} + N \\times q = ${pl[0]} + ${N2} \\times ${tn(q, 4)} = \\boxed{${tx(U2, 4)}${u('V')}}`)],
+          ['5. Erreur', `<p>L'erreur de quantification est au plus égale au quantum, soit ${fn(q * 1000, 4)} mV.</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 3,
+    title: 'Résolution et erreur totale d\'une chaîne de mesure',
+    support: 'Annales : vélodrome 2023, digesteur 2025',
+    gen() {
+      const Tmin = pick([-50, -20, 0]), Tmax = pick([100, 150, 200]), n = pick([10, 12, 16]), cl = pick([['A', 0.15, 0.002], ['B', 0.3, 0.005]]);
+      const T = rnd(10, 80, 1), cdc = pick([0.3, 0.5, 1]);
+      const res = (Tmax - Tmin) / 2 ** n, tol = cl[1] + cl[2] * Math.abs(T), tot = tol + res;
+      return {
+        statement: `<p>Une sonde Pt100 de classe ${cl[0]} (tolérance ± (${fr(cl[1], 2)} + ${fr(cl[2], 3)} × |T|) °C) est reliée à un transmetteur qui convertit
+          ${v(Tmin, '°C')} … ${v(Tmax, '°C')} en 0 … 10 V. Un CAN ${v(n, 'bits')} de pleine échelle 10 V numérise ce signal.
+          Le cahier des charges impose une erreur inférieure à ± ${v(cdc, '°C', 1)} à ${v(T, '°C')}.</p>` +
+          ol('Calculer le quantum du CAN.', 'En déduire la résolution de la chaîne en °C (variation de température pour ΔN = 1).',
+            `Calculer la tolérance du capteur à ${T} °C.`, 'Calculer l\'erreur totale et conclure.'),
+        steps: [
+          ['1. Quantum', M(`q = \\frac{10}{2^{${n}}} = \\boxed{${tn(10 / 2 ** n * 1000, 4)}${u('mV')}}`)],
+          ['2. Résolution', M(`r = \\frac{${Tmax} - (${Tmin})}{2^{${n}}} = \\boxed{${tn(res, 3)}${u('°C')}}`)],
+          ['3. Tolérance', M(`\\pm (${tx(cl[1], 2)} + ${tx(cl[2], 3)} \\times ${T}) = \\boxed{\\pm ${tx(tol, 3)}${u('°C')}}`)],
+          ['4. Erreur totale', M(`${tx(tol, 3)} + ${tn(res, 3)} = \\boxed{\\pm ${tn(tot, 3)}${u('°C')}}`) +
+            `<p>${tot <= cdc ? 'Elle est inférieure à l\'exigence : le cahier des charges est respecté.' : 'Elle dépasse l\'exigence : le cahier des charges n\'est pas respecté.'}</p>`]
+        ]
+      };
+    }
+  },
+  // ===================== Chapitre 4 =====================
+  {
+    chap: 4,
+    title: 'Conversions binaire, hexadécimal et décimal',
+    support: 'BO 2.4.3',
+    gen() {
+      const a = rnd(256, 65535, 1), b = rnd(4096, 65535, 1), c = rnd(256, 65535, 1);
+      const bh = b.toString(16).toUpperCase(), cb = BW(c, 16);
+      return {
+        statement: ol(`Convertir ${v(a + '<sub>(10)</sub>')} en hexadécimal puis en binaire sur 16 bits.`, `Convertir ${v(bh + '<sub>(16)</sub>')} en décimal.`,
+          `Convertir ${v(grp4(cb) + '<sub>(2)</sub>')} en hexadécimal puis en décimal.`, 'Quelle est la plus grande valeur codable sur 16 bits non signés ?'),
+        steps: [
+          ['1. Décimal → hexadécimal → binaire', M(`${a} = \\boxed{${tt(a.toString(16).toUpperCase().padStart(4, '0'))}_{16}} = \\boxed{${tt(grp4(BW(a, 16)))}_2}`) +
+            '<p>Divisions successives par 16, puis chaque chiffre hexadécimal donne 4 bits.</p>'],
+          ['2. Hexadécimal → décimal', M(bh.split('').map((ch, i, s) => `${parseInt(ch, 16)} \\times 16^{${s.length - 1 - i}}`).join(' + ') + ` = \\boxed{${b}}`)],
+          ['3. Binaire → hexadécimal → décimal', M(`${tt(grp4(cb))} = \\boxed{${tt(c.toString(16).toUpperCase().padStart(4, '0'))}_{16}} = \\boxed{${c}}`)],
+          ['4. Maximum', M(`2^{16} - 1 = \\boxed{65\\,535} = ${tt('FFFF')}_{16}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 4,
+    title: 'Température codée sur deux octets',
+    support: 'Annales : piscine 2022 (capteur DS18B20)',
+    gen() {
+      const T1 = rnd(-10, 85, 0.0625), T2 = pick([rnd(-25, -0.5, 0.0625), rnd(1, 99, 0.0625)]);
+      const enc = T => { const r = Math.round(T * 16) & 0xFFFF; return [r >> 8, r & 255, r]; };
+      const [m1, l1, r1] = enc(T1), [m2, l2, r2] = enc(T2), s2 = r2 >= 32768 ? r2 - 65536 : r2;
+      return {
+        statement: `<p>Le capteur DS18B20 code la température sur 16 bits en complément à 2, avec une résolution de 1/16 °C = 0,0625 °C :
+          la valeur lue vaut T × 16. data[1] est l'octet de poids fort, data[0] celui de poids faible.</p>` +
+          ol(`Coder la température ${v(frf(T1, 4), '°C')} : valeur entière, binaire sur 16 bits, data[1] et data[0] en hexadécimal.`,
+            `Le capteur renvoie data[1] = ${v(H2(m2))} et data[0] = ${v(H2(l2))}. Quelle est la température ?`,
+            'Comment reconnaît-on une température négative ?'),
+        steps: [
+          ['1. Codage', M(`${txf(T1, 4)} \\times 16 = ${Math.round(T1 * 16)}${T1 < 0 ? ` \\;\\Rightarrow\\; 65\\,536 ${Math.round(T1 * 16)} = ${r1}` : ''}`) +
+            M(`${tt(grp4(BW(r1, 16)))} \\qquad \\text{data[1]} = \\boxed{${tt(H2(m1))}} \\quad \\text{data[0]} = \\boxed{${tt(H2(l1))}}`)],
+          ['2. Décodage', M(`${tt(H2(m2) + H2(l2))}_{16} = ${r2}${r2 >= 32768 ? ` \\;\\Rightarrow\\; ${r2} - 65\\,536 = ${s2}` : ''} \\qquad T = \\frac{${s2}}{16} = \\boxed{${txf(s2 / 16, 4)}${u('°C')}}`)],
+          ['3. Signe', '<p>En complément à 2, une valeur est négative quand son bit de poids fort (bit 15) vaut 1, c\'est-à-dire quand data[1] ≥ 80<sub>(16)</sub>.</p>']
+        ]
+      };
+    }
+  },
+  {
+    chap: 4,
+    title: 'Décoder une chaîne ASCII dans une trame',
+    support: 'Annales : granulés 2021, piscine 2022, téléphérique 2024, digesteur 2025…',
+    gen() {
+      const msgs = [() => `temp=${frf(rnd(15, 35, 0.1), 1).replace(',', '.')}`, () => `masse=${rnd(50, 950, 1)}`, () => `P=${frf(rnd(1, 3, 0.01), 2).replace(',', '.')}bar`,
+        () => `CO2=${rnd(400, 2500, 1)}`, () => `id=${rnd(1000, 9999, 1)}`, () => `HR=${rnd(30, 90, 1)}%`];
+      const [f1, f2] = sample(msgs, 2), s1 = f1(), s2 = f2(), hx = s => s.split('').map(ch => H2(ch.charCodeAt(0)));
+      return {
+        statement: `<p>Extrait de la table ASCII : chiffres « 0 » à « 9 » = 30 à 39<sub>(16)</sub> ; « . » = 2E ; « = » = 3D ; « % » = 25 ;
+          « A » = 41 … « Z » = 5A ; « a » = 61 … « z » = 7A.</p>` +
+          ol(`Une capture réseau contient la suite d'octets ${v(hx(s1).join(' '))}. Décoder le texte transmis.`,
+            `Coder en hexadécimal le texte ${v(s2)}.`, 'Combien d\'octets ce second message occupe-t-il ?'),
+        steps: [
+          ['1. Décodage', table(hx(s1), [s1.split('')]) + `<p>Texte transmis : <b>${s1}</b>.</p>`],
+          ['2. Codage', table(s2.split(''), [hx(s2)]) + M(`\\boxed{${tt(hx(s2).join(' '))}}`)],
+          ['3. Taille', `<p>${s2.length} caractères, soit <b>${s2.length} octets</b>.</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 4,
+    title: 'Couleur RVB en hexadécimal',
+    support: 'Annales : tri des sacs 2023 (reconnaissance de couleur)',
+    gen() {
+      const main = rnd(0, 2, 1), c = [0, 1, 2].map(i => i === main ? rnd(150, 255, 1) : rnd(0, 120, 1)), W = pick([640, 1280, 1920]), Hh = { 640: 480, 1280: 720, 1920: 1080 }[W];
+      const names = ['rouge', 'vert', 'bleu'], hex = c.map(H2).join(''), size = W * Hh * 3;
+      return {
+        statement: `<p>Une caméra code chaque pixel sur 3 octets (rouge, vert, bleu). Le pixel moyen d'une image vaut ${v('#' + hex)}.</p>` +
+          ol('Convertir les trois composantes en décimal.', 'Quelle est la couleur dominante ?', 'Combien de couleurs différentes ce codage permet-il ?',
+            `Calculer la taille en Mo d'une image non compressée de ${W} × ${Hh} pixels (1 Mo = 10<sup>6</sup> octets).`),
+        steps: [
+          ['1. Composantes', M(c.map((x, i) => `\\text{${names[i]}} : ${tt(H2(x))}_{16} = ${x}`).join(' \\quad '))],
+          ['2. Couleur dominante', `<p>La composante la plus forte est le <b>${names[main]}</b> (${c[main]} / 255).</p>`],
+          ['3. Nombre de couleurs', M(`2^{24} = \\boxed{${tx(2 ** 24)}}`)],
+          ['4. Taille d\'une image', M(`${W} \\times ${Hh} \\times 3 = ${tx(size)}\\ \\text{octets} = \\boxed{${tx(size / 1e6, 2)}${u('Mo')}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 4,
+    title: 'Lecture d\'un chronogramme',
+    support: 'BO 3.4.1 : période, fréquence, amplitude, niveau logique, rapport cyclique',
+    gen() {
+      const T = pick([0.5, 1, 2, 4, 5, 10]), al = rnd(10, 90, 10), Uh = pick([3.3, 5]);
+      const pts = [0, 1, 2].flatMap(k => [[k * T, Uh], [k * T + al / 100 * T, Uh], [k * T + al / 100 * T, 0], [(k + 1) * T, 0]]);
+      const g = graph({ x0: 0, x1: 3 * T, dx: T / 10, y0: -0.5, y1: 6, dy: 0.5, fy: y => Number.isInteger(y) ? fr(y) : '',
+        fx: x => Math.round(x / T * 10) % 5 === 0 ? fr(x, 3) : '', xlab: 't (ms)', ylab: 'u (V)', series: [{ pts, cls: 'c1' }] });
+      const f = 1000 / T, tH = al / 100 * T;
+      return {
+        statement: `<p>On relève le signal de commande ci-dessous.</p>${g}` +
+          ol('Quels sont les niveaux logiques haut et bas ?', 'Mesurer la période T et calculer la fréquence.', 'Mesurer la durée t<sub>H</sub> de l\'état haut et calculer le rapport cyclique.',
+            'Calculer la valeur moyenne du signal.'),
+        steps: [
+          ['1. Niveaux', `<p>Niveau haut : <b>${fr(Uh, 1)} V</b>, niveau bas : <b>0 V</b>.</p>`],
+          ['2. Période et fréquence', M(`T = \\boxed{${tx(T, 2)}${u('ms')}} \\qquad f = \\frac{1}{${tx(T / 1000, 4)}} = \\boxed{${tx(f, 1)}${u('Hz')}}`)],
+          ['3. Rapport cyclique', M(`t_H = ${tx(tH, 3)}${u('ms')} \\qquad \\alpha = \\frac{t_H}{T} = \\boxed{${al}\\,\\%}`)],
+          ['4. Valeur moyenne', M(`U_{moy} = \\alpha \\times U_H = ${tx(al / 100, 2)} \\times ${tx(Uh, 1)} = \\boxed{${tx(al / 100 * Uh, 2)}${u('V')}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 4,
+    title: 'Taille de stockage et compression',
+    support: 'Annales : granulés 2021, vidéosurveillance 2024, éolienne 2025, digesteur 2025',
+    gen() {
+      const nc = rnd(2, 12, 1), o = pick([2, 4]), per = pick([1, 5, 10, 15, 30, 60]), j = pick([245, 365]), an = rnd(1, 10, 1);
+      const nb = nc * (24 * 60 / per) * j * an, oct = nb * o;
+      const W = pick([1280, 1920]), Hh = W === 1280 ? 720 : 1080, fps = pick([10, 15, 25]), tau = pick([50, 100, 200]), D = pick([1, 2, 4]);
+      const img = W * Hh * 3, flux = img * fps / tau, dur = D * 1e12 / flux / 3600;
+      return {
+        statement: `<p><b>Relevés :</b> ${v(nc, 'capteurs')} sont relevés toutes les ${v(per, 'min')}, chaque mesure occupant ${v(o, 'octets')}.
+          L'installation fonctionne ${v(j, 'jours')} par an et on archive ${v(an, an > 1 ? 'ans' : 'an')}.</p>
+          <p><b>Vidéo :</b> une caméra filme en ${W} × ${Hh} pixels (3 octets par pixel) à ${v(fps, 'images/s')}. La compression divise la taille par ${v(tau)}.
+          L'enregistreur dispose d'un disque de ${v(D, 'To')} (1 To = 10<sup>12</sup> octets).</p>` +
+          ol('Calculer le nombre de mesures archivées et la taille en ko (1 ko = 1 024 octets).', 'Calculer la taille d\'une image non compressée en Mo.',
+            'Calculer le flux vidéo compressé en Mo/s.', 'Combien d\'heures de vidéo le disque peut-il stocker ?'),
+        steps: [
+          ['1. Relevés', M(`${nc} \\times \\frac{24 \\times 60}{${per}} \\times ${j} \\times ${an} = ${tx(nb)}\\ \\text{mesures}`) +
+            M(`${tx(nb)} \\times ${o} = ${tx(oct)}\\ \\text{octets} = \\boxed{${tx(oct / 1024, 1)}${u('ko')}}`)],
+          ['2. Image', M(`${W} \\times ${Hh} \\times 3 = ${tx(img)}\\ \\text{octets} = \\boxed{${tx(img / 1e6, 2)}${u('Mo')}}`)],
+          ['3. Flux', M(`\\frac{${tx(img / 1e6, 2)} \\times ${fps}}{${tau}} = \\boxed{${tx(flux / 1e6, 3)}${u('Mo/s')}}`)],
+          ['4. Durée d\'enregistrement', M(`\\frac{${D} \\times 10^{12}}{${tx(flux, 0)}} = ${sci(D * 1e12 / flux, 3)}${u('s')} = \\boxed{${tx(dur, 0)}${u('h')}}`) + `<p>Soit environ ${fr(dur / 24, 1)} jours.</p>`]
+        ]
+      };
+    }
+  },
+  // ===================== Chapitre 5 =====================
+  {
+    chap: 5,
+    title: 'Trame UART / RS232',
+    support: 'BO 3.4.3 · annales : commandes AT 2024, RS-485 2024',
+    gen() {
+      const ch = pick('ABCDEFGHJKLMNPRSTUVWXYZabcdefghkmnprstuvwxyz0123456789'.split('')), code = ch.charCodeAt(0);
+      const par = pick(['paire', 'impaire', 'aucune']), baud = pick([2400, 4800, 9600, 19200, 115200]);
+      const bits = Array.from({ length: 8 }, (_, i) => code >> i & 1), ones = bits.reduce((a, b) => a + b, 0);
+      const pb = par === 'paire' ? ones % 2 : par === 'impaire' ? 1 - ones % 2 : null;
+      const cells = [{ l: 0, t: 'Start' }, ...bits.map((b, i) => ({ l: b, t: 'D' + i })), ...(pb === null ? [] : [{ l: pb, t: 'P' }]), { l: 1, t: 'Stop' }];
+      const nb = cells.length, tb = 1 / baud, Tf = nb * tb;
+      return {
+        statement: `<p>Une carte à microcontrôleur envoie le caractère ${v('« ' + ch + ' »')} sur une liaison série asynchrone : 1 bit de start, 8 bits de données
+          (bit de poids faible en premier), parité ${v(par)}, 1 bit de stop, à ${v(baud, 'bauds', 0)}. Au repos, la ligne est au niveau 1.</p>` +
+          ol('Donner le code ASCII du caractère en hexadécimal et en binaire.', 'Donner l\'ordre d\'émission des 8 bits de données.',
+            par === 'aucune' ? 'Pourquoi peut-on se passer du bit de parité ? Quel est son rôle quand il est présent ?' : 'Déterminer la valeur du bit de parité.',
+            'Combien de bits faut-il pour transmettre ce caractère ?', 'Calculer la durée d\'un bit puis la durée de la trame.', 'Tracer le chronogramme de la trame.'),
+        steps: [
+          ['1. Code ASCII', M(`\\text{${ch}} = ${tt(H2(code))}_{16} = ${tt(BW(code))}_2`)],
+          ['2. Ordre d\'émission', `<p>Le bit de poids faible (D0) part en premier : <b>${bits.join(' ')}</b>.</p>`],
+          ['3. Parité', pb === null ? '<p>Sans parité, aucune erreur n\'est détectée. Le bit de parité permet de détecter une erreur portant sur un bit.</p>'
+            : `<p>Il y a ${ones} bit(s) à 1 dans les données. Avec une parité ${par}, le nombre total de 1 (données + parité) doit être ${par === 'paire' ? 'pair' : 'impair'} : P = <b>${pb}</b>.</p>`],
+          ['4. Nombre de bits', M(`1 + 8 ${pb === null ? '' : '+ 1 '}+ 1 = \\boxed{${nb}\\ \\text{bits}}`)],
+          ['5. Durées', M(`t_{bit} = \\frac{1}{${baud}} = \\boxed{${tn(tb * 1e6, 4)}${u('µs')}} \\qquad T = ${nb} \\times ${tn(tb * 1e6, 4)} = \\boxed{${tn(Tf * 1000, 4)}${u('ms')}}`)],
+          ['6. Chronogramme', wave(cells, 'Ligne au repos à 1, puis start (0), données D0 à D7' + (pb === null ? '' : ', parité') + ' et stop (1)')]
+        ]
+      };
+    }
+  },
+  {
+    chap: 5,
+    title: 'Durée d\'une trame et débit',
+    support: 'Annales : bus LIN 2023, PROFIBUS 2025, transmission du vent 2022',
+    gen() {
+      const bus = pick([['Modbus RTU sur RS-485 (8 bits, parité paire, 1 stop)', pick([9600, 19200]), 11], ['bus LIN (8 bits, sans parité)', 19200, 10],
+        ['PROFIBUS PA (8 bits, parité paire, 1 stop)', 31250, 11], ['liaison RS-232 (8N1)', pick([9600, 115200]), 10]]);
+      const n = rnd(6, 24, 1), per = pick([10, 20, 50, 100]), D = bus[1], b = bus[2];
+      const nbit = n * b, T = nbit / D, util = n * 8 / T, nmax = Math.floor(1 / T);
+      return {
+        statement: `<p>Un capteur communique par ${v(bus[0])} à ${v(D, 'bit/s', 0)}. Chaque octet est encadré par un bit de start et un bit de stop
+          (et éventuellement un bit de parité) : il faut donc ${v(b, 'bits')} pour transmettre un octet. Une trame complète contient ${v(n, 'octets')}.
+          Le cahier des charges impose de rafraîchir la mesure toutes les ${v(per, 'ms')}.</p>` +
+          ol('Calculer le nombre de bits transmis pour une trame.', 'Calculer la durée de transmission d\'une trame.',
+            'Combien de trames peut-on transmettre au maximum par seconde ?', 'Calculer le débit utile (seuls les bits de données comptent).', 'Le cahier des charges est-il respecté ?'),
+        steps: [
+          ['1. Nombre de bits', M(`${n} \\times ${b} = \\boxed{${nbit}\\ \\text{bits}}`)],
+          ['2. Durée', M(`T = \\frac{${nbit}}{${D}} = \\boxed{${tn(T * 1000, 4)}${u('ms')}}`)],
+          ['3. Trames par seconde', M(`\\frac{1}{${tn(T, 4)}} = ${tx(1 / T, 1)} \\;\\Rightarrow\\; \\boxed{${nmax}\\ \\text{trames/s}}`)],
+          ['4. Débit utile', M(`\\frac{${n} \\times 8}{${tn(T, 4)}} = \\boxed{${tx(util, 0)}${u('bit/s')}}`) + `<p>Soit ${fr(util / D * 100, 1)} % du débit brut.</p>`],
+          ['5. Conclusion', `<p>${T * 1000 <= per ? `${fn(T * 1000, 3)} ms ≤ ${per} ms : la trame est transmise à temps, l'exigence est respectée.` : `${fn(T * 1000, 3)} ms > ${per} ms : la liaison est trop lente pour cette exigence.`}</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 5,
+    title: 'Bits de parité et détection d\'erreur',
+    support: 'Annales : bus LIN du Trambus 2023',
+    gen() {
+      const id = rnd(0, 63, 1), b = i => id >> i & 1;
+      const P0 = b(0) ^ b(1) ^ b(2) ^ b(4), P1 = 1 - (b(1) ^ b(3) ^ b(4) ^ b(5)), pid = P1 << 7 | P0 << 6 | id;
+      const flip = rnd(0, 7, 1), rx = pid ^ (1 << flip), rid = rx & 63, rb = i => rid >> i & 1;
+      const rP0 = rb(0) ^ rb(1) ^ rb(2) ^ rb(4), rP1 = 1 - (rb(1) ^ rb(3) ^ rb(4) ^ rb(5)), ok = (rx >> 6 & 1) === rP0 && (rx >> 7 & 1) === rP1;
+      return {
+        statement: `<p>Sur le bus LIN, l'octet « PID » contient l'identifiant sur 6 bits (id5 … id0) et deux bits de parité :</p>` +
+          M('P_0 = id_0 \\oplus id_1 \\oplus id_2 \\oplus id_4 \\qquad P_1 = \\overline{id_1 \\oplus id_3 \\oplus id_4 \\oplus id_5} \\qquad PID = P_1\\,P_0\\,id_5\\,id_4\\,id_3\\,id_2\\,id_1\\,id_0') +
+          ol(`L'identifiant vaut ${v(H2(id) + '<sub>(16)</sub>')}. Écrire id5 … id0 en binaire.`, 'Calculer P0 et P1.', 'En déduire le PID en binaire et en hexadécimal.',
+            `Le récepteur reçoit ${v(H2(rx) + '<sub>(16)</sub>')}. Recalculer les parités et conclure.`),
+        steps: [
+          ['1. Identifiant', M(`${tt(H2(id))}_{16} = ${tt(BW(id, 6))}_2`)],
+          ['2. Parités', M(`P_0 = ${b(0)} \\oplus ${b(1)} \\oplus ${b(2)} \\oplus ${b(4)} = \\boxed{${P0}} \\qquad P_1 = \\overline{${b(1)} \\oplus ${b(3)} \\oplus ${b(4)} \\oplus ${b(5)}} = \\boxed{${P1}}`)],
+          ['3. PID', M(`${tt(`${P1}${P0} ${BW(id, 6)}`)} = \\boxed{${tt(H2(pid))}_{16}}`)],
+          ['4. Réception', M(`${tt(BW(rx))} : id = ${tt(BW(rid, 6))} \\;\\Rightarrow\\; P_0 = ${rP0},\\ P_1 = ${rP1}`) +
+            `<p>Bits de parité reçus : P1 = ${rx >> 7 & 1}, P0 = ${rx >> 6 & 1}. ${ok ? 'Ils concordent.' : '<b>Ils ne concordent pas : une erreur est détectée</b>, la trame est rejetée.'}
+            Ici le bit ${flip} a été altéré pendant la transmission.</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 5,
+    title: 'Bus I2C',
+    support: 'Annales : inclinomètre du tracker solaire 2022',
+    gen() {
+      const Tscl = pick([[10, 100, 'standard (100 kbit/s)'], [2.5, 400, 'rapide (400 kbit/s)'], [1, 1000, 'rapide plus (1 Mbit/s)']]);
+      const ad = rnd(8, 119, 1), rw = rnd(0, 1, 1), byte = ad << 1 | rw, ad2 = rnd(8, 119, 1), rw2 = rnd(0, 1, 1), byte2 = ad2 << 1 | rw2;
+      const cells = [...Array.from({ length: 7 }, (_, i) => ({ l: ad >> (6 - i) & 1, t: 'A' + (6 - i) })), { l: rw, t: 'R/W' }, { l: 0, t: 'ACK' }];
+      return {
+        statement: `<p>Sur l'oscillogramme du bus I2C, on mesure une période de l'horloge SCL de ${v(Tscl[0], 'µs', 1)}.
+          Après la condition de START, le maître envoie l'octet d'adresse (7 bits d'adresse, poids fort en premier, puis le bit R/W : 1 = lecture, 0 = écriture).
+          Voici les niveaux de SDA relevés pendant les 9 premiers coups d'horloge :</p>${wave(cells, 'SDA échantillonné sur chaque front montant de SCL')}` +
+          ol('Calculer la fréquence de SCL et en déduire le mode de transmission.', 'Décoder l\'adresse de l\'esclave (binaire et hexadécimal) et le sens de l\'échange.',
+            'Que signifie le 9e bit à 0 ?', `Écrire en hexadécimal l'octet envoyé pour une ${rw2 ? 'lecture' : 'écriture'} dans l'esclave d'adresse ${v(H2(ad2) + '<sub>(16)</sub>')}.`),
+        steps: [
+          ['1. Fréquence', M(`f = \\frac{1}{${tx(Tscl[0], 1)} \\times 10^{-6}} = \\boxed{${tx(Tscl[1])}${u('kHz')}}`) + `<p>Mode <b>${Tscl[2]}</b>.</p>`],
+          ['2. Adresse', M(`${tt(BW(ad, 7))}_2 = \\boxed{${tt(H2(ad))}_{16}} \\qquad R/W = ${rw}`) + `<p>Le maître veut ${rw ? '<b>lire</b> des données de' : '<b>écrire</b> dans'} l'esclave.</p>`],
+          ['3. ACK', '<p>C\'est l\'acquittement : l\'esclave tire SDA à 0 pour indiquer qu\'il a reconnu son adresse.</p>'],
+          ['4. Octet d\'adresse', M(`${tt(BW(ad2, 7))}\\ ${rw2} = ${tt(BW(byte2))} = \\boxed{${tt(H2(byte2))}_{16}}`) + `<p>Formule : adresse × 2 + R/W = ${ad2} × 2 + ${rw2} = ${byte2}. (Octet relevé plus haut : ${H2(byte)}<sub>(16)</sub>.)</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 5,
+    title: 'Trame Modbus',
+    support: 'Annales : station hydrogène 2022, centre aquatique 2025, WECU 2025',
+    gen() {
+      const crc = arr => { let c = 0xFFFF; arr.forEach(b => { c ^= b; for (let i = 0; i < 8; i++) c = c & 1 ? (c >> 1) ^ 0xA001 : c >> 1; }); return [c & 255, c >> 8]; };
+      const sl = rnd(1, 247, 1), reg = rnd(0, 999, 1), val = rnd(-200, 900, 1), raw = val & 0xFFFF;
+      const req = [sl, 3, reg >> 8, reg & 255, 0, 1], rep = [sl, 3, 2, raw >> 8, raw & 255];
+      const R = [...req, ...crc(req)], A = [...rep, ...crc(rep)];
+      return {
+        statement: `<p>Un superviseur (maître) interroge un capteur de température (esclave) en Modbus RTU. Format : adresse esclave (1 octet), code fonction (1 octet),
+          données, CRC (2 octets). Le code 03 signifie « lecture de registres ». La température est stockée en dixièmes de °C sur 16 bits signés.</p>
+          <p>Requête : ${v(R.map(H2).join(' '))}<br>Réponse : ${v(A.map(H2).join(' '))}</p>` +
+          ol('Quelle est l\'adresse de l\'esclave en décimal ?', 'Quel registre est lu et combien de registres sont demandés ?',
+            'Combien d\'octets de données la réponse contient-elle ?', 'Décoder la température renvoyée.', 'À quoi sert le CRC ?'),
+        steps: [
+          ['1. Esclave', M(`${tt(H2(sl))}_{16} = \\boxed{${sl}}`)],
+          ['2. Registre', M(`\\text{registre} : ${tt(H2(reg >> 8) + ' ' + H2(reg & 255))}_{16} = \\boxed{${reg}} \\qquad \\text{nombre} : ${tt('00 01')} = \\boxed{1}`)],
+          ['3. Données', '<p>Le 3e octet de la réponse (02) indique <b>2 octets</b> de données, soit un registre de 16 bits.</p>'],
+          ['4. Température', M(`${tt(H2(raw >> 8) + H2(raw & 255))}_{16} = ${raw}${raw >= 32768 ? ` \\;\\Rightarrow\\; ${raw} - 65\\,536 = ${val}` : ''} \\qquad T = \\frac{${val}}{10} = \\boxed{${tx(val / 10, 1)}${u('°C')}}`)],
+          ['5. CRC', '<p>Le CRC (contrôle de redondance cyclique) permet au récepteur de vérifier que la trame n\'a pas été altérée.</p>']
+        ]
+      };
+    }
+  },
+  Q(5, 'Typologie des communications', 'BO 3.4.3', [
+    ['Une liaison half-duplex permet :', 'de communiquer dans les deux sens, mais pas en même temps', ['de communiquer dans les deux sens simultanément', 'de communiquer dans un seul sens', 'de communiquer sans câble uniquement'], 'Comme un talkie-walkie.'],
+    ['Une liaison full-duplex permet :', 'de communiquer dans les deux sens en même temps', ['de communiquer dans un seul sens', 'de communiquer à tour de rôle', 'de transmettre deux fois plus lentement'], 'Comme le téléphone.'],
+    ['Une liaison simplex permet :', 'de communiquer dans un seul sens', ['de communiquer dans les deux sens en même temps', 'de communiquer à tour de rôle', 'de relier plusieurs maîtres'], 'Comme la radio FM.'],
+    ['Une liaison synchrone :', 'transmet aussi un signal d\'horloge commun', ['n\'a pas d\'horloge commune', 'utilise forcément la parité', 'est toujours sans fil'], 'Exemples : I2C, SPI.'],
+    ['Une liaison asynchrone (UART) se synchronise grâce :', 'au bit de start et à une vitesse convenue à l\'avance', ['à un fil d\'horloge', 'au CRC', 'à l\'adresse IP'], ''],
+    ['Le Modbus sur RS-485 à 2 fils fonctionne en :', 'half-duplex', ['full-duplex', 'simplex', 'synchrone'], 'Une seule paire de fils sert aux deux sens.'],
+    ['Dans une communication maître/esclave :', 'seul le maître peut initier un échange', ['tous les équipements parlent quand ils veulent', 'l\'esclave interroge le maître', 'il n\'y a pas d\'adresse'], ''],
+    ['Dans une architecture client/serveur :', 'le client envoie une requête et le serveur y répond', ['le serveur interroge les clients en permanence', 'il n\'y a qu\'un seul équipement', 'le client stocke les données du serveur'], ''],
+    ['Le bit de start d\'une trame UART vaut :', '0', ['1', 'la parité', 'le dernier bit de données'], 'La ligne est au repos à 1.'],
+    ['Le bit de parité permet :', 'de détecter une erreur sur un bit', ['de corriger toutes les erreurs', 'd\'augmenter le débit', 'de synchroniser l\'horloge'], '']
+  ]),
+  Q(5, 'Bus de terrain', 'BO 5.3.4 : KNX, EnOcean, CAN, I2C, SPI…', [
+    ['Le bus I2C utilise :', '2 fils (SDA et SCL) et des adresses sur 7 bits', ['4 fils et une sélection par broche', '1 seul fil sans horloge', 'une paire torsadée différentielle sans adresse'], ''],
+    ['Le bus SPI utilise :', 'une horloge, deux lignes de données et une ligne de sélection par esclave', ['2 fils et des adresses', 'une seule ligne bidirectionnelle', 'la fibre optique'], ''],
+    ['Le bus CAN, très utilisé dans l\'automobile :', 'transmet des trames sur une paire différentielle et donne la priorité selon l\'identifiant', ['est un bus sans fil', 'n\'a qu\'un seul émetteur possible', 'utilise des adresses IP'], ''],
+    ['Le bus LIN est :', 'un bus maître/esclave lent et économique, complément du CAN', ['un réseau Wi-Fi', 'un bus de 1 Gbit/s', 'un protocole web'], ''],
+    ['Le bus KNX est surtout utilisé :', 'en domotique et gestion technique du bâtiment', ['dans les cartes graphiques', 'pour la vidéo', 'dans les téléphones portables'], ''],
+    ['EnOcean se caractérise par :', 'des modules sans fil et sans pile, alimentés par récupération d\'énergie', ['une liaison filaire à 4 fils', 'un débit de plusieurs Gbit/s', 'l\'utilisation obligatoire d\'une batterie'], ''],
+    ['La liaison RS-485 est appréciée en milieu industriel car :', 'elle est différentielle, donc peu sensible aux parasites, et permet de longues distances', ['elle est sans fil', 'elle ne nécessite aucune alimentation', 'elle a une portée de quelques centimètres'], ''],
+    ['Modbus est :', 'un protocole de communication maître/esclave (RTU sur liaison série, TCP sur Ethernet)', ['un type de câble', 'un capteur de température', 'un système d\'exploitation'], ''],
+    ['PROFIBUS PA est utilisé dans les zones à risque d\'explosion (ATEX) car :', 'il limite l\'énergie transportée sur le bus (sécurité intrinsèque)', ['il est très rapide', 'il est sans fil', 'il n\'a pas besoin de câble'], ''],
+    ['Pour choisir un bus, on compare notamment :', 'la longueur maximale, le débit et la fiabilité', ['la couleur des câbles', 'la marque du microcontrôleur', 'le prix de l\'écran'], '']
+  ]),
+  {
+    chap: 5,
+    title: 'Trame RFID',
+    support: 'Annales : serrure RFID 2021, hélistation 2026',
+    gen() {
+      const fmt = pick([[10, '1 start, 8 données, 1 stop'], [11, '1 start, 8 données, 1 parité, 1 stop']]), nd = rnd(10, 16, 1);
+      const tb = pick([[104.2, 9600], [52.1, 19200], [26, 38400], [8.68, 115200]]), lim = pick([5, 10, 20, 50]);
+      const tot = fmt[0] * nd, T = tot * tb[0] / 1000;
+      return {
+        statement: `<p>Un lecteur RFID transmet le code d'un badge au microcontrôleur sous forme de ${v(nd, 'données')} (octets).
+          Chaque donnée est codée ainsi : ${v(fmt[1])}. À l'oscilloscope, on mesure la durée d'un bit : ${v(tb[0], 'µs', 2)}.
+          L'exigence impose une lecture complète en moins de ${v(lim, 'ms')}.</p>` +
+          ol('Combien de bits faut-il pour une donnée ?', 'Combien de bits la trame complète contient-elle ?', 'Calculer la vitesse de transmission en bauds.',
+            'Calculer la durée de la trame et conclure.'),
+        steps: [
+          ['1. Bits par donnée', `<p><b>${fmt[0]} bits</b> (${fmt[1]}).</p>`],
+          ['2. Bits de la trame', M(`${nd} \\times ${fmt[0]} = \\boxed{${tot}\\ \\text{bits}}`)],
+          ['3. Vitesse', M(`\\frac{1}{${tx(tb[0], 2)} \\times 10^{-6}} \\approx \\boxed{${tx(tb[1])}${u('bauds')}}`)],
+          ['4. Durée', M(`T = ${tot} \\times ${tx(tb[0], 2)}${u('µs')} = \\boxed{${tx(T, 2)}${u('ms')}}`) +
+            `<p>${T <= lim ? 'La lecture est assez rapide : l\'exigence est respectée.' : 'La lecture est trop lente : l\'exigence n\'est pas respectée.'}</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 5,
+    title: 'Adressage sur un bus KNX',
+    support: 'Annales : téléphérique Téléo 2024 (pilotage de l\'éclairage)',
+    gen() {
+      const A = rnd(1, 15, 1), L = rnd(0, 15, 1), D = rnd(1, 255, 1), A2 = rnd(1, 15, 1), L2 = rnd(0, 15, 1), D2 = rnd(1, 255, 1);
+      const o1 = A << 4 | L, o2 = D, p1 = A2 << 4 | L2, p2 = D2;
+      return {
+        statement: `<p>Une adresse physique KNX s'écrit Zone.Ligne.Participant. Elle est codée sur 2 octets : la zone sur 4 bits, la ligne sur 4 bits,
+          puis le participant sur 8 bits.</p>` +
+          ol(`Coder l'adresse ${v(`${A}.${L}.${D}`)} en binaire puis en hexadécimal.`, `Une trame contient l'adresse source ${v(H2(p1) + ' ' + H2(p2))}. Retrouver l'adresse physique.`,
+            'Combien de participants peut-on adresser sur une ligne ? Et au total sur 16 bits ?'),
+        steps: [
+          ['1. Codage', M(`${tt(BW(A, 4))}\\ ${tt(BW(L, 4))}\\ ${tt(BW(D))} = \\boxed{${tt(H2(o1) + ' ' + H2(o2))}_{16}}`)],
+          ['2. Décodage', M(`${tt(H2(p1))} = ${tt(BW(A2, 4) + ' ' + BW(L2, 4))} \\;\\Rightarrow\\; \\text{zone } ${A2},\\ \\text{ligne } ${L2} \\qquad ${tt(H2(p2))} = ${D2}`) +
+            `<p>Adresse physique : <b>${A2}.${L2}.${D2}</b>.</p>`],
+          ['3. Nombre de participants', M(`\\text{par ligne} : 2^8 = 256 \\qquad \\text{au total} : 2^{16} = \\boxed{65\\,536}`) + '<p>En pratique, quelques adresses sont réservées (coupleurs).</p>']
+        ]
+      };
+    }
+  },
+  // ===================== Chapitre 6 =====================
+  {
+    chap: 6,
+    title: 'Masque de sous-réseau',
+    support: 'Annales : éclairage DALI 2023, centre aquatique 2025',
+    gen() {
+      const n = rnd(16, 30, 1), mask = (0xFFFFFFFF << (32 - n)) >>> 0, oct = [24, 16, 8, 0].map(s => mask >>> s & 255), h = 32 - n;
+      return {
+        statement: ol(`Un réseau est noté en notation CIDR ${v('/' + n)}. Que représente ce nombre ?`, 'Écrire le masque en binaire puis en décimal pointé.',
+          'Combien d\'adresses ce réseau contient-il ?', 'Combien de machines peut-on y connecter ?'),
+        steps: [
+          ['1. CIDR', `<p>/${n} signifie que les <b>${n} premiers bits</b> de l'adresse identifient le réseau ; les ${h} bits restants identifient les machines.</p>`],
+          ['2. Masque', M(oct.map(o => tt(BW(o))).join('.')) + M(`\\boxed{${oct.join('.')}}`)],
+          ['3. Nombre d\'adresses', M(`2^{${h}} = \\boxed{${tx(2 ** h)}}`)],
+          ['4. Machines', M(`2^{${h}} - 2 = \\boxed{${tx(2 ** h - 2)}}`) + '<p>On retire l\'adresse du réseau et l\'adresse de broadcast.</p>']
+        ]
+      };
+    }
+  },
+  {
+    chap: 6,
+    title: 'Adresse réseau, broadcast et plage d\'adresses',
+    support: 'Annales : centre aquatique 2025 (réseau des automates)',
+    gen() {
+      const n = rnd(22, 29, 1), ip = [pick([192, 10, 172]), rnd(0, 255, 1), rnd(0, 255, 1), rnd(1, 254, 1)];
+      if (ip[0] === 192) ip[1] = 168; if (ip[0] === 172) ip[1] = rnd(16, 31, 1);
+      const toN = a => ((a[0] << 24) | (a[1] << 16) | (a[2] << 8) | a[3]) >>> 0, toA = x => [24, 16, 8, 0].map(s => x >>> s & 255).join('.');
+      const mask = (0xFFFFFFFF << (32 - n)) >>> 0, net = (toN(ip) & mask) >>> 0, bc = (net | ~mask) >>> 0;
+      return {
+        statement: `<p>Un automate a l'adresse ${v(ip.join('.') + '/' + n)}.</p>` +
+          ol('Donner le masque en décimal pointé.', 'Calculer l\'adresse du réseau (ET logique entre l\'adresse et le masque).', 'Calculer l\'adresse de broadcast.',
+            'Donner la plage des adresses utilisables et leur nombre.'),
+        steps: [
+          ['1. Masque', M(`\\boxed{${toA(mask)}}`)],
+          ['2. Adresse réseau', `<p>Le dernier octet non entièrement à 255 du masque est ${toA(mask).split('.').find(o => o !== '255')} : on fait le ET sur l'octet correspondant.</p>` + M(`\\boxed{${toA(net)}}`)],
+          ['3. Broadcast', '<p>On met à 1 tous les bits de la partie machine :</p>' + M(`\\boxed{${toA(bc)}}`)],
+          ['4. Plage', M(`${toA(net + 1)} \\ \\text{à}\\ ${toA(bc - 1)} \\qquad 2^{${32 - n}} - 2 = \\boxed{${tx(2 ** (32 - n) - 2)}\\ \\text{adresses}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 6,
+    title: 'Masque optimal',
+    support: 'Annales : turbine WECU 2025 (Polynésie)',
+    gen() {
+      const N = rnd(5, 500, 1);
+      let h = 2; while (2 ** h - 2 < N) h++;
+      const n = 32 - h, mask = (0xFFFFFFFF << h) >>> 0, toA = x => [24, 16, 8, 0].map(s => x >>> s & 255).join('.');
+      return {
+        statement: `<p>On doit connecter ${v(N, 'éléments')} (automates, capteurs, passerelle) sur un même sous-réseau, en gaspillant le moins d'adresses possible.</p>` +
+          ol('Combien de bits faut-il réserver à la partie machine ?', 'En déduire le CIDR et le masque.', 'Combien d\'adresses resteront inutilisées ?'),
+        steps: [
+          ['1. Bits machine', `<p>Il faut le plus petit h tel que 2<sup>h</sup> − 2 ≥ ${N} :</p>` + M(`2^{${h - 1}} - 2 = ${2 ** (h - 1) - 2} < ${N} \\le 2^{${h}} - 2 = ${2 ** h - 2} \\;\\Rightarrow\\; \\boxed{h = ${h}}`)],
+          ['2. Masque', M(`\\text{CIDR} = 32 - ${h} = \\boxed{/${n}} \\qquad \\boxed{${toA(mask)}}`)],
+          ['3. Adresses inutilisées', M(`${2 ** h - 2} - ${N} = \\boxed{${2 ** h - 2 - N}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 6,
+    title: 'Lire une trame Ethernet / IP',
+    support: 'Annales : granulés 2021, piscine 2022, téléphérique 2024, caisson hyperbare 2026',
+    gen() {
+      const mac = () => [pick([0x00, 0xB8, 0xDC, 0x3C, 0xE4]), ...Array.from({ length: 5 }, () => rnd(0, 255, 1))];
+      const md = mac(), ms = mac(), net = [192, 168, rnd(0, 20, 1)], ipS = [...net, rnd(2, 250, 1)], ipD = [...net, rnd(2, 250, 1)];
+      const len = rnd(60, 400, 1), id = rnd(0, 65535, 1), ck = rnd(0, 65535, 1), proto = pick([[6, 'TCP'], [17, 'UDP']]);
+      const bytes = [...md, ...ms, 0x08, 0x00, 0x45, 0x00, len >> 8, len & 255, id >> 8, id & 255, 0x40, 0x00, 64, proto[0], ck >> 8, ck & 255, ...ipS, ...ipD];
+      const rows = []; for (let i = 0; i < bytes.length; i += 16) rows.push([H2(i).padStart(4, '0'), bytes.slice(i, i + 16).map(H2).join(' ')]);
+      return {
+        statement: `<p>Voici le début d'une trame capturée avec Wireshark. Structure : adresse MAC destination (6 octets), adresse MAC source (6 octets), type (2 octets),
+          puis l'en-tête IPv4 ; dans cet en-tête, le protocole est à l'octet 23, l'adresse IP source aux octets 26 à 29 et l'adresse IP destination aux octets 30 à 33
+          (numérotation à partir de 0).</p>` + `<pre class="code">${rows.map(r => r.join('   ')).join('\n')}</pre>` +
+          ol('Relever les adresses MAC destination et source.', 'Que signifie le type 08 00 ? Quel est le protocole de transport (06 = TCP, 11 = UDP) ?',
+            'Relever les adresses IP source et destination en hexadécimal et les convertir en décimal pointé.', 'Les deux machines sont-elles sur le même réseau /24 ?'),
+        steps: [
+          ['1. Adresses MAC', `<p>Destination : <b>${md.map(H2).join(':')}</b><br>Source : <b>${ms.map(H2).join(':')}</b></p>`],
+          ['2. Type et protocole', `<p>08 00 = IPv4. L'octet de protocole vaut ${H2(proto[0])} : <b>${proto[1]}</b>.</p>`],
+          ['3. Adresses IP', M(`\\text{source} : ${tt(ipS.map(H2).join(' '))} = \\boxed{${ipS.join('.')}}`) + M(`\\text{destination} : ${tt(ipD.map(H2).join(' '))} = \\boxed{${ipD.join('.')}}`)],
+          ['4. Même réseau', `<p>Les trois premiers octets sont identiques (${net.join('.')}) : les deux machines sont sur le même réseau ${net.join('.')}.0/24.</p>`]
+        ]
+      };
+    }
+  },
+  Q(6, 'Modèle OSI', 'BO 2.4.4 · annales : Polynésie 2026', () => [
+    ...fromPairs([['le protocole HTTP', '7 – Application'], ['le protocole Modbus TCP', '7 – Application'], ['le service DNS', '7 – Application'],
+      ['le protocole TCP', '4 – Transport'], ['le protocole UDP', '4 – Transport'], ['le protocole IP', '3 – Réseau'], ['un routeur', '3 – Réseau'],
+      ['un switch (commutateur)', '2 – Liaison de données'], ['l\'adresse MAC', '2 – Liaison de données'], ['la trame Ethernet', '2 – Liaison de données'],
+      ['un câble en paire torsadée', '1 – Physique'], ['un concentrateur (hub)', '1 – Physique'], ['la fibre optique', '1 – Physique']],
+      a => `À quelle couche du modèle OSI appartient ${a} ?`).map(q => { q[2] = ['1 – Physique', '2 – Liaison de données', '3 – Réseau', '4 – Transport', '7 – Application']; return q; }),
+    ['Le modèle OSI comporte :', '7 couches', ['4 couches', '5 couches', '10 couches'], ''],
+    ['L\'encapsulation consiste à :', 'ajouter l\'en-tête de chaque couche aux données de la couche supérieure', ['chiffrer les données', 'compresser les fichiers', 'supprimer les adresses'], ''],
+    ['L\'adresse IP est une adresse :', 'logique (couche 3)', ['physique (couche 2)', 'de port (couche 4)', 'gravée dans la carte réseau'], 'L\'adresse MAC est l\'adresse physique.']
+  ]),
+  Q(6, 'Équipements et services réseau', 'BO 2.4.4 et 5.3.4', [
+    ['Un switch (commutateur) aiguille les trames grâce :', 'aux adresses MAC', ['aux adresses IP', 'aux noms de domaine', 'aux numéros de port'], ''],
+    ['Un routeur permet :', 'de relier des réseaux différents en aiguillant les paquets selon l\'adresse IP', ['d\'amplifier le signal Wi-Fi uniquement', 'de stocker des pages web', 'de convertir l\'analogique en numérique'], ''],
+    ['Un serveur DHCP :', 'attribue automatiquement une adresse IP aux machines', ['traduit un nom de domaine en adresse IP', 'héberge des pages web', 'filtre les virus'], ''],
+    ['Un serveur DNS :', 'traduit un nom de domaine en adresse IP', ['attribue des adresses IP', 'relie deux réseaux', 'stocke les vidéos'], ''],
+    ['La passerelle par défaut est :', 'l\'adresse du routeur qui permet de sortir du réseau local', ['l\'adresse de broadcast', 'l\'adresse du serveur DNS', 'l\'adresse MAC du switch'], ''],
+    ['Avec la méthode HTTP GET, les paramètres envoyés au serveur :', 'apparaissent dans l\'URL (après le ?)', ['sont cachés dans le corps de la requête', 'sont chiffrés automatiquement', 'ne peuvent pas être transmis'], 'Exemple : page.php?masse=420'],
+    ['Une adresse IP statique :', 'est fixée manuellement et ne change pas', ['est attribuée par le DHCP à chaque connexion', 'est l\'adresse MAC', 'est réservée au broadcast'], ''],
+    ['La durée du bail DHCP correspond :', 'au temps pendant lequel une adresse est prêtée à une machine', ['au temps de réponse d\'un ping', 'à la durée d\'une trame', 'au temps de démarrage du serveur'], ''],
+    ['La commande ping permet :', 'de tester si une machine répond et mesurer le temps de réponse', ['d\'attribuer une adresse IP', 'de configurer un switch', 'de télécharger un fichier'], ''],
+    ['Un serveur web de type « AMP » associe :', 'Apache, MySQL et PHP', ['Arduino, Modbus et Python', 'Android, Mac et PC', 'Adresse, Masque et Passerelle'], '']
+  ]),
+  {
+    chap: 6,
+    title: 'Débit Wi-Fi et temps de transfert',
+    support: 'Annales : téléphérique Téléo 2024, éolienne 2025',
+    gen() {
+      const Dmax = rnd(60, 300, 10), Dmin = rnd(5, 40, 1), d = rnd(0.5, 4, 0.5), S = rnd(20, 900, 10);
+      const n = Math.floor(Dmin / d), t1 = S * 8 / Dmax, t2 = S * 8 / Dmin;
+      return {
+        statement: `<p>Le long du trajet d'une cabine, le débit Wi-Fi mesuré varie de ${v(Dmin, 'Mbit/s')} (zone la plus faible) à ${v(Dmax, 'Mbit/s')}.
+          Chaque cabine a besoin de ${v(d, 'Mbit/s', 1)} pour sa vidéosurveillance. On doit aussi transférer un fichier de ${v(S, 'Mo')}.</p>` +
+          ol('Combien de cabines peuvent être connectées dans la zone la plus faible ?', 'Convertir la taille du fichier en mégabits.',
+            'Calculer la durée de transfert au débit maximal puis au débit minimal.'),
+        steps: [
+          ['1. Nombre de cabines', M(`\\frac{${Dmin}}{${tx(d, 1)}} = ${tx(Dmin / d, 2)} \\;\\Rightarrow\\; \\boxed{${n}\\ \\text{cabines}}`) + '<p>On arrondit à l\'entier inférieur.</p>'],
+          ['2. Taille en Mbit', M(`${S} \\times 8 = \\boxed{${S * 8}${u('Mbit')}}`)],
+          ['3. Durées', M(`t_{max} = \\frac{${S * 8}}{${Dmax}} = \\boxed{${tx(t1, 2)}${u('s')}} \\qquad t_{min} = \\frac{${S * 8}}{${Dmin}} = \\boxed{${tx(t2, 1)}${u('s')}}`)]
+        ]
+      };
+    }
+  },
+  // ===================== Chapitre 7 =====================
+  Q(7, 'Types de variables', 'BO 4.3.5 · annales : tracker solaire 2022', [
+    ...fromPairs([['l\'état d\'un capteur de fin de course', 'booléen'], ['l\'état « alarme active / inactive »', 'booléen'],
+      ['une température comme 23,5 °C', 'flottant'], ['une vitesse de vent comme 12,7 m/s', 'flottant'],
+      ['le nombre de personnes dans la piscine (0 à 550)', 'entier'], ['la valeur d\'un CAN 10 bits (0 à 1 023)', 'entier'],
+      ['un code ASCII reçu sur la liaison série', 'octet (char)'], ['une valeur toujours comprise entre 0 et 255', 'octet (char)']],
+      a => `Quel type de variable choisir pour stocker ${a} ?`).map(q => { q[2] = ['booléen', 'octet (char)', 'entier', 'flottant']; return q; }),
+    ['Un octet non signé peut stocker des valeurs de :', '0 à 255', ['0 à 1 023', '−128 à 255', '0 à 65 535'], ''],
+    ['Sur Arduino Uno, un int occupe 16 bits. Il peut stocker des valeurs de :', '−32 768 à 32 767', ['0 à 255', '−128 à 127', '0 à 4 294 967 295'], ''],
+    ['Si une variable de type octet (non signé) vaut 255 et qu\'on lui ajoute 1, elle vaut :', '0', ['256', '255', '1'], 'C\'est un dépassement de capacité.'],
+    ['Pourquoi ne peut-on pas stocker la valeur d\'un CAN 10 bits dans un octet ?', 'Elle peut dépasser 255', ['Elle est négative', 'Elle est décimale', 'Elle est booléenne'], 'Un CAN 10 bits va de 0 à 1 023.']
+  ]),
+  {
+    chap: 7,
+    title: 'Trace d\'un algorigramme',
+    support: 'Annales : comptage des entrées de la piscine 2022, alarmes 2023',
+    gen() {
+      const Cmax = rnd(5, 9, 1), N0 = rnd(Cmax - 3, Cmax - 1, 1), ev = Array.from({ length: rnd(7, 9, 1) }, () => Math.random() < 0.65 ? 'E' : 'S');
+      let nb = N0, ref = 0; const rows = [];
+      ev.forEach((e, i) => {
+        let act;
+        if (e === 'E') { if (nb < Cmax) { nb++; act = 'entrée acceptée'; } else { ref++; act = 'refus (voyant rouge)'; } }
+        else if (nb > 0) { nb--; act = 'sortie'; } else act = 'aucune action';
+        rows.push([i + 1, e === 'E' ? 'Entrée' : 'Sortie', act, nb]);
+      });
+      return {
+        statement: `<p>Un tourniquet compte les personnes présentes dans une salle de capacité maximale ${v(Cmax)}. Algorithme :</p>
+<pre class="code">nb ← ${N0}
+POUR chaque passage détecté FAIRE
+    SI passage = Entrée ALORS
+        SI nb &lt; ${Cmax} ALORS
+            nb ← nb + 1 ; débloquer le tourniquet
+        SINON
+            allumer le voyant rouge (refus)
+        FIN SI
+    SINON
+        SI nb &gt; 0 ALORS nb ← nb − 1 FIN SI
+    FIN SI
+FIN POUR</pre><p>Passages détectés dans l'ordre : ${v(ev.join(' '))} (E = entrée, S = sortie).</p>` +
+          ol('Compléter la trace de l\'algorithme (valeur de nb après chaque passage).', 'Quelle est la valeur finale de nb ?', 'Combien d\'entrées ont été refusées ?'),
+        steps: [
+          ['1. Trace', table(['Passage', 'Type', 'Action', 'nb'], [['départ', '', '', N0], ...rows])],
+          ['2. Valeur finale', `<p>nb = <b>${nb}</b>.</p>`],
+          ['3. Refus', `<p><b>${ref}</b> entrée(s) refusée(s).</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 7,
+    title: 'Trace d\'un programme Arduino',
+    support: 'BO 4.3.5 (C++) · annales : supercapacités 2024, éolienne 2025',
+    gen() {
+      const seuil = rnd(24, 32, 0.5), N = rnd(120, 280, 1), U = N * 5 / 1024, T = (U - 0.5) * 100, on = T > seuil;
+      const Ns = Math.floor((seuil / 100 + 0.5) * 1024 / 5) + 1;
+      return {
+        statement: `<p>Un capteur de température MCP9700 (V<sub>out</sub> = 0,5 V + 10 mV/°C × T) est relié à l'entrée A0 d'une carte Arduino Uno (CAN 10 bits, 0-5 V).
+          Un ventilateur est commandé par la broche 8.</p>
+<pre class="code">const float SEUIL = <span class="v">${fr(seuil, 1).replace(',', '.')}</span>;
+
+void loop() {
+  int N = analogRead(A0);
+  float U = N * 5.0 / 1024.0;
+  float T = (U - 0.5) * 100.0;
+  if (T &gt; SEUIL) {
+    digitalWrite(8, HIGH);
+  } else {
+    digitalWrite(8, LOW);
+  }
+  delay(1000);
+}</pre>` +
+          ol(`analogRead(A0) renvoie ${v(N)}. Calculer U.`, 'Calculer T et justifier la formule utilisée dans le programme.', 'Le ventilateur est-il en marche ?',
+            'À partir de quelle valeur de N le ventilateur se met-il en marche ?', 'Toutes les combien de temps la mesure est-elle refaite ?'),
+        steps: [
+          ['1. Tension', M(`U = ${N} \\times \\frac{5}{1024} = \\boxed{${tx(U, 4)}${u('V')}}`)],
+          ['2. Température', M(`U = 0{,}5 + 0{,}01 \\times T \\;\\Rightarrow\\; T = \\frac{U - 0{,}5}{0{,}01} = (U - 0{,}5) \\times 100 = \\boxed{${tx(T, 2)}${u('°C')}}`)],
+          ['3. Ventilateur', `<p>${fr(T, 2)} °C ${on ? '>' : '≤'} ${fr(seuil, 1)} °C : la broche 8 est mise à <b>${on ? 'HIGH, le ventilateur tourne' : 'LOW, le ventilateur est arrêté'}</b>.</p>`],
+          ['4. Seuil en N', M(`U_s = 0{,}5 + 0{,}01 \\times ${tx(seuil, 1)} = ${tx(seuil / 100 + 0.5, 3)}${u('V')} \\qquad N = \\frac{${tx(seuil / 100 + 0.5, 3)} \\times 1024}{5} = ${tx((seuil / 100 + 0.5) * 1024 / 5, 1)}`) +
+            `<p>Le ventilateur démarre pour N ≥ <b>${Ns}</b> (T doit dépasser strictement le seuil).</p>`],
+          ['5. Période', '<p>delay(1000) : une mesure toutes les <b>1 000 ms = 1 s</b> environ.</p>']
+        ]
+      };
+    }
+  },
+  {
+    chap: 7,
+    title: 'Trace d\'un programme Python',
+    support: 'BO 4.3.5 (Python) · annales : digesteur 2025 (fonction check_alarm)',
+    gen() {
+      const Tmin = rnd(30, 36, 1), Tmax = Tmin + rnd(3, 6, 1), mes = Array.from({ length: 6 }, () => +rnd(Tmin - 3, Tmax + 3, 0.5).toFixed(1));
+      const al = mes.map(t => (t < Tmin || t > Tmax) ? 1 : 0), nb = al.reduce((a, b) => a + b, 0), t0 = pick(mes);
+      return {
+        statement: `<p>Le script suivant surveille la température d'un digesteur :</p>
+<pre class="code">def check_alarm(T, Tmin, Tmax):
+    if T &lt; Tmin or T &gt; Tmax:
+        return 1
+    return 0
+
+mesures = [${mes.map(x => String(x)).join(', ')}]
+nb = 0
+for T in mesures:
+    nb = nb + check_alarm(T, ${Tmin}, ${Tmax})
+print("Alarmes :", nb)</pre>` +
+          ol(`Que renvoie check_alarm(${String(t0)}, ${Tmin}, ${Tmax}) ?`, 'Pour chaque mesure, indiquer la valeur renvoyée par check_alarm.', 'Qu\'affiche le programme ?',
+            'Quel est le rôle de la fonction check_alarm ?'),
+        steps: [
+          ['1. Appel', `<p>${String(t0)} ${t0 < Tmin ? '< ' + Tmin : t0 > Tmax ? '> ' + Tmax : `est entre ${Tmin} et ${Tmax}`} : la fonction renvoie <b>${(t0 < Tmin || t0 > Tmax) ? 1 : 0}</b>.</p>`],
+          ['2. Mesures', table(['T', ...mes.map(String)], [['check_alarm', ...al]])],
+          ['3. Affichage', `<p>Le programme affiche <b>Alarmes : ${nb}</b>.</p>`],
+          ['4. Rôle', `<p>Elle renvoie 1 si la température sort de la plage autorisée [${Tmin} ; ${Tmax}], 0 sinon. C'est un sous-programme réutilisable.</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 7,
+    title: 'Régulation tout ou rien à hystérésis',
+    support: 'Annales : centre aquatique 2025, qualité de l\'air (CO₂) 2026',
+    gen() {
+      const Sc = rnd(19, 23, 0.5), dh = pick([0.5, 1, 1.5]), Sb = Sc - dh, Sh = Sc + dh;
+      const T = Array.from({ length: 10 }, () => +rnd(Sb - 1.5, Sh + 1.5, 0.5).toFixed(1));
+      let st = 1, n = 0; const S = T.map(t => { const p = st; if (t < Sb) st = 1; else if (t > Sh) st = 0; if (st && !p) n++; return st; });
+      const g = graph({ x0: 0, x1: 9, dx: 1, y0: Math.floor(Sb - 2), y1: Math.ceil(Sh + 2), dy: 0.5, fy: y => Number.isInteger(y) ? fr(y) : '', xlab: 't (min)', ylab: 'T (°C)',
+        series: [{ pts: T.map((t, i) => [i, t]), cls: 'c1' }],
+        extra: (X, Y) => `<line class="c3" x1="${X(0)}" y1="${Y(Sb)}" x2="${X(9)}" y2="${Y(Sb)}"/><line class="c3" x1="${X(0)}" y1="${Y(Sh)}" x2="${X(9)}" y2="${Y(Sh)}"/>` +
+          T.map((t, i) => `<circle class="pt" cx="${X(i)}" cy="${Y(t)}" r="3.5"/>`).join('') });
+      return {
+        statement: `<p>Le chauffage de l'air d'un local est régulé en tout ou rien autour de la consigne ${v(Sc, '°C', 1)}, avec un hystérésis de ± ${v(dh, '°C', 1)} :
+          le chauffage s'allume si T < seuil bas, s'éteint si T > seuil haut, et ne change pas d'état entre les deux. Au départ, il est allumé.
+          Les mesures relevées chaque minute sont tracées ci-dessous (pointillés : seuils).</p>${g}` +
+          table(['t (min)', ...T.map((_, i) => i)], [['T (°C)', ...T.map(t => fr(t, 1))]]) +
+          ol('Calculer les seuils bas et haut.', 'Donner l\'état du chauffage (1 = allumé, 0 = éteint) à chaque minute.', 'Combien de fois le chauffage se rallume-t-il ?',
+            'Pourquoi utilise-t-on deux seuils au lieu d\'un seul ?'),
+        steps: [
+          ['1. Seuils', M(`S_{bas} = ${tx(Sc, 1)} - ${tx(dh, 1)} = \\boxed{${tx(Sb, 1)}${u('°C')}} \\qquad S_{haut} = ${tx(Sc, 1)} + ${tx(dh, 1)} = \\boxed{${tx(Sh, 1)}${u('°C')}}`)],
+          ['2. États', table(['t (min)', ...T.map((_, i) => i)], [['T (°C)', ...T.map(t => fr(t, 1))], ['Chauffage', ...S]])],
+          ['3. Rallumages', `<p>Le chauffage se rallume <b>${n} fois</b>.</p>`],
+          ['4. Intérêt', '<p>Avec un seul seuil, le chauffage s\'allumerait et s\'éteindrait sans arrêt autour de la consigne (usure, bruit). L\'hystérésis espace les commutations, au prix d\'une précision moindre.</p>']
+        ]
+      };
+    }
+  },
+  {
+    chap: 7,
+    title: 'Équation logique',
+    support: 'Annales : charge des batteries du Trambus 2023, intrusion du vélodrome 2023',
+    gen() {
+      const C = pick([
+        { txt: 'Le ventilateur V se met en marche si la température est trop haute (T = 1) ET la porte est fermée (P = 1), OU si le mode forcé est activé (F = 1).', s: 'V', vars: ['T', 'P', 'F'], tex: 'V = T \\cdot P + F', f: (a, b, c) => (a & b) | c },
+        { txt: 'L\'alarme A se déclenche si une intrusion est détectée (I = 1) ET le système est armé (M = 1) ET le code n\'a pas été saisi (C = 0).', s: 'A', vars: ['I', 'M', 'C'], tex: 'A = I \\cdot M \\cdot \\overline{C}', f: (a, b, c) => a & b & (1 - c) },
+        { txt: 'La charge K est autorisée si la batterie n\'est pas pleine (B = 0) ET si le véhicule est à quai (Q = 1) OU en mode maintenance (M = 1).', s: 'K', vars: ['B', 'Q', 'M'], tex: 'K = \\overline{B} \\cdot (Q + M)', f: (a, b, c) => (1 - a) & (b | c) },
+        { txt: 'La pompe P fonctionne si le niveau bas est atteint (N = 1) OU si le bouton manuel est appuyé (M = 1), à condition qu\'il n\'y ait pas de défaut (D = 0).', s: 'P', vars: ['N', 'M', 'D'], tex: 'P = (N + M) \\cdot \\overline{D}', f: (a, b, c) => (a | b) & (1 - c) }]);
+      const rows = []; for (let i = 0; i < 8; i++) { const a = i >> 2 & 1, b = i >> 1 & 1, c = i & 1; rows.push([a, b, c, C.f(a, b, c)]); }
+      const k = rnd(0, 7, 1), cas = rows[k];
+      return {
+        statement: `<p>${C.txt}</p>` +
+          ol(`Écrire l'équation logique de ${C.s}.`, 'Établir la table de vérité.', `Que vaut ${C.s} lorsque ${C.vars.map((x, i) => `${x} = ${cas[i]}`).join(', ')} ?`),
+        steps: [
+          ['1. Équation', M(`\\boxed{${C.tex}}`) + '<p>« ET » se note « · », « OU » se note « + » et la négation par une barre.</p>'],
+          ['2. Table de vérité', table([...C.vars, C.s], rows)],
+          ['3. Cas particulier', `<p>${C.s} = <b>${cas[3]}</b>.</p>`]
+        ]
+      };
+    }
+  },
+  Q(7, 'Système temps réel', 'BO 3.4.3 : temps de cycle, interruptions', [
+    ['Un système temps réel est un système qui :', 'doit réagir dans un délai garanti', ['fonctionne uniquement le jour', 'affiche l\'heure', 'n\'a pas de microcontrôleur'], ''],
+    ['Une interruption permet au microcontrôleur :', 'de réagir immédiatement à un événement en suspendant le programme principal', ['d\'éteindre la carte', 'de ralentir le programme', 'de lire une entrée analogique uniquement'], ''],
+    ['La scrutation (polling) consiste à :', 'lire régulièrement une entrée dans la boucle principale', ['réagir par interruption', 'arrêter le programme', 'envoyer une trame réseau'], 'Un événement très bref peut alors être manqué.'],
+    ['Le temps de cycle d\'un automate est :', 'la durée d\'un tour complet : lecture des entrées, traitement, écriture des sorties', ['la durée de vie de l\'automate', 'la période d\'un signal PWM', 'le temps de démarrage'], ''],
+    ['Un objet Ticker (mbed) ou une interruption de timer permet :', 'd\'exécuter une fonction à intervalles réguliers', ['de lire une broche analogique', 'de mesurer une tension', 'de configurer le Wi-Fi'], ''],
+    ['Un chien de garde (watchdog) sert à :', 'redémarrer le système s\'il se bloque', ['surveiller la température', 'détecter les intrusions', 'compter les interruptions'], ''],
+    ['Pour compter des impulsions très rapides d\'un capteur, on préfère :', 'une entrée sur interruption', ['une lecture dans un delay(1000)', 'une entrée analogique', 'un affichage sur l\'écran'], ''],
+    ['Une routine d\'interruption doit être :', 'la plus courte possible', ['la plus longue possible', 'appelée dans loop()', 'écrite en Python uniquement'], '']
+  ]),
+  // ===================== Chapitre 8 =====================
+  Q(8, 'Technologies sans fil', 'BO 5.3.3 et 5.3.4', [
+    ['Quelle technologie offre un débit élevé sur quelques dizaines de mètres, pour un réseau local ?', 'le Wi-Fi', ['le RFID LF', 'LoRa', 'le Bluetooth Low Energy'], ''],
+    ['Quelle technologie relie des appareils proches (≈ 10 m) avec une faible consommation ?', 'le Bluetooth', ['le GSM', 'LoRa', 'la fibre optique'], ''],
+    ['Quelle technologie permet d\'envoyer peu de données sur plusieurs kilomètres avec une très faible consommation ?', 'LoRa / Sigfox (LPWAN)', ['le Wi-Fi', 'le Bluetooth', 'le RFID HF'], ''],
+    ['Le RFID basse fréquence (125 kHz) a une portée :', 'de quelques centimètres', ['de plusieurs kilomètres', 'de 100 m', 'illimitée'], ''],
+    ['Le NFC des smartphones fonctionne à :', '13,56 MHz, sur quelques centimètres', ['2,4 GHz, sur 100 m', '125 kHz, sur 10 m', '868 MHz, sur 10 km'], ''],
+    ['Un badge RFID passif :', 'est alimenté par le champ du lecteur, sans pile', ['possède une batterie', 'émet en permanence', 'fonctionne en Wi-Fi'], ''],
+    ['Le Wi-Fi utilise principalement les bandes :', '2,4 GHz et 5 GHz', ['125 kHz et 13,56 MHz', '50 Hz et 60 Hz', '868 MHz uniquement'], ''],
+    ['Un module GSM / 4G permet à un objet connecté :', 'de communiquer à distance par le réseau de téléphonie mobile (SMS, données)', ['de lire un badge', 'de mesurer la température', 'de se passer d\'antenne'], ''],
+    ['Un objet connecté (IoT) est :', 'un objet capable de transmettre des données via un réseau, souvent Internet', ['un objet relié uniquement par USB', 'un ordinateur de bureau', 'un capteur sans traitement'], ''],
+    ['Le module XBee utilise un protocole sans fil de type :', 'Zigbee (réseau maillé basse consommation)', ['Wi-Fi 6', '4G', 'RS-232'], '']
+  ]),
+  {
+    chap: 8,
+    title: 'Identifiants RFID',
+    support: 'Annales : serrure RFID 2021, piscine 2022',
+    gen() {
+      const id = Array.from({ length: 4 }, () => rnd(0, 255, 1)), dec = ((id[0] << 24) >>> 0) + (id[1] << 16) + (id[2] << 8) + id[3];
+      const abo = rnd(1, 50, 1) * 1000, fixe = rnd(0, 255, 1);
+      return {
+        statement: `<p>Des cartes RFID ont un identifiant unique codé sur 4 octets. Un établissement doit gérer ${v(abo, 'abonnés', 0)}.</p>` +
+          ol('Combien d\'identifiants différents peut-on coder sur 4 octets ?', `Une carte renvoie l'identifiant ${v(id.map(H2).join(' ') + '<sub>(16)</sub>')}. Le convertir en décimal.`,
+            `Le premier octet est en fait un code fabricant toujours égal à ${v(H2(fixe))}. Combien d'identifiants restent disponibles ?`, 'Ces cartes conviennent-elles ?'),
+        steps: [
+          ['1. Nombre d\'identifiants', M(`4 \\times 8 = 32\\ \\text{bits} \\qquad 2^{32} = \\boxed{${tx(2 ** 32)}}`)],
+          ['2. Conversion', M(id.map((x, i) => `${x} \\times 256^{${3 - i}}`).join(' + ') + ` = \\boxed{${tx(dec)}}`) +
+            `<p>(${id.map(x => `${H2(x)}<sub>16</sub> = ${x}`).join(', ')})</p>`],
+          ['3. Avec le code fabricant', M(`2^{24} = \\boxed{${tx(2 ** 24)}}`)],
+          ['4. Conclusion', `<p>${fr(2 ** 24)} identifiants ≫ ${fr(abo)} abonnés : les cartes conviennent largement.</p>`]
+        ]
+      };
+    }
+  },
+];
+
+// ---------- Affichage ----------
+const nav = document.getElementById('nav');
+const card = document.getElementById('card');
+let current = 0;
+
+function renderMath(root) {
+  root.querySelectorAll('.m').forEach(el => {
+    const tex = el.dataset.tex;
+    if (window.katex) {
+      katex.render(tex, el, { displayMode: !!el.dataset.d, throwOnError: false, strict: false });
+    } else {
+      el.textContent = tex;
+    }
+  });
+}
+
+// QCM : colore les réponses et affiche le score (on = correction visible)
+function markQcm(on) {
+  let score = 0, n = 0;
+  card.querySelectorAll('ol.qcm > li').forEach(li => {
+    n++;
+    const ok = +li.dataset.ok;
+    li.querySelectorAll('label').forEach((lab, j) => {
+      const checked = lab.querySelector('input').checked;
+      lab.classList.toggle('good', on && j === ok);
+      lab.classList.toggle('bad', on && checked && j !== ok);
+      if (checked && j === ok) score++;
+    });
+  });
+  const s = card.querySelector('.score');
+  if (s) s.textContent = on ? `Score : ${score} / ${n}` : '';
+}
+
+// Identifiant d'un exercice dans l'adresse : #c<chapitre>-<rang dans le chapitre>
+const idOf = i => {
+  const c = EXOS[i].chap;
+  return `c${c}-${EXOS.slice(0, i + 1).filter(e => e.chap === c).length}`;
+};
+const ARROW = '<svg class="arrow" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function buildNav() {
+  nav.innerHTML = CHAPITRES.map((titre, c) => `
+    <div class="chap">
+      <button class="chap-btn" aria-expanded="false">
+        ${ARROW}
+        <span><span class="seq">Chapitre ${c + 1}</span><span class="ex">${titre}</span></span>
+      </button>
+      <div class="exlist" hidden>
+        ${EXOS.map((e, i) => e.chap === c + 1 ? `<a href="#${idOf(i)}" data-i="${i}">${e.title}</a>` : '').join('')}
+      </div>
+    </div>`).join('');
+  nav.querySelectorAll('.chap-btn').forEach(b => b.onclick = () => toggleChap(b));
+  nav.querySelectorAll('.exlist a').forEach(a => a.onclick = ev => { ev.preventDefault(); go(+a.dataset.i); });
+}
+
+// Affiche l'exercice i et met à jour l'adresse (#c4-1…) sans recharger la page
+function go(i) {
+  show(i);
+  closeMenu();
+  window.scrollTo(0, 0);
+  try { history.pushState(null, '', '#' + idOf(i)); } catch (err) { /* aperçu hors ligne : on ignore */ }
+}
+
+// Ouvre ou ferme un chapitre ; ouvrir un chapitre referme les autres
+function toggleChap(btn, open) {
+  const list = btn.nextElementSibling;
+  list.hidden = open === undefined ? !list.hidden : !open;
+  btn.setAttribute('aria-expanded', String(!list.hidden));
+  if (!list.hidden) {
+    nav.querySelectorAll('.chap-btn').forEach(b => {
+      if (b !== btn) { b.nextElementSibling.hidden = true; b.setAttribute('aria-expanded', 'false'); }
+    });
+  }
+}
+
+function show(i) {
+  current = i;
+  const e = EXOS[i], data = e.gen();
+  card.innerHTML = `
+    <div class="crumb">Chapitre ${e.chap} · ${CHAPITRES[e.chap - 1]}</div>
+    <h2>${e.title}</h2>
+    <p class="support">${e.support}</p>
+    ${data.statement}
+    <div class="btns">
+      <button id="newBtn">↻ Nouvelles valeurs</button>
+      <button id="ansBtn" class="primary" aria-expanded="false">Afficher la réponse</button>
+    </div>
+    <section class="correction" id="corr" hidden>
+      <h3>Correction</h3>
+      ${data.qcm ? '<p class="score"></p>' : ''}
+      ${data.steps.map(([lab, body]) => `<div class="step"><div class="lab">${lab}</div>${body}</div>`).join('')}
+    </section>`;
+  renderMath(card);
+  document.getElementById('newBtn').onclick = () => show(current);
+  const ans = document.getElementById('ansBtn'), corr = document.getElementById('corr');
+  ans.onclick = () => {
+    corr.hidden = !corr.hidden;
+    ans.textContent = corr.hidden ? 'Afficher la réponse' : 'Masquer la réponse';
+    ans.setAttribute('aria-expanded', String(!corr.hidden));
+    if (data.qcm) markQcm(!corr.hidden);
+  };
+  nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', +a.dataset.i === i));
+  nav.querySelectorAll('.chap').forEach((ch, c) => {
+    const btn = ch.querySelector('.chap-btn');
+    btn.classList.toggle('on', c === e.chap - 1);
+    if (c === e.chap - 1) toggleChap(btn, true);
+  });
+  document.getElementById('prevBtn').style.visibility = i > 0 ? 'visible' : 'hidden';
+  document.getElementById('nextBtn').style.visibility = i < EXOS.length - 1 ? 'visible' : 'hidden';
+}
+
+function fromHash() {
+  const i = EXOS.findIndex((e, k) => '#' + idOf(k) === location.hash);
+  show(i >= 0 ? i : 0);
+  closeMenu();
+  window.scrollTo(0, 0);
+}
+
+// Menu mobile
+const sidebar = document.getElementById('sidebar'), shade = document.getElementById('shade');
+function closeMenu() { sidebar.classList.remove('open'); shade.hidden = true; }
+document.getElementById('menuBtn').onclick = () => { sidebar.classList.add('open'); shade.hidden = false; };
+shade.onclick = closeMenu;
+
+document.getElementById('prevBtn').onclick = () => go(current - 1);
+document.getElementById('nextBtn').onclick = () => go(current + 1);
+window.addEventListener('popstate', fromHash);
+
+buildNav();
+fromHash();
+</script>
+</body>
+</html>
