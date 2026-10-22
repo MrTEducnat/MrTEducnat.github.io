@@ -4,33 +4,1333 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cours I2D</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <style>
-:root { --bg: #f6f5f1; --surface: #ffffff; --text: #1f1e1c; --muted: #6b6a65; --border: #dcd9d0; --accent: #185fa5; --accent-bg: #e6f1fb; }
+:root {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --side: #efede6;
+  --text: #1f1e1c;
+  --muted: #6b6a65;
+  --border: #dcd9d0;
+  --accent: #185fa5;
+  --accent-bg: #e6f1fb;
+  --val: #854f0b;
+  --val-bg: #faeeda;
+  --ok: #27500a;
+  --ok-bg: #eaf3de;
+  --ok-border: #639922;
+  --code-bg: #f1efe8;
+  --bad-bg: #fcebeb;
+  --bad-border: #e24b4a;
+}
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #1b1b1a; --surface: #242422; --text: #ecebe6; --muted: #a3a29b; --border: #3a3a37; --accent: #85b7eb; --accent-bg: #0c447c; }
+  :root:not([data-theme="light"]) {
+    --bg: #1b1b1a;
+    --surface: #242422;
+    --side: #20201e;
+    --text: #ecebe6;
+    --muted: #a3a29b;
+    --border: #3a3a37;
+    --accent: #85b7eb;
+    --accent-bg: #0c447c;
+    --val: #fac775;
+    --val-bg: #4a3209;
+    --ok: #c0dd97;
+    --ok-bg: #1f3309;
+    --ok-border: #639922;
+    --code-bg: #2c2c2a;
+    --bad-bg: #3d1414;
+    --bad-border: #e24b4a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1b1a;
+  --surface: #242422;
+  --side: #20201e;
+  --text: #ecebe6;
+  --muted: #a3a29b;
+  --border: #3a3a37;
+  --accent: #85b7eb;
+  --accent-bg: #0c447c;
+  --val: #fac775;
+  --val-bg: #4a3209;
+  --ok: #c0dd97;
+  --ok-bg: #1f3309;
+  --ok-border: #639922;
+  --code-bg: #2c2c2a;
+  --bad-bg: #3d1414;
+  --bad-border: #e24b4a;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 16px; line-height: 1.6; }
-main { max-width: 780px; margin: 0 auto; padding: 48px 24px; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); min-height: 100vh; }
+
+/* Barre latérale */
+.sidebar {
+  background: var(--side);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.sidebar h1 { font-size: 18px; font-weight: 600; margin: 0 8px 4px; }
+.sidebar .sub { font-size: 13px; color: var(--muted); margin: 0 8px 16px; }
+.chap { margin-bottom: 2px; }
+.chap-btn {
+  display: flex; align-items: flex-start; gap: 8px; width: 100%;
+  text-align: left; border: 0; border-radius: 8px; padding: 8px 8px;
+  line-height: 1.35;
+}
+.chap-btn:hover { background: var(--border); }
+.chap-btn .arrow { flex: none; margin-top: 10px; color: var(--muted); transition: transform .15s; }
+.chap-btn[aria-expanded="true"] .arrow { transform: rotate(180deg); }
+.chap-btn.on .seq, .chap-btn.on .arrow { color: var(--accent); }
+.nav .seq { font-size: 12px; color: var(--muted); display: block; }
+.nav .ex { font-size: 14px; font-weight: 500; }
+.exlist { padding: 2px 0 6px 32px; }
+.exlist[hidden] { display: none; }
+.exlist a {
+  display: block; text-decoration: none; color: var(--text); font-size: 14px;
+  padding: 6px 10px; border-radius: 0 8px 8px 0; border-left: 2px solid var(--border);
+}
+.exlist a:hover { background: var(--border); }
+.exlist a.on { background: var(--accent-bg); color: var(--accent); border-left-color: var(--accent); }
+
+/* Barre du haut (mobile) */
+.topbar { display: none; }
+
+/* Contenu */
+main { padding: 32px 24px 48px; }
+.card {
+  max-width: 780px; margin: 0 auto;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 24px 28px;
+}
 .crumb { font-size: 13px; color: var(--muted); }
-h1 { font-size: 26px; font-weight: 600; margin: 2px 0 20px; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; }
-.card p { margin: 0; color: var(--muted); }
-.links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-.go { text-decoration: none; border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; padding: 8px 16px; font-size: 15px; }
-.go:hover, .go:focus-visible { background: var(--accent-bg); outline: none; }
-@media (max-width: 860px) { main { padding: 28px 16px; } .card { padding: 18px 16px; } h1 { font-size: 22px; } }
+.card h2 { font-size: 22px; font-weight: 600; margin: 2px 0 4px; }
+.support { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+.v {
+  background: var(--val-bg); color: var(--val);
+  padding: 1px 5px; border-radius: 5px; font-weight: 500;
+  /* Une valeur longue (suite d'événements, octets…) peut passer à la ligne ; nombre et unité restent liés par une espace insécable */
+  overflow-wrap: anywhere; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+pre .v { overflow-wrap: normal; }
+ol.q { padding-left: 22px; margin: 12px 0 0; }
+ol.q li { margin-bottom: 4px; }
+pre.code {
+  background: var(--code-bg); border-radius: 8px; padding: 12px 14px;
+  font-size: 14px; line-height: 1.5; overflow-x: auto; margin: 12px 0;
+}
+.btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+button {
+  font: inherit; font-size: 15px; cursor: pointer;
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px;
+}
+button:hover { background: var(--side); }
+button.primary { border-color: var(--accent); color: var(--accent); }
+.correction {
+  margin-top: 20px; padding: 14px 18px;
+  background: var(--ok-bg); border-left: 4px solid var(--ok-border);
+}
+.correction[hidden] { display: none; }
+.correction h3 { font-size: 15px; font-weight: 600; color: var(--ok); margin: 0 0 8px; }
+.step { margin-bottom: 12px; }
+.step:last-child { margin-bottom: 0; }
+.step .lab { font-size: 14px; font-weight: 600; color: var(--ok); }
+.step p { margin: 2px 0; }
+.mdisp { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+.mdisp.mwrap { text-align: center; line-height: 2.2; margin: 6px 0; }
+@media (max-width: 600px) {
+  table.t { font-size: 13px; }
+  table.t th, table.t td { padding: 3px 6px; }
+  pre.code { font-size: 12px; padding: 10px; }
+  table.t th, table.t td { overflow-wrap: anywhere; hyphens: auto; }
+}
+/* QCM */
+ol.qcm { padding-left: 22px; margin: 12px 0 0; }
+ol.qcm > li { margin-bottom: 14px; }
+ol.qcm > li > p { margin: 0 0 6px; }
+ol.qcm label {
+  display: flex; align-items: flex-start; gap: 8px; cursor: pointer;
+  padding: 6px 10px; margin-bottom: 4px; border: 1px solid var(--border); border-radius: 8px;
+}
+ol.qcm label:hover { background: var(--side); }
+ol.qcm input { margin-top: 5px; accent-color: var(--accent); }
+ol.qcm label.good { border-color: var(--ok-border); background: var(--ok-bg); }
+ol.qcm label.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+.score { font-weight: 600; color: var(--ok); margin: 0 0 10px; }
+.score:empty { display: none; }
+
+/* Tableaux et schémas */
+table.t { border-collapse: collapse; margin: 10px 0; font-size: 15px; }
+table.t th, table.t td { border: 1px solid var(--border); padding: 4px 10px; text-align: center; }
+table.t th { background: var(--side); font-weight: 600; }
+.tw { overflow-x: auto; }
+figure.fig { margin: 12px 0; text-align: center; }
+figure.fig svg { width: 100%; max-width: 560px; height: auto; }
+figure.fig svg.small { max-width: 220px; }
+svg.sym { display: block; width: 150px; height: auto; margin: 6px 0; }
+figure.fig svg.leds { max-width: 400px; }
+figcaption { font-size: 13px; color: var(--muted); }
+svg text { fill: var(--text); font-size: 12px; font-family: inherit; }
+svg text.lab { fill: var(--muted); font-size: 12px; }
+svg .grid { stroke: var(--border); stroke-width: 1; }
+svg .ax { stroke: var(--muted); stroke-width: 1.4; }
+svg .c1 { fill: none; stroke: var(--accent); stroke-width: 2.2; }
+svg .c2 { fill: none; stroke: var(--val); stroke-width: 2; }
+svg .c3 { fill: none; stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 5 4; }
+svg .pt { fill: var(--val); }
+svg .line { stroke: var(--text); stroke-width: 2; fill: none; }
+svg .thin { stroke: var(--text); stroke-width: 1.2; fill: none; }
+svg .fillv { fill: var(--val-bg); stroke: var(--val); stroke-width: 1.5; }
+svg .arrow { stroke: var(--accent); stroke-width: 2.4; fill: none; }
+svg .arrowv { stroke: var(--val); stroke-width: 2.4; fill: none; }
+svg .flow { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 1; }
+svg .loss { fill: var(--val-bg); stroke: var(--val); stroke-width: 1; }
+svg .ledon { fill: #e5484d; stroke: var(--text); }
+svg .ledoff { fill: var(--side); stroke: var(--muted); }
+
+/* Fiches de cours */
+.card h3 { font-size: 18px; font-weight: 600; color: var(--accent); margin: 26px 0 8px; }
+.card p { margin: 8px 0; }
+.card p.support { margin: 0 0 16px; }
+ul.l { padding-left: 22px; margin: 8px 0; }
+ul.l li { margin-bottom: 4px; }
+.box, .exm { border-radius: 0 8px 8px 0; padding: 10px 16px; margin: 16px 0; }
+.box { background: var(--accent-bg); border-left: 4px solid var(--accent); }
+.exm { background: var(--ok-bg); border-left: 4px solid var(--ok-border); }
+.box-t { font-size: 14px; font-weight: 600; color: var(--accent); }
+.exm .box-t { color: var(--ok); }
+.box p, .exm p { margin: 4px 0; }
+.chain { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 14px 0; }
+.blk { border: 1.5px solid var(--accent); border-radius: 8px; padding: 6px 10px; background: var(--surface); text-align: center; font-size: 14px; }
+.blk span { display: block; font-size: 12px; color: var(--muted); }
+.arr { color: var(--accent); font-weight: 600; }
+a.go {
+  text-decoration: none; border: 1px solid var(--accent); color: var(--accent);
+  border-radius: 8px; padding: 8px 16px; font-size: 15px;
+}
+a.go:hover, a.go:focus-visible { background: var(--accent-bg); outline: none; }
+/* Fiches : on ne coupe pas les mots dans les cases, la colonne prend la largeur du mot le plus long */
+@media (max-width: 600px) {
+  table.t th, table.t td { overflow-wrap: break-word; hyphens: manual; padding: 3px 4px; }
+}
+
+.pager { display: flex; justify-content: space-between; gap: 10px; max-width: 780px; margin: 16px auto 0; }
+.pager button { font-size: 14px; }
+
+@media (max-width: 860px) {
+  .layout { display: block; }
+  .topbar {
+    display: flex; align-items: center; gap: 10px;
+    position: sticky; top: 0; z-index: 5;
+    background: var(--side); border-bottom: 1px solid var(--border); padding: 10px 16px;
+  }
+  .topbar span { font-weight: 600; }
+  .sidebar {
+    position: fixed; left: 0; top: 0; z-index: 10; width: 290px; max-width: 85vw;
+    transform: translateX(-100%); transition: transform .2s;
+  }
+  .sidebar.open { transform: none; }
+  .shade { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 9; }
+  .shade[hidden] { display: none; }
+  main { padding: 16px 16px 40px; }
+  .card { padding: 18px 16px; }
+  .card h2 { font-size: 19px; }
+}
 </style>
 </head>
 <body>
-<main>
-  <div class="crumb">1re STI2D</div>
-  <h1>Cours I2D</h1>
-  <div class="card">
-    <p>Page en construction : les cours seront bientôt disponibles.</p>
-  </div>
-  <div class="links"><a class="go" href="index.html">← Accueil</a><a class="go" href="Exercices_I2D.html">Exercices I2D →</a></div>
-</main>
+<div class="topbar">
+  <button id="menuBtn" aria-label="Ouvrir le menu">☰</button>
+  <span>Cours I2D</span>
+</div>
+<div class="shade" id="shade" hidden></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <h1>Cours I2D</h1>
+    <p class="sub">1re STI2D · fiches de cours</p>
+    <div class="nav" id="nav"></div>
+  </nav>
+  <main>
+    <article class="card" id="card"></article>
+    <div class="pager">
+      <button id="prevBtn">← Précédent</button>
+      <button id="nextBtn">Suivant →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+// ---------- Outils ----------
+const rnd = (a, b, step = 1) => {
+  const n = Math.round((b - a) / step);
+  return +(a + step * Math.floor(Math.random() * (n + 1))).toFixed(6);
+};
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+// Nombre au format français (texte)
+const fr = (x, d = 2) => Number(x).toLocaleString('fr-FR', { maximumFractionDigits: d });
+// Nombre au format français (LaTeX)
+const tx = (x, d = 2) => fr(x, d).replace(',', '{,}').replace(/[\u202f\u00a0]/g, '\\,');
+// Nombre avec un nombre fixe de décimales (texte / LaTeX)
+const frf = (x, d) => Number(x).toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const txf = (x, d) => frf(x, d).replace(',', '{,}').replace(/[  ]/g, '\\,');
+// Écriture scientifique en LaTeX
+const sci = (x, d = 2) => {
+  let e = Math.floor(Math.log10(Math.abs(x)));
+  if (Math.abs(+(x / 10 ** e).toFixed(d)) >= 10) e++;
+  return `${tx(x / 10 ** e, d)} \\times 10^{${e}}`;
+};
+// Nombre avec s chiffres significatifs : décimal si raisonnable, sinon scientifique
+const tn = (x, s = 3) => {
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e-3 && a < 1e6) return tx(x, Math.max(0, s - 1 - Math.floor(Math.log10(a))));
+  return sci(x, s - 1);
+};
+const fn = (x, s = 3) => {
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  return fr(x, Math.max(0, s - 1 - Math.floor(Math.log10(a))));
+};
+const deg = a => a * Math.PI / 180;
+const G = 9.81;
+// Valeur surlignée dans l'énoncé
+const v = (x, unit = '', d = 2) => `<span class="v">${typeof x === 'number' ? fr(x, d) : x}${unit ? '\u00a0' + unit : ''}</span>`;
+// Formules
+const m = t => `<span class="m" data-tex="${t.replace(/"/g, '&quot;')}"></span>`;
+const M = t => `<div class="m mdisp" data-d="1" data-tex="${t.replace(/"/g, '&quot;')}"></div>`;
+// Unité en LaTeX (gère ², ³, ·, °, µ)
+const u = s => '\\,\\text{' + s.replace(/%/g, '\\%').replace(/²/g,'}^2\\text{').replace(/³/g, '}^3\\text{')
+  .replace(/·/g, '}\\cdot\\text{').replace(/°/g, '}{}^\\circ\\text{').replace(/[µμ]/g, '}\\mu\\text{') + '}';
+
+// Liste des questions d'un énoncé
+const ol = (...items) => `<ol class="q">${items.map(i => `<li>${i}</li>`).join('')}</ol>`;
+// Tableau HTML : en-têtes puis lignes
+const table = (head, rows) => `<div class="tw"><table class="t"><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr>${
+  rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const euro = x => frf(x, 2) + ' €';
+const teuro = x => txf(x, 2) + u('€');
+
+// ---------- Tirages ----------
+const shuffle = arr => {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+};
+const sample = (arr, n) => shuffle(arr).slice(0, n);
+
+// ---------- QCM ----------
+// Banque : [question, bonne réponse, [mauvaises réponses], explication]
+const QCM_N = 5;
+function qcm(bank, n = QCM_N) {
+  const id = 'q' + Math.random().toString(36).slice(2, 8);
+  const items = sample(bank, Math.min(n, bank.length)).map(([q, ok, bad, ex]) => {
+    const choices = shuffle([ok, ...sample(bad.filter(b => b !== ok), 3)]);
+    return { q, ok, ex, choices, k: choices.indexOf(ok) };
+  });
+  return {
+    qcm: true,
+    statement: `<p>Choisir la bonne réponse pour chaque question.</p>
+      <ol class="qcm">${items.map((it, i) => `<li data-ok="${it.k}"><p>${it.q}</p>${it.choices.map((c, j) =>
+        `<label><input type="radio" name="${id}${i}" value="${j}"> <span>${c}</span></label>`).join('')}</li>`).join('')}</ol>`,
+    steps: items.map((it, i) => [`${i + 1}. ${it.ok}`, it.ex ? `<p>${it.ex}</p>` : ''])
+  };
+}
+// Questions construites à partir de couples (élément, réponse)
+const fromPairs = (pairs, fmt, ex) =>
+  pairs.map(([a, b]) => [fmt(a), b, [...new Set(pairs.map(p => p[1]))], ex ? ex(a, b) : '']);
+// Exercice QCM
+const Q = (chap, title, support, bank) => ({ chap, title, support, gen: () => qcm(typeof bank === 'function' ? bank() : bank) });
+
+// ---------- Schémas SVG ----------
+const fig = (svg, cap = '') => `<figure class="fig">${svg}${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
+// Graphique gradué : o = {x0, x1, dx, y0, y1, dy, xlab, ylab, series: [{pts, cls}], extra(X, Y), nolab}
+function graph(o) {
+  const W = o.w || 560, H = o.h || 270, L = 50, R = 16, T = 14, B = 34;
+  const X = x => +(L + (x - o.x0) / (o.x1 - o.x0) * (W - L - R)).toFixed(1);
+  const Y = y => +(H - B - (y - o.y0) / (o.y1 - o.y0) * (H - T - B)).toFixed(1);
+  const fx = o.fx || (x => fr(x, 3)), fy = o.fy || (y => fr(y, 3));
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="graph" role="img">`;
+  const nx = Math.round((o.x1 - o.x0) / o.dx), ny = Math.round((o.y1 - o.y0) / o.dy);
+  for (let i = 0; i <= nx; i++) {
+    const x = o.x0 + i * o.dx;
+    s += `<line class="grid" x1="${X(x)}" y1="${T}" x2="${X(x)}" y2="${H - B}"/>`;
+    if (!o.nolab) s += `<text x="${X(x)}" y="${H - B + 15}" text-anchor="middle">${fx(x)}</text>`;
+  }
+  for (let i = 0; i <= ny; i++) {
+    const y = o.y0 + i * o.dy;
+    s += `<line class="grid" x1="${L}" y1="${Y(y)}" x2="${W - R}" y2="${Y(y)}"/>`;
+    if (!o.nolab) s += `<text x="${L - 6}" y="${Y(y) + 4}" text-anchor="end">${fy(y)}</text>`;
+  }
+  if (o.y0 < 0 && o.y1 > 0) s += `<line class="ax" x1="${L}" y1="${Y(0)}" x2="${W - R}" y2="${Y(0)}"/>`;
+  s += `<line class="ax" x1="${L}" y1="${T}" x2="${L}" y2="${H - B}"/><line class="ax" x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/>`;
+  if (o.xlab) s += `<text x="${W - R}" y="${H - 4}" text-anchor="end" class="lab">${o.xlab}</text>`;
+  if (o.ylab) s += `<text x="${L + 6}" y="${T + 12}" class="lab">${o.ylab}</text>`;
+  (o.series || []).forEach(se => {
+    s += `<polyline class="${se.cls || 'c1'}" points="${se.pts.map(([x, y]) => X(x) + ',' + Y(y)).join(' ')}"/>`;
+  });
+  if (o.extra) s += o.extra(X, Y);
+  return fig(s + '</svg>', o.cap);
+}
+// Échantillonne une fonction pour un graphique
+const curve = (f, x0, x1, n = 400) => Array.from({ length: n + 1 }, (_, i) => { const x = x0 + (x1 - x0) * i / n; return [x, f(x)]; });
+// Diagramme de Sankey en ligne : étapes [{name, val}] (val peut être '?') ; les pertes partent vers le bas
+function sankey(stages, vals, unit) {
+  const W = 560, H = 220, top = 40, x0 = 20, x1 = W - 20, seg = (x1 - x0) / stages.length;
+  const k = 90 / vals[0];
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="sankey" role="img">`;
+  stages.forEach((st, i) => {
+    const h = vals[i] * k, xa = x0 + i * seg;
+    s += `<rect class="flow" x="${xa}" y="${top}" width="${seg}" height="${h}"/>`;
+    s += `<text x="${xa + 6}" y="${top - 18}" class="lab">${st.name}</text><text x="${xa + 6}" y="${top - 4}">${st.label}</text>`;
+    if (i < stages.length - 1) {
+      const lw = Math.max(4, (vals[i] - vals[i + 1]) * k), xb = xa + seg;
+      s += `<rect class="loss" x="${xb - lw}" y="${top + vals[i + 1] * k}" width="${lw}" height="${H - 30 - top - vals[i + 1] * k}"/>`;
+      s += `<text x="${xb - lw / 2}" y="${H - 12}" text-anchor="middle">${stages[i].loss}</text>`;
+    }
+  });
+  return fig(s + '</svg>', unit);
+}
+
+// ---------- Chapitres ----------
+const CHAPITRES = [
+  'Du besoin à la solution technique',
+  'Gestion des ressources',
+  'Mobilité et transport',
+  'Énergie électrique et transition énergétique',
+  'Capter et mesurer',
+  'Transmettre la puissance',
+  'Coder et piloter',
+  'Éco-conception, matériaux et habitat'
+];
+
+// ---------- Mise en forme des fiches ----------
+const H = t => `<h3>${t}</h3>`;
+const P = (...t) => t.map(x => `<p>${x}</p>`).join('');
+const UL = (...i) => `<ul class="l">${i.map(x => `<li>${x}</li>`).join('')}</ul>`;
+// Encadré « À retenir » et exemple résolu
+const BOX = (...b) => `<div class="box"><div class="box-t">À retenir</div>${b.join('')}</div>`;
+const EX = (t, ...b) => `<div class="exm"><div class="box-t">${t}</div>${b.join('')}</div>`;
+// Suite de blocs fonctionnels : [[titre, sous-titre], …]
+const CHAIN = items => `<div class="chain">${items.map(([t, s]) => `<div class="blk"><b>${t}</b>${s ? `<span>${s}</span>` : ''}</div>`).join('<span class="arr">→</span>')}</div>`;
+const code = s => `<pre class="code">${s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+
+// ---------- Fiches de cours (chap = numéro de la séquence) ----------
+const EXOS = [
+  // ===================== Séquence 1 =====================
+  {
+    chap: 1,
+    title: 'Unités et grandeurs',
+    support: 'Cours/TD Unités et grandeurs · fiche ressource « Les unités »',
+    body:
+      H('1. Le Système international (SI)') +
+      P('Les lois de la physique s\'écrivent dans un système d\'unités commun à presque tous les pays : le <b>Système international</b> (SI). Toutes les grandeurs se déduisent de 7 grandeurs de base ; en STI2D on en utilise surtout 5 :') +
+      table(['Grandeur', 'Symbole', 'Unité'], [['Longueur', 'L', 'mètre (m)'], ['Masse', 'm', 'kilogramme (kg)'], ['Temps', 't', 'seconde (s)'],
+        ['Intensité du courant', 'I', 'ampère (A)'], ['Température', 'T', 'kelvin (K)']]) +
+      P('Lire une unité composée : « kg·m » se lit kilogramme-mètre (produit), « m/s » ou « m·s⁻¹ » mètre par seconde (quotient), « m³ » mètre cube.') +
+      H('2. Unités dérivées') +
+      table(['Grandeur', 'Unité SI', 'Définition'], [['Surface S', 'm²', 'longueur × longueur'], ['Volume V', 'm³', 'surface × longueur'],
+        ['Masse volumique ρ', 'kg/m³', 'masse par unité de volume'], ['Vitesse v', 'm/s', 'distance par unité de temps'], ['Accélération a', 'm/s²', 'variation de vitesse par seconde'],
+        ['Force F', 'N (newton)', 'cause d\'un mouvement ou d\'une déformation'], ['Pression p', 'Pa (pascal)', 'force par unité de surface : 1 Pa = 1 N/m²'],
+        ['Énergie E', 'J (joule)', 'force × déplacement : 1 J = 1 N·m'], ['Puissance P', 'W (watt)', 'énergie par unité de temps : 1 W = 1 J/s'], ['Tension U', 'V (volt)', 'différence de potentiel']]) +
+      H('3. Unités usuelles hors SI') +
+      table(['Unité', 'Correspondance'], [['degré Celsius (°C)', 'T (K) = θ (°C) + 273,15'], ['litre (L)', '1 L = 1 dm³ = 10⁻³ m³'], ['bar', '1 bar = 10⁵ Pa'],
+        ['calorie (cal)', '1 cal ≈ 4,18 J'], ['kilowattheure (kWh)', '1 kWh = 3,6 × 10⁶ J'], ['kilomètre par heure', '1 m/s = 3,6 km/h'], ['heure (h)', '1 h = 60 min = 3 600 s']]) +
+      H('4. Multiples et sous-multiples') +
+      table(['Préfixe', 'Symbole', 'Facteur'], [['téra', 'T', '10¹²'], ['giga', 'G', '10⁹'], ['méga', 'M', '10⁶'], ['kilo', 'k', '10³'], ['hecto', 'h', '10²'], ['déca', 'da', '10¹'],
+        ['déci', 'd', '10⁻¹'], ['centi', 'c', '10⁻²'], ['milli', 'm', '10⁻³'], ['micro', 'µ', '10⁻⁶'], ['nano', 'n', '10⁻⁹'], ['pico', 'p', '10⁻¹²']]) +
+      P('<b>Piège des surfaces et des volumes</b> : le préfixe est élevé au carré ou au cube.') +
+      M(`1${u('m²')} = 10^4${u('cm²')} = 10^6${u('mm²')}`) + M(`1${u('m³')} = 10^3${u('L')} = 10^6${u('cm³')}`) +
+      H('5. Écriture scientifique') +
+      P(`Un nombre s'écrit ${m('a \\times 10^n')} avec ${m('1 \\leq a < 10')}. Exemples : 10 000 m = 10⁴ m = 10 km ; 0,003 s = 3 × 10⁻³ s = 3 ms.`) +
+      M('10^a \\times 10^b = 10^{a+b} \\qquad \\frac{10^a}{10^b} = 10^{a-b} \\qquad (10^a)^b = 10^{a \\times b}') +
+      H('6. Produit en croix') +
+      P('Il permet de passer d\'une unité à l\'autre quand on connaît une correspondance. Si 1 cal = 4,18 J, alors :') + M('100\\,\\text{J} = \\frac{100 \\times 1}{4{,}18} \\approx 23{,}9\\,\\text{cal}') +
+      H('7. Méthode de résolution') +
+      ol('Convertir toutes les données dans les unités SI dès la lecture de l\'énoncé.', 'Nommer clairement chaque grandeur (exemple : vA pour la vitesse au point A).',
+        'Écrire la formule littérale et l\'isoler si besoin.', 'Remplacer par les valeurs numériques à la fin seulement (on évite d\'accumuler les arrondis).',
+        'Donner le résultat avec son unité et 2 ou 3 chiffres significatifs.') +
+      H('8. Formulaire de géométrie') +
+      table(['Forme', 'Surface ou volume'], [['Rectangle a × b', 'S = a × b'], ['Triangle (base a, hauteur h)', 'S = a × h / 2'], ['Disque (rayon r, diamètre d)', 'S = π r² = π d² / 4 ; périmètre π d'],
+        ['Cube (côté a)', 'V = a³'], ['Pavé droit', 'V = a × b × h'], ['Cylindre', 'V = π r² × h'], ['Sphère', 'V = 4/3 × π r³']]) +
+      BOX(P('Toujours convertir en unités SI avant de calculer, et toujours écrire l\'unité du résultat.', 'Attention aux surfaces (×10⁴ de m² en cm²) et aux volumes (1 m³ = 1 000 L).'))
+  },
+  {
+    chap: 1,
+    title: 'Grandeurs mécaniques de base et rendement',
+    support: 'Fiche ressource « Les unités » · cours Statique et Matériaux',
+    body:
+      H('1. Vitesse') +
+      P('La vitesse moyenne est la distance parcourue divisée par la durée du parcours :') + M('v = \\frac{d}{\\Delta t}') + P(`avec ${m('v')} en m/s, ${m('d')} en m et ${m('\\Delta t')} en s.`) +
+      EX('Exemple', P('Un tapis roulant déplace un colis de 12 m en 8 s : v = 12 / 8 = 1,5 m/s, soit 1,5 × 3,6 = 5,4 km/h.')) +
+      H('2. Masse volumique') +
+      P('C\'est la masse d\'un matériau par unité de volume. Elle permet d\'identifier un matériau.') + M('\\rho = \\frac{m}{V}') + P(`avec ${m('\\rho')} en kg/m³, ${m('m')} en kg et ${m('V')} en m³.`) +
+      P('Repères : eau 1 000 kg/m³, air 1,2 kg/m³, aluminium 2 700 kg/m³, acier 7 850 kg/m³, béton 2 400 kg/m³.') +
+      EX('Exemple', P('100 mL d\'un liquide pèsent 184 g. On convertit : m = 0,184 kg et V = 0,1 L = 10⁻⁴ m³.') + M('\\rho = \\frac{0{,}184}{10^{-4}} = 1\\,840\\,\\text{kg/m}^3')) +
+      H('3. Poids') +
+      P('Le poids est la force exercée par la Terre sur un corps. Ne pas le confondre avec la masse : le poids est en newtons, la masse en kilogrammes.') +
+      M(`P = m \\times g \\qquad g \\approx 9{,}81${u('N/kg')}`) + P('Une personne de 80 kg a un poids de 80 × 9,81 ≈ 785 N.') +
+      H('4. Pression') +
+      P('La pression est une force répartie sur une surface :') + M('p = \\frac{F}{S}') + P(`avec ${m('p')} en Pa, ${m('F')} en N et ${m('S')} en m².`) +
+      P('Plus la surface d\'appui est grande, plus la pression est faible (raquettes à neige, fondations d\'un mur). Rappel : 1 bar = 10⁵ Pa.') +
+      H('5. Rendement') +
+      P('Toute conversion d\'énergie s\'accompagne de pertes (le plus souvent de la chaleur). Le rendement compare la puissance utile à la puissance absorbée :') +
+      M('\\eta = \\frac{P_u}{P_a} \\qquad P_{pertes} = P_a - P_u') +
+      P('Le rendement n\'a pas d\'unité et vaut toujours moins de 1 (ou 100 %). Pour une chaîne de constituants placés les uns après les autres, les rendements se multiplient :') +
+      M('\\eta_{global} = \\eta_1 \\times \\eta_2 \\times \\eta_3 \\times \\dots') +
+      EX('Exemple', P('Batterie (η = 0,95), variateur (0,97), moteur (0,85) et réducteur (0,9) :') + M('\\eta = 0{,}95 \\times 0{,}97 \\times 0{,}85 \\times 0{,}9 \\approx 0{,}70') +
+        P('Pour 100 W utiles, il faut donc fournir 100 / 0,70 ≈ 143 W.')) +
+      BOX(P('v = d / Δt ; ρ = m / V ; P = m·g ; p = F / S ; η = Pu / Pa.', 'Les rendements d\'une chaîne se multiplient, ils ne s\'additionnent pas.'))
+  },
+  {
+    chap: 1,
+    title: 'Chaînes de puissance et d\'information',
+    support: 'Cours Chaînes de puissance et d\'information · TP Chaînes d\'énergie et d\'information',
+    body:
+      H('1. Système technique') +
+      P('Un <b>système technique</b> est un assemblage de constituants qui réalisent chacun une fonction élémentaire (alimenter, convertir…). C\'est l\'assemblage de ces fonctions qui permet de réaliser une fonction plus complexe.') +
+      P('Un système est défini par :') + UL('la nature des éléments qui le composent ;', 'les interactions entre ces éléments ;', 'sa frontière (ce qui fait partie du système et ce qui appartient à son environnement) ;', 'ses interactions avec l\'environnement.') +
+      P('On peut comparer un système à un être humain : la <b>chaîne d\'information</b> est son cerveau (elle reçoit des informations, décide et donne des ordres), la <b>chaîne de puissance</b> (ou chaîne d\'énergie) ses muscles (elle agit sur la matière).') +
+      H('2. La chaîne d\'information') +
+      P('Elle acquiert des informations, les traite (souvent par un programme) puis les communique : à l\'utilisateur, à un autre système ou à la chaîne de puissance sous forme d\'ordres.') +
+      CHAIN([['Acquérir', 'capteurs, boutons'], ['Traiter', 'microcontrôleur, automate'], ['Communiquer', 'écran, voyant, radio']]) +
+      table(['Fonction', 'Exemples de constituants'], [['Acquérir', 'capteur, détecteur, bouton-poussoir, clavier, caméra'], ['Traiter', 'microcontrôleur (Arduino), automate programmable, ordinateur'],
+        ['Communiquer', 'écran, voyant, haut-parleur, module Wi-Fi ou Bluetooth, liaison filaire']]) +
+      H('3. La chaîne de puissance') +
+      P('Elle reçoit l\'énergie et la transforme pour agir sur la matière d\'œuvre (déplacer, chauffer, éclairer…).') +
+      CHAIN([['Alimenter', 'batterie, réseau'], ['Distribuer', 'variateur, relais'], ['Convertir', 'moteur, vérin'], ['Transmettre', 'réducteur'], ['Agir', 'roue, pince']]) +
+      table(['Fonction', 'Rôle', 'Exemples'], [['Alimenter', 'fournir l\'énergie', 'batterie, réseau électrique, panneau photovoltaïque'], ['Distribuer', 'doser l\'énergie selon les ordres reçus', 'variateur de vitesse, relais, contacteur, distributeur pneumatique'],
+        ['Convertir', 'changer la forme de l\'énergie', 'moteur électrique, vérin, résistance chauffante, lampe'], ['Transmettre', 'adapter et transporter l\'énergie mécanique', 'réducteur, engrenages, poulies-courroie, vis-écrou'],
+        ['Agir', 'agir sur la matière d\'œuvre', 'roue, pince, tapis, hélice']]) +
+      EX('Exemple : le robot Robovolc', P('Batterie (stocker et restituer l\'électricité) → variateur (faire varier l\'énergie apportée au moteur) → moteur électrique (convertir l\'énergie électrique en énergie mécanique) → réducteur (adapter la vitesse de rotation) → roue (déplacer le robot).')) +
+      H('4. Interaction des deux chaînes') +
+      P('Les deux chaînes travaillent ensemble : la chaîne d\'information envoie des <b>ordres</b> à la fonction Distribuer ; les capteurs lui renvoient des <b>comptes rendus</b> sur l\'état du système. L\'utilisateur dialogue avec la chaîne d\'information grâce à une <b>IHM</b> (interface homme-machine).') +
+      P('Entre les constituants circulent trois types de flux : <b>énergie</b>, <b>matière</b> et <b>information</b>. La matière d\'œuvre entre dans le système, est transformée par la chaîne de puissance et ressort avec une valeur ajoutée.') +
+      BOX(P('Chaîne d\'information : Acquérir → Traiter → Communiquer.', 'Chaîne de puissance : Alimenter → Distribuer → Convertir → Transmettre → Agir.', 'La chaîne d\'information commande la fonction Distribuer de la chaîne de puissance.'))
+  },
+  // ===================== Séquence 2 =====================
+  {
+    chap: 2,
+    title: 'Sources et formes d\'énergie',
+    support: 'Cours Sources d\'énergie · PC Conversion d\'énergie dans les systèmes',
+    body:
+      H('1. Qu\'est-ce que l\'énergie ?') +
+      P('L\'énergie mesure la capacité d\'un système à modifier un état : produire un mouvement, de la chaleur ou un rayonnement (lumière). Elle se présente sous plusieurs <b>formes</b> :') +
+      table(['Forme', 'Exemples'], [['Mécanique', 'cinétique (objet en mouvement), potentielle (eau d\'un barrage en hauteur)'], ['Thermique', 'chaleur d\'un radiateur, d\'un moteur'],
+        ['Électrique', 'courant dans un câble'], ['Chimique', 'carburant, aliments, batterie'], ['Nucléaire', 'fission de l\'uranium'], ['Rayonnante', 'lumière du Soleil']]) +
+      H('2. Sources renouvelables ou non') +
+      UL('<b>Non renouvelables</b> (stock) : quantité limitée, renouvellement beaucoup trop lent par rapport à notre consommation. Pétrole, gaz naturel, charbon, uranium.',
+        '<b>Renouvelables</b> (flux) : renouvellement assez rapide à l\'échelle humaine pour paraître inépuisable, à condition de ne pas consommer plus que ce qui se renouvelle. Soleil, vent, eau (hydraulique), biomasse, géothermie, marées.') +
+      H('3. Conservation de l\'énergie') +
+      P('L\'énergie ne se crée pas et ne disparaît pas : elle se transforme. Le mouvement perpétuel n\'existe pas.') + M('E_{initiale} = E_{finale} + \\text{pertes}') +
+      P('Toute transformation produit des pertes, le plus souvent sous forme de chaleur. Dans les pays développés, elles représentent 60 à 70 % de l\'énergie de départ.') +
+      table(['Convertisseur', 'Énergie d\'entrée', 'Énergie de sortie'], [['Moteur électrique', 'électrique', 'mécanique'], ['Alternateur, génératrice', 'mécanique', 'électrique'],
+        ['Panneau photovoltaïque', 'rayonnante', 'électrique'], ['Radiateur électrique', 'électrique', 'thermique'], ['Batterie en décharge', 'chimique', 'électrique'], ['Moteur thermique', 'chimique', 'mécanique']]) +
+      H('4. Énergie primaire, secondaire, finale et utile') +
+      table(['Catégorie', 'Définition', 'Exemple'], [['Primaire', 'disponible dans la nature, avant toute transformation', 'pétrole brut, vent, uranium'],
+        ['Secondaire', 'issue de la transformation d\'une énergie primaire, en sortie d\'usine ou de centrale', 'essence raffinée, électricité produite'],
+        ['Finale', 'livrée au consommateur', 'essence à la pompe, électricité au compteur'], ['Utile', 'réellement utilisée après la conversion par l\'appareil', 'mouvement de la voiture, lumière de la lampe']]) +
+      H('5. Unités de l\'énergie') +
+      UL('<b>Joule (J)</b> : énergie consommée par un appareil de 1 W pendant 1 s (1 J = 1 W·s).', '<b>Kilowattheure (kWh)</b> : 1 000 W pendant 1 h, soit 1 kWh = 1 000 × 3 600 = 3,6 × 10⁶ J = 3,6 MJ.',
+        '<b>Tonne équivalent pétrole (tep)</b> : énergie dégagée par la combustion d\'une tonne de pétrole ; 1 tep = 11 630 kWh.') +
+      EX('Exemple', P('Une éolienne de 2 MW produit 4,4 GWh par an :') + M('\\frac{4{,}4 \\times 10^6\\,\\text{kWh}}{11\\,630} \\approx 378\\,\\text{tep}') +
+        P('Un réacteur nucléaire de 900 MW produit 6 000 GWh par an, soit l\'équivalent de 6 000 / 4,4 ≈ 1 364 éoliennes.')) +
+      BOX(P('Primaire → secondaire → finale → utile : il y a des pertes à chaque étape.', '1 kWh = 3,6 MJ ; 1 tep = 11 630 kWh.'))
+  },
+  {
+    chap: 2,
+    title: 'Énergie, puissance et coût',
+    support: 'Cours Grandeurs électriques (rappels sur l\'énergie) · TD Calculs et conversions de base',
+    body:
+      H('1. Énergie et puissance') +
+      P('La puissance est la quantité d\'énergie transférée par unité de temps. Avec une même quantité d\'énergie, on peut utiliser beaucoup de puissance pendant peu de temps, ou peu de puissance pendant longtemps :') +
+      M(`E = P \\times \\Delta t`) + table(['Si P est en…', 'et Δt en…', 'alors E est en…'], [['W', 's', 'J'], ['W', 'h', 'Wh'], ['kW', 'h', 'kWh']]) +
+      P('On utilise le Wh ou le kWh pour l\'électricité car le joule est une unité trop petite : un foyer consomme de l\'ordre de 10 000 kWh par an, soit 3,6 × 10¹⁰ J.') +
+      H('2. Convertir les durées') +
+      P('Les durées doivent être en heures décimales pour un calcul en Wh : 1 h 30 min = 1,5 h ; 45 min = 45 / 60 = 0,75 h ; 10 min ≈ 0,167 h. Attention : 1,5 h ne fait pas 1 h 50 min.') +
+      H('3. Coût de l\'énergie') +
+      M('\\text{Coût} = E\\,(\\text{kWh}) \\times \\text{prix du kWh}') +
+      EX('Exemple : une box internet en veille', P('Une box de 10 W reste allumée toute l\'année (8 760 h) :') + M('E = 10 \\times 8\\,760 = 87\\,600\\,\\text{Wh} = 87{,}6\\,\\text{kWh}') +
+        P('À 0,25 € le kWh, cela coûte 87,6 × 0,25 ≈ 21,90 € par an.')) +
+      H('4. Comparer des solutions') +
+      P('Pour comparer deux appareils ou deux modes de chauffage, on calcule pour chacun l\'énergie consommée sur une même durée, puis le coût (énergie × prix) et éventuellement les émissions de CO₂ (énergie × facteur d\'émission en g/kWh).') +
+      BOX(P('E = P × Δt, avec des unités cohérentes (W et h donnent des Wh).', 'Coût = énergie en kWh × prix du kWh.'))
+  },
+  {
+    chap: 2,
+    title: 'Ressources énergétiques, mix et réseaux',
+    support: 'Cours Ressources énergétiques · PC Types de centrales · TD Ressources énergétiques',
+    body:
+      H('1. Les enjeux') +
+      P('La consommation d\'énergie mondiale augmente, les ressources s\'épuisent et les impacts sur l\'environnement s\'aggravent. Il faut donc :') +
+      UL('limiter la consommation (sobriété : « chaque geste compte ») ;', 'réduire le recours aux énergies non renouvelables (transition énergétique) ;', 'éduquer au développement durable ;', 'pratiquer l\'éco-conception.') +
+      H('2. Énergie primaire et finale') +
+      P('Les bilans énergétiques distinguent l\'énergie <b>primaire</b> (disponible dans la nature) et l\'énergie <b>finale</b> (utilisée par le consommateur). La transformation de l\'une en l\'autre s\'accompagne de pertes importantes, notamment dans les centrales thermiques.') +
+      H('3. Mix énergétique et mix électrique') +
+      UL('Le <b>mix énergétique</b> est la répartition des sources d\'énergie primaire consommées dans une zone géographique. Les énergies fossiles y dominent encore, y compris en France.',
+        'Le <b>mix électrique</b> ne concerne que les sources qui produisent l\'électricité. L\'électricité ne représente qu\'environ 18 % de la consommation finale d\'énergie dans le monde. La France se distingue par une forte part de nucléaire dans son mix électrique.') +
+      H('4. Diagramme de Sankey') +
+      P('Pour représenter des flux d\'énergie, on utilise un diagramme de Sankey : la largeur de chaque flèche est proportionnelle à la quantité d\'énergie. Les pertes partent sur le côté.') +
+      fig(`<svg viewBox="0 0 340 226" role="img" style="max-width:460px">
+        <path class="flow" d="M10 40 H300 V30 L328 58 L300 86 V76 H200 V130 H100 V140 H10 Z"/>
+        <path class="loss" d="M100 130 H110 V192 L105 202 L100 192 Z"/><path class="loss" d="M200 76 H254 V188 L227 204 L200 188 Z"/>
+        <text x="105" y="30" text-anchor="middle" style="font-size:14px">chaudière</text><text x="205" y="30" text-anchor="middle" style="font-size:14px">turbine</text>
+        <text x="55" y="95" text-anchor="middle" style="font-size:14px">100 MJ</text><text x="150" y="90" text-anchor="middle" style="font-size:14px">90 MJ</text>
+        <text x="250" y="63" text-anchor="middle" style="font-size:14px">36 MJ</text>
+        <text x="105" y="220" text-anchor="middle" style="font-size:14px">10 MJ</text><text x="227" y="220" text-anchor="middle" style="font-size:14px">54 MJ</text></svg>`,
+        'Exemple : 100 MJ chimiques, chaudière (η = 0,9) puis turbine (η = 0,4) ; en bas, les pertes') +
+      H('5. Les infrastructures de transport') +
+      table(['Énergie', 'Moyens de transport'], [['Pétrole', 'oléoducs (pipelines), pétroliers ; camions, trains et barges pour la distribution'],
+        ['Gaz', 'gazoducs terrestres ou sous-marins ; gaz naturel liquéfié (GNL) transporté par méthaniers quand le gazoduc est impossible'],
+        ['Électricité', 'réseau de transport haute tension géré par RTE ; réseaux de distribution exploités par Enedis sur 95 % du territoire']]) +
+      BOX(P('Mix énergétique : toutes les sources d\'énergie primaire ; mix électrique : seulement la production d\'électricité.', 'Dans un diagramme de Sankey, la largeur des flèches est proportionnelle à l\'énergie.'))
+  },
+  {
+    chap: 2,
+    title: 'Développement durable et cycle de vie',
+    support: 'Cours Développement durable · TD ACV et transport de bouteilles en verre',
+    body:
+      H('1. Définition') +
+      P('Selon le rapport Brundtland (1987), le développement durable est <i>« un développement qui répond aux besoins des générations du présent sans compromettre la capacité des générations futures à répondre aux leurs »</i>.') +
+      P('Il repose sur <b>trois piliers</b> à concilier :') +
+      UL('<b>économique</b> : créer de la richesse et des emplois ;', '<b>social</b> : réduire les inégalités, garantir l\'accès à la santé, à l\'éducation ;', '<b>environnemental</b> : préserver les ressources, le climat et la biodiversité.') +
+      H('2. Les constats') +
+      UL('Environnement : réchauffement climatique dû aux gaz à effet de serre, épuisement des ressources, pollutions.', 'Société : inégalités d\'accès aux soins et de répartition des richesses, migrations liées au climat et aux conflits.') +
+      H('3. Les indicateurs') +
+      table(['Indicateur', 'Ce qu\'il mesure'], [['PIB (produit intérieur brut)', 'la richesse produite par un pays : critère uniquement économique'],
+        ['IDH (indice de développement humain, années 1990)', 'ajoute la santé, l\'espérance de vie, l\'éducation'],
+        ['Empreinte écologique (1992)', 'la surface de terre et d\'eau nécessaire pour produire ce que l\'on consomme et absorber nos déchets']]) +
+      H('4. Dates importantes') +
+      table(['Année', 'Événement'], [['1987', 'Rapport Brundtland : définition du développement durable'], ['1987', 'Protocole de Montréal : élimination des gaz qui détruisent la couche d\'ozone (CFC)'],
+        ['1990', 'Premier rapport du GIEC sur l\'évolution du climat'], ['1992', 'Sommet de la Terre à Rio : les trois piliers du développement durable'],
+        ['1997', 'Protocole de Kyoto : réduction des émissions de gaz à effet de serre'], ['2015', 'COP21, accord de Paris : limiter le réchauffement entre 1,5 et 2 °C ; 17 objectifs de développement durable de l\'ONU']]) +
+      H('5. Cycle de vie et ACV') +
+      P('Un produit a des impacts environnementaux à chaque étape de son cycle de vie :') +
+      CHAIN([['Extraction', 'matières premières'], ['Fabrication', ''], ['Transport', 'distribution'], ['Utilisation', ''], ['Fin de vie', 'recyclage, déchets']]) +
+      P('L\'<b>analyse du cycle de vie</b> (ACV) chiffre ces impacts avec plusieurs indicateurs (énergie consommée, émissions de CO₂, épuisement des ressources, pollution de l\'eau…). Elle permet de comparer deux solutions et de repérer l\'étape la plus pénalisante.') +
+      P('L\'<b>éco-conception</b> consiste à prendre en compte ces impacts dès la conception du produit, et non une fois qu\'il est fini.') +
+      EX('Exemple : transport de bouteilles', P('Les émissions dues au transport se calculent par : masse transportée (t) × distance (km) × facteur d\'émission du moyen de transport (g de CO₂ par t·km). Le camion émet beaucoup plus que le train ou le bateau pour la même distance.')) +
+      BOX(P('Trois piliers : économique, social, environnemental.', 'L\'ACV étudie tout le cycle de vie, de l\'extraction des matières à la fin de vie.'))
+  },
+  // ===================== Séquence 3 =====================
+  {
+    chap: 3,
+    title: 'Contacts, mouvements et degrés de liberté',
+    support: 'Cours Modélisation cinématique · TD et PC Modélisation cinématique',
+    body:
+      H('1. Solides et mécanismes') +
+      UL('Un <b>solide</b> est une pièce ou un ensemble de pièces liées entre elles.', 'On le suppose <b>indéformable</b> : sa forme ne change pas, quelles que soient les actions qu\'il subit (les déformations réelles sont de l\'ordre du µm).',
+        'Un <b>mécanisme</b> est un ensemble de pièces mobiles les unes par rapport aux autres.') +
+      H('2. Classes d\'équivalence') +
+      P('Une <b>classe d\'équivalence</b> est un groupe de pièces qui n\'ont aucun mouvement les unes par rapport aux autres pendant le fonctionnement normal du mécanisme. On les note par des lettres majuscules : A = {1 ; 2 ; 3}.') +
+      UL('Une pièce n\'appartient qu\'à une seule classe d\'équivalence.', 'Les pièces déformables (ressorts, joints) n\'appartiennent à aucune classe.') +
+      H('3. Les contacts') +
+      P('Pour reconnaître un contact, on imagine qu\'on trempe une pièce dans la peinture et on regarde la trace laissée sur l\'autre :') +
+      table(['Trace laissée', 'Type de contact', 'Exemple'], [['un point', 'ponctuel', 'bille sur un plan'], ['une ligne droite', 'linéique rectiligne', 'cylindre posé sur un plan'],
+        ['un cercle', 'linéique annulaire', 'bille dans un tube'], ['une surface', 'surfacique (plan, cylindre, sphère)', 'livre posé sur une table']]) +
+      H('4. Les mouvements élémentaires') +
+      P('Dans l\'espace, on se repère avec un repère d\'origine O et trois axes x, y, z. Il existe <b>6 mouvements élémentaires</b> : 3 translations (Tx, Ty, Tz) et 3 rotations (Rx, Ry, Rz). Tout mouvement est une combinaison de ces six.') +
+      UL('<b>Translation rectiligne</b> : tous les points du solide se déplacent sur des droites parallèles.', '<b>Rotation autour d\'un axe fixe</b> : tous les points décrivent des cercles centrés sur l\'axe.') +
+      H('5. Degrés de liberté') +
+      P('Les <b>degrés de liberté</b> (ddl) sont les mouvements indépendants possibles entre deux pièces. Il y en a au maximum 6, et 0 quand les pièces sont fixées.') +
+      table(['Situation', 'Mouvements possibles', 'ddl'], [['Téléphone posé sur une table', 'Tx, Ty (glisser) et Rz (tourner à plat)', '3'], ['Porte sur ses gonds', 'une rotation', '1'],
+        ['Tiroir', 'une translation', '1'], ['Pièces rivetées', 'aucun', '0']]) +
+      BOX(P('6 mouvements élémentaires : 3 translations et 3 rotations.', 'Nombre de degrés de liberté = nombre de mouvements indépendants possibles (de 0 à 6).'))
+  },
+  {
+    chap: 3,
+    title: 'Liaisons et schéma cinématique',
+    support: 'Cours Modélisation cinématique · PC Assemblage, graphe et schéma cinématique',
+    body:
+      H('1. Liaisons parfaites') +
+      P('Deux pièces sont en <b>liaison</b> si elles restent en contact pendant le fonctionnement. La liaison est caractérisée par ses degrés de liberté, la forme du contact et les mouvements possibles.') +
+      P('On suppose les liaisons <b>parfaites</b> : surfaces géométriquement parfaites et indéformables, contact permanent, sans jeu ni frottement.') +
+      H('2. Les liaisons normalisées') +
+      P('Dans le tableau, l\'axe principal de la liaison est x ; R désigne les rotations possibles et T les translations possibles.') +
+      table(['Liaison', 'ddl', 'R', 'T'], [['Encastrement', '0', '—', '—'], ['Pivot', '1', 'Rx', '—'], ['Glissière', '1', '—', 'Tx'],
+        ['Hélicoïdale', '1', 'Rx liée à Tx', '(vis-écrou)'], ['Pivot glissant', '2', 'Rx', 'Tx'], ['Rotule à doigt', '2', 'Rx, Ry', '—'], ['Rotule', '3', 'Rx, Ry, Rz', '—'],
+        ['Appui plan', '3', 'Rz', 'Tx, Ty'], ['Linéaire annulaire', '4', 'Rx, Ry, Rz', 'Tx'], ['Linéaire rectiligne', '4', 'Rx, Rz', 'Tx, Ty'], ['Ponctuelle', '5', 'Rx, Ry, Rz', 'Tx, Ty']]) +
+      P('Le <b>bâti</b> représente les parties fixes. L\'absence de contact s\'appelle une liaison libre (6 ddl).') +
+      H('3. Le graphe des liaisons') +
+      P('Il représente chaque classe d\'équivalence par un cercle et chaque liaison par un trait portant son nom. Il n\'y a liaison entre deux classes que si au moins une pièce de chacune est en contact avec l\'autre.') +
+      fig(`<svg viewBox="0 0 340 170" role="img" style="max-width:420px">
+        <line class="thin" x1="60" y1="120" x2="170" y2="40"/><line class="thin" x1="170" y1="40" x2="280" y2="120"/><line class="thin" x1="60" y1="120" x2="280" y2="120"/>
+        <circle class="fillv" cx="60" cy="120" r="22"/><circle class="fillv" cx="170" cy="40" r="22"/><circle class="fillv" cx="280" cy="120" r="22"/>
+        <text x="60" y="126" text-anchor="middle" style="font-size:16px">A</text><text x="170" y="46" text-anchor="middle" style="font-size:16px">B</text><text x="280" y="126" text-anchor="middle" style="font-size:16px">C</text>
+        <text x="100" y="68" text-anchor="end" style="font-size:14px">pivot</text><text x="240" y="68" style="font-size:14px">pivot</text><text x="170" y="150" text-anchor="middle" style="font-size:14px">glissière</text></svg>`,
+        'Exemple de graphe des liaisons à trois classes d\'équivalence (A : bâti)') +
+      H('4. Le schéma cinématique') +
+      P('C\'est la représentation de toutes les liaisons d\'un mécanisme par leurs symboles normalisés. Il montre les mouvements possibles entre les classes d\'équivalence. Règles :') +
+      UL('les pièces sont dessinées par de simples traits, sans épaisseur ;', 'chaque liaison est représentée par son symbole normalisé, correctement orienté ;', 'la disposition des liaisons est respectée, mais pas l\'échelle ;', 'une couleur par classe d\'équivalence.') +
+      H('5. Méthode') +
+      ol('Lire les documents (plan, nomenclature) et mettre à part les pièces déformables.', 'Regrouper les pièces en classes d\'équivalence (une lettre et une couleur par classe).',
+        'Chercher les contacts entre classes et tracer le graphe des liaisons.', 'Identifier chaque liaison par ses mouvements possibles.',
+        'Tracer le schéma : placer le repère et le centre des liaisons, dessiner les symboles, relier les traits de même couleur, ajouter le bâti et le nom des classes.') +
+      BOX(P('Pivot : 1 rotation ; glissière : 1 translation ; pivot glissant : 1 rotation + 1 translation de même axe ; encastrement : aucun mouvement.', 'Graphe des liaisons d\'abord, schéma cinématique ensuite.'))
+  },
+  {
+    chap: 3,
+    title: 'Relations cinématiques : translation et rotation',
+    support: 'Fiche « Relations cinématiques importantes » · TP Cinématique du bras robotisé',
+    body:
+      H('1. Translation rectiligne') +
+      M('v = \\frac{d}{\\Delta t}') + P(`avec ${m('v')} en m/s, ${m('d')} en m et ${m('\\Delta t')} en s.`) +
+      P('Pour passer des km/h aux m/s on divise par 3,6 ; pour passer des m/s aux km/h on multiplie par 3,6. Exemple : 36 km/h = 10 m/s et 5 m/s = 18 km/h.') +
+      H('2. Rotation') +
+      P('Un angle se mesure en tours, en degrés ou en radians : 1 tour = 360° = 2π rad. La vitesse de rotation s\'exprime :') +
+      UL('en <b>tours par minute</b> (tr/min), notée N ;', 'en <b>radians par seconde</b> (rad/s), notée ω et appelée vitesse angulaire.') +
+      M('\\omega = \\frac{2 \\pi N}{60}') + P('Inversement :') + M('N = \\frac{60\\, \\omega}{2 \\pi}') +
+      H('3. Lien entre rotation et translation') +
+      P('Pour une roue, une poulie ou une pale de rayon R (en m) :') +
+      UL(`distance parcourue en un tour : ${m('d = 2 \\pi R = \\pi D')} ;`, `distance parcourue pour un angle θ en radians : ${m('d = R \\times \\theta')} ;`, 'vitesse linéaire d\'un point situé à la distance R de l\'axe :') +
+      M('V = R \\times \\omega') + P(`avec ${m('V')} en m/s, ${m('R')} en m et ${m('\\omega')} en rad/s.`) +
+      EX('Exemple : pale d\'éolienne', P('Une pale de 40 m tourne à 14 tr/min :') + M('\\omega = \\frac{2 \\pi \\times 14}{60} = 1{,}47\\,\\text{rad/s}') +
+        M('V = 40 \\times 1{,}47 = 58{,}6\\,\\text{m/s} \\approx 211\\,\\text{km/h}')) +
+      EX('Exemple : roue de véhicule', P('Un véhicule roule à 209 km/h avec des roues de 88,9 cm de diamètre :') + M('V = \\frac{209}{3{,}6} = 58{,}1\\,\\text{m/s} \\qquad \\omega = \\frac{V}{R} = \\frac{58{,}1}{0{,}4445} = 131\\,\\text{rad/s}') +
+        M('N = \\frac{60 \\times 131}{2 \\pi} \\approx 1\\,250\\,\\text{tr/min}')) +
+      H('4. Le vecteur vitesse') +
+      P('La vitesse d\'un point est un vecteur : sa <b>direction</b> est tangente à la trajectoire, son <b>sens</b> est celui du mouvement, sa <b>norme</b> est la valeur de la vitesse et son <b>point d\'application</b> est le point étudié.') +
+      BOX(P('ω = 2πN / 60 et V = R × ω, avec ω en rad/s et R en m.', '÷ 3,6 pour passer des km/h aux m/s.'))
+  },
+  // ===================== Séquence 4 =====================
+  {
+    chap: 4,
+    title: 'Grandeurs électriques',
+    support: 'Cours Grandeurs électriques',
+    body:
+      H('1. Tension et courant') +
+      P('Analogie avec une chute d\'eau : la hauteur de chute correspond à la <b>tension</b> U (en volts, c\'est l\'effort) et le débit d\'eau au <b>courant</b> I (en ampères, c\'est le flux). Sans tension, aucun courant ne circule.') +
+      P('On mesure un courant avec un <b>ampèremètre branché en série</b> et une tension avec un <b>voltmètre branché en parallèle</b> (en dérivation).') +
+      H('2. Continu et alternatif') +
+      UL('<b>Continu</b> (DC) : valeur constante dans le temps. Sources : piles, batteries, panneaux photovoltaïques.', '<b>Alternatif</b> (AC) : valeur moyenne nulle, autant de parties positives que négatives, le plus souvent sinusoïdal. Sources : alternateurs des centrales et des éoliennes.') +
+      graph({ x0: 0, x1: 40, dx: 5, y0: -400, y1: 400, dy: 100, w: 420, h: 250, xlab: 't (ms)', ylab: 'u (V)', series: [{ pts: curve(t => 325 * Math.sin(2 * Math.PI * t / 20), 0, 40) }],
+        extra: (X, Y) => `<line class="c3" x1="${X(0)}" y1="${Y(325)}" x2="${X(40)}" y2="${Y(325)}"/><text x="${X(26)}" y="${Y(345)}" style="font-size:14px">Umax = 325 V</text>`, cap: 'Tension du secteur : 230 V efficaces, 50 Hz (T = 20 ms)' }) +
+      P('Une tension sinusoïdale est caractérisée par :') +
+      UL(`sa <b>période</b> T (en s) et sa <b>fréquence</b> ${m('f = 1/T')} (en Hz) ;`, 'son <b>amplitude</b> Umax (valeur maximale) ;', 'sa <b>valeur efficace</b> U : la tension continue qui produirait le même effet (le même échauffement).') +
+      M('U = \\frac{U_{max}}{\\sqrt{2}}') + P('Cette relation n\'est valable que pour une sinusoïde.') +
+      H('3. Monophasé et triphasé') +
+      P('En triphasé, l\'alternateur délivre trois sinusoïdes de même fréquence et de même amplitude, décalées de 120°. Le réseau français est en 230 V / 400 V, 50 Hz :') +
+      UL('V = 230 V : tension simple, entre une phase et le neutre ;', 'U = 400 V : tension composée, entre deux phases.') + M('U = \\sqrt{3} \\times V') +
+      H('4. Puissance électrique') +
+      table(['Alimentation', 'Puissance (W)'], [['Continu', 'P = U × I'], ['Alternatif monophasé', 'P = V × I × cos φ'], ['Alternatif triphasé', 'P = √3 × U × I × cos φ']]) +
+      P('cos φ est le <b>facteur de puissance</b> (φ : déphasage entre la tension et le courant). On mesure la puissance avec un wattmètre.') +
+      EX('Exemple : moteur de 750 W', M('\\text{Continu 24 V :}\\quad I = \\frac{750}{24} = 31{,}3\\,\\text{A}') +
+        M('\\text{Monophasé, } \\cos\\varphi = 0{,}8 :\\quad I = \\frac{750}{230 \\times 0{,}8} = 4{,}08\\,\\text{A}') +
+        M('\\text{Triphasé, } \\cos\\varphi = 0{,}85 :\\quad I = \\frac{750}{\\sqrt{3} \\times 400 \\times 0{,}85} = 1{,}27\\,\\text{A}')) +
+      H('5. Le transport de l\'électricité') +
+      UL('On transporte en triphasé : c\'est le meilleur compromis entre puissance transportée et coût.', `On élève la tension (jusqu'à 400 kV) pour réduire le courant et donc les pertes par effet Joule ${m('P_J = R \\times I^2')}.`,
+        'Les câbles sont en aluminium (plus léger et moins cher que le cuivre) et nus, sans isolant, pour ne pas les alourdir.') +
+      H('6. Dangers et protections') +
+      P('La gravité d\'une électrocution dépend du trajet du courant dans le corps, de son intensité et de sa durée : quelques dizaines de milliampères pendant quelques dizaines de millisecondes suffisent à être en danger.') +
+      UL('Le <b>disjoncteur</b> protège l\'installation contre les surcharges et les courts-circuits.', 'Le <b>dispositif différentiel 30 mA</b> protège les personnes en coupant le courant en cas de fuite vers la terre.') +
+      BOX(P('Continu : P = U × I. Alternatif sinusoïdal : U = Umax / √2 et f = 1 / T.', 'Réseau : 230 V entre phase et neutre, 400 V entre phases, 50 Hz.'))
+  },
+  {
+    chap: 4,
+    title: 'Énergie solaire photovoltaïque',
+    support: 'Cours Panneaux photovoltaïques · TD Panneaux PV',
+    body:
+      H('1. L\'effet photovoltaïque') +
+      P('Quand une cellule photovoltaïque est éclairée, un photon d\'énergie suffisante peut arracher un électron au matériau : ces électrons forment un courant <b>continu</b>.') +
+      P('Ne pas confondre avec les panneaux solaires <b>thermiques</b>, qui chauffent de l\'eau. Les cellules sont le plus souvent en silicium, abondant sur Terre. Le temps de retour énergétique est d\'environ 3 ans, la durée de vie de 20 à 30 ans et environ 95 % d\'un panneau est recyclable.') +
+      H('2. Caractéristique courant-tension') +
+      P('La caractéristique I = f(U) a toujours la même allure ; ses valeurs dépendent de l\'<b>irradiance</b> (puissance lumineuse reçue par m², en W/m²) :') +
+      graph({ x0: 0, x1: 40, dx: 5, y0: 0, y1: 9, dy: 1, w: 420, h: 250, xlab: 'U (V)', ylab: 'I (A)',
+        series: [{ pts: curve(U => Math.max(0, 8 * (1 - Math.exp((U - 37) / 1.6))), 0, 37.2) }, { pts: curve(U => Math.max(0, 4 * (1 - Math.exp((U - 35.5) / 1.6))), 0, 35.7), cls: 'c2' }],
+        extra: (X, Y) => `<text x="${X(3)}" y="${Y(8.3)}" style="font-size:14px">1 000 W/m²</text><text x="${X(3)}" y="${Y(4.3)}" style="font-size:14px">500 W/m²</text>`, cap: 'Le courant de court-circuit Icc est proportionnel à l\'irradiance ; la tension à vide U0 en dépend peu' }) +
+      UL('<b>Icc</b> (courant de court-circuit, U = 0) : quasiment proportionnel à l\'irradiance.', '<b>U0</b> (tension à vide, I = 0) : varie peu avec l\'irradiance.',
+        'La puissance P = U × I passe par un maximum : un régulateur <b>MPPT</b> fait travailler le panneau à ce point. Des trackers orientent les panneaux vers le soleil.',
+        'Les panneaux n\'aiment pas la chaleur : environ 0,4 % de rendement en moins par degré.') +
+      H('3. Puissance crête et rendement') +
+      P('Les panneaux sont testés dans les <b>conditions standard</b> : irradiance de 1 000 W/m² et cellules à 25 °C. La puissance maximale mesurée est la <b>puissance crête</b>, en watts-crête (Wc).') +
+      M('\\eta = \\frac{P_{crête}}{1\\,000 \\times S} \\qquad P = \\text{irradiance} \\times S \\times \\eta') +
+      P('Le rendement des panneaux courants est de l\'ordre de 15 à 20 %.') +
+      EX('Exemple', P('Un panneau de 0,85 m², de rendement 16,5 %, reçoit 900 W/m² :') + M('P = 900 \\times 0{,}85 \\times 0{,}165 = 126\\,\\text{W}')) +
+      H('4. Associer des panneaux') +
+      UL('<b>En série</b> : les tensions s\'additionnent, le courant reste celui d\'un panneau.', '<b>En parallèle</b> : les courants s\'additionnent, la tension reste celle d\'un panneau.', 'Dans les deux cas, les puissances s\'additionnent.') +
+      H('5. Énergie produite') +
+      P('L\'énergie produite sur une période se calcule avec E = P × Δt, en tenant compte de l\'ensoleillement réel du site (heures équivalentes à pleine puissance).') +
+      BOX(P('Conditions standard : 1 000 W/m² et 25 °C ; puissance crête en Wc.', 'P = irradiance × S × η ; série : tensions ajoutées, parallèle : courants ajoutés.'))
+  },
+  {
+    chap: 4,
+    title: 'Piles, accumulateurs et batteries',
+    support: 'Cours Batteries · TD Batteries',
+    body:
+      H('1. Définitions') +
+      UL('Une <b>pile</b> est un générateur électrochimique à usage unique : sa décharge est irréversible.', 'Un <b>accumulateur</b> est un générateur électrochimique réversible : il se décharge et se recharge. La « pile rechargeable » est en fait un accumulateur.',
+        'Une <b>batterie</b> est un assemblage d\'accumulateurs en série et/ou en parallèle.') +
+      P('Tous délivrent un courant <b>continu</b>.') +
+      H('2. Caractéristiques') +
+      UL('<b>Tension nominale</b> U (V) : tension en fonctionnement normal.', '<b>Capacité</b> Q (Ah) : quantité d\'électricité disponible. 1 Ah, c\'est 1 A pendant 1 h, ou 2 A pendant 30 min.') +
+      M('E = Q \\times U') + P(`avec ${m('E')} en Wh, ${m('Q')} en Ah et ${m('U')} en V.`) + P('L\'autonomie (durée de décharge) vaut :') +
+      M('\\Delta t = \\frac{Q}{I} = \\frac{E}{P}') +
+      EX('Exemples', P('Batterie 12 V, 7 Ah : E = 12 × 7 = 84 Wh.', 'Téléphone 3,7 V, 4 600 mAh : E = 3,7 × 4,6 ≈ 17 Wh. Avec un chargeur de 67 W, la recharge durerait en théorie 17 / 67 ≈ 0,25 h ≈ 15 min ; en réalité le constructeur annonce 39 min car la puissance de charge baisse en fin de charge.')) +
+      P('Pour préserver une batterie lithium-ion : éviter de descendre sous 20 % et de dépasser 80 %, privilégier des charges courtes et répétées.') +
+      H('3. Associer des accumulateurs') +
+      table(['Montage', 'Tension', 'Capacité', 'Énergie'], [['Série', 'les tensions s\'ajoutent', 'celle d\'un élément', 'somme des énergies'], ['Parallèle', 'celle d\'un élément', 'les capacités s\'ajoutent', 'somme des énergies']]) +
+      EX('Exemple : deux éléments 3,7 V et 800 mAh', P('En série : U = 7,4 V, Q = 0,8 Ah, E = 5,92 Wh. En parallèle : U = 3,7 V, Q = 1,6 Ah, E = 5,92 Wh. L\'énergie totale est la même.')) +
+      H('4. Énergie massique et volumique') +
+      P('Pour un véhicule ou un objet portable, on compare l\'énergie stockée par kilogramme ou par m³ :') + M('E_m = \\frac{E}{m}\\ (\\text{Wh/kg}) \\qquad E_V = \\frac{E}{V}\\ (\\text{Wh/m}^3)') +
+      EX('Exemple : pile 9 V, 500 mAh, 45,6 g, 47,5 × 25,5 × 16,5 mm', P('E = 9 × 0,5 = 4,5 Wh ; V ≈ 20 cm³ = 20 × 10⁻⁶ m³.') + M('E_m = \\frac{4{,}5}{0{,}0456} = 98{,}7\\,\\text{Wh/kg} \\qquad E_V = \\frac{4{,}5}{20 \\times 10^{-6}} = 225\\,\\text{kWh/m}^3') +
+        P('Pour un détecteur de fumée de 0,30 mW : Δt = 4,5 / 0,0003 = 15 000 h, soit environ 625 jours.')) +
+      H('5. Impact environnemental') +
+      P('Les batteries contiennent des produits toxiques ; elles doivent être collectées et recyclées (la loi impose au moins 50 % de recyclage pour les batteries au lithium). Les impacts ont aussi lieu à l\'extraction des métaux : il faut raisonner sur tout le cycle de vie.') +
+      BOX(P('E = Q × U (Wh) ; autonomie Δt = Q / I = E / P.', 'Série : tensions ajoutées ; parallèle : capacités ajoutées.'))
+  },
+  {
+    chap: 4,
+    title: 'Convertir l\'énergie électrique',
+    support: 'PC Adaptation AC/DC · PC Schémas fluidiques',
+    body:
+      H('1. Pourquoi convertir ?') +
+      P('Les sources et les récepteurs n\'utilisent pas tous la même forme d\'électricité : le réseau fournit de l\'alternatif, une batterie du continu, un moteur peut demander une tension réglable. Les <b>convertisseurs statiques</b> (sans pièce en mouvement) adaptent l\'énergie électrique.') +
+      UL('<b>Redresseur</b> (alternatif → continu) : chargeur de téléphone, alimentation d\'un appareil électronique.',
+        '<b>Onduleur</b> (continu → alternatif) : installation photovoltaïque raccordée au réseau, véhicule électrique.',
+        '<b>Hacheur</b> (continu → continu réglable) : variateur de vitesse d\'un moteur à courant continu.',
+        '<b>Transformateur</b> (alternatif → alternatif d\'une autre tension) : élever la tension pour le transport, l\'abaisser pour la distribution.',
+        '<b>Gradateur</b> (alternatif → alternatif réglable) : variateur de lumière.') +
+      H('2. Du réseau à l\'appareil électronique') +
+      CHAIN([['Transformateur', '230 V → 12 V alternatif'], ['Redresseur', 'tension redressée'], ['Filtrage', 'condensateur'], ['Régulation', 'tension continue stable']]) +
+      P('Le transformateur abaisse la tension, le pont de diodes la redresse, le condensateur la lisse et le régulateur la stabilise.') +
+      H('3. Le transformateur') +
+      P('Il ne fonctionne qu\'en alternatif. Le rapport des tensions est égal au rapport des nombres de spires :') + M('\\frac{U_2}{U_1} = \\frac{N_2}{N_1}') +
+      P('Si N2 < N1, il abaisse la tension. Son rendement est très bon (souvent plus de 95 %).') +
+      H('4. Le hacheur et la commande PWM') +
+      P('Le hacheur découpe une tension continue en créneaux : la tension moyenne en sortie vaut α × U, où α est le rapport cyclique du signal PWM. C\'est ainsi qu\'on règle la vitesse d\'un moteur ou la luminosité d\'une LED.') +
+      H('5. Les schémas fluidiques') +
+      P('En hydraulique et en pneumatique, on représente aussi les circuits par des symboles normalisés : pompe ou compresseur (Alimenter), distributeur (Distribuer), vérin ou moteur hydraulique (Convertir), canalisations et appareils de mesure. On y retrouve la même logique que pour la chaîne de puissance électrique.') +
+      BOX(P('Redresseur : AC → DC ; onduleur : DC → AC ; hacheur : DC → DC réglable ; transformateur : AC → AC.', 'U2 / U1 = N2 / N1 pour un transformateur.'))
+  },
+  // ===================== Séquence 5 =====================
+  {
+    chap: 5,
+    title: 'Information et signaux',
+    support: 'Cours Chaîne d\'information · PC Génération et filtrage',
+    body:
+      H('1. Nature de l\'information') +
+      table(['Information', 'Valeurs possibles', 'Exemple'], [['Analogique', 'une infinité de valeurs continues', 'tension d\'un capteur de température'],
+        ['Logique (tout ou rien)', 'deux états : 0 ou 1', 'bouton appuyé ou non, porte ouverte ou fermée'], ['Numérique', 'des nombres codés en binaire', 'valeur envoyée par un microcontrôleur']]) +
+      P('Un microcontrôleur ne traite que du binaire : une information analogique doit être <b>numérisée</b> par un convertisseur analogique-numérique.') +
+      H('2. L\'oscillogramme') +
+      P('Un oscilloscope affiche l\'évolution d\'un signal dans le temps. On lit les valeurs avec deux réglages :') +
+      UL('le <b>calibre</b> vertical (en V par division) ;', 'la <b>base de temps</b> horizontale (en s, ms ou µs par division).') +
+      P('Valeur lue = nombre de divisions × calibre.') +
+      H('3. Signaux périodiques') +
+      P('Un signal périodique se répète identique à lui-même. La durée d\'un motif est la <b>période</b> T (s) ; la <b>fréquence</b> f (Hz) est le nombre de motifs par seconde :') +
+      M('f = \\frac{1}{T}') + P('Exemple : un signal de 200 Hz a une période T = 1 / 200 = 5 ms. L\'<b>amplitude</b> est la valeur maximale atteinte.') +
+      H('4. Signal PWM et rapport cyclique') +
+      P('Un signal PWM (modulation de largeur d\'impulsion) est un signal carré dont la durée à l\'état haut peut varier. Le <b>rapport cyclique</b> vaut :') +
+      M('\\alpha = \\frac{t_{haut}}{T}') +
+      graph({ x0: 0, x1: 30, dx: 5, y0: 0, y1: 6, dy: 1, w: 420, h: 220, xlab: 't (ms)', ylab: 'u (V)',
+        series: [{ pts: [[0, 0], [0, 5], [2.5, 5], [2.5, 0], [10, 0], [10, 5], [12.5, 5], [12.5, 0], [20, 0], [20, 5], [22.5, 5], [22.5, 0], [30, 0]] }], cap: 'T = 10 ms et 2,5 ms à l\'état haut : α = 25 %' }) +
+      P('On l\'utilise pour commander la vitesse d\'un moteur ou la luminosité d\'une LED : la tension moyenne vaut α × Umax.') +
+      H('5. Harmoniques et filtres') +
+      P('Un signal périodique non sinusoïdal est la somme d\'une sinusoïde de même fréquence (le <b>fondamental</b>) et de sinusoïdes de fréquences multiples 2f, 3f… (les <b>harmoniques</b>). Un filtre laisse passer certaines fréquences et en atténue d\'autres :') +
+      UL('<b>passe-bas</b> : garde les basses fréquences (supprime le bruit rapide) ;', '<b>passe-haut</b> : garde les hautes fréquences ;', '<b>passe-bande</b> : garde une bande de fréquences.') +
+      BOX(P('f = 1 / T ; valeur lue = divisions × calibre.', 'Rapport cyclique α = durée à l\'état haut / période.'))
+  },
+  {
+    chap: 5,
+    title: 'Capteurs et détecteurs',
+    support: 'Cours Acquisition de l\'information · TD Capteurs · PC Hemo-mixer',
+    body:
+      H('1. Définition') +
+      P('Un <b>capteur</b> transforme une grandeur physique (température, position, effort…) en une grandeur utilisable, le plus souvent une tension ou un courant, souvent très faible (mV, mA). Il réalise la fonction <b>Acquérir</b> de la chaîne d\'information.') +
+      H('2. Capteurs actifs et passifs') +
+      UL('<b>Actifs</b> : ils produisent eux-mêmes un signal électrique. Effet thermoélectrique (thermocouple), piézoélectrique (déformation → charges électriques), photoélectrique (lumière → courant, photodiode).',
+        '<b>Passifs</b> : leur résistance (ou leur capacité) varie avec la grandeur mesurée. Il faut les alimenter. Exemples : sonde PT100, thermistance, jauge de contrainte.') +
+      P('Sonde <b>PT100</b> : résistance de platine qui vaut 100 Ω à 0 °C et augmente avec la température :') +
+      M('R_T = R_0 \\,(1 + A \\cdot T) \\qquad R_0 = 100\\,\\Omega,\\ A = 3{,}9 \\times 10^{-3}\\ {}^\\circ\\text{C}^{-1}') +
+      P('À 50 °C : R = 100 × (1 + 3,9 × 10⁻³ × 50) = 119,5 Ω.') +
+      H('3. Capteur à sortie en tension') +
+      P('Beaucoup de capteurs donnent une tension proportionnelle à la grandeur mesurée. On l\'exploite avec un produit en croix.') +
+      EX('Exemple', P('Un capteur de vitesse fournit 0 à 10 V pour 0 à 130 km/h. Il délivre 4,3 V :') + M('v = \\frac{4{,}3 \\times 130}{10} = 55{,}9\\,\\text{km/h}')) +
+      H('4. Détecteurs (tout ou rien)') +
+      P('Un <b>détecteur</b> indique seulement la présence (état haut, 1, par exemple 5 V) ou l\'absence (état bas, 0, 0 V) d\'un objet.') +
+      table(['Détecteur', 'Principe', 'Usage'], [['Interrupteur de position', 'contact mécanique', 'fin de course d\'un mécanisme'], ['Inductif', 'sans contact, détecte les métaux à quelques mm', 'position d\'une pièce métallique'],
+        ['Capacitif', 'sans contact, détecte tous les matériaux, même les liquides', 'niveau dans une cuve'], ['Photoélectrique', 'faisceau lumineux coupé ou renvoyé, grande portée', 'passage d\'objets sur un convoyeur'],
+        ['ILS (interrupteur à lame souple)', 'se ferme à l\'approche d\'un aimant', 'ouverture de porte, position d\'un vérin']]) +
+      H('5. Caractéristiques métrologiques') +
+      UL('<b>Étendue de mesure</b> : plage de valeurs mesurables.', '<b>Sensibilité</b> : variation de la sortie pour une variation de la grandeur mesurée (exemple : 10 mV/°C).',
+        '<b>Précision</b> : dispersion des mesures répétées. <b>Exactitude</b> : proximité avec la vraie valeur. On peut être précis sans être exact.', '<b>Temps de réponse</b> : délai pour que la sortie suive un changement.',
+        '<b>Étalonnage</b> : associer une valeur de sortie à une valeur connue de la grandeur mesurée.') +
+      BOX(P('Actif : produit un signal ; passif : doit être alimenté (PT100).', 'Détecteur TOR : 0 ou 1 ; capteur analogique : une valeur continue.'))
+  },
+  {
+    chap: 5,
+    title: 'Codage de l\'information',
+    support: 'Cours Codage · TD Codage',
+    body:
+      H('1. Bit, octet et mot') +
+      UL('Le <b>bit</b> (b, binary digit) vaut 0 ou 1 : c\'est l\'unité élémentaire de l\'information.', 'L\'<b>octet</b> (en anglais <i>byte</i>, noté B ou o) est un groupe de 8 bits, la plus petite unité adressable d\'un ordinateur.',
+        'Un <b>mot</b> de 16 bits contient 2 octets.', 'Dans un mot binaire, le bit de gauche est le bit de poids fort (MSB), celui de droite le bit de poids faible (LSB).') +
+      table(['Multiples décimaux', 'Multiples binaires'], [['1 ko = 10³ octets', '1 Kio = 2¹⁰ = 1 024 octets'], ['1 Mo = 10⁶ octets', '1 Mio = 2²⁰ octets'], ['1 Go = 10⁹ octets', '1 Gio = 2³⁰ octets']]) +
+      H('2. Les bases') +
+      table(['Base', 'Symboles', 'Poids des rangs'], [['10 (décimal)', '0 à 9', '1, 10, 100, 1 000…'], ['2 (binaire)', '0 et 1', '1, 2, 4, 8, 16, 32, 64, 128…'], ['16 (hexadécimal)', '0 à 9 puis A à F (A = 10 … F = 15)', '1, 16, 256, 4 096…']]) +
+      H('3. Nombre de valeurs') +
+      P('Avec N bits, on peut coder 2<sup>N</sup> valeurs différentes, de 0 à 2<sup>N</sup> − 1. Sur 8 bits : 256 valeurs, de 0 à 255.') +
+      H('4. Conversions') +
+      table(['Conversion', 'Méthode', 'Exemple'], [['Binaire → décimal', 'somme des poids des bits à 1', '101 = 4 + 1 = 5'], ['Hexadécimal → décimal', 'chaque symbole × sa puissance de 16', 'B1 = 11 × 16 + 1 = 177'],
+        ['Binaire → hexadécimal', 'grouper les bits par 4 à partir de la droite', '1011 1111 0001 = BF1'], ['Hexadécimal → binaire', 'chaque symbole donne 4 bits', 'AB2 = 1010 1011 0010'],
+        ['Décimal → binaire', 'divisions successives par 2, lire les restes à l\'envers', '166 = 1010 0110'], ['Décimal → hexadécimal', 'divisions successives par 16', '195 = 12 × 16 + 3 = C3']]) +
+      H('5. Entiers signés') +
+      P('Si l\'on précise que l\'interprétation est <b>signée</b>, le bit de poids fort indique le signe (1 = négatif). Exemple sur 4 bits : 1011 vaut 11 en non signé mais −5 en signé.') +
+      H('6. Code ASCII') +
+      P('Le code ASCII associe un nombre sur 7 bits à chaque caractère : « A » = 65 (41 en hexadécimal), « a » = 97, « 0 » = 48, espace = 32. Les lettres se suivent : « B » = 66, « C » = 67…') +
+      H('7. Opérations logiques bit à bit') +
+      P('On applique ET, OU… bit par bit à deux mots binaires. Le ET sert de <b>masque</b> pour isoler des bits : 1011 0110 ET 0000 1111 = 0000 0110.') +
+      H('8. Débit et durée de transmission') +
+      P('Le débit s\'exprime en bit/s. Pour un fichier de taille donnée en octets :') + M('\\Delta t = \\frac{\\text{taille (octets)} \\times 8}{\\text{débit (bit/s)}}') +
+      EX('Exemple', P('Un fichier de 5 Mo avec un débit de 20 Mbit/s : Δt = 5 × 10⁶ × 8 / (20 × 10⁶) = 2 s.')) +
+      BOX(P('N bits : 2<sup>N</sup> valeurs, de 0 à 2<sup>N</sup> − 1.', '1 octet = 8 bits ; ne pas confondre b (bit) et B (byte, octet).'))
+  },
+  {
+    chap: 5,
+    title: 'Conversion analogique-numérique',
+    support: 'Cours/TD Convertisseur analogique-numérique',
+    body:
+      H('1. La chaîne d\'acquisition') +
+      CHAIN([['Capteur', 'grandeur → tension'], ['Conditionnement', 'amplifier, filtrer'], ['CAN', 'tension → binaire'], ['Traitement', 'microcontrôleur']]) +
+      P('Le <b>convertisseur analogique-numérique</b> (CAN) réalise la <b>numérisation</b> : il transforme une tension en nombre binaire compréhensible par le microcontrôleur.') +
+      H('2. Échantillonnage et quantification') +
+      UL('<b>Échantillonnage</b> : le CAN prélève la valeur du signal à intervalles réguliers. La fréquence d\'échantillonnage Fe est le nombre d\'échantillons par seconde ; la période vaut Te = 1 / Fe.',
+        '<b>Quantification</b> : chaque échantillon est arrondi à l\'une des valeurs permises, la valeur inférieure la plus proche.') +
+      P('Exemple : à Fe = 44,1 kHz, Te = 1 / 44 100 ≈ 22,7 µs.') +
+      H('3. Résolution et quantum') +
+      P('Un CAN de n bits peut fournir 2<sup>n</sup> valeurs différentes : c\'est sa <b>résolution</b>. Le <b>quantum</b> q est la plus petite variation de tension qui change la valeur binaire en sortie :') +
+      M('q = \\frac{\\Delta V_e}{2^n} \\qquad \\Delta V_e = V_{max} - V_{min} \\text{ (pleine échelle)}') +
+      graph({ x0: 0, x1: 8, dx: 1, y0: 0, y1: 7, dy: 1, w: 420, h: 260, xlab: 'Ve (V)', ylab: 'N', fy: y => y.toString(2).padStart(3, '0'),
+        series: [{ pts: [0, 1, 2, 3, 4, 5, 6, 7].flatMap(k => [[k, k], [k + 1, k]]) }], cap: 'CAN 3 bits, pleine échelle 8 V : q = 8 / 2³ = 1 V' }) +
+      P('Plus le nombre de bits est grand, plus le quantum est petit et plus la valeur numérique est proche de la valeur réelle.') +
+      EX('Exemples', P('CAN 8 bits, 0 à 10 V : q = 10 / 256 ≈ 0,039 V. Même résultat pour une entrée de −5 V à +5 V.', 'CAN 16 bits, 0 à 12 V : q = 12 / 65 536 ≈ 183 µV.',
+        'CAN 3 bits, 0 à 10 V, entrée 5,2 V : q = 10 / 8 = 1,25 V ; 5,2 / 1,25 = 4,16, arrondi à 4, soit 100 en binaire.')) +
+      H('4. Temps de conversion') +
+      P('C\'est la durée nécessaire pour convertir une valeur (de 10⁻⁹ à 10⁻³ s). Plus il est court, plus on peut prendre d\'échantillons… et plus le fichier obtenu est gros.') +
+      H('5. Taille d\'un fichier numérisé') +
+      M('\\text{débit (bit/s)} = F_e \\times n \\times \\text{nombre de voies}') +
+      EX('Exemple : son de qualité CD', P('44,1 kHz, 16 bits, stéréo (2 voies) : 44 100 × 16 × 2 = 1 411 200 bit/s. Une minute occupe 1 411 200 × 60 / 8 ≈ 10,6 Mo. Le format MP3 compresse ce débit à 128 kbit/s, soit environ 11 fois moins.')) +
+      BOX(P('q = (Vmax − Vmin) / 2<sup>n</sup>.', 'Te = 1 / Fe ; débit = Fe × n × nombre de voies.'))
+  },
+  // ===================== Séquence 6 =====================
+  {
+    chap: 6,
+    title: 'Actions mécaniques et équilibre',
+    support: 'Cours Actions mécaniques et équilibre · TD Actions mécaniques · PC Résolution statique',
+    body:
+      H('1. Les actions mécaniques') +
+      P('Une action mécanique peut créer ou modifier un mouvement, maintenir un corps en équilibre ou le déformer. Il en existe deux types : les <b>forces</b> (F) et les <b>moments</b> (M).') +
+      UL('<b>Actions de contact</b> : dues à un contact entre deux corps. Elles sont concentrées (ponctuelles) ou réparties sur une ligne ou une surface.', '<b>Actions à distance</b> : sans contact, réparties dans tout le corps (pesanteur, magnétisme).') +
+      H('2. Les forces') +
+      P('Une force est un vecteur : direction, sens, norme (valeur en newtons, N) et point d\'application. On utilise aussi le décanewton : 1 daN = 10 N.') +
+      P('<b>Principe des actions réciproques</b> : si A exerce une force sur B, alors B exerce sur A une force de même direction, de même norme et de sens opposé.') + M('\\vec F_{A/B} = -\\vec F_{B/A}') +
+      UL(`<b>Poids</b> : ${m('P = m \\times g')}, vertical, vers le bas, appliqué au centre de gravité.`, `<b>Force d'un fluide sur un piston</b> : ${m('F = p \\times S')} (p en Pa, S en m²).`,
+        '<b>Charge répartie</b> q (en N/m) sur une longueur L : elle équivaut à une force q × L appliquée au milieu de la longueur.') +
+      EX('Exemple : vérin sous 3 bars', P('Piston Ø 40 mm, tige Ø 20 mm, p = 3 × 10⁵ Pa.') + M('F_{sortie} = p \\times \\frac{\\pi D^2}{4} = 3 \\times 10^5 \\times \\frac{\\pi \\times 0{,}04^2}{4} = 377\\,\\text{N}') +
+        P('En rentrée, la tige réduit la surface utile : F = p × (π × 0,04² / 4 − π × 0,02² / 4) = 283 N.')) +
+      H('3. Le moment d\'une force') +
+      P('Le moment traduit la capacité d\'une force à faire tourner un corps autour d\'un point. Il s\'exprime en N·m :') +
+      M('M_A(\\vec F) = \\pm\\, L \\times F') +
+      P('L est le <b>bras de levier</b> : la distance entre le point A et la <b>droite d\'action</b> de la force (et non la distance entre A et le point d\'application). Le moment est positif si la force fait tourner dans le sens trigonométrique (inverse des aiguilles d\'une montre), négatif sinon.') +
+      H('4. Principe fondamental de la statique (PFS)') +
+      P('Un corps est en <b>équilibre</b> s\'il n\'a ni translation ni rotation. Alors :') +
+      UL('la somme vectorielle des forces qui s\'appliquent sur lui est nulle ;', 'la somme des moments de ces forces en un même point est nulle.') +
+      fig(`<svg viewBox="0 0 340 150" role="img" style="max-width:440px">
+        <rect class="fillv" x="20" y="70" width="300" height="10"/><path class="thin" d="M70 80 L58 104 H82 Z"/>
+        <line class="arrowv" x1="40" y1="20" x2="40" y2="66"/><path class="arrowv" d="M34 56 L40 68 L46 56"/>
+        <line class="arrowv" x1="300" y1="40" x2="300" y2="66"/><path class="arrowv" d="M294 56 L300 68 L306 56"/>
+        <line class="arrow" x1="70" y1="140" x2="70" y2="86"/><path class="arrow" d="M64 96 L70 84 L76 96"/>
+        <text x="46" y="30" style="font-size:14px">F1</text><text x="282" y="36" style="font-size:14px">F2</text><text x="78" y="136" style="font-size:14px">R</text><text x="66" y="62" style="font-size:14px">O</text>
+        </svg>`, 'Planche en appui en O, chargée par F1 et F2') +
+      EX('Exemple : planche en équilibre', P('F1 = 1 000 N à L1 = 0,5 m du point O, F2 = 50 N de l\'autre côté. Forces : R = F1 + F2 = 1 050 N. Moments en O :') +
+        M('F_1 \\times L_1 - F_2 \\times L_2 = 0 \\Rightarrow L_2 = \\frac{1\\,000 \\times 0{,}5}{50} = 10\\,\\text{m}')) +
+      H('5. Coefficient de sécurité') +
+      P('On dimensionne une pièce pour qu\'elle résiste avec une marge : le coefficient de sécurité s compare la charge que la pièce peut supporter à celle qu\'elle subit réellement (s > 1). Une valeur trop grande alourdit et renchérit la pièce.') +
+      BOX(P('M = L × F avec L le bras de levier (distance à la droite d\'action).', 'Équilibre : somme des forces nulle et somme des moments nulle.'))
+  },
+  {
+    chap: 6,
+    title: 'Engrenages et réducteurs de vitesse',
+    support: 'Cours Réducteurs de vitesse · PC et TP Réducteurs de vitesse',
+    body:
+      H('1. Vocabulaire') +
+      UL('Deux <b>roues dentées</b> en contact forment un <b>engrenage</b>. La plus petite s\'appelle le <b>pignon</b>, la plus grande la <b>roue</b>.', 'La <b>roue menante</b> entraîne l\'autre (entrée) ; la <b>roue menée</b> est entraînée (sortie).',
+        'Deux roues en contact extérieur tournent en sens inverses.') +
+      P('Un engrenage peut transmettre une rotation, réduire ou augmenter la vitesse (et donc augmenter ou réduire le couple), changer l\'axe de rotation (renvoi d\'angle) ou transformer une rotation en translation.') +
+      table(['Type', 'Particularité'], [['Droit à denture droite', 'le plus courant, simple et économique ; arbres parallèles'], ['Droit à denture hélicoïdale', 'plus silencieux et plus résistant'],
+        ['Conique', 'arbres non parallèles (renvoi d\'angle)'], ['Roue et vis sans fin', 'renvoi à angle droit, grande réduction ; la roue ne peut pas entraîner la vis'], ['Pignon-crémaillère', 'rotation ↔ translation']]) +
+      H('2. Le module') +
+      P('Les dimensions d\'une roue à denture droite sont fixées par son <b>module</b> m (en mm) et son nombre de dents Z (entier) :') +
+      M('d = m \\times Z \\qquad a = \\frac{d_1 + d_2}{2} = \\frac{m\\,(Z_1 + Z_2)}{2}') +
+      P('d est le diamètre primitif et a l\'entraxe. Deux roues ne peuvent engrener que si elles ont le <b>même module</b>.') +
+      H('3. Rapport de transmission') +
+      M('r = \\frac{N_{sortie}}{N_{entrée}} = \\frac{\\omega_{sortie}}{\\omega_{entrée}} = \\frac{Z_{menante}}{Z_{menée}}') +
+      UL('r < 1 : <b>réducteur</b> (après un moteur, pour réduire la vitesse et augmenter le couple) ;', 'r > 1 : <b>multiplicateur</b> (éolienne, pour augmenter la vitesse de la génératrice).') +
+      EX('Exemple : pétrin', P('Un moteur à 480 tr/min doit entraîner une pale à 30 tr/min : r = 30 / 480 = 0,0625. Avec un pignon de 10 dents : Zmenée = 10 / 0,0625 = 160 dents. Avec m = 3, la roue mesure 3 × 160 = 480 mm : trop grande pour une cuve de 450 mm, il faut plusieurs étages.')) +
+      H('4. Cascade et train d\'engrenages') +
+      UL('Dans une <b>cascade</b> (roues en ligne), les roues intermédiaires (pignons fous) ne changent pas le rapport : r = Z<sub>entrée</sub> / Z<sub>sortie</sub>. Elles servent à régler l\'entraxe ou le sens de rotation.',
+        'Dans un <b>train</b>, chaque étage combine deux roues fixées sur le même arbre :') +
+      M('r = \\frac{\\text{produit des } Z \\text{ des roues menantes}}{\\text{produit des } Z \\text{ des roues menées}} = r_1 \\times r_2 \\times \\dots') +
+      P('Le sens de sortie s\'inverse à chaque contact extérieur.') +
+      H('5. Couple et puissance') +
+      P('En rotation, la puissance vaut P = C × ω (C en N·m, ω en rad/s). Un réducteur conserve la puissance aux pertes près :') +
+      M('P_s = \\eta \\times P_e \\qquad C_s = \\frac{\\eta \\times C_e}{r}') +
+      P('Réduire la vitesse augmente donc le couple disponible.') +
+      BOX(P('r = Z menante / Z menée = N sortie / N entrée.', 'Train : r = produit des Z menantes / produit des Z menées. d = m × Z.'))
+  },
+  {
+    chap: 6,
+    title: 'Puissance d\'un véhicule en déplacement',
+    support: 'Cours/TD Puissances lors d\'un déplacement · TP Portail',
+    body:
+      H('1. Le cycle de déplacement') +
+      P('Un trajet se décompose en phases : accélération, vitesse constante, décélération, sur le plat ou en pente. Les besoins en puissance changent à chaque phase.') +
+      H('2. Les forces qui s\'opposent au mouvement') +
+      table(['Force', 'Expression', 'Origine'], [['Traînée (force fluidique)', '½ × Cx × ρ × S × V²', 'frottement de l\'air'], ['Résistance au roulement', 'Cr × m × g', 'écrasement des pneus'],
+        ['Gravité (en pente)', 'm × g × sin α', 'poids du véhicule dans la montée'], ['Inertie', 'm × a', 'accélérer la masse']]) +
+      UL('Cx : coefficient de traînée (0,25 à 0,35 pour une voiture, 0,5 à 0,9 pour un camion) ; ρ : masse volumique de l\'air (≈ 1,2 kg/m³) ; S : surface frontale (m²) ; V : vitesse (m/s).',
+        'Cr : coefficient de résistance au roulement (0,008 à 0,015 pour un pneu sur route).', 'α : angle de la pente ; a : accélération (m/s²).') +
+      P('La force de traction nécessaire est la somme de toutes ces forces :') +
+      M('F_{traction} = F_{fluidique} + F_{roulement} + F_{gravité} + m \\times a') +
+      H('3. Puissance nécessaire') +
+      M(`P_{traction} = F_{traction} \\times V \\qquad P_{moteur} = \\frac{P_{traction}}{\\eta_{transmission}}`) +
+      EX('Exemple : véhicule de 2 095 kg en montée de 5°', P('Données : S = 2,33 m², Cx = 0,29, ρ = 1,24 kg/m³, Cr = 0,01, V = 27,7 m/s, a = 4 m/s².') +
+        M('F_{fluidique} = \\tfrac{1}{2} \\times 0{,}29 \\times 1{,}24 \\times 2{,}33 \\times 27{,}7^2 = 321\\,\\text{N}') + M('F_{roulement} = 0{,}01 \\times 2\\,095 \\times 9{,}81 = 206\\,\\text{N}') +
+        M('F_{gravité} = 2\\,095 \\times 9{,}81 \\times \\sin 5^\\circ = 1\\,791\\,\\text{N}') + M('F_{traction} = 321 + 206 + 1\\,791 + 2\\,095 \\times 4 = 10\\,698\\,\\text{N}') +
+        M('P = 10\\,698 \\times 27{,}7 \\approx 296\\,\\text{kW}')) +
+      H('4. Puissance en rotation') +
+      P('Pour un arbre qui tourne, la puissance mécanique est le produit du couple par la vitesse angulaire :') + M('P = C \\times \\omega') +
+      P('Exemple : un moteur de portail fournit 2 N·m à 1 500 tr/min : ω = 157 rad/s, P = 2 × 157 ≈ 314 W.') +
+      BOX(P('Translation : P = F × V ; rotation : P = C × ω.', 'F traction = traînée + roulement + gravité + m × a.'))
+  },
+  // ===================== Séquence 7 =====================
+  {
+    chap: 7,
+    title: 'Algorithmique et algorigrammes',
+    support: 'Cours Algorithmique · TD Algorithmique · PC Algorithmique',
+    body:
+      H('1. Algorithme et algorigramme') +
+      P('Un <b>algorithme</b> est une suite finie et ordonnée d\'instructions qui permet de résoudre un problème. On le représente graphiquement par un <b>algorigramme</b>, compréhensible par tous, avant de le traduire dans un langage de programmation.') +
+      table(['Symbole', 'Rôle'], [['Ovale', 'début ou fin'], ['Rectangle', 'traitement, action (calcul, affectation)'], ['Losange', 'test : la condition est vraie (oui) ou fausse (non)'],
+        ['Parallélogramme', 'entrée (lire une donnée) ou sortie (afficher)'], ['Flèches', 'ordre d\'exécution']]) +
+      H('2. Les structures fondamentales') +
+      table(['Structure', 'Exemple'], [['Séquence', 'les instructions s\'exécutent l\'une après l\'autre'], ['Alternative partielle (SI… ALORS)', 'SI j\'ai faim, je mange'],
+        ['Alternative complète (SI… ALORS… SINON)', 'SI j\'ai de quoi payer, je mange dehors, SINON je mange à la cantine'], ['Itération à condition initiale (TANT QUE)', 'TANT QUE j\'ai faim, je mange : on teste avant d\'agir'],
+        ['Itération à condition finale (RÉPÉTER… JUSQU\'À)', 'je mange, et je recommence jusqu\'à ne plus avoir faim : on agit au moins une fois']]) +
+      H('3. La boucle avec compteur') +
+      P('Quand on connaît à l\'avance le nombre de répétitions, on utilise une variable de boucle (souvent i) que l\'on augmente de 1 à chaque tour. La flèche ← signifie « prend la valeur ».') +
+      fig(`<svg viewBox="0 0 320 400" role="img" style="max-width:340px">
+        <rect class="fillv" x="110" y="8" width="100" height="34" rx="17"/><text x="160" y="30" text-anchor="middle" style="font-size:14px">Début</text>
+        <line class="thin" x1="160" y1="42" x2="160" y2="62"/>
+        <rect class="flow" x="100" y="62" width="120" height="34"/><text x="160" y="84" text-anchor="middle" style="font-size:14px">i ← 0</text>
+        <line class="thin" x1="160" y1="96" x2="160" y2="120"/>
+        <path class="flow" d="M160 120 L230 154 L160 188 L90 154 Z"/><text x="160" y="159" text-anchor="middle" style="font-size:14px">i &lt; 10 ?</text>
+        <line class="thin" x1="160" y1="188" x2="160" y2="216"/><text x="168" y="206" style="font-size:13px">oui</text>
+        <rect class="flow" x="85" y="216" width="150" height="34"/><text x="160" y="238" text-anchor="middle" style="font-size:14px">manger une chips</text>
+        <line class="thin" x1="160" y1="250" x2="160" y2="270"/>
+        <rect class="flow" x="100" y="270" width="120" height="34"/><text x="160" y="292" text-anchor="middle" style="font-size:14px">i ← i + 1</text>
+        <polyline class="thin" points="100,287 40,287 40,110 160,110"/><path class="thin" d="M152 105 L160 110 L152 115"/>
+        <polyline class="thin" points="230,154 280,154 280,346 210,346"/><text x="240" y="146" style="font-size:13px">non</text>
+        <rect class="fillv" x="110" y="330" width="100" height="34" rx="17"/><text x="160" y="352" text-anchor="middle" style="font-size:14px">Fin</text></svg>`,
+        'Algorigramme : manger exactement 10 chips') +
+      H('4. Exemple : mot de passe avec trois essais') +
+      code(`essais ← 0
+ok ← faux
+TANT QUE ok = faux ET essais < 3
+  lire mdp
+  essais ← essais + 1
+  SI mdp = secret ALORS
+    ok ← vrai
+  SINON
+    afficher "Incorrect"
+SI ok ALORS
+  afficher "Bienvenue"
+SINON
+  afficher "Accès refusé"`) +
+      H('5. Faire la trace d\'un algorithme') +
+      P('Pour vérifier un algorithme, on suit son exécution pas à pas dans un tableau : une colonne par variable, une ligne par tour de boucle. C\'est indispensable pour savoir combien de fois une boucle s\'exécute.') +
+      H('6. Lien avec le SysML') +
+      P('En SysML, le <b>diagramme d\'états</b> (stm) décrit lui aussi l\'évolution du fonctionnement d\'un système : c\'est l\'équivalent graphique de l\'algorigramme.') +
+      BOX(P('TANT QUE : on teste avant d\'agir (0 passage possible). RÉPÉTER JUSQU\'À : on agit au moins une fois.', 'Losange = test ; rectangle = action ; ovale = début et fin.'))
+  },
+  {
+    chap: 7,
+    title: 'Logique combinatoire',
+    support: 'PC Fonctions logiques · cours Codage (algèbre de Boole)',
+    body:
+      H('1. Signaux et variables logiques') +
+      P('Un signal logique n\'a que deux états : état haut (1, vrai, HIGH) et état bas (0, faux, LOW). Exemples : bouton appuyé ou non, porte ouverte ou fermée, jour ou nuit. Une variable logique s\'appelle aussi un <b>booléen</b>.') +
+      P('En <b>logique combinatoire</b>, l\'état des sorties ne dépend que de l\'état actuel des entrées. En logique <b>séquentielle</b> (algorithmes), il dépend aussi de ce qui s\'est passé avant.') +
+      H('2. Les fonctions logiques') +
+      table(['Fonction', 'Équation', 'Sortie à 1 quand…'], [['OUI', 'S = a', 'a = 1'], ['NON', 'S = ā', 'a = 0'], ['ET (AND)', 'S = a · b', 'a ET b valent 1'], ['OU (OR)', 'S = a + b', 'au moins une entrée vaut 1'],
+        ['NON-ET (NAND)', 'S = <span style="text-decoration:overline">a · b</span>', 'pas toutes les entrées à 1'], ['NON-OU (NOR)', 'S = <span style="text-decoration:overline">a + b</span>', 'toutes les entrées à 0'],
+        ['OU exclusif (XOR)', 'S = a ⊕ b', 'les entrées sont différentes']]) +
+      P('Attention : « + » se lit OU et « · » se lit ET.') +
+      H('3. Table de vérité') +
+      P('Elle donne l\'état de la sortie pour toutes les combinaisons des entrées : avec n entrées, il y a 2<sup>n</sup> lignes.') +
+      table(['a', 'b', 'ET', 'OU', 'NAND', 'NOR', 'XOR'], [[0, 0, 0, 0, 1, 1, 0], [0, 1, 0, 1, 1, 0, 1], [1, 0, 0, 1, 1, 0, 1], [1, 1, 1, 1, 0, 0, 0]]) +
+      H('4. Autres représentations') +
+      UL('<b>Logigramme</b> : l\'équation dessinée avec des portes logiques (entrées à gauche, sortie à droite).', '<b>Schéma à contacts</b> : le ET correspond à des contacts en série, le OU à des contacts en parallèle.',
+        '<b>Chronogramme</b> : l\'évolution des entrées et de la sortie dans le temps.') +
+      H('5. Règles de calcul') +
+      table(['Règle', 'Résultat'], [['a + ā', '1'], ['a · ā', '0'], ['a + 1', '1'], ['a · 0', '0'], ['a + a', 'a'], ['a · a', 'a'], ['(a + b) · c', 'a · c + b · c']]) +
+      P('<b>Lois de De Morgan</b> :') + M('\\overline{a \\cdot b} = \\overline{a} + \\overline{b} \\qquad \\overline{a + b} = \\overline{a} \\cdot \\overline{b}') +
+      EX('Exemple : baignade surveillée', P('Capteurs : T = 1 si l\'eau est à 10 °C ou plus, P = 1 si l\'eau est propre, C = 1 si l\'eau est calme.') +
+        P('H1 : baignade autorisée (bonne température, eau propre et calme).') + M('H_1 = T \\cdot P \\cdot C') +
+        P('H2 : eau propre et calme mais trop froide.') + M('H_2 = \\overline{T} \\cdot P \\cdot C') +
+        P('H3 : eau trop froide et, en plus, sale ou agitée.') + M('H_3 = \\overline{T} \\cdot (\\overline{P} + \\overline{C})')) +
+      BOX(P('ET : sortie à 1 si toutes les entrées sont à 1 ; OU : si au moins une est à 1.', 'n entrées : 2<sup>n</sup> lignes dans la table de vérité.'))
+  },
+  {
+    chap: 7,
+    title: 'Bases de la programmation en Python',
+    support: 'PC Initiation à la programmation · TP Bras robotisé',
+    body:
+      H('1. Variables et types') +
+      P('Une <b>variable</b> est une case mémoire qui stocke une valeur. Le signe = signifie « prend la valeur » (affectation).') +
+      table(['Type', 'Contenu', 'Exemple'], [['int', 'nombre entier', 'n = 12'], ['float', 'nombre décimal (avec un point)', 'u = 3.3'], ['str', 'chaîne de caractères', 'nom = "Robot"'], ['bool', 'vrai ou faux', 'ok = True']]) +
+      H('2. Entrées et sorties') +
+      code(`# input() renvoie toujours du texte
+nom = input("Nom : ")
+# int() convertit en entier
+age = int(input("Âge : "))
+# + met des textes bout à bout
+print("Bonjour " + nom)
+# str() convertit en texte
+print(str(len(nom)) + " lettres")
+moy = (12 + 15 + 9) / 3
+# arrondi à 2 chiffres
+print(round(moy, 2))`) +
+      H('3. Conditions') +
+      P('Le bloc exécuté est repéré par l\'<b>indentation</b> (le décalage vers la droite). Comparaisons : == (égal), != (différent), &lt;, &lt;=, &gt;, &gt;=.') +
+      code(`t = float(input("Température : "))
+if t > 25:
+    print("Ventilateur")
+elif t < 18:
+    print("Chauffage")
+else:
+    print("Rien à faire")`) +
+      H('4. Boucle for') +
+      P('On l\'utilise quand le nombre de répétitions est connu. range(n) donne les entiers de 0 à n − 1 ; range(a, b, pas) va de a à b − 1 avec le pas indiqué.') +
+      code(`total = 0
+for i in range(4):
+    total = total + i
+print(total)`) +
+      P('Trace de ce programme :') + table(['Tour', 'i', 'total après le tour'], [['1', '0', '0'], ['2', '1', '1'], ['3', '2', '3'], ['4', '3', '6']]) + P('Le programme affiche 6.') +
+      H('5. Boucle while') +
+      P('On l\'utilise quand on répète tant qu\'une condition est vraie, sans connaître le nombre de tours à l\'avance. Attention à faire évoluer la condition, sinon la boucle ne s\'arrête jamais.') +
+      code(`niveau = 0
+while niveau < 100:
+    niveau = niveau + 15
+# affiche 105
+print(niveau)`) +
+      BOX(P('input() renvoie du texte : convertir avec int() ou float().', 'for i in range(n) : i va de 0 à n − 1 ; while : tant que la condition est vraie.'))
+  },
+  // ===================== Séquence 8 =====================
+  {
+    chap: 8,
+    title: 'Familles et propriétés physiques des matériaux',
+    support: 'Cours Matériaux · TP Caractérisation des matériaux',
+    body:
+      H('1. Les familles de matériaux') +
+      P('Un matériau est une matière choisie pour ses propriétés en vue d\'un usage précis. On en compte environ 80 000, regroupés en quatre familles :') +
+      table(['Famille', 'Exemples'], [['Métaux et alliages', 'acier, fonte (ferreux) ; aluminium, cuivre, zinc, laiton (non ferreux)'],
+        ['Organiques', 'plastiques (thermoplastiques comme le PLA ou l\'ABS, thermodurcissables), élastomères, bois, papier, fibres naturelles'],
+        ['Minéraux (céramiques)', 'verre, béton, brique, céramique, pierre'], ['Composites', 'association d\'un renfort et d\'une matrice : fibre de carbone et résine, béton armé, contreplaqué']]) +
+      H('2. Masse volumique') +
+      M('\\rho = \\frac{m}{V}') + P(`avec ${m('\\rho')} en kg/m³, ${m('m')} en kg et ${m('V')} en m³.`) +
+      table(['Matériau', 'ρ (kg/m³)'], [['Air', '1,2'], ['Bois (chêne)', 'environ 700'], ['Eau', '1 000'], ['PLA', '1 250'], ['Béton', '2 400'], ['Verre', '2 500'], ['Aluminium', '2 700'], ['Acier', '7 850'], ['Cuivre', '8 960']]) +
+      EX('Exemple', P('Un bloc de 2,5 × 1,3 × 1,6 cm pèse 5,4 g : V = 5,2 cm³ = 5,2 × 10⁻⁶ m³ et m = 5,4 × 10⁻³ kg.') + M('\\rho = \\frac{5{,}4 \\times 10^{-3}}{5{,}2 \\times 10^{-6}} \\approx 1\\,040\\,\\text{kg/m}^3')) +
+      H('3. Chaleur et température') +
+      P('La chaleur Q est l\'énergie apportée à un corps qui augmente sa température. Elle va toujours du plus chaud vers le plus froid.') +
+      M('Q = m \\times c \\times \\Delta T') +
+      P('c est la capacité thermique massique, en J/(kg·K) : 4 180 pour l\'eau, environ 900 pour l\'aluminium, 450 pour l\'acier. Un écart de température a la même valeur en °C et en K ; pour une température, T (K) = θ (°C) + 273.') +
+      P('La chaleur se transmet par <b>conduction</b> (dans la matière), <b>convection</b> (par un fluide en mouvement) et <b>rayonnement</b>. Un matériau qui conduit mal la chaleur est un isolant.') +
+      EX('Exemple', P('Chauffer 2 L d\'eau de 20 °C à 100 °C : Q = 2 × 4 180 × 80 = 668 800 J ≈ 0,19 kWh.')) +
+      H('4. Homogénéité et isotropie') +
+      UL('<b>Homogène</b> : même composition en tout point (verre, plastique, acier). <b>Hétérogène</b> sinon (bois, béton, brique).',
+        '<b>Isotrope</b> : mêmes propriétés dans toutes les directions (métaux, béton). <b>Anisotrope</b> sinon (bois, pièce imprimée en 3D couche par couche).') +
+      BOX(P('Quatre familles : métaux, organiques, minéraux, composites.', 'ρ = m / V ; Q = m × c × ΔT.'))
+  },
+  {
+    chap: 8,
+    title: 'Comportement mécanique et choix des matériaux',
+    support: 'Cours Matériaux · PC Comportement des matériaux · PC Choix matériaux et procédés',
+    body:
+      H('1. Les sollicitations') +
+      table(['Sollicitation', 'Effet', 'Exemple'], [['Traction', 'on tire dans l\'axe de la pièce', 'câble d\'une grue'], ['Compression', 'on écrase la pièce', 'pilier d\'un pont'],
+        ['Flexion', 'la pièce se courbe sous un effort perpendiculaire', 'tablier d\'un pont, étagère'], ['Cisaillement', 'on tranche la pièce', 'ciseaux, rivet'], ['Torsion', 'on tord la pièce autour de son axe', 'tournevis']]) +
+      H('2. L\'essai de traction') +
+      P('On tire de plus en plus fort sur une <b>éprouvette</b> normalisée et on relève son allongement. On calcule :') +
+      M(`\\sigma = \\frac{F}{S_0} \\qquad \\varepsilon = \\frac{\\Delta L}{L_0}`) +
+      P('σ est la <b>contrainte</b> (en Pa, ou en MPa = N/mm²) et ε l\'<b>allongement relatif</b> (sans unité).') +
+      graph({ x0: 0, x1: 25, dx: 5, y0: 0, y1: 500, dy: 100, w: 420, h: 260, xlab: 'ε (%)', ylab: 'σ (MPa)',
+        series: [{ pts: [[0, 0], [0.17, 350], ...curve(e => 350 + 110 * Math.sin(Math.min(1, (e - 0.17) / 14) * Math.PI / 2) - (e > 15 ? (e - 15) ** 2 * 1.4 : 0), 0.17, 21, 120)] }],
+        extra: (X, Y) => `<text x="${X(1)}" y="${Y(320)}" style="font-size:14px">Re</text><text x="${X(13)}" y="${Y(475)}" style="font-size:14px">Rm</text><text x="${X(19.5)}" y="${Y(340)}" style="font-size:14px">rupture</text>`,
+        cap: 'Allure de la courbe d\'un acier : domaine élastique (droite) puis domaine plastique' }) +
+      UL('<b>Domaine élastique</b> : la pièce reprend sa forme quand on la relâche. La contrainte est proportionnelle à l\'allongement : c\'est la <b>loi de Hooke</b>.', '<b>Re</b> : limite élastique, au-delà la déformation devient permanente.',
+        '<b>Rm</b> : résistance maximale avant la rupture.') +
+      M('\\sigma = E \\times \\varepsilon') +
+      P('E est le <b>module de Young</b> (en Pa) : plus il est grand, plus le matériau est rigide. Ordres de grandeur : acier 210 GPa, aluminium 70 GPa, béton 30 GPa, bois 10 GPa, PLA 3,5 GPa.') +
+      EX('Exemple', P('Une tige d\'acier de Ø 10 mm et de 1 m supporte 10 kN : S = π × 10² / 4 = 78,5 mm².') + M('\\sigma = \\frac{10\\,000}{78{,}5} = 127\\,\\text{MPa} \\qquad \\varepsilon = \\frac{127}{210\\,000} = 6{,}1 \\times 10^{-4}') +
+        P('L\'allongement vaut ΔL = 6,1 × 10⁻⁴ × 1 000 = 0,61 mm.')) +
+      H('3. Mesurer E par la flèche') +
+      P('Pour une éprouvette de section carrée h × h, encastrée à une extrémité et tirée à l\'autre par une force F, la flèche f vaut :') + M('f = \\frac{4\\,F\\,L^3}{E\\,h^4} \\quad \\Rightarrow \\quad E = \\frac{4\\,F\\,L^3}{f\\,h^4}') +
+      H('4. Les propriétés à connaître') +
+      UL('<b>Élasticité</b> : aptitude à reprendre sa forme initiale.', '<b>Plasticité</b> : aptitude à garder la forme donnée par une déformation (pâte à modeler).', '<b>Ductilité</b> : capacité à se déformer beaucoup avant de rompre.',
+        '<b>Rigidité</b> : résistance à la déformation (module de Young élevé).', '<b>Dureté</b> : résistance à l\'usure et à la pénétration.') +
+      H('5. Choisir un matériau') +
+      P('On choisit un matériau qui résiste aux sollicitations de la pièce, mais aussi selon :') +
+      UL('ses propriétés physiques (masse volumique, conductivité…) ;', 'son prix et la disponibilité des matières premières ;', 'les procédés de fabrication possibles (moulage, usinage, impression 3D…) ;',
+        'ses impacts environnementaux sur tout le cycle de vie : énergie, émissions de CO₂, ressources, recyclabilité.') +
+      P('C\'est la démarche d\'<b>éco-conception</b> : intégrer ces impacts dès la conception. Des logiciels comme Granta EduPack aident à comparer matériaux et procédés.') +
+      BOX(P('σ = F / S ; ε = ΔL / L0 ; loi de Hooke σ = E × ε (domaine élastique).', 'Re : fin du domaine élastique ; Rm : résistance maximale.'))
+  }
+];
+
+// ---------- Affichage ----------
+const nav = document.getElementById('nav');
+const card = document.getElementById('card');
+let current = 0;
+
+function renderMath(root) {
+  root.querySelectorAll('.m').forEach(el => {
+    const tex = el.dataset.tex;
+    if (window.katex) {
+      katex.render(tex, el, { displayMode: !!el.dataset.d, throwOnError: false, strict: false });
+    } else {
+      el.textContent = tex;
+    }
+  });
+}
+
+// Adapte le contenu visible à la largeur de l'écran :
+// - un tableau de 2 ou 3 lignes trop large est présenté en colonnes (transposé) ;
+// - une formule centrée trop large est rendue « en ligne », que KaTeX peut couper après = ou +.
+function fitToWidth(root) {
+  root.querySelectorAll('.tw').forEach(w => {
+    const t = w.querySelector('table');
+    if (!w.offsetParent || !t || t.dataset.tr || t.rows.length > 3 || w.scrollWidth <= w.clientWidth + 1) return;
+    const cells = [...t.rows].map(r => [...r.cells].map(c => c.innerHTML));
+    t.innerHTML = cells[0].map((_, c) => `<tr>${cells.map((row, k) => {
+      const tag = c === 0 || k === 0 ? 'th' : 'td';
+      return `<${tag}>${row[c] ?? ''}</${tag}>`;
+    }).join('')}</tr>`).join('');
+    t.dataset.tr = '1';
+  });
+  if (!window.katex) return;
+  root.querySelectorAll('.mdisp').forEach(el => {
+    if (!el.offsetParent) return;
+    if (el.classList.contains('mwrap')) {
+      katex.render(el.dataset.tex, el, { displayMode: true, throwOnError: false, strict: false });
+      el.classList.remove('mwrap');
+      el.style.overflow = '';
+    }
+    if (el.scrollWidth > el.clientWidth + 1) {
+      katex.render(el.dataset.tex, el, { displayMode: false, throwOnError: false, strict: false });
+      el.classList.add('mwrap');
+      // Quelques pixels de trop (bord d'un cadre) : on laisse déborder dans la marge plutôt que d'afficher un défilement
+      if (el.scrollWidth - el.clientWidth <= 8) el.style.overflow = 'visible';
+    }
+  });
+}
+let fitTimer;
+window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(() => fitToWidth(card), 150); });
+
+// Identifiant d'une fiche dans l'adresse : #c<chapitre>-<rang dans le chapitre>
+const idOf = i => {
+  const c = EXOS[i].chap;
+  return `c${c}-${EXOS.slice(0, i + 1).filter(e => e.chap === c).length}`;
+};
+const ARROW = '<svg class="arrow" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function buildNav() {
+  nav.innerHTML = CHAPITRES.map((titre, c) => `
+    <div class="chap">
+      <button class="chap-btn" aria-expanded="false">
+        ${ARROW}
+        <span><span class="seq">Séquence ${c + 1}</span><span class="ex">${titre}</span></span>
+      </button>
+      <div class="exlist" hidden>
+        ${EXOS.map((e, i) => e.chap === c + 1 ? `<a href="#${idOf(i)}" data-i="${i}">${e.title}</a>` : '').join('')}
+      </div>
+    </div>`).join('');
+  nav.querySelectorAll('.chap-btn').forEach(b => b.onclick = () => toggleChap(b));
+  nav.querySelectorAll('.exlist a').forEach(a => a.onclick = ev => { ev.preventDefault(); go(+a.dataset.i); });
+}
+
+// Affiche la fiche i et met à jour l'adresse (#c4-1…) sans recharger la page
+function go(i) {
+  show(i);
+  closeMenu();
+  window.scrollTo(0, 0);
+  try { history.pushState(null, '', '#' + idOf(i)); } catch (err) { /* aperçu hors ligne : on ignore */ }
+}
+
+// Ouvre ou ferme un chapitre ; ouvrir un chapitre referme les autres
+function toggleChap(btn, open) {
+  const list = btn.nextElementSibling;
+  list.hidden = open === undefined ? !list.hidden : !open;
+  btn.setAttribute('aria-expanded', String(!list.hidden));
+  if (!list.hidden) {
+    nav.querySelectorAll('.chap-btn').forEach(b => {
+      if (b !== btn) { b.nextElementSibling.hidden = true; b.setAttribute('aria-expanded', 'false'); }
+    });
+  }
+}
+
+function show(i) {
+  current = i;
+  const e = EXOS[i];
+  card.innerHTML = `
+    <div class="crumb">Séquence ${e.chap} · ${CHAPITRES[e.chap - 1]}</div>
+    <h2>${e.title}</h2>
+    <p class="support">${e.support}</p>
+    ${e.body}
+    <div class="btns"><a class="go" href="Exercices_I2D.html#c${e.chap}-1">S'entraîner : exercices de la séquence ${e.chap} →</a></div>`;
+  renderMath(card);
+  fitToWidth(card);
+  nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', +a.dataset.i === i));
+  nav.querySelectorAll('.chap').forEach((ch, c) => {
+    const btn = ch.querySelector('.chap-btn');
+    btn.classList.toggle('on', c === e.chap - 1);
+    if (c === e.chap - 1) toggleChap(btn, true);
+  });
+  document.getElementById('prevBtn').style.visibility = i > 0 ? 'visible' : 'hidden';
+  document.getElementById('nextBtn').style.visibility = i < EXOS.length - 1 ? 'visible' : 'hidden';
+}
+
+function fromHash() {
+  const i = EXOS.findIndex((e, k) => '#' + idOf(k) === location.hash);
+  show(i >= 0 ? i : 0);
+  closeMenu();
+  window.scrollTo(0, 0);
+}
+
+// Menu mobile
+const sidebar = document.getElementById('sidebar'), shade = document.getElementById('shade');
+function closeMenu() { sidebar.classList.remove('open'); shade.hidden = true; }
+document.getElementById('menuBtn').onclick = () => { sidebar.classList.add('open'); shade.hidden = false; };
+shade.onclick = closeMenu;
+
+document.getElementById('prevBtn').onclick = () => go(current - 1);
+document.getElementById('nextBtn').onclick = () => go(current + 1);
+window.addEventListener('popstate', fromHash);
+
+buildNav();
+fromHash();
+</script>
 </body>
 </html>
