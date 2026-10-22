@@ -6,33 +6,906 @@
 <title>Cours SIN</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <style>
-:root { --bg: #f6f5f1; --surface: #ffffff; --text: #1f1e1c; --muted: #6b6a65; --border: #dcd9d0; --accent: #185fa5; --accent-bg: #e6f1fb; }
+:root {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --side: #efede6;
+  --text: #1f1e1c;
+  --muted: #6b6a65;
+  --border: #dcd9d0;
+  --accent: #185fa5;
+  --accent-bg: #e6f1fb;
+  --val: #854f0b;
+  --val-bg: #faeeda;
+  --ok: #27500a;
+  --ok-bg: #eaf3de;
+  --ok-border: #639922;
+  --code-bg: #f1efe8;
+  --bad-bg: #fcebeb;
+  --bad-border: #e24b4a;
+}
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #1b1b1a; --surface: #242422; --text: #ecebe6; --muted: #a3a29b; --border: #3a3a37; --accent: #85b7eb; --accent-bg: #0c447c; }
+  :root:not([data-theme="light"]) {
+    --bg: #1b1b1a;
+    --surface: #242422;
+    --side: #20201e;
+    --text: #ecebe6;
+    --muted: #a3a29b;
+    --border: #3a3a37;
+    --accent: #85b7eb;
+    --accent-bg: #0c447c;
+    --val: #fac775;
+    --val-bg: #4a3209;
+    --ok: #c0dd97;
+    --ok-bg: #1f3309;
+    --ok-border: #639922;
+    --code-bg: #2c2c2a;
+    --bad-bg: #3d1414;
+    --bad-border: #e24b4a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1b1a;
+  --surface: #242422;
+  --side: #20201e;
+  --text: #ecebe6;
+  --muted: #a3a29b;
+  --border: #3a3a37;
+  --accent: #85b7eb;
+  --accent-bg: #0c447c;
+  --val: #fac775;
+  --val-bg: #4a3209;
+  --ok: #c0dd97;
+  --ok-bg: #1f3309;
+  --ok-border: #639922;
+  --code-bg: #2c2c2a;
+  --bad-bg: #3d1414;
+  --bad-border: #e24b4a;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 16px; line-height: 1.6; }
-main { max-width: 780px; margin: 0 auto; padding: 48px 24px; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); min-height: 100vh; }
+
+/* Barre latérale */
+.sidebar {
+  background: var(--side);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.sidebar h1 { font-size: 18px; font-weight: 600; margin: 0 8px 4px; }
+a.home {
+  display: inline-block; text-decoration: none; color: var(--accent); font-size: 14px;
+  border: 1px solid var(--accent); border-radius: 8px; padding: 4px 10px;
+}
+a.home:hover, a.home:focus-visible { background: var(--accent-bg); outline: none; }
+.sidebar a.home { margin: 0 8px 14px; }
+.topbar a.home { margin-left: auto; }
+.sidebar .sub { font-size: 13px; color: var(--muted); margin: 0 8px 16px; }
+.chap { margin-bottom: 2px; }
+.chap-btn {
+  display: flex; align-items: flex-start; gap: 8px; width: 100%;
+  text-align: left; border: 0; border-radius: 8px; padding: 8px 8px;
+  line-height: 1.35;
+}
+.chap-btn:hover { background: var(--border); }
+.chap-btn .arrow { flex: none; margin-top: 10px; color: var(--muted); transition: transform .15s; }
+.chap-btn[aria-expanded="true"] .arrow { transform: rotate(180deg); }
+.chap-btn.on .seq, .chap-btn.on .arrow { color: var(--accent); }
+.nav .seq { font-size: 12px; color: var(--muted); display: block; }
+.nav .ex { font-size: 14px; font-weight: 500; }
+.exlist { padding: 2px 0 6px 32px; }
+.exlist[hidden] { display: none; }
+.exlist a {
+  display: block; text-decoration: none; color: var(--text); font-size: 14px;
+  padding: 6px 10px; border-radius: 0 8px 8px 0; border-left: 2px solid var(--border);
+}
+.exlist a:hover { background: var(--border); }
+.exlist a.on { background: var(--accent-bg); color: var(--accent); border-left-color: var(--accent); }
+
+/* Barre du haut (mobile) */
+.topbar { display: none; }
+
+/* Contenu */
+main { padding: 32px 24px 48px; }
+.card {
+  max-width: 780px; margin: 0 auto;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 24px 28px;
+}
 .crumb { font-size: 13px; color: var(--muted); }
-h1 { font-size: 26px; font-weight: 600; margin: 2px 0 20px; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; }
-.card p { margin: 0; color: var(--muted); }
-.links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-.go { text-decoration: none; border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; padding: 8px 16px; font-size: 15px; }
-.go:hover, .go:focus-visible { background: var(--accent-bg); outline: none; }
-@media (max-width: 860px) { main { padding: 28px 16px; } .card { padding: 18px 16px; } h1 { font-size: 22px; } }
+.card h2 { font-size: 22px; font-weight: 600; margin: 2px 0 4px; }
+.support { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+.v {
+  background: var(--val-bg); color: var(--val);
+  padding: 1px 5px; border-radius: 5px; font-weight: 500;
+  /* Une valeur longue (suite d'événements, octets…) peut passer à la ligne ; nombre et unité restent liés par une espace insécable */
+  overflow-wrap: anywhere; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+pre .v { overflow-wrap: normal; }
+ol.q { padding-left: 22px; margin: 12px 0 0; }
+ol.q li { margin-bottom: 4px; }
+pre.code {
+  background: var(--code-bg); border-radius: 8px; padding: 12px 14px;
+  font-size: 14px; line-height: 1.5; overflow-x: auto; margin: 12px 0;
+}
+.btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+button {
+  font: inherit; font-size: 15px; cursor: pointer;
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px;
+}
+button:hover { background: var(--side); }
+button.primary { border-color: var(--accent); color: var(--accent); }
+.correction {
+  margin-top: 20px; padding: 14px 18px;
+  background: var(--ok-bg); border-left: 4px solid var(--ok-border);
+}
+.correction[hidden] { display: none; }
+.correction h3 { font-size: 15px; font-weight: 600; color: var(--ok); margin: 0 0 8px; }
+.step { margin-bottom: 12px; }
+.step:last-child { margin-bottom: 0; }
+.step .lab { font-size: 14px; font-weight: 600; color: var(--ok); }
+.step p { margin: 2px 0; }
+.mdisp { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+.mdisp.mwrap { text-align: center; line-height: 2.2; margin: 6px 0; }
+@media (max-width: 600px) {
+  table.t { font-size: 13px; }
+  table.t th, table.t td { padding: 3px 6px; }
+  pre.code { font-size: 12px; padding: 10px; }
+  table.t th, table.t td { overflow-wrap: anywhere; hyphens: auto; }
+}
+/* QCM */
+ol.qcm { padding-left: 22px; margin: 12px 0 0; }
+ol.qcm > li { margin-bottom: 14px; }
+ol.qcm > li > p { margin: 0 0 6px; }
+ol.qcm label {
+  display: flex; align-items: flex-start; gap: 8px; cursor: pointer;
+  padding: 6px 10px; margin-bottom: 4px; border: 1px solid var(--border); border-radius: 8px;
+}
+ol.qcm label:hover { background: var(--side); }
+ol.qcm input { margin-top: 5px; accent-color: var(--accent); }
+ol.qcm label.good { border-color: var(--ok-border); background: var(--ok-bg); }
+ol.qcm label.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+.score { font-weight: 600; color: var(--ok); margin: 0 0 10px; }
+.score:empty { display: none; }
+
+/* Tableaux et schémas */
+table.t { border-collapse: collapse; margin: 10px 0; font-size: 15px; }
+table.t th, table.t td { border: 1px solid var(--border); padding: 4px 10px; text-align: center; }
+table.t th { background: var(--side); font-weight: 600; }
+.tw { overflow-x: auto; }
+figure.fig { margin: 12px 0; text-align: center; }
+figure.fig svg { width: 100%; max-width: 560px; height: auto; }
+figure.fig svg.small { max-width: 220px; }
+svg.sym { display: block; width: 150px; height: auto; margin: 6px 0; }
+figure.fig svg.leds { max-width: 400px; }
+figcaption { font-size: 13px; color: var(--muted); }
+svg text { fill: var(--text); font-size: 12px; font-family: inherit; }
+svg text.lab { fill: var(--muted); font-size: 12px; }
+svg .grid { stroke: var(--border); stroke-width: 1; }
+svg .ax { stroke: var(--muted); stroke-width: 1.4; }
+svg .c1 { fill: none; stroke: var(--accent); stroke-width: 2.2; }
+svg .c2 { fill: none; stroke: var(--val); stroke-width: 2; }
+svg .c3 { fill: none; stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 5 4; }
+svg .pt { fill: var(--val); }
+svg .line { stroke: var(--text); stroke-width: 2; fill: none; }
+svg .thin { stroke: var(--text); stroke-width: 1.2; fill: none; }
+svg .fillv { fill: var(--val-bg); stroke: var(--val); stroke-width: 1.5; }
+svg .arrow { stroke: var(--accent); stroke-width: 2.4; fill: none; }
+svg .arrowv { stroke: var(--val); stroke-width: 2.4; fill: none; }
+svg .flow { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 1; }
+svg .loss { fill: var(--val-bg); stroke: var(--val); stroke-width: 1; }
+svg .ledon { fill: #e5484d; stroke: var(--text); }
+svg .ledoff { fill: var(--side); stroke: var(--muted); }
+
+/* Fiches de cours */
+.card h3 { font-size: 18px; font-weight: 600; color: var(--accent); margin: 26px 0 8px; }
+.card p { margin: 8px 0; }
+.card p.support { margin: 0 0 16px; }
+ul.l { padding-left: 22px; margin: 8px 0; }
+ul.l li { margin-bottom: 4px; }
+.box, .exm { border-radius: 0 8px 8px 0; padding: 10px 16px; margin: 16px 0; }
+.box { background: var(--accent-bg); border-left: 4px solid var(--accent); }
+.exm { background: var(--ok-bg); border-left: 4px solid var(--ok-border); }
+.box-t { font-size: 14px; font-weight: 600; color: var(--accent); }
+.exm .box-t { color: var(--ok); }
+.box p, .exm p { margin: 4px 0; }
+.chain { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 14px 0; }
+.blk { border: 1.5px solid var(--accent); border-radius: 8px; padding: 6px 10px; background: var(--surface); text-align: center; font-size: 14px; }
+.blk span { display: block; font-size: 12px; color: var(--muted); }
+.arr { color: var(--accent); font-weight: 600; }
+a.go {
+  text-decoration: none; border: 1px solid var(--accent); color: var(--accent);
+  border-radius: 8px; padding: 8px 16px; font-size: 15px;
+}
+a.go:hover, a.go:focus-visible { background: var(--accent-bg); outline: none; }
+/* Fiches : on ne coupe pas les mots dans les cases, la colonne prend la largeur du mot le plus long */
+@media (max-width: 600px) {
+  table.t th, table.t td { overflow-wrap: break-word; hyphens: manual; padding: 3px 4px; }
+}
+
+.pager { display: flex; justify-content: space-between; gap: 10px; max-width: 780px; margin: 16px auto 0; }
+.pager button { font-size: 14px; }
+
+@media (max-width: 860px) {
+  .layout { display: block; }
+  .topbar {
+    display: flex; align-items: center; gap: 10px;
+    position: sticky; top: 0; z-index: 5;
+    background: var(--side); border-bottom: 1px solid var(--border); padding: 10px 16px;
+  }
+  .topbar span { font-weight: 600; }
+  .sidebar {
+    position: fixed; left: 0; top: 0; z-index: 10; width: 290px; max-width: 85vw;
+    transform: translateX(-100%); transition: transform .2s;
+  }
+  .sidebar.open { transform: none; }
+  .shade { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 9; }
+  .shade[hidden] { display: none; }
+  main { padding: 16px 16px 40px; }
+  .card { padding: 18px 16px; }
+  .card h2 { font-size: 19px; }
+}
 </style>
 </head>
 <body>
-<main>
-  <div class="crumb">Terminale STI2D</div>
-  <h1>Cours SIN</h1>
-  <div class="card">
-    <p>Page en construction : les cours seront bientôt disponibles.</p>
-  </div>
-  <div class="links"><a class="go" href="index.html">← Accueil</a><a class="go" href="Exercices_SIN.html">Exercices SIN →</a></div>
-</main>
+<div class="topbar">
+  <button id="menuBtn" aria-label="Ouvrir le menu">☰</button>
+  <span>Cours SIN</span>
+  <a class="home" href="index.html">← Accueil</a>
+</div>
+<div class="shade" id="shade" hidden></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a class="home" href="index.html">← Accueil</a>
+    <h1>Cours SIN</h1>
+    <p class="sub">Terminale STI2D · spécialité SIN</p>
+    <div class="nav" id="nav"></div>
+  </nav>
+  <main>
+    <article class="card" id="card"></article>
+    <div class="pager">
+      <button id="prevBtn">← Précédent</button>
+      <button id="nextBtn">Suivant →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+// ---------- Outils ----------
+const rnd = (a, b, step = 1) => {
+  const n = Math.round((b - a) / step);
+  return +(a + step * Math.floor(Math.random() * (n + 1))).toFixed(6);
+};
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+// Nombre au format français (texte)
+const fr = (x, d = 2) => Number(x).toLocaleString('fr-FR', { maximumFractionDigits: d });
+// Nombre au format français (LaTeX)
+const tx = (x, d = 2) => fr(x, d).replace(',', '{,}').replace(/[\u202f\u00a0]/g, '\\,');
+// Nombre avec un nombre fixe de décimales (texte / LaTeX)
+const frf = (x, d) => Number(x).toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const txf = (x, d) => frf(x, d).replace(',', '{,}').replace(/[  ]/g, '\\,');
+// Écriture scientifique en LaTeX
+const sci = (x, d = 2) => {
+  let e = Math.floor(Math.log10(Math.abs(x)));
+  if (Math.abs(+(x / 10 ** e).toFixed(d)) >= 10) e++;
+  return `${tx(x / 10 ** e, d)} \\times 10^{${e}}`;
+};
+// Nombre avec s chiffres significatifs : décimal si raisonnable, sinon scientifique
+const tn = (x, s = 3) => {
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e-3 && a < 1e6) return tx(x, Math.max(0, s - 1 - Math.floor(Math.log10(a))));
+  return sci(x, s - 1);
+};
+const fn = (x, s = 3) => {
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  return fr(x, Math.max(0, s - 1 - Math.floor(Math.log10(a))));
+};
+const deg = a => a * Math.PI / 180;
+const G = 9.81;
+// Valeur surlignée dans l'énoncé
+const v = (x, unit = '', d = 2) => `<span class="v">${typeof x === 'number' ? fr(x, d) : x}${unit ? '\u00a0' + unit : ''}</span>`;
+// Formules
+const m = t => `<span class="m" data-tex="${t.replace(/"/g, '&quot;')}"></span>`;
+const M = t => `<div class="m mdisp" data-d="1" data-tex="${t.replace(/"/g, '&quot;')}"></div>`;
+// Unité en LaTeX (gère ², ³, ·, °, µ)
+const u = s => '\\,\\text{' + s.replace(/%/g, '\\%').replace(/²/g,'}^2\\text{').replace(/³/g, '}^3\\text{')
+  .replace(/·/g, '}\\cdot\\text{').replace(/°/g, '}{}^\\circ\\text{').replace(/[µμ]/g, '}\\mu\\text{') + '}';
+
+// Liste des questions d'un énoncé
+const ol = (...items) => `<ol class="q">${items.map(i => `<li>${i}</li>`).join('')}</ol>`;
+// Tableau HTML : en-têtes puis lignes
+const table = (head, rows) => `<div class="tw"><table class="t"><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr>${
+  rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const euro = x => frf(x, 2) + ' €';
+const teuro = x => txf(x, 2) + u('€');
+
+// ---------- Tirages ----------
+const shuffle = arr => {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+};
+const sample = (arr, n) => shuffle(arr).slice(0, n);
+
+// ---------- QCM ----------
+// Banque : [question, bonne réponse, [mauvaises réponses], explication]
+const QCM_N = 5;
+function qcm(bank, n = QCM_N) {
+  const id = 'q' + Math.random().toString(36).slice(2, 8);
+  const items = sample(bank, Math.min(n, bank.length)).map(([q, ok, bad, ex]) => {
+    const choices = shuffle([ok, ...sample(bad.filter(b => b !== ok), 3)]);
+    return { q, ok, ex, choices, k: choices.indexOf(ok) };
+  });
+  return {
+    qcm: true,
+    statement: `<p>Choisir la bonne réponse pour chaque question.</p>
+      <ol class="qcm">${items.map((it, i) => `<li data-ok="${it.k}"><p>${it.q}</p>${it.choices.map((c, j) =>
+        `<label><input type="radio" name="${id}${i}" value="${j}"> <span>${c}</span></label>`).join('')}</li>`).join('')}</ol>`,
+    steps: items.map((it, i) => [`${i + 1}. ${it.ok}`, it.ex ? `<p>${it.ex}</p>` : ''])
+  };
+}
+// Questions construites à partir de couples (élément, réponse)
+const fromPairs = (pairs, fmt, ex) =>
+  pairs.map(([a, b]) => [fmt(a), b, [...new Set(pairs.map(p => p[1]))], ex ? ex(a, b) : '']);
+// Exercice QCM
+const Q = (chap, title, support, bank) => ({ chap, title, support, gen: () => qcm(typeof bank === 'function' ? bank() : bank) });
+
+// ---------- Schémas SVG ----------
+const fig = (svg, cap = '') => `<figure class="fig">${svg}${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
+// Graphique gradué : o = {x0, x1, dx, y0, y1, dy, xlab, ylab, series: [{pts, cls}], extra(X, Y), nolab}
+function graph(o) {
+  const W = o.w || 560, H = o.h || 270, L = 50, R = 16, T = 14, B = 34;
+  const X = x => +(L + (x - o.x0) / (o.x1 - o.x0) * (W - L - R)).toFixed(1);
+  const Y = y => +(H - B - (y - o.y0) / (o.y1 - o.y0) * (H - T - B)).toFixed(1);
+  const fx = o.fx || (x => fr(x, 3)), fy = o.fy || (y => fr(y, 3));
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="graph" role="img">`;
+  const nx = Math.round((o.x1 - o.x0) / o.dx), ny = Math.round((o.y1 - o.y0) / o.dy);
+  for (let i = 0; i <= nx; i++) {
+    const x = o.x0 + i * o.dx;
+    s += `<line class="grid" x1="${X(x)}" y1="${T}" x2="${X(x)}" y2="${H - B}"/>`;
+    if (!o.nolab) s += `<text x="${X(x)}" y="${H - B + 15}" text-anchor="middle">${fx(x)}</text>`;
+  }
+  for (let i = 0; i <= ny; i++) {
+    const y = o.y0 + i * o.dy;
+    s += `<line class="grid" x1="${L}" y1="${Y(y)}" x2="${W - R}" y2="${Y(y)}"/>`;
+    if (!o.nolab) s += `<text x="${L - 6}" y="${Y(y) + 4}" text-anchor="end">${fy(y)}</text>`;
+  }
+  if (o.y0 < 0 && o.y1 > 0) s += `<line class="ax" x1="${L}" y1="${Y(0)}" x2="${W - R}" y2="${Y(0)}"/>`;
+  s += `<line class="ax" x1="${L}" y1="${T}" x2="${L}" y2="${H - B}"/><line class="ax" x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/>`;
+  if (o.xlab) s += `<text x="${W - R}" y="${H - 4}" text-anchor="end" class="lab">${o.xlab}</text>`;
+  if (o.ylab) s += `<text x="${L + 6}" y="${T + 12}" class="lab">${o.ylab}</text>`;
+  (o.series || []).forEach(se => {
+    s += `<polyline class="${se.cls || 'c1'}" points="${se.pts.map(([x, y]) => X(x) + ',' + Y(y)).join(' ')}"/>`;
+  });
+  if (o.extra) s += o.extra(X, Y);
+  return fig(s + '</svg>', o.cap);
+}
+// Échantillonne une fonction pour un graphique
+const curve = (f, x0, x1, n = 400) => Array.from({ length: n + 1 }, (_, i) => { const x = x0 + (x1 - x0) * i / n; return [x, f(x)]; });
+// Diagramme de Sankey en ligne : étapes [{name, val}] (val peut être '?') ; les pertes partent vers le bas
+function sankey(stages, vals, unit) {
+  const W = 560, H = 220, top = 40, x0 = 20, x1 = W - 20, seg = (x1 - x0) / stages.length;
+  const k = 90 / vals[0];
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="sankey" role="img">`;
+  stages.forEach((st, i) => {
+    const h = vals[i] * k, xa = x0 + i * seg;
+    s += `<rect class="flow" x="${xa}" y="${top}" width="${seg}" height="${h}"/>`;
+    s += `<text x="${xa + 6}" y="${top - 18}" class="lab">${st.name}</text><text x="${xa + 6}" y="${top - 4}">${st.label}</text>`;
+    if (i < stages.length - 1) {
+      const lw = Math.max(4, (vals[i] - vals[i + 1]) * k), xb = xa + seg;
+      s += `<rect class="loss" x="${xb - lw}" y="${top + vals[i + 1] * k}" width="${lw}" height="${H - 30 - top - vals[i + 1] * k}"/>`;
+      s += `<text x="${xb - lw / 2}" y="${H - 12}" text-anchor="middle">${stages[i].loss}</text>`;
+    }
+  });
+  return fig(s + '</svg>', unit);
+}
+
+// ---------- Dessins (schémas lisibles sur téléphone : viewBox étroit, texte à 14 px) ----------
+// Schéma : largeur et hauteur du viewBox, contenu SVG, légende
+const dSV = (w, h, inner, cap = '', max = 440) => fig(`<svg viewBox="0 0 ${w} ${h}" role="img" style="max-width:${max}px">${inner}</svg>`, cap);
+// Texte : position, contenu, ancrage (start | middle | end), taille
+const dT = (x, y, s, a = 'middle', sz = 14) => `<text x="${+x.toFixed(1)}" y="${+y.toFixed(1)}" text-anchor="${a}" style="font-size:${sz}px">${s}</text>`;
+// Flèche du point 1 au point 2 (cls : arrow = bleu, arrowv = orange)
+function dA(x1, y1, x2, y2, cls = 'arrow') {
+  const a = Math.atan2(y2 - y1, x2 - x1), h = 9, r = n => +n.toFixed(1);
+  const p = s => `${r(x2 - h * Math.cos(a + s))} ${r(y2 - h * Math.sin(a + s))}`;
+  return `<line class="${cls}" x1="${r(x1)}" y1="${r(y1)}" x2="${r(x2)}" y2="${r(y2)}"/><path class="${cls}" d="M${p(-0.45)} L${r(x2)} ${r(y2)} L${p(0.45)}"/>`;
+}
+// Cote horizontale ou verticale avec flèches aux deux bouts et texte au milieu
+function dCote(x1, y1, x2, y2, s, off = -6) {
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, hor = Math.abs(y2 - y1) < Math.abs(x2 - x1);
+  return dA(mx, my, x1, y1, 'thin') + dA(mx, my, x2, y2, 'thin') + (hor ? dT(mx, my + off, s) : dT(mx + 6, my + 5, s, 'start'));
+}
+// Roue dentée : centre, rayon primitif, nombre de dents (dessin simplifié)
+function dGear(cx, cy, r, z, cls = 'fillv') {
+  const n = Math.max(8, Math.min(z, 40)), pts = [];
+  for (let k = 0; k < n; k++) {
+    const a = 2 * Math.PI * k / n, s = Math.PI / n;
+    [[a - s * 0.5, r - 4], [a - s * 0.25, r + 5], [a + s * 0.25, r + 5], [a + s * 0.5, r - 4]]
+      .forEach(([t, rr]) => pts.push(`${(cx + rr * Math.cos(t)).toFixed(1)},${(cy + rr * Math.sin(t)).toFixed(1)}`));
+  }
+  return `<polygon class="${cls}" points="${pts.join(' ')}"/><circle class="thin" cx="${cx}" cy="${cy}" r="${Math.max(3, r * 0.18).toFixed(1)}"/>`;
+}
+// Appui simple (triangle) sous le point x, y, et sol hachuré
+const dAppui = (x, y) => `<path class="thin" d="M${x} ${y} L${x - 10} ${y + 16} H${x + 10} Z"/><line class="thin" x1="${x - 16}" y1="${y + 16}" x2="${x + 16}" y2="${y + 16}"/>` +
+  [0, 1, 2, 3].map(k => `<line class="thin" x1="${x - 14 + k * 9}" y1="${y + 16}" x2="${x - 20 + k * 9}" y2="${y + 23}"/>`).join('');
+// Encastrement (mur hachuré vertical) à l'abscisse x, de y1 à y2
+const dMur = (x, y1, y2) => `<line class="line" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/>` +
+  Array.from({ length: Math.floor((y2 - y1) / 9) + 1 }, (_, k) => `<line class="thin" x1="${x}" y1="${y1 + k * 9}" x2="${x - 8}" y2="${y1 + k * 9 + 8}"/>`).join('');
+// Flèche courbe de rotation autour de (cx, cy), rayon r, de l'angle a1 à a2 (en degrés, sens trigonométrique si a2 > a1)
+function dRot(cx, cy, r, a1, a2, cls = 'arrow') {
+  const P = a => [cx + r * Math.cos(-a * Math.PI / 180), cy + r * Math.sin(-a * Math.PI / 180)], [x1, y1] = P(a1), [x2, y2] = P(a2);
+  const big = Math.abs(a2 - a1) > 180 ? 1 : 0, sweep = a2 > a1 ? 0 : 1, [xp, yp] = P(a2 - Math.sign(a2 - a1) * 12);
+  return `<path class="${cls}" d="M${x1.toFixed(1)} ${y1.toFixed(1)} A${r} ${r} 0 ${big} ${sweep} ${x2.toFixed(1)} ${y2.toFixed(1)}"/>` + dA(xp, yp, x2, y2, cls).replace(/<line[^>]*\/>/, '');
+}
+
+// ---------- Chapitres ----------
+const CHAPITRES = [
+  'Chaîne d\'information et SysML',
+  'Acquisition et capteurs',
+  'Conditionnement et conversion analogique-numérique',
+  'Représentation de l\'information',
+  'Liaisons série et bus de terrain',
+  'Réseaux informatiques',
+  'Traitement et programmation',
+  'Objets connectés et transmission sans fil'
+];
+
+// ---------- Mise en forme des fiches ----------
+const H = t => `<h3>${t}</h3>`;
+const P = (...t) => t.map(x => `<p>${x}</p>`).join('');
+const UL = (...i) => `<ul class="l">${i.map(x => `<li>${x}</li>`).join('')}</ul>`;
+// Encadré « À retenir » et exemple résolu
+const BOX = (...b) => `<div class="box"><div class="box-t">À retenir</div>${b.join('')}</div>`;
+const EX = (t, ...b) => `<div class="exm"><div class="box-t">${t}</div>${b.join('')}</div>`;
+// Suite de blocs fonctionnels : [[titre, sous-titre], …]
+const CHAIN = items => `<div class="chain">${items.map(([t, s]) => `<div class="blk"><b>${t}</b>${s ? `<span>${s}</span>` : ''}</div>`).join('<span class="arr">→</span>')}</div>`;
+const code = s => `<pre class="code">${s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+// Légende d'une formule : [[symbole LaTeX, description], …]
+const LEG = (...t) => {
+  const s = t.map(([a, d]) => `${m(a)} ${d}`);
+  return P('avec ' + (s.length > 1 ? s.slice(0, -1).join(', ') + ' et ' + s[s.length - 1] : s[0]) + '.');
+};
+
+
+// Chronogramme logique : cells = [{l: 0|1, t: 'étiquette'}], repos à l'état haut avant et après
+function wave(cells, cap = '') {
+  const cw = Math.min(46, 500 / (cells.length + 2)), x0 = 30, hi = 24, lo = 64, W = x0 * 2 + cw * (cells.length + 2);
+  let pts = `${x0},${hi} ${x0 + cw},${hi}`, x = x0 + cw, lab = '';
+  cells.forEach(c => {
+    const y = c.l ? hi : lo;
+    pts += ` ${x},${y} ${x + cw},${y}`;
+    lab += `<line class="grid" x1="${x}" y1="14" x2="${x}" y2="${lo + 6}"/><text x="${x + cw / 2}" y="${lo + 22}" text-anchor="middle">${c.t}</text>`;
+    x += cw;
+  });
+  pts += ` ${x},${hi} ${x + cw},${hi}`;
+  lab += `<line class="grid" x1="${x}" y1="14" x2="${x}" y2="${lo + 6}"/>`;
+  return fig(`<svg viewBox="0 0 ${W} 100" role="img">${lab}<polyline class="c1" points="${pts}"/>
+    <text x="4" y="${hi + 4}">1</text><text x="4" y="${lo + 4}">0</text></svg>`, cap);
+}
+
+// ---------- Fiches de cours (chap = numéro du chapitre) ----------
+const EXOS = [
+  // ===================== Chapitre 1 =====================
+  {
+    chap: 1,
+    title: 'Chaîne d\'information et diagrammes SysML',
+    support: 'Programme SIN, chapitres 2.4 et 3.4.2 · présents dans tous les sujets SIN',
+    body:
+      H('1. La chaîne d\'information') +
+      CHAIN([['Acquérir', 'capteur, bouton'], ['Traiter', 'microcontrôleur'], ['Communiquer', 'écran, bus, réseau']]) +
+      table(['Nature du signal', 'Valeurs', 'Exemple'], [['Logique (TOR)', '0 ou 1 (0 V / 5 V)', 'fin de course'], ['Analogique', 'continues', 'tension d\'un capteur'], ['Numérique', 'nombre codé en binaire', 'trame I2C']]) +
+      P('Dans un diagramme de blocs internes (ibd), chaque flux est repéré par sa nature : une sonde donne une grandeur analogique, un bus transporte du numérique, un bouton donne un signal logique.') +
+      H('2. Diagrammes de comportement') +
+      UL('<b>Séquence (sd)</b> : messages échangés entre les éléments, dans l\'ordre du temps (lignes de vie verticales).', '<b>États (stm)</b> : états du système et transitions, déclenchées par un événement et éventuellement une condition [garde].',
+        '<b>Activités (act)</b> : enchaînement des actions, équivalent d\'un algorigramme.') +
+      dSV(340, 120, `<rect class="flow" x="20" y="40" width="90" height="40" rx="12"/><rect class="flow" x="230" y="40" width="90" height="40" rx="12"/><circle class="pt" cx="65" cy="16" r="6"/>` + dA(65, 22, 65, 40, 'thin') +
+        dT(65, 65, 'Veille', 'middle', 13) + dT(275, 65, 'Mesure', 'middle', 13) + dA(110, 52, 230, 52) + dA(230, 70, 110, 70, 'arrowv') + dT(170, 44, 'appui [batterie OK]', 'middle', 12) + dT(170, 92, 'fin de mesure', 'middle', 12),
+        'Diagramme d\'états : une transition = événement [condition]') +
+      P('Pour <b>parcourir un diagramme d\'états</b>, on part de l\'état initial et on suit les transitions dont l\'événement se produit et dont la condition est vraie.') +
+      BOX(P('TOR : 0/1 ; analogique : continu ; numérique : codé.', 'stm = états et transitions ; sd = messages dans le temps.'))
+  },
+  // ===================== Chapitre 2 =====================
+  {
+    chap: 2,
+    title: 'Caractéristiques des capteurs',
+    support: 'Programme SIN, chapitre 5.3.1 · annales SIN 2021 à 2026',
+    body:
+      H('1. Types de capteurs') +
+      UL('<b>Détecteur TOR</b> : présence ou absence (fin de course, inductif, capacitif, photoélectrique, ILS).', '<b>Capteur analogique</b> : une tension ou un courant image de la grandeur.',
+        '<b>Capteur numérique</b> : il envoie directement une valeur codée (bus I2C, 1-Wire…).') +
+      H('2. Caractéristiques') +
+      table(['Caractéristique', 'Définition'], [['Étendue de mesure', 'plage des valeurs mesurables'], ['Sensibilité', 'variation de la sortie pour une variation de l\'entrée (ex : 10 mV/°C)'],
+        ['Résolution', 'plus petite variation détectable'], ['Précision', 'erreur maximale (± 0,5 °C, ou en % de la pleine échelle)'], ['Temps de réponse', 'délai pour que la sortie suive l\'entrée']]) +
+      H('3. Capteur à sortie linéaire') +
+      M('S = a \\times X + b') + LEG(['S', 'la sortie (tension en V ou courant en mA)'], ['X', 'la grandeur mesurée'], ['a', 'la sensibilité (pente)'], ['b', 'la valeur de la sortie quand X = 0']) +
+      P('On trouve a et b avec deux points connus de la caractéristique : a = (S₂ − S₁) / (X₂ − X₁), puis b = S₁ − a × X₁.') +
+      H('4. Boucle de courant 4-20 mA') +
+      P('Le transmetteur délivre 4 mA au début de l\'étendue de mesure et 20 mA à la fin. Le « zéro vivant » à 4 mA permet de détecter une coupure de fil (0 mA). Le courant n\'est pas affaibli par la longueur du câble. Aux bornes d\'une résistance de 250 Ω, on obtient 1 à 5 V.') +
+      M('I = 4 + 16 \\times \\frac{X - X_{min}}{X_{max} - X_{min}}') + LEG(['I', 'le courant en mA'], ['X', 'la grandeur mesurée'], ['X_{min}', 'et Xmax les bornes de l\'étendue de mesure']) +
+      BOX(P('Sortie linéaire : S = a·X + b, avec a la sensibilité.', '4-20 mA : 4 mA au minimum, 20 mA au maximum.'))
+  },
+  {
+    chap: 2,
+    title: 'Capteurs résistifs, shunt et codeurs',
+    support: 'Programme SIN, chapitre 5.3.1 · annales SIN',
+    body:
+      H('1. Pont diviseur') +
+      P('Un capteur dont la résistance varie (thermistance, photorésistance) est monté avec une résistance fixe R. La tension mesurée aux bornes du capteur vaut :') +
+      M('U_T = V_{cc} \\times \\frac{R_T}{R_T + R}') + LEG(['U_T', 'la tension aux bornes du capteur en V'], ['V_{cc}', 'la tension d\'alimentation en V'], ['R_T', 'la résistance du capteur en Ω'], ['R', 'la résistance fixe en Ω']) +
+      P('Une <b>CTN</b> (coefficient de température négatif) voit sa résistance <b>diminuer</b> quand la température augmente ; une sonde PT100 (platine) augmente : R = 100 × (1 + 0,0039 × T).') +
+      H('2. Mesure de courant par shunt') +
+      P('Un shunt est une résistance très faible placée <b>en série</b> ; on mesure la petite tension à ses bornes.') +
+      M('R_{shunt} = \\frac{U_n}{I_n}') + LEG(['U_n', 'la tension nominale (ex : 75 mV)'], ['I_n', 'le courant nominal (ex : 100 A)']) +
+      P('Il dissipe une puissance P = R × I².') +
+      H('3. Codeurs') +
+      UL('<b>Codeur incrémental</b> : il délivre N impulsions par tour ; on compte les impulsions pour connaître l\'angle et la vitesse.', '<b>Codeur absolu</b> : chaque position correspond à un code unique sur n bits, soit 2<sup>n</sup> positions par tour (résolution 360° / 2<sup>n</sup>).',
+        'Le <b>code Gray</b> ne change que d\'un bit entre deux positions voisines, ce qui évite les lectures erronées pendant les transitions. Conversion : chaque bit binaire = bit Gray OU EXCLUSIF le bit binaire précédent.') +
+      H('4. Mesure par ultrasons') +
+      P('Un émetteur envoie une onde et mesure le temps de vol t. La distance vaut d = v × t / 2 pour un aller-retour (v ≈ 340 m/s dans l\'air). Un anémomètre compare les temps de vol dans les deux sens pour en déduire la vitesse du vent.') +
+      BOX(P('Pont diviseur : UT = Vcc × RT / (RT + R).', 'Codeur absolu sur n bits : 2<sup>n</sup> positions ; code Gray : un seul bit change à la fois.'))
+  },
+  // ===================== Chapitre 3 =====================
+  {
+    chap: 3,
+    title: 'Amplifier, adapter et filtrer',
+    support: 'Programme SIN, chapitre 5.3.1 · annales SIN',
+    body:
+      H('1. Amplification') +
+      M('A = \\frac{U_s}{U_e}') + LEG(['A', 'le gain en tension (sans unité)'], ['U_s', 'la tension de sortie'], ['U_e', 'la tension d\'entrée (même unité)']) +
+      M('G_{dB} = 20 \\log(A)') + P('Un gain de 10 vaut 20 dB, un gain de 100 vaut 40 dB.') +
+      H('2. Adaptateur de dynamique') +
+      P('Il transforme la plage du capteur en la plage complète du CAN (par exemple 0 à 3,3 V), pour profiter de toute la résolution :') +
+      M('V_{s2} = a \\times V_{s1} + b') + LEG(['V_{s1}', 'la tension du capteur'], ['V_{s2}', 'la tension envoyée au CAN'], ['a', 'le gain'], ['b', 'le décalage']) +
+      P('On calcule a et b avec les deux bornes : à V<sub>s1 min</sub> on veut 0 V, à V<sub>s1 max</sub> on veut la pleine échelle du CAN.') +
+      H('3. Filtre passe-bas du premier ordre') +
+      P('Un filtre RC laisse passer les basses fréquences et atténue les hautes (le bruit) :') +
+      M('f_c = \\frac{1}{2 \\pi R C}') + LEG(['f_c', 'la fréquence de coupure en Hz'], ['R', 'la résistance en Ω'], ['C', 'la capacité en F']) +
+      P('À la fréquence de coupure, le gain vaut −3 dB ; au-delà, il diminue de 20 dB par décade (chaque fois que la fréquence est multipliée par 10).') +
+      BOX(P('G = 20 log A ; fc = 1 / (2πRC).', 'Adaptateur : la plage du capteur devient la pleine échelle du CAN.'))
+  },
+  {
+    chap: 3,
+    title: 'Conversion analogique-numérique',
+    support: 'Cours/TD CAN · programme SIN, chapitre 5.3.1',
+    body:
+      M('q = \\frac{V_{max} - V_{min}}{2^n}') + LEG(['q', 'le quantum en V'], ['V_{max}', 'et Vmin les bornes de la plage d\'entrée en V'], ['n', 'le nombre de bits du CAN']) +
+      M('N = \\left\\lfloor \\frac{U - V_{min}}{q} \\right\\rfloor') + LEG(['N', 'la valeur numérique (entier de 0 à 2ⁿ − 1)'], ['U', 'la tension d\'entrée en V']) +
+      P('Les crochets signifient « partie entière » : on arrondit à l\'entier inférieur. Inversement, la tension correspondant à N vaut V<sub>min</sub> + N × q.') +
+      H('Erreurs et résolution') +
+      UL('L\'erreur de quantification est au plus d\'un quantum q (un demi-quantum si le CAN arrondit au plus proche).', 'Résolution d\'une chaîne de mesure : on ramène le quantum à la grandeur mesurée en le divisant par la sensibilité du capteur et le gain de l\'amplificateur.',
+        'L\'erreur totale d\'une chaîne additionne les erreurs du capteur, du conditionnement et de la conversion.') +
+      EX('Exemple', P('CAN 10 bits sur 0 à 5 V : q = 5 / 1 024 ≈ 4,9 mV. Un capteur de 10 mV/°C, amplifié 5 fois, donne 50 mV/°C : la résolution vaut 4,9 / 50 ≈ 0,1 °C.')) +
+      H('Échantillonnage') +
+      P('Le CAN prend Fe mesures par seconde (fréquence d\'échantillonnage) ; pour bien reconstituer un signal, Fe doit valoir au moins le double de sa plus haute fréquence (théorème de Shannon).') +
+      BOX(P('q = (Vmax − Vmin) / 2ⁿ ; N = partie entière de (U − Vmin) / q.', 'Fe ≥ 2 × fmax.'))
+  },
+  // ===================== Chapitre 4 =====================
+  {
+    chap: 4,
+    title: 'Coder l\'information',
+    support: 'Programme SIN, chapitre 3.4.1 · annales SIN',
+    body:
+      H('1. Bases') +
+      table(['Décimal', 'Binaire', 'Hexadécimal'], [['10', '1010', 'A'], ['15', '1111', 'F'], ['166', '1010 0110', 'A6'], ['255', '1111 1111', 'FF']]) +
+      UL('Binaire → hexadécimal : grouper les bits par 4 en partant de la droite.', 'n bits : 2<sup>n</sup> valeurs, de 0 à 2<sup>n</sup> − 1 (8 bits : 0 à 255 ; 16 bits : 0 à 65 535).') +
+      H('2. Entiers signés (complément à 2)') +
+      P('Sur n bits signés, le bit de poids fort vaut −2<sup>n−1</sup>. Pour lire une valeur négative sur 16 bits : on la lit comme un entier positif puis on retire 65 536.') +
+      EX('Exemple : température sur deux octets', P('Un capteur envoie FF 38 avec une résolution de 0,1 °C. FF38 = 65 336 ; comme le bit de poids fort est à 1, la valeur vaut 65 336 − 65 536 = −200, soit −20,0 °C.')) +
+      H('3. Caractères et couleurs') +
+      UL('<b>ASCII</b> : un caractère par octet. « A » = 41 (hex) = 65 ; « a » = 61 = 97 ; « 0 » = 30 = 48.', '<b>Couleur RVB</b> : trois octets rouge, vert, bleu (de 00 à FF). #FF8000 = rouge 255, vert 128, bleu 0 : orange.') +
+      BOX(P('Binaire ↔ hexadécimal par paquets de 4 bits.', 'Signé sur 16 bits : si le bit de poids fort vaut 1, on retire 65 536.'))
+  },
+  {
+    chap: 4,
+    title: 'Chronogrammes, taille des données et compression',
+    support: 'Programme SIN, chapitre 3.4.1',
+    body:
+      H('1. Lire un chronogramme') +
+      UL('<b>Période</b> T : durée d\'un motif ; <b>fréquence</b> f = 1 / T.', '<b>Rapport cyclique</b> α = durée à l\'état haut / T (signal PWM).', '<b>Niveaux logiques</b> : 1 = état haut (5 V ou 3,3 V), 0 = état bas (0 V).') +
+      graph({ x0: 0, x1: 4, dx: 1, y0: 0, y1: 6, dy: 1, w: 400, h: 200, xlab: 't (ms)', ylab: 'u (V)', series: [{ pts: [[0, 0], [0, 5], [0.75, 5], [0.75, 0], [1, 0], [1, 5], [1.75, 5], [1.75, 0], [2, 0], [2, 5], [2.75, 5], [2.75, 0], [3, 0], [3, 5], [3.75, 5], [3.75, 0], [4, 0]] }],
+        cap: 'T = 1 ms, f = 1 kHz, α = 0,75 / 1 = 75 %' }) +
+      H('2. Taille des données') +
+      M('\\text{taille (bits)} = n \\times N_{valeurs}') + LEG(['n', 'le nombre de bits par valeur'], ['N_{valeurs}', 'le nombre de valeurs stockées']) +
+      P('Une image de L × H pixels en couleur (24 bits par pixel) occupe L × H × 3 octets. Un son occupe Fe × n × voies × durée bits.') +
+      H('3. Compression') +
+      M('\\tau = \\frac{\\text{taille initiale}}{\\text{taille compressée}}') + P('Une compression <b>sans perte</b> (ZIP, PNG) permet de retrouver exactement les données ; une compression <b>avec perte</b> (JPEG, MP3, H.264) supprime des détails peu perceptibles et va beaucoup plus loin.') +
+      BOX(P('f = 1 / T ; α = thaut / T.', 'Image : L × H × 3 octets en couleur.'))
+  },
+  // ===================== Chapitre 5 =====================
+  {
+    chap: 5,
+    title: 'Liaison série asynchrone (UART, RS232, RS485)',
+    support: 'Cours Liaison série RS232 · programme SIN, chapitre 3.4.3',
+    body:
+      H('1. Principe') +
+      P('Les bits sont envoyés <b>les uns après les autres</b> sur un seul fil de données. La liaison est <b>asynchrone</b> : il n\'y a pas d\'horloge commune, l\'émetteur et le récepteur doivent être réglés sur le même débit (9 600, 19 200, 115 200 bit/s…).') +
+      wave([{ l: 0, t: 'S' }, { l: 1, t: 'b0' }, { l: 0, t: 'b1' }, { l: 0, t: 'b2' }, { l: 0, t: 'b3' }, { l: 0, t: 'b4' }, { l: 0, t: 'b5' }, { l: 1, t: 'b6' }, { l: 0, t: 'b7' }, { l: 0, t: 'P' }, { l: 1, t: 'St' }],
+        'Octet 0x41 (« A ») envoyé bit de poids faible en premier, avec parité paire') +
+      UL('Au repos, la ligne est à 1. Le <b>bit de start</b> (0) annonce le début du caractère.', 'Les <b>données</b> (7 ou 8 bits) partent bit de poids faible (b0) en premier.',
+        'Le <b>bit de parité</b> (facultatif) permet de détecter une erreur sur un bit : en parité paire, le nombre total de 1 (données + parité) est pair.', 'Le <b>bit de stop</b> (1) termine le caractère.') +
+      P('La notation « 8N1 » signifie 8 bits de données, pas de parité, 1 bit de stop, soit 10 bits par octet.') +
+      H('2. Durée et débit') +
+      M('t_{bit} = \\frac{1}{D}') + M('t_{trame} = n_{octets} \\times n_{bits} \\times t_{bit}') +
+      LEG(['t_{bit}', 'la durée d\'un bit en s'], ['D', 'le débit en bit/s'], ['n_{bits}', 'le nombre de bits transmis par octet (start, données, parité, stop)']) +
+      P('Le <b>débit utile</b> ne compte que les bits de données : 8 bits sur 10 en 8N1, soit 80 % du débit.') +
+      H('3. Supports physiques') +
+      table(['Norme', 'Caractéristiques'], [['UART (TTL)', 'niveaux 0 / 3,3 ou 5 V, quelques dizaines de cm, entre composants d\'une carte'], ['RS232', 'niveaux ±12 V, point à point, une quinzaine de mètres'],
+        ['RS485', 'paire différentielle, jusqu\'à 1 200 m, plusieurs équipements sur le même bus (Modbus RTU)']]) +
+      BOX(P('Start (0), données b0 d\'abord, parité, stop (1).', 'Durée d\'une trame = nombre de bits × 1 / débit.'))
+  },
+  {
+    chap: 5,
+    title: 'Bus de communication : I2C, Modbus, KNX',
+    support: 'Cours Bus I2C · programme SIN, chapitres 3.4.3 et 5.3.4',
+    body:
+      H('1. Typologie des communications') +
+      table(['Notion', 'Signification'], [['Synchrone', 'une horloge commune cadence les bits (I2C, SPI)'], ['Asynchrone', 'pas d\'horloge commune (UART)'], ['Half duplex', 'les deux sens, mais un seul à la fois (talkie-walkie)'],
+        ['Full duplex', 'les deux sens en même temps (téléphone)'], ['Maître / esclave', 'le maître interroge, l\'esclave répond'], ['Client / serveur', 'le client demande un service au serveur']]) +
+      H('2. Bus I2C') +
+      UL('Deux fils : <b>SDA</b> (données) et <b>SCL</b> (horloge), plus la masse. Bus synchrone, half duplex, maître/esclave.', 'Chaque esclave a une <b>adresse sur 7 bits</b> (jusqu\'à 128 adresses). La trame commence par l\'adresse suivie d\'un bit R/W (1 = lecture, 0 = écriture).',
+        'Chaque octet est suivi d\'un bit d\'acquittement (ACK) envoyé par le récepteur. Débits courants : 100 kbit/s ou 400 kbit/s.') +
+      H('3. Modbus') +
+      P('Protocole maître/esclave très utilisé en industrie (souvent sur RS485). Une trame contient : l\'adresse de l\'esclave, le code fonction (03 = lire des registres, 06 = écrire un registre), les données, puis un contrôle d\'erreur (CRC).') +
+      H('4. Bus de terrain du bâtiment et des véhicules') +
+      UL('<b>KNX</b> : domotique et bâtiment ; adresse physique en trois parties zone.ligne.participant (ex : 1.1.12) et adresses de groupe pour les commandes.', '<b>CAN</b> : automobile, très fiable ; chaque message a un identifiant qui fixe sa priorité.',
+        '<b>EnOcean</b> : sans fil et sans pile (récupération d\'énergie).') +
+      BOX(P('I2C : SDA + SCL, adresse 7 bits + R/W, ACK après chaque octet.', 'Modbus : adresse, fonction, données, CRC.'))
+  },
+  // ===================== Chapitre 6 =====================
+  {
+    chap: 6,
+    title: 'Adressage IP et masques de sous-réseau',
+    support: 'Programme SIN, chapitre 3.4.3 · annales SIN',
+    body:
+      P('Une adresse IPv4 tient sur 32 bits (4 octets de 0 à 255). Le masque indique la partie réseau (bits à 1) et la partie hôte (bits à 0) ; en notation CIDR, /26 signifie 26 bits à 1.') +
+      M('\\text{réseau} = IP \\ \\text{ET}\\ \\text{masque}') +
+      UL('<b>Broadcast</b> : partie hôte entièrement à 1.', 'Première adresse utilisable : réseau + 1 ; dernière : broadcast − 1.') +
+      M('N = 2^h - 2') + LEG(['N', 'le nombre de machines'], ['h', 'le nombre de bits de la partie hôte']) +
+      EX('Exemple : 172.16.5.200/27', P('Masque : 255.255.255.224 (27 bits à 1). 200 = 1100 1000 ; 224 = 1110 0000 ; ET : 1100 0000 = 192.', 'Réseau 172.16.5.192, broadcast 172.16.5.223, 30 machines possibles (de .193 à .222).')) +
+      H('Masque optimal') +
+      P('Pour un nombre de machines donné, on choisit le plus petit h tel que 2<sup>h</sup> − 2 soit suffisant (sans oublier le routeur, qui a lui aussi une adresse). Le masque vaut alors /(32 − h).') +
+      table(['Machines', 'Bits hôte', 'Masque'], [['jusqu\'à 6', '3', '/29 = 255.255.255.248'], ['jusqu\'à 14', '4', '/28 = 255.255.255.240'], ['jusqu\'à 30', '5', '/27 = 255.255.255.224'], ['jusqu\'à 62', '6', '/26 = 255.255.255.192']]) +
+      P('Adressage <b>statique</b> (fixé à la main, pour les serveurs, imprimantes, automates) ou <b>dynamique</b> (attribué par un serveur DHCP).') +
+      BOX(P('Réseau = IP ET masque ; machines = 2<sup>h</sup> − 2.'))
+  },
+  {
+    chap: 6,
+    title: 'Trames, modèle OSI et services réseau',
+    support: 'Programme SIN, chapitres 3.4.3 et 5.3.4 · annales SIN',
+    body:
+      H('1. Encapsulation') +
+      CHAIN([['Trame Ethernet', 'MAC dest., MAC source'], ['Paquet IP', 'IP source, IP dest.'], ['Segment TCP / UDP', 'ports'], ['Données', 'HTTP, Modbus TCP…']]) +
+      P('Dans une capture (Wireshark), l\'en-tête Ethernet commence par l\'adresse MAC de destination (6 octets) puis la source (6 octets) et le type (08 00 = IPv4). Dans l\'en-tête IP, les adresses source et destination occupent 4 octets chacune, écrits en hexadécimal : C0 A8 00 0A = 192.168.0.10.') +
+      H('2. Modèle OSI') +
+      table(['Couche', 'Équipement ou protocole'], [['7 Application', 'HTTP, FTP, DNS, DHCP, Modbus TCP'], ['4 Transport', 'TCP (fiable), UDP (rapide)'], ['3 Réseau', 'IP, routeur'], ['2 Liaison', 'Ethernet, Wi-Fi, switch'], ['1 Physique', 'câble, fibre, ondes']]) +
+      H('3. Services et ports') +
+      table(['Service', 'Rôle', 'Port'], [['HTTP / HTTPS', 'pages web', '80 / 443'], ['FTP', 'transfert de fichiers', '21'], ['DNS', 'nom → adresse IP', '53'], ['DHCP', 'attribution d\'adresses', '67'], ['Modbus TCP', 'automates', '502']]) +
+      P('Un <b>socket</b> est le couple adresse IP + port qui identifie une extrémité d\'une communication.') +
+      H('4. Débit Wi-Fi') +
+      P('Le débit réel est nettement inférieur au débit théorique annoncé (souvent la moitié ou moins), car le support est partagé et les en-têtes occupent de la place. Durée d\'un transfert : t = taille en bits / débit réel.') +
+      BOX(P('Ethernet : MAC ; IP : adresses ; TCP/UDP : ports.', 'Switch : couche 2 ; routeur : couche 3.'))
+  },
+  // ===================== Chapitre 7 =====================
+  {
+    chap: 7,
+    title: 'Algorithmes et programmes : Arduino et Python',
+    support: 'Mini-cours Algorigrammes · programme SIN, chapitre 4.3.5',
+    body:
+      H('1. Types de variables') +
+      table(['Type (C++ Arduino)', 'Contenu', 'Taille'], [['bool', 'vrai ou faux', '1 octet'], ['byte', 'entier de 0 à 255', '1 octet'], ['int', 'entier de −32 768 à 32 767 (Uno)', '2 octets'],
+        ['long', 'entier sur 32 bits', '4 octets'], ['float', 'nombre à virgule', '4 octets']]) +
+      P('Choisir un type trop petit provoque un débordement (un byte qui vaut 255 passe à 0 si on lui ajoute 1).') +
+      H('2. Structure d\'un programme Arduino') +
+      code(`const int LED = 13;
+void setup() {
+  pinMode(LED, OUTPUT);
+}
+void loop() {
+  int v = analogRead(A0);
+  if (v > 512) {
+    digitalWrite(LED, HIGH);
+  } else {
+    digitalWrite(LED, LOW);
+  }
+  delay(100);
+}`) +
+      P('setup() s\'exécute une fois au démarrage, loop() se répète sans fin. analogRead renvoie une valeur de 0 à 1 023 (CAN 10 bits).') +
+      H('3. La même logique en Python') +
+      code(`for i in range(3):
+    print(i * 2)
+n = 0
+while n < 10:
+    n = n + 4
+print(n)`) +
+      P('Ce programme affiche 0, 2, 4 puis 12. Pour faire la <b>trace</b> d\'un programme, on note dans un tableau la valeur de chaque variable à chaque passage dans la boucle.') +
+      BOX(P('Arduino : setup() une fois, loop() en boucle.', 'Trace : un tableau, une colonne par variable, une ligne par tour.'))
+  },
+  {
+    chap: 7,
+    title: 'Logique, régulation et temps réel',
+    support: 'Programme SIN, chapitres 3.4.3 et 3.4.4',
+    body:
+      H('1. Équations logiques') +
+      P('ET (·), OU (+), NON (barre), OU exclusif (⊕). Lois de De Morgan :') + M('\\overline{a \\cdot b} = \\overline{a} + \\overline{b} \\qquad \\overline{a + b} = \\overline{a} \\cdot \\overline{b}') +
+      H('2. Régulation tout ou rien à hystérésis') +
+      P('Pour éviter que l\'actionneur ne commute sans arrêt autour de la consigne, on utilise deux seuils. Exemple d\'un chauffage réglé à 20 °C avec un écart de ± 0,5 °C : il s\'allume sous 19,5 °C et s\'éteint au-dessus de 20,5 °C ; entre les deux, il garde son état.') +
+      graph({ x0: 0, x1: 60, dx: 10, y0: 18, y1: 22, dy: 1, w: 400, h: 220, xlab: 't (min)', ylab: 'T (°C)',
+        series: [{ pts: [[0, 19.5], [8, 20.5], [20, 19.5], [28, 20.5], [40, 19.5], [48, 20.5], [60, 19.5]] }, { pts: [[0, 20.5], [60, 20.5]], cls: 'c3' }, { pts: [[0, 19.5], [60, 19.5]], cls: 'c3' }],
+        cap: 'Température d\'une pièce régulée entre 19,5 et 20,5 °C' }) +
+      H('3. Régulation et asservissement') +
+      P('Une boucle fermée compare la mesure à la consigne ; l\'écart commande l\'actionneur. On parle de <b>régulation</b> quand la consigne est fixe (température), d\'<b>asservissement</b> quand elle varie (position d\'un bras).') +
+      CHAIN([['Consigne', ''], ['Comparateur', 'écart'], ['Correcteur', ''], ['Actionneur', ''], ['Système', 'mesure par capteur']]) +
+      H('4. Temps réel') +
+      P('Un système temps réel doit réagir dans un délai garanti. Le <b>temps de cycle</b> est la durée d\'un tour de boucle du programme ; une <b>interruption</b> suspend le programme pour traiter immédiatement un événement (front sur une entrée, minuterie).') +
+      BOX(P('Hystérésis : deux seuils pour éviter les commutations répétées.', 'Régulation : consigne fixe ; asservissement : consigne variable.'))
+  },
+  // ===================== Chapitre 8 =====================
+  {
+    chap: 8,
+    title: 'Objets connectés et transmission sans fil',
+    support: 'Programme SIN, chapitres 5.3.3 et 5.3.4',
+    body:
+      H('1. Unités de traitement') +
+      table(['Type', 'Exemple', 'Usage'], [['Microcontrôleur', 'Arduino', 'piloter des entrées/sorties en temps réel'], ['Nano-ordinateur', 'Raspberry Pi', 'système d\'exploitation, écran, caméra, serveur web'],
+        ['Module connecté', 'ESP32', 'objet connecté à Internet (IoT)']]) +
+      P('On choisit selon le volume de données, la puissance de calcul, le stockage, la consommation et les interfaces nécessaires.') +
+      H('2. Technologies sans fil') +
+      table(['Technologie', 'Portée', 'Débit, usage'], [['RFID / NFC', 'quelques cm à quelques m', 'identification (badges, étiquettes)'], ['Bluetooth', '10 à 100 m', 'moyen débit, accessoires'],
+        ['Wi-Fi', 'quelques dizaines de m', 'haut débit, réseau local'], ['Zigbee', 'quelques dizaines de m', 'faible débit, maillé, domotique'], ['LoRa, Sigfox', 'plusieurs km', 'très faible débit, faible consommation (capteurs)']]) +
+      P('Plus la portée et le débit sont grands, plus la consommation augmente : un capteur sur pile qui envoie quelques octets par heure utilisera LoRa plutôt que le Wi-Fi.') +
+      H('3. RFID') +
+      P('Un lecteur alimente à distance une étiquette (tag) passive qui renvoie son identifiant unique (UID), souvent écrit en hexadécimal sur 4 ou 7 octets. Le nombre d\'identifiants possibles sur n bits vaut 2<sup>n</sup>.') +
+      BOX(P('Longue portée et faible consommation : LoRa ; haut débit : Wi-Fi ; identification : RFID.'))
+  }
+];
+
+// ---------- Affichage ----------
+const nav = document.getElementById('nav');
+const card = document.getElementById('card');
+let current = 0;
+
+function renderMath(root) {
+  root.querySelectorAll('.m').forEach(el => {
+    const tex = el.dataset.tex;
+    if (window.katex) {
+      katex.render(tex, el, { displayMode: !!el.dataset.d, throwOnError: false, strict: false });
+    } else {
+      el.textContent = tex;
+    }
+  });
+}
+
+// Adapte le contenu visible à la largeur de l'écran :
+// - un tableau de 2 ou 3 lignes trop large est présenté en colonnes (transposé) ;
+// - une formule centrée trop large est rendue « en ligne », que KaTeX peut couper après = ou +.
+function fitToWidth(root) {
+  root.querySelectorAll('.tw').forEach(w => {
+    const t = w.querySelector('table');
+    if (!w.offsetParent || !t || t.dataset.tr || t.rows.length > 3 || w.scrollWidth <= w.clientWidth + 1) return;
+    const cells = [...t.rows].map(r => [...r.cells].map(c => c.innerHTML));
+    t.innerHTML = cells[0].map((_, c) => `<tr>${cells.map((row, k) => {
+      const tag = c === 0 || k === 0 ? 'th' : 'td';
+      return `<${tag}>${row[c] ?? ''}</${tag}>`;
+    }).join('')}</tr>`).join('');
+    t.dataset.tr = '1';
+  });
+  if (!window.katex) return;
+  root.querySelectorAll('.mdisp').forEach(el => {
+    if (!el.offsetParent) return;
+    if (el.classList.contains('mwrap')) {
+      katex.render(el.dataset.tex, el, { displayMode: true, throwOnError: false, strict: false });
+      el.classList.remove('mwrap');
+      el.style.overflow = '';
+    }
+    if (el.scrollWidth > el.clientWidth + 1) {
+      katex.render(el.dataset.tex, el, { displayMode: false, throwOnError: false, strict: false });
+      el.classList.add('mwrap');
+      // Quelques pixels de trop (bord d'un cadre) : on laisse déborder dans la marge plutôt que d'afficher un défilement
+      if (el.scrollWidth - el.clientWidth <= 8) el.style.overflow = 'visible';
+    }
+  });
+}
+let fitTimer;
+window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(() => fitToWidth(card), 150); });
+
+// Identifiant d'une fiche dans l'adresse : #c<chapitre>-<rang dans le chapitre>
+const idOf = i => {
+  const c = EXOS[i].chap;
+  return `c${c}-${EXOS.slice(0, i + 1).filter(e => e.chap === c).length}`;
+};
+const ARROW = '<svg class="arrow" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function buildNav() {
+  nav.innerHTML = CHAPITRES.map((titre, c) => `
+    <div class="chap">
+      <button class="chap-btn" aria-expanded="false">
+        ${ARROW}
+        <span><span class="seq">Chapitre ${c + 1}</span><span class="ex">${titre}</span></span>
+      </button>
+      <div class="exlist" hidden>
+        ${EXOS.map((e, i) => e.chap === c + 1 ? `<a href="#${idOf(i)}" data-i="${i}">${e.title}</a>` : '').join('')}
+      </div>
+    </div>`).join('');
+  nav.querySelectorAll('.chap-btn').forEach(b => b.onclick = () => toggleChap(b));
+  nav.querySelectorAll('.exlist a').forEach(a => a.onclick = ev => { ev.preventDefault(); go(+a.dataset.i); });
+}
+
+// Affiche la fiche i et met à jour l'adresse (#c4-1…) sans recharger la page
+function go(i) {
+  show(i);
+  closeMenu();
+  window.scrollTo(0, 0);
+  try { history.pushState(null, '', '#' + idOf(i)); } catch (err) { /* aperçu hors ligne : on ignore */ }
+}
+
+// Ouvre ou ferme un chapitre ; ouvrir un chapitre referme les autres
+function toggleChap(btn, open) {
+  const list = btn.nextElementSibling;
+  list.hidden = open === undefined ? !list.hidden : !open;
+  btn.setAttribute('aria-expanded', String(!list.hidden));
+  if (!list.hidden) {
+    nav.querySelectorAll('.chap-btn').forEach(b => {
+      if (b !== btn) { b.nextElementSibling.hidden = true; b.setAttribute('aria-expanded', 'false'); }
+    });
+  }
+}
+
+function show(i) {
+  current = i;
+  const e = EXOS[i];
+  card.innerHTML = `
+    <div class="crumb">Chapitre ${e.chap} · ${CHAPITRES[e.chap - 1]}</div>
+    <h2>${e.title}</h2>
+    <p class="support">${e.support}</p>
+    ${e.body}
+    <div class="btns"><a class="go" href="Exercices_SIN.html#c${e.chap}-1">S'entraîner : exercices du chapitre ${e.chap} →</a></div>`;
+  renderMath(card);
+  fitToWidth(card);
+  nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', +a.dataset.i === i));
+  nav.querySelectorAll('.chap').forEach((ch, c) => {
+    const btn = ch.querySelector('.chap-btn');
+    btn.classList.toggle('on', c === e.chap - 1);
+    if (c === e.chap - 1) toggleChap(btn, true);
+  });
+  document.getElementById('prevBtn').style.visibility = i > 0 ? 'visible' : 'hidden';
+  document.getElementById('nextBtn').style.visibility = i < EXOS.length - 1 ? 'visible' : 'hidden';
+}
+
+function fromHash() {
+  const i = EXOS.findIndex((e, k) => '#' + idOf(k) === location.hash);
+  show(i >= 0 ? i : 0);
+  closeMenu();
+  window.scrollTo(0, 0);
+}
+
+// Menu mobile
+const sidebar = document.getElementById('sidebar'), shade = document.getElementById('shade');
+function closeMenu() { sidebar.classList.remove('open'); shade.hidden = true; }
+document.getElementById('menuBtn').onclick = () => { sidebar.classList.add('open'); shade.hidden = false; };
+shade.onclick = closeMenu;
+
+document.getElementById('prevBtn').onclick = () => go(current - 1);
+document.getElementById('nextBtn').onclick = () => go(current + 1);
+window.addEventListener('popstate', fromHash);
+
+buildNav();
+fromHash();
+</script>
 </body>
 </html>

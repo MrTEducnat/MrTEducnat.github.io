@@ -6,33 +6,1037 @@
 <title>Cours 2I2D</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <style>
-:root { --bg: #f6f5f1; --surface: #ffffff; --text: #1f1e1c; --muted: #6b6a65; --border: #dcd9d0; --accent: #185fa5; --accent-bg: #e6f1fb; }
+:root {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --side: #efede6;
+  --text: #1f1e1c;
+  --muted: #6b6a65;
+  --border: #dcd9d0;
+  --accent: #185fa5;
+  --accent-bg: #e6f1fb;
+  --val: #854f0b;
+  --val-bg: #faeeda;
+  --ok: #27500a;
+  --ok-bg: #eaf3de;
+  --ok-border: #639922;
+  --code-bg: #f1efe8;
+  --bad-bg: #fcebeb;
+  --bad-border: #e24b4a;
+}
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #1b1b1a; --surface: #242422; --text: #ecebe6; --muted: #a3a29b; --border: #3a3a37; --accent: #85b7eb; --accent-bg: #0c447c; }
+  :root:not([data-theme="light"]) {
+    --bg: #1b1b1a;
+    --surface: #242422;
+    --side: #20201e;
+    --text: #ecebe6;
+    --muted: #a3a29b;
+    --border: #3a3a37;
+    --accent: #85b7eb;
+    --accent-bg: #0c447c;
+    --val: #fac775;
+    --val-bg: #4a3209;
+    --ok: #c0dd97;
+    --ok-bg: #1f3309;
+    --ok-border: #639922;
+    --code-bg: #2c2c2a;
+    --bad-bg: #3d1414;
+    --bad-border: #e24b4a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1b1a;
+  --surface: #242422;
+  --side: #20201e;
+  --text: #ecebe6;
+  --muted: #a3a29b;
+  --border: #3a3a37;
+  --accent: #85b7eb;
+  --accent-bg: #0c447c;
+  --val: #fac775;
+  --val-bg: #4a3209;
+  --ok: #c0dd97;
+  --ok-bg: #1f3309;
+  --ok-border: #639922;
+  --code-bg: #2c2c2a;
+  --bad-bg: #3d1414;
+  --bad-border: #e24b4a;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 16px; line-height: 1.6; }
-main { max-width: 780px; margin: 0 auto; padding: 48px 24px; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); min-height: 100vh; }
+
+/* Barre latérale */
+.sidebar {
+  background: var(--side);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.sidebar h1 { font-size: 18px; font-weight: 600; margin: 0 8px 4px; }
+a.home {
+  display: inline-block; text-decoration: none; color: var(--accent); font-size: 14px;
+  border: 1px solid var(--accent); border-radius: 8px; padding: 4px 10px;
+}
+a.home:hover, a.home:focus-visible { background: var(--accent-bg); outline: none; }
+.sidebar a.home { margin: 0 8px 14px; }
+.topbar a.home { margin-left: auto; }
+.sidebar .sub { font-size: 13px; color: var(--muted); margin: 0 8px 16px; }
+.chap { margin-bottom: 2px; }
+.chap-btn {
+  display: flex; align-items: flex-start; gap: 8px; width: 100%;
+  text-align: left; border: 0; border-radius: 8px; padding: 8px 8px;
+  line-height: 1.35;
+}
+.chap-btn:hover { background: var(--border); }
+.chap-btn .arrow { flex: none; margin-top: 10px; color: var(--muted); transition: transform .15s; }
+.chap-btn[aria-expanded="true"] .arrow { transform: rotate(180deg); }
+.chap-btn.on .seq, .chap-btn.on .arrow { color: var(--accent); }
+.nav .seq { font-size: 12px; color: var(--muted); display: block; }
+.nav .ex { font-size: 14px; font-weight: 500; }
+.exlist { padding: 2px 0 6px 32px; }
+.exlist[hidden] { display: none; }
+.exlist a {
+  display: block; text-decoration: none; color: var(--text); font-size: 14px;
+  padding: 6px 10px; border-radius: 0 8px 8px 0; border-left: 2px solid var(--border);
+}
+.exlist a:hover { background: var(--border); }
+.exlist a.on { background: var(--accent-bg); color: var(--accent); border-left-color: var(--accent); }
+
+/* Barre du haut (mobile) */
+.topbar { display: none; }
+
+/* Contenu */
+main { padding: 32px 24px 48px; }
+.card {
+  max-width: 780px; margin: 0 auto;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 24px 28px;
+}
 .crumb { font-size: 13px; color: var(--muted); }
-h1 { font-size: 26px; font-weight: 600; margin: 2px 0 20px; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; }
-.card p { margin: 0; color: var(--muted); }
-.links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-.go { text-decoration: none; border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; padding: 8px 16px; font-size: 15px; }
-.go:hover, .go:focus-visible { background: var(--accent-bg); outline: none; }
-@media (max-width: 860px) { main { padding: 28px 16px; } .card { padding: 18px 16px; } h1 { font-size: 22px; } }
+.card h2 { font-size: 22px; font-weight: 600; margin: 2px 0 4px; }
+.support { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+.v {
+  background: var(--val-bg); color: var(--val);
+  padding: 1px 5px; border-radius: 5px; font-weight: 500;
+  /* Une valeur longue (suite d'événements, octets…) peut passer à la ligne ; nombre et unité restent liés par une espace insécable */
+  overflow-wrap: anywhere; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+pre .v { overflow-wrap: normal; }
+ol.q { padding-left: 22px; margin: 12px 0 0; }
+ol.q li { margin-bottom: 4px; }
+pre.code {
+  background: var(--code-bg); border-radius: 8px; padding: 12px 14px;
+  font-size: 14px; line-height: 1.5; overflow-x: auto; margin: 12px 0;
+}
+.btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+button {
+  font: inherit; font-size: 15px; cursor: pointer;
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px;
+}
+button:hover { background: var(--side); }
+button.primary { border-color: var(--accent); color: var(--accent); }
+.correction {
+  margin-top: 20px; padding: 14px 18px;
+  background: var(--ok-bg); border-left: 4px solid var(--ok-border);
+}
+.correction[hidden] { display: none; }
+.correction h3 { font-size: 15px; font-weight: 600; color: var(--ok); margin: 0 0 8px; }
+.step { margin-bottom: 12px; }
+.step:last-child { margin-bottom: 0; }
+.step .lab { font-size: 14px; font-weight: 600; color: var(--ok); }
+.step p { margin: 2px 0; }
+.mdisp { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+.mdisp.mwrap { text-align: center; line-height: 2.2; margin: 6px 0; }
+@media (max-width: 600px) {
+  table.t { font-size: 13px; }
+  table.t th, table.t td { padding: 3px 6px; }
+  pre.code { font-size: 12px; padding: 10px; }
+  table.t th, table.t td { overflow-wrap: anywhere; hyphens: auto; }
+}
+/* QCM */
+ol.qcm { padding-left: 22px; margin: 12px 0 0; }
+ol.qcm > li { margin-bottom: 14px; }
+ol.qcm > li > p { margin: 0 0 6px; }
+ol.qcm label {
+  display: flex; align-items: flex-start; gap: 8px; cursor: pointer;
+  padding: 6px 10px; margin-bottom: 4px; border: 1px solid var(--border); border-radius: 8px;
+}
+ol.qcm label:hover { background: var(--side); }
+ol.qcm input { margin-top: 5px; accent-color: var(--accent); }
+ol.qcm label.good { border-color: var(--ok-border); background: var(--ok-bg); }
+ol.qcm label.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+.score { font-weight: 600; color: var(--ok); margin: 0 0 10px; }
+.score:empty { display: none; }
+
+/* Tableaux et schémas */
+table.t { border-collapse: collapse; margin: 10px 0; font-size: 15px; }
+table.t th, table.t td { border: 1px solid var(--border); padding: 4px 10px; text-align: center; }
+table.t th { background: var(--side); font-weight: 600; }
+.tw { overflow-x: auto; }
+figure.fig { margin: 12px 0; text-align: center; }
+figure.fig svg { width: 100%; max-width: 560px; height: auto; }
+figure.fig svg.small { max-width: 220px; }
+svg.sym { display: block; width: 150px; height: auto; margin: 6px 0; }
+figure.fig svg.leds { max-width: 400px; }
+figcaption { font-size: 13px; color: var(--muted); }
+svg text { fill: var(--text); font-size: 12px; font-family: inherit; }
+svg text.lab { fill: var(--muted); font-size: 12px; }
+svg .grid { stroke: var(--border); stroke-width: 1; }
+svg .ax { stroke: var(--muted); stroke-width: 1.4; }
+svg .c1 { fill: none; stroke: var(--accent); stroke-width: 2.2; }
+svg .c2 { fill: none; stroke: var(--val); stroke-width: 2; }
+svg .c3 { fill: none; stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 5 4; }
+svg .pt { fill: var(--val); }
+svg .line { stroke: var(--text); stroke-width: 2; fill: none; }
+svg .thin { stroke: var(--text); stroke-width: 1.2; fill: none; }
+svg .fillv { fill: var(--val-bg); stroke: var(--val); stroke-width: 1.5; }
+svg .arrow { stroke: var(--accent); stroke-width: 2.4; fill: none; }
+svg .arrowv { stroke: var(--val); stroke-width: 2.4; fill: none; }
+svg .flow { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 1; }
+svg .loss { fill: var(--val-bg); stroke: var(--val); stroke-width: 1; }
+svg .ledon { fill: #e5484d; stroke: var(--text); }
+svg .ledoff { fill: var(--side); stroke: var(--muted); }
+
+/* Fiches de cours */
+.card h3 { font-size: 18px; font-weight: 600; color: var(--accent); margin: 26px 0 8px; }
+.card p { margin: 8px 0; }
+.card p.support { margin: 0 0 16px; }
+ul.l { padding-left: 22px; margin: 8px 0; }
+ul.l li { margin-bottom: 4px; }
+.box, .exm { border-radius: 0 8px 8px 0; padding: 10px 16px; margin: 16px 0; }
+.box { background: var(--accent-bg); border-left: 4px solid var(--accent); }
+.exm { background: var(--ok-bg); border-left: 4px solid var(--ok-border); }
+.box-t { font-size: 14px; font-weight: 600; color: var(--accent); }
+.exm .box-t { color: var(--ok); }
+.box p, .exm p { margin: 4px 0; }
+.chain { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 14px 0; }
+.blk { border: 1.5px solid var(--accent); border-radius: 8px; padding: 6px 10px; background: var(--surface); text-align: center; font-size: 14px; }
+.blk span { display: block; font-size: 12px; color: var(--muted); }
+.arr { color: var(--accent); font-weight: 600; }
+a.go {
+  text-decoration: none; border: 1px solid var(--accent); color: var(--accent);
+  border-radius: 8px; padding: 8px 16px; font-size: 15px;
+}
+a.go:hover, a.go:focus-visible { background: var(--accent-bg); outline: none; }
+/* Fiches : on ne coupe pas les mots dans les cases, la colonne prend la largeur du mot le plus long */
+@media (max-width: 600px) {
+  table.t th, table.t td { overflow-wrap: break-word; hyphens: manual; padding: 3px 4px; }
+}
+
+.pager { display: flex; justify-content: space-between; gap: 10px; max-width: 780px; margin: 16px auto 0; }
+.pager button { font-size: 14px; }
+
+@media (max-width: 860px) {
+  .layout { display: block; }
+  .topbar {
+    display: flex; align-items: center; gap: 10px;
+    position: sticky; top: 0; z-index: 5;
+    background: var(--side); border-bottom: 1px solid var(--border); padding: 10px 16px;
+  }
+  .topbar span { font-weight: 600; }
+  .sidebar {
+    position: fixed; left: 0; top: 0; z-index: 10; width: 290px; max-width: 85vw;
+    transform: translateX(-100%); transition: transform .2s;
+  }
+  .sidebar.open { transform: none; }
+  .shade { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 9; }
+  .shade[hidden] { display: none; }
+  main { padding: 16px 16px 40px; }
+  .card { padding: 18px 16px; }
+  .card h2 { font-size: 19px; }
+}
 </style>
 </head>
 <body>
-<main>
-  <div class="crumb">Terminale STI2D</div>
-  <h1>Cours 2I2D</h1>
-  <div class="card">
-    <p>Page en construction : les cours seront bientôt disponibles.</p>
-  </div>
-  <div class="links"><a class="go" href="index.html">← Accueil</a><a class="go" href="Exercices_2I2D.html">Exercices 2I2D →</a></div>
-</main>
+<div class="topbar">
+  <button id="menuBtn" aria-label="Ouvrir le menu">☰</button>
+  <span>Cours 2I2D</span>
+  <a class="home" href="index.html">← Accueil</a>
+</div>
+<div class="shade" id="shade" hidden></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a class="home" href="index.html">← Accueil</a>
+    <h1>Cours 2I2D</h1>
+    <p class="sub">Terminale STI2D · enseignement commun 2I2D</p>
+    <div class="nav" id="nav"></div>
+  </nav>
+  <main>
+    <article class="card" id="card"></article>
+    <div class="pager">
+      <button id="prevBtn">← Précédent</button>
+      <button id="nextBtn">Suivant →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+// ---------- Outils ----------
+const rnd = (a, b, step = 1) => {
+  const n = Math.round((b - a) / step);
+  return +(a + step * Math.floor(Math.random() * (n + 1))).toFixed(6);
+};
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+// Nombre au format français (texte)
+const fr = (x, d = 2) => Number(x).toLocaleString('fr-FR', { maximumFractionDigits: d });
+// Nombre au format français (LaTeX)
+const tx = (x, d = 2) => fr(x, d).replace(',', '{,}').replace(/[\u202f\u00a0]/g, '\\,');
+// Nombre avec un nombre fixe de décimales (texte / LaTeX)
+const frf = (x, d) => Number(x).toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const txf = (x, d) => frf(x, d).replace(',', '{,}').replace(/[  ]/g, '\\,');
+// Écriture scientifique en LaTeX
+const sci = (x, d = 2) => {
+  let e = Math.floor(Math.log10(Math.abs(x)));
+  if (Math.abs(+(x / 10 ** e).toFixed(d)) >= 10) e++;
+  return `${tx(x / 10 ** e, d)} \\times 10^{${e}}`;
+};
+// Nombre avec s chiffres significatifs : décimal si raisonnable, sinon scientifique
+const tn = (x, s = 3) => {
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e-3 && a < 1e6) return tx(x, Math.max(0, s - 1 - Math.floor(Math.log10(a))));
+  return sci(x, s - 1);
+};
+const fn = (x, s = 3) => {
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  return fr(x, Math.max(0, s - 1 - Math.floor(Math.log10(a))));
+};
+const deg = a => a * Math.PI / 180;
+const G = 9.81;
+// Valeur surlignée dans l'énoncé
+const v = (x, unit = '', d = 2) => `<span class="v">${typeof x === 'number' ? fr(x, d) : x}${unit ? '\u00a0' + unit : ''}</span>`;
+// Formules
+const m = t => `<span class="m" data-tex="${t.replace(/"/g, '&quot;')}"></span>`;
+const M = t => `<div class="m mdisp" data-d="1" data-tex="${t.replace(/"/g, '&quot;')}"></div>`;
+// Unité en LaTeX (gère ², ³, ·, °, µ)
+const u = s => '\\,\\text{' + s.replace(/%/g, '\\%').replace(/²/g,'}^2\\text{').replace(/³/g, '}^3\\text{')
+  .replace(/·/g, '}\\cdot\\text{').replace(/°/g, '}{}^\\circ\\text{').replace(/[µμ]/g, '}\\mu\\text{') + '}';
+
+// Liste des questions d'un énoncé
+const ol = (...items) => `<ol class="q">${items.map(i => `<li>${i}</li>`).join('')}</ol>`;
+// Tableau HTML : en-têtes puis lignes
+const table = (head, rows) => `<div class="tw"><table class="t"><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr>${
+  rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const euro = x => frf(x, 2) + ' €';
+const teuro = x => txf(x, 2) + u('€');
+
+// ---------- Tirages ----------
+const shuffle = arr => {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+};
+const sample = (arr, n) => shuffle(arr).slice(0, n);
+
+// ---------- QCM ----------
+// Banque : [question, bonne réponse, [mauvaises réponses], explication]
+const QCM_N = 5;
+function qcm(bank, n = QCM_N) {
+  const id = 'q' + Math.random().toString(36).slice(2, 8);
+  const items = sample(bank, Math.min(n, bank.length)).map(([q, ok, bad, ex]) => {
+    const choices = shuffle([ok, ...sample(bad.filter(b => b !== ok), 3)]);
+    return { q, ok, ex, choices, k: choices.indexOf(ok) };
+  });
+  return {
+    qcm: true,
+    statement: `<p>Choisir la bonne réponse pour chaque question.</p>
+      <ol class="qcm">${items.map((it, i) => `<li data-ok="${it.k}"><p>${it.q}</p>${it.choices.map((c, j) =>
+        `<label><input type="radio" name="${id}${i}" value="${j}"> <span>${c}</span></label>`).join('')}</li>`).join('')}</ol>`,
+    steps: items.map((it, i) => [`${i + 1}. ${it.ok}`, it.ex ? `<p>${it.ex}</p>` : ''])
+  };
+}
+// Questions construites à partir de couples (élément, réponse)
+const fromPairs = (pairs, fmt, ex) =>
+  pairs.map(([a, b]) => [fmt(a), b, [...new Set(pairs.map(p => p[1]))], ex ? ex(a, b) : '']);
+// Exercice QCM
+const Q = (chap, title, support, bank) => ({ chap, title, support, gen: () => qcm(typeof bank === 'function' ? bank() : bank) });
+
+// ---------- Schémas SVG ----------
+const fig = (svg, cap = '') => `<figure class="fig">${svg}${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
+// Graphique gradué : o = {x0, x1, dx, y0, y1, dy, xlab, ylab, series: [{pts, cls}], extra(X, Y), nolab}
+function graph(o) {
+  const W = o.w || 560, H = o.h || 270, L = 50, R = 16, T = 14, B = 34;
+  const X = x => +(L + (x - o.x0) / (o.x1 - o.x0) * (W - L - R)).toFixed(1);
+  const Y = y => +(H - B - (y - o.y0) / (o.y1 - o.y0) * (H - T - B)).toFixed(1);
+  const fx = o.fx || (x => fr(x, 3)), fy = o.fy || (y => fr(y, 3));
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="graph" role="img">`;
+  const nx = Math.round((o.x1 - o.x0) / o.dx), ny = Math.round((o.y1 - o.y0) / o.dy);
+  for (let i = 0; i <= nx; i++) {
+    const x = o.x0 + i * o.dx;
+    s += `<line class="grid" x1="${X(x)}" y1="${T}" x2="${X(x)}" y2="${H - B}"/>`;
+    if (!o.nolab) s += `<text x="${X(x)}" y="${H - B + 15}" text-anchor="middle">${fx(x)}</text>`;
+  }
+  for (let i = 0; i <= ny; i++) {
+    const y = o.y0 + i * o.dy;
+    s += `<line class="grid" x1="${L}" y1="${Y(y)}" x2="${W - R}" y2="${Y(y)}"/>`;
+    if (!o.nolab) s += `<text x="${L - 6}" y="${Y(y) + 4}" text-anchor="end">${fy(y)}</text>`;
+  }
+  if (o.y0 < 0 && o.y1 > 0) s += `<line class="ax" x1="${L}" y1="${Y(0)}" x2="${W - R}" y2="${Y(0)}"/>`;
+  s += `<line class="ax" x1="${L}" y1="${T}" x2="${L}" y2="${H - B}"/><line class="ax" x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/>`;
+  if (o.xlab) s += `<text x="${W - R}" y="${H - 4}" text-anchor="end" class="lab">${o.xlab}</text>`;
+  if (o.ylab) s += `<text x="${L + 6}" y="${T + 12}" class="lab">${o.ylab}</text>`;
+  (o.series || []).forEach(se => {
+    s += `<polyline class="${se.cls || 'c1'}" points="${se.pts.map(([x, y]) => X(x) + ',' + Y(y)).join(' ')}"/>`;
+  });
+  if (o.extra) s += o.extra(X, Y);
+  return fig(s + '</svg>', o.cap);
+}
+// Échantillonne une fonction pour un graphique
+const curve = (f, x0, x1, n = 400) => Array.from({ length: n + 1 }, (_, i) => { const x = x0 + (x1 - x0) * i / n; return [x, f(x)]; });
+// Diagramme de Sankey en ligne : étapes [{name, val}] (val peut être '?') ; les pertes partent vers le bas
+function sankey(stages, vals, unit) {
+  const W = 560, H = 220, top = 40, x0 = 20, x1 = W - 20, seg = (x1 - x0) / stages.length;
+  const k = 90 / vals[0];
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="sankey" role="img">`;
+  stages.forEach((st, i) => {
+    const h = vals[i] * k, xa = x0 + i * seg;
+    s += `<rect class="flow" x="${xa}" y="${top}" width="${seg}" height="${h}"/>`;
+    s += `<text x="${xa + 6}" y="${top - 18}" class="lab">${st.name}</text><text x="${xa + 6}" y="${top - 4}">${st.label}</text>`;
+    if (i < stages.length - 1) {
+      const lw = Math.max(4, (vals[i] - vals[i + 1]) * k), xb = xa + seg;
+      s += `<rect class="loss" x="${xb - lw}" y="${top + vals[i + 1] * k}" width="${lw}" height="${H - 30 - top - vals[i + 1] * k}"/>`;
+      s += `<text x="${xb - lw / 2}" y="${H - 12}" text-anchor="middle">${stages[i].loss}</text>`;
+    }
+  });
+  return fig(s + '</svg>', unit);
+}
+
+// ---------- Dessins (schémas lisibles sur téléphone : viewBox étroit, texte à 14 px) ----------
+// Schéma : largeur et hauteur du viewBox, contenu SVG, légende
+const dSV = (w, h, inner, cap = '', max = 440) => fig(`<svg viewBox="0 0 ${w} ${h}" role="img" style="max-width:${max}px">${inner}</svg>`, cap);
+// Texte : position, contenu, ancrage (start | middle | end), taille
+const dT = (x, y, s, a = 'middle', sz = 14) => `<text x="${+x.toFixed(1)}" y="${+y.toFixed(1)}" text-anchor="${a}" style="font-size:${sz}px">${s}</text>`;
+// Flèche du point 1 au point 2 (cls : arrow = bleu, arrowv = orange)
+function dA(x1, y1, x2, y2, cls = 'arrow') {
+  const a = Math.atan2(y2 - y1, x2 - x1), h = 9, r = n => +n.toFixed(1);
+  const p = s => `${r(x2 - h * Math.cos(a + s))} ${r(y2 - h * Math.sin(a + s))}`;
+  return `<line class="${cls}" x1="${r(x1)}" y1="${r(y1)}" x2="${r(x2)}" y2="${r(y2)}"/><path class="${cls}" d="M${p(-0.45)} L${r(x2)} ${r(y2)} L${p(0.45)}"/>`;
+}
+// Cote horizontale ou verticale avec flèches aux deux bouts et texte au milieu
+function dCote(x1, y1, x2, y2, s, off = -6) {
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, hor = Math.abs(y2 - y1) < Math.abs(x2 - x1);
+  return dA(mx, my, x1, y1, 'thin') + dA(mx, my, x2, y2, 'thin') + (hor ? dT(mx, my + off, s) : dT(mx + 6, my + 5, s, 'start'));
+}
+// Roue dentée : centre, rayon primitif, nombre de dents (dessin simplifié)
+function dGear(cx, cy, r, z, cls = 'fillv') {
+  const n = Math.max(8, Math.min(z, 40)), pts = [];
+  for (let k = 0; k < n; k++) {
+    const a = 2 * Math.PI * k / n, s = Math.PI / n;
+    [[a - s * 0.5, r - 4], [a - s * 0.25, r + 5], [a + s * 0.25, r + 5], [a + s * 0.5, r - 4]]
+      .forEach(([t, rr]) => pts.push(`${(cx + rr * Math.cos(t)).toFixed(1)},${(cy + rr * Math.sin(t)).toFixed(1)}`));
+  }
+  return `<polygon class="${cls}" points="${pts.join(' ')}"/><circle class="thin" cx="${cx}" cy="${cy}" r="${Math.max(3, r * 0.18).toFixed(1)}"/>`;
+}
+// Appui simple (triangle) sous le point x, y, et sol hachuré
+const dAppui = (x, y) => `<path class="thin" d="M${x} ${y} L${x - 10} ${y + 16} H${x + 10} Z"/><line class="thin" x1="${x - 16}" y1="${y + 16}" x2="${x + 16}" y2="${y + 16}"/>` +
+  [0, 1, 2, 3].map(k => `<line class="thin" x1="${x - 14 + k * 9}" y1="${y + 16}" x2="${x - 20 + k * 9}" y2="${y + 23}"/>`).join('');
+// Encastrement (mur hachuré vertical) à l'abscisse x, de y1 à y2
+const dMur = (x, y1, y2) => `<line class="line" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/>` +
+  Array.from({ length: Math.floor((y2 - y1) / 9) + 1 }, (_, k) => `<line class="thin" x1="${x}" y1="${y1 + k * 9}" x2="${x - 8}" y2="${y1 + k * 9 + 8}"/>`).join('');
+// Flèche courbe de rotation autour de (cx, cy), rayon r, de l'angle a1 à a2 (en degrés, sens trigonométrique si a2 > a1)
+function dRot(cx, cy, r, a1, a2, cls = 'arrow') {
+  const P = a => [cx + r * Math.cos(-a * Math.PI / 180), cy + r * Math.sin(-a * Math.PI / 180)], [x1, y1] = P(a1), [x2, y2] = P(a2);
+  const big = Math.abs(a2 - a1) > 180 ? 1 : 0, sweep = a2 > a1 ? 0 : 1, [xp, yp] = P(a2 - Math.sign(a2 - a1) * 12);
+  return `<path class="${cls}" d="M${x1.toFixed(1)} ${y1.toFixed(1)} A${r} ${r} 0 ${big} ${sweep} ${x2.toFixed(1)} ${y2.toFixed(1)}"/>` + dA(xp, yp, x2, y2, cls).replace(/<line[^>]*\/>/, '');
+}
+
+// ---------- Chapitres ----------
+const CHAPITRES = [
+  'Outils de base : formules, unités, géométrie',
+  'SysML et chaînes',
+  'Design responsable',
+  'Thermique du bâtiment',
+  'Énergies renouvelables, stockage et eau',
+  'Communication informatique',
+  'Durabilité des structures',
+  'Éclairage'
+];
+
+// ---------- Mise en forme des fiches ----------
+const H = t => `<h3>${t}</h3>`;
+const P = (...t) => t.map(x => `<p>${x}</p>`).join('');
+const UL = (...i) => `<ul class="l">${i.map(x => `<li>${x}</li>`).join('')}</ul>`;
+// Encadré « À retenir » et exemple résolu
+const BOX = (...b) => `<div class="box"><div class="box-t">À retenir</div>${b.join('')}</div>`;
+const EX = (t, ...b) => `<div class="exm"><div class="box-t">${t}</div>${b.join('')}</div>`;
+// Suite de blocs fonctionnels : [[titre, sous-titre], …]
+const CHAIN = items => `<div class="chain">${items.map(([t, s]) => `<div class="blk"><b>${t}</b>${s ? `<span>${s}</span>` : ''}</div>`).join('<span class="arr">→</span>')}</div>`;
+const code = s => `<pre class="code">${s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+// Légende d'une formule : [[symbole LaTeX, description], …]
+const LEG = (...t) => {
+  const s = t.map(([a, d]) => `${m(a)} ${d}`);
+  return P('avec ' + (s.length > 1 ? s.slice(0, -1).join(', ') + ' et ' + s[s.length - 1] : s[0]) + '.');
+};
+
+
+// Chronogramme logique : cells = [{l: 0|1, t: 'étiquette'}], repos à l'état haut avant et après
+function wave(cells, cap = '') {
+  const cw = Math.min(46, 500 / (cells.length + 2)), x0 = 30, hi = 24, lo = 64, W = x0 * 2 + cw * (cells.length + 2);
+  let pts = `${x0},${hi} ${x0 + cw},${hi}`, x = x0 + cw, lab = '';
+  cells.forEach(c => {
+    const y = c.l ? hi : lo;
+    pts += ` ${x},${y} ${x + cw},${y}`;
+    lab += `<line class="grid" x1="${x}" y1="14" x2="${x}" y2="${lo + 6}"/><text x="${x + cw / 2}" y="${lo + 22}" text-anchor="middle">${c.t}</text>`;
+    x += cw;
+  });
+  pts += ` ${x},${hi} ${x + cw},${hi}`;
+  lab += `<line class="grid" x1="${x}" y1="14" x2="${x}" y2="${lo + 6}"/>`;
+  return fig(`<svg viewBox="0 0 ${W} 100" role="img">${lab}<polyline class="c1" points="${pts}"/>
+    <text x="4" y="${hi + 4}">1</text><text x="4" y="${lo + 4}">0</text></svg>`, cap);
+}
+
+// ---------- Fiches de cours (chap = numéro du chapitre) ----------
+const EXOS = [
+  // ===================== Chapitre 1 =====================
+  {
+    chap: 1,
+    title: 'Transformer une formule et convertir les unités',
+    support: 'Programme 2I2D · révisions initiales · erreurs fréquentes relevées dans les annales',
+    body:
+      H('1. Isoler une grandeur') +
+      P(`Une formule est une égalité : on peut faire la même opération des deux côtés. Pour isoler une grandeur, on « défait » les opérations qui l'entourent, dans l'ordre inverse.`) +
+      table(['Formule', 'On cherche…', 'Résultat'], [['X = Y × Z', 'Y', 'Y = X / Z'], ['X = Y / Z', 'Z', 'Z = Y / X'], ['X = Y / Z', 'Y', 'Y = X × Z'], ['X = Y²', 'Y', 'Y = √X']]) +
+      EX('Exemple', P('Le débit vaut Q = v × S. Pour trouver la section S :') + M('S = \\frac{Q}{v}') + P('On vérifie avec les unités : (m³/s) / (m/s) = m², c\'est bien une surface.')) +
+      H('2. Conversions pièges') +
+      table(['Conversion', 'Règle'], [['km/h → m/s', 'diviser par 3,6'], ['mm² → m²', 'multiplier par 10⁻⁶'], ['cm² → m²', 'multiplier par 10⁻⁴'], ['L → m³', 'diviser par 1 000'],
+        ['bar → Pa', 'multiplier par 10⁵'], ['Wh → J', 'multiplier par 3 600'], ['kWh → MJ', 'multiplier par 3,6'], ['min → h', 'diviser par 60 (90 min = 1,5 h)'], ['°C → K', 'ajouter 273,15']]) +
+      P(`Un piège classique : 1 h 30 min = 1,5 h et non 1,30 h. De même, 1 m² = 10 000 cm² car le préfixe est élevé au carré.`) +
+      H('3. Vérifier un résultat') +
+      UL('Écrire l\'unité à chaque étape : si l\'unité finale n\'est pas celle attendue, il y a une erreur.', 'Comparer avec un ordre de grandeur connu (une maison consomme environ 10 000 kWh par an, une voiture pèse environ 1,5 t).',
+        'Garder 2 ou 3 chiffres significatifs.') +
+      BOX(P('On isole une grandeur en faisant la même opération des deux côtés, puis on vérifie avec les unités.', 'Toujours convertir en unités SI avant de calculer.'))
+  },
+  {
+    chap: 1,
+    title: 'Puissance, énergie, rendement et rentabilité',
+    support: 'Programme 2I2D, chapitre 2.3 · annales : éolien 2025, Hélilock 2026, PV flottant 2024',
+    body:
+      H('1. La puissance : effort × flux') +
+      P('Dans tous les domaines, la puissance est le produit d\'une grandeur d\'effort par une grandeur de flux :') +
+      table(['Domaine', 'Puissance', 'Effort × flux'], [['Électrique (continu)', 'P = U × I', 'tension × courant'], ['Rotation', 'P = C × ω', 'couple × vitesse angulaire'],
+        ['Translation', 'P = F × v', 'force × vitesse'], ['Hydraulique', 'P = p × Q', 'pression × débit']]) +
+      P('avec P en W, U en V, I en A, C en N·m, ω en rad/s, F en N, v en m/s, p en Pa et Q en m³/s.') +
+      H('2. Rendement d\'une chaîne') +
+      M('\\eta = \\frac{P_u}{P_a}') + LEG(['\\eta', 'le rendement (sans unité)'], ['P_u', 'la puissance utile en W'], ['P_a', 'la puissance absorbée en W']) +
+      P('Pour des constituants placés en série, les rendements se multiplient :') + M('\\eta_{global} = \\eta_1 \\times \\eta_2 \\times \\eta_3') +
+      P('Les pertes valent Pa − Pu ; elles partent le plus souvent en chaleur.') +
+      H('3. Énergie et coût') +
+      M('E = P \\times \\Delta t') + LEG(['E', 'l\'énergie en Wh (ou J)'], ['P', 'la puissance en W'], ['\\Delta t', 'la durée en h (ou s)']) +
+      P('Le coût de l\'énergie vaut : énergie en kWh × prix du kWh.') +
+      H('4. Temps de retour sur investissement') +
+      M('T_R = \\frac{I}{G}') + LEG(['T_R', 'le temps de retour en années'], ['I', 'l\'investissement en €'], ['G', 'le gain net annuel en € (économies ou recettes moins la maintenance)']) +
+      EX('Exemple', P('Une installation de 25 kW produit 1 100 h équivalentes par an : E = 25 × 1 100 = 27 500 kWh. Vendue 0,13 €/kWh, elle rapporte 3 575 € ; avec 400 € de maintenance, le gain net est de 3 175 €. Pour un investissement de 38 000 € :') +
+        M('T_R = \\frac{38\\,000}{3\\,175} \\approx 12\\ \\text{ans}')) +
+      BOX(P('P = effort × flux ; η = Pu / Pa ; les rendements en série se multiplient.', 'Temps de retour = investissement / gain net annuel.'))
+  },
+  {
+    chap: 1,
+    title: 'Périmètres, surfaces et volumes',
+    support: 'Révisions initiales · annales : collecte des déchets 2023, bassins 2026',
+    body:
+      H('1. Formulaire') +
+      table(['Forme', 'Périmètre', 'Surface'], [['Rectangle a × b', '2 (a + b)', 'a × b'], ['Disque de rayon r', '2 π r', 'π r²'], ['Demi-disque', 'π r + 2 r', 'π r² / 2'], ['Triangle (base a, hauteur h)', '—', 'a × h / 2']]) +
+      table(['Solide', 'Volume'], [['Pavé a × b × c', 'a × b × c'], ['Cylindre (rayon r, hauteur h)', 'π r² × h'], ['Sphère de rayon r', '4/3 × π r³'], ['Cône (base S, hauteur h)', 'S × h / 3']]) +
+      P('Avec le diamètre d : la surface d\'un disque vaut π d² / 4.') +
+      H('2. Méthode') +
+      UL('Décomposer une forme complexe en formes simples, puis additionner ou soustraire.', 'Convertir toutes les longueurs dans la même unité avant de calculer.', 'Un volume de béton vaut surface × épaisseur ; une masse vaut volume × masse volumique.') +
+      dSV(340, 150, `<path class="flow" d="M60 120 A90 90 0 0 1 240 120 Z"/><line class="line" x1="60" y1="120" x2="240" y2="120"/><line class="thin" x1="150" y1="120" x2="214" y2="56"/>` +
+        dT(190, 82, 'r', 'start') + dT(150, 142, 'diamètre = 2 r', 'middle', 13) + dT(250, 60, 'arc = π r', 'start', 13), 'Demi-disque : périmètre = π r + 2 r ; surface = π r² / 2') +
+      EX('Exemple', P('Un bassin cylindrique de 6 m de diamètre est rempli sur 1,5 m :') + M('V = \\frac{\\pi \\times 6^2}{4} \\times 1{,}5 \\approx 42{,}4\\,\\text{m}^3')) +
+      BOX(P('Disque : S = π r² = π d² / 4. Cylindre : V = π r² × h. Sphère : V = 4/3 π r³.'))
+  },
+  // ===================== Chapitre 2 =====================
+  {
+    chap: 2,
+    title: 'Les diagrammes SysML',
+    support: 'Programme 2I2D, chapitres 1.2 et 3.4.2 · présents dans tous les sujets de bac',
+    body:
+      P('Le langage SysML décrit un système avec plusieurs diagrammes complémentaires, compréhensibles par tous les métiers.') +
+      table(['Diagramme', 'À quoi il sert'], [['Cas d\'utilisation (uc)', 'les services rendus aux acteurs ; la frontière du système'], ['Exigences (req)', 'les performances attendues, chiffrées (ex : autonomie ≥ 8 h)'],
+        ['Définition de blocs (bdd)', 'la composition du système (un bloc est constitué d\'autres blocs)'], ['Blocs internes (ibd)', 'les flux échangés entre les blocs (énergie, matière, information)'],
+        ['Séquence (sd)', 'les messages échangés dans l\'ordre chronologique'], ['États (stm)', 'les modes de marche et le passage de l\'un à l\'autre'], ['Activités (act)', 'l\'enchaînement des actions, comme un algorigramme']]) +
+      H('Quel diagramme modifier ?') +
+      UL('Ajouter un constituant (un buzzer, un capteur) : bdd, puis ibd pour ses flux.', 'Ajouter un service rendu : uc.', 'Changer une performance : req.', 'Ajouter un mode de fonctionnement : stm.') +
+      P('Dans un uc, les acteurs sont à l\'extérieur de la frontière ; un acteur existant (l\'utilisateur) n\'est pas ajouté une seconde fois.') +
+      BOX(P('Structure : bdd et ibd. Comportement : sd, stm, act. Besoin : uc et req.'))
+  },
+  {
+    chap: 2,
+    title: 'Chaînes de puissance, d\'information et nature de l\'énergie',
+    support: 'Programme 2I2D, chapitres 2.1, 2.3 et 2.4 · annales : station hydro-éolienne 2026',
+    body:
+      H('1. Les deux chaînes') +
+      CHAIN([['Acquérir', 'capteur'], ['Traiter', 'automate'], ['Communiquer', 'écran, réseau']]) +
+      CHAIN([['Alimenter', 'batterie'], ['Distribuer', 'variateur'], ['Convertir', 'moteur'], ['Transmettre', 'réducteur'], ['Agir', 'roue']]) +
+      P('La chaîne d\'information commande la fonction Distribuer de la chaîne de puissance ; les capteurs lui renvoient l\'état du système.') +
+      H('2. Les flux MEI') +
+      P('Entre les constituants circulent trois natures de flux : <b>matière</b> (eau, granulés), <b>énergie</b> (courant, rotation d\'un arbre) et <b>information</b> (mesure, trame).') +
+      H('3. Nature et forme de l\'énergie') +
+      table(['Catégorie', 'Exemple'], [['Primaire', 'vent, soleil, gaz extrait'], ['Secondaire', 'électricité produite par une éolienne'], ['Finale', 'électricité au compteur'], ['Utile', 'chaleur d\'un radiateur dans la pièce']]) +
+      P('Formes : mécanique (rotation des pales, cinétique du vent), électrique, thermique, chimique (batterie), potentielle de pesanteur (réservoir d\'une STEP), rayonnante.') +
+      BOX(P('Acquérir → Traiter → Communiquer ; Alimenter → Distribuer → Convertir → Transmettre → Agir.', 'Primaire → secondaire → finale → utile, avec des pertes à chaque étape.'))
+  },
+  // ===================== Chapitre 3 =====================
+  {
+    chap: 3,
+    title: 'Analyse du cycle de vie et éco-conception',
+    support: 'Cours ACV · programme 2I2D, chapitre 1.5',
+    body:
+      H('1. Éco-concevoir') +
+      P('L\'<b>éco-conception</b> consiste à prendre en compte, dès la conception d\'un produit ou d\'un service, les impacts environnementaux qu\'il engendrera sur tout son cycle de vie.') +
+      CHAIN([['Extraction', 'matières premières'], ['Fabrication', ''], ['Transport', 'distribution'], ['Utilisation', ''], ['Fin de vie', 'recyclage']]) +
+      H('2. L\'ACV') +
+      UL('Méthode <b>normalisée</b> (ISO 14040 à 14044) et <b>multicritère</b>.', 'On recense les <b>flux entrants</b> (matières, énergie, eau) et <b>sortants</b> (déchets, émissions) à chaque étape.',
+        'On les traduit en <b>impacts potentiels</b> (le mot rappelle l\'incertitude des calculs).', 'L\'<b>unité fonctionnelle</b> (ex : « éclairer 10 m² pendant 10 ans ») permet de comparer des produits qui rendent le même service.') +
+      table(['Indicateur', 'Ce qu\'il mesure'], [['Effet de serre', 'kg éq. CO₂ émis'], ['Énergie primaire', 'énergie consommée sur le cycle de vie (MJ)'], ['Acidification de l\'air', 'SO₂, NO₂ à l\'origine des pluies acides'],
+        ['Eutrophisation', 'excès de nitrates et phosphates dans l\'eau (algues)'], ['Épuisement des ressources', 'matières non renouvelables prélevées'], ['Toxicité, couche d\'ozone', 'substances dangereuses, CFC']]) +
+      H('3. Analyser les résultats') +
+      UL('<b>Énergie grise</b> : énergie nécessaire sur tout le cycle de vie d\'un matériau ou d\'un produit.', '<b>Bilan carbone</b> : total des émissions de gaz à effet de serre.',
+        '<b>Transfert d\'impact</b> : une amélioration sur une étape ou un critère en dégrade un autre (ex : la voiture électrique).') +
+      P('Pour comparer deux solutions, on calcule la variation de chaque indicateur :') + M('\\text{variation} = \\frac{B - A}{A} \\times 100') + LEG(['A', 'la valeur de départ'], ['B', 'la nouvelle valeur (résultat en %)']) +
+      BOX(P('ACV : normalisée, multicritère, sur tout le cycle de vie.', 'Transfert d\'impact : on gagne sur un critère mais on perd sur un autre.'))
+  },
+  {
+    chap: 3,
+    title: 'Labels, recyclage et empreinte environnementale',
+    support: 'TD Symboles du recyclage · PC Empreinte environnementale',
+    body:
+      H('1. Les symboles à connaître') +
+      table(['Symbole', 'Signification'], [['Ruban de Möbius', 'produit recyclable (pas forcément recyclé) ; avec un %, part de matière recyclée'], ['Triman', 'produit à trier ou à rapporter en point de collecte'],
+        ['Poubelle barrée', 'collecte séparée obligatoire (piles, électronique)'], ['Info-tri', 'consignes de tri détaillées'], ['Tidy Man', 'ne pas jeter dans la nature'], ['Numéro dans un triangle', 'type de plastique']]) +
+      H('2. Les labels') +
+      UL('<b>NF Environnement</b> (France) et <b>Écolabel européen</b> : impacts limités sur tout le cycle de vie, selon un cahier des charges chiffré.', '<b>FSC</b>, <b>PEFC</b> : bois issu de forêts gérées durablement.') +
+      EX('Exemple : bloc autonome d\'éclairage de sécurité (BAES)', P('Pour être certifié NF Environnement, il doit respecter tous les seuils : énergie sur le cycle de vie ≤ 1 700 MJ, effet de serre ≤ 32 000 g éq. CO₂, circuit imprimé ≤ 30 cm³, batterie ≤ 160 g, puissance < 1,6 W. Un seul critère dépassé suffit à refuser la certification.')) +
+      H('3. Empreinte et développement durable') +
+      UL('L\'<b>empreinte environnementale</b> est la surface nécessaire pour produire ce que l\'on consomme et absorber nos déchets (en hectares globaux, 1 ha = 10 000 m²).',
+        'Le <b>jour du dépassement</b> est la date où l\'humanité a consommé ce que la Terre renouvelle en un an.', 'Règle des <b>3R</b> : réduire, réutiliser, recycler.',
+        '<b>Trois piliers</b> du développement durable : environnemental, économique, social.') +
+      BOX(P('Recyclable ne veut pas dire recyclé.', 'Un label exige de respecter tous ses critères.'))
+  },
+  {
+    chap: 3,
+    title: 'Comparer des solutions : CO₂ et choix multicritère',
+    support: 'Annales : Trambus 2023, complexe sportif CIME 2024, PV flottant 2024',
+    body:
+      H('1. Émissions de CO₂') +
+      M('m_{CO_2} = Q \\times f') + LEG(['m_{CO_2}', 'la masse de CO₂ émise en g'], ['Q', 'la quantité consommée (kWh, km parcourus, t·km transportées…)'], ['f', 'le facteur d\'émission en g par unité de Q']) +
+      P('On convertit ensuite en kg (÷ 1 000) ou en tonnes (÷ 10⁶). Facteurs utiles (ordre de grandeur) : électricité en France environ 60 à 100 g/kWh, gaz environ 200 g/kWh, électricité au charbon environ 1 000 g/kWh.') +
+      EX('Exemple', P('Un bus parcourt 200 km par jour pendant 330 jours et 12 ans, soit 792 000 km. Diesel à 1 200 g/km : 950 t de CO₂. Électrique à 300 g/km (cycle de vie) : 238 t. Gain : 712 t, soit 75 %.')) +
+      H('2. Choix multicritère') +
+      P('On compare plusieurs solutions sur plusieurs critères (masse, coût, résistance, CO₂…). Dans une <b>matrice de choix</b>, chaque critère reçoit un coefficient (son importance) et chaque solution une note ; on additionne les notes pondérées.') +
+      table(['Critère (coefficient)', 'Bois', 'Acier'], [['Masse (3)', '4', '2'], ['Coût (2)', '3', '3'], ['CO₂ (3)', '5', '1'], ['Total pondéré', '33', '15']]) +
+      P('Avant de noter, on élimine les solutions qui ne respectent pas une contrainte impérative (par exemple : le poteau doit résister avec un coefficient de sécurité de 2).') +
+      BOX(P('CO₂ émis = quantité × facteur d\'émission.', 'Matrice de choix : notes × coefficients, après avoir éliminé les solutions non conformes.'))
+  },
+  // ===================== Chapitre 4 =====================
+  {
+    chap: 4,
+    title: 'Énergie et bâtiment : enjeux et réglementation',
+    support: 'Cours Thermique du bâtiment · programme 2I2D, chapitre 4.3.2',
+    body:
+      H('1. Les enjeux') +
+      UL('Le bâtiment représente environ <b>43 %</b> de l\'énergie consommée en France et environ 20 % des émissions de gaz à effet de serre.', 'Environ <b>4,8 millions</b> de logements sont des passoires thermiques (étiquettes F et G) : c\'est aussi un problème social de précarité énergétique.') +
+      H('2. Réglementation et étiquettes') +
+      table(['Outil', 'Rôle'], [['RE2020', 'réglementation des bâtiments neufs : consommation maximale, impact carbone sur le cycle de vie, confort d\'été'],
+        ['DPE', 'diagnostic d\'un logement existant, classé de A (performant) à G (énergivore)'], ['BEPOS', 'bâtiment à énergie positive : il produit plus qu\'il ne consomme sur l\'année']]) +
+      H('3. Conception bioclimatique') +
+      P('Elle exploite le site et le climat pour réduire les besoins : grandes baies au sud (soleil d\'hiver), casquettes et brise-soleil contre le soleil d\'été, compacité, inertie des murs lourds, ventilation naturelle, végétation.') +
+      H('4. Compacité') +
+      M('C = \\frac{S_p}{V_{ch}}') + LEG(['C', 'la compacité en m⁻¹'], ['S_p', 'la surface des parois déperditives (murs, toiture, plancher bas) en m²'], ['V_{ch}', 'le volume chauffé en m³']) +
+      P('À volume égal, plus la compacité est faible, moins il y a de surface d\'échange, donc moins de déperditions. Une maison à étage est plus compacte qu\'un plain-pied.') +
+      BOX(P('Bâtiment : 43 % de l\'énergie consommée en France.', 'Compacité C = Sp / V : plus elle est petite, mieux c\'est.'))
+  },
+  {
+    chap: 4,
+    title: 'Résistance thermique et déperditions',
+    support: 'Cours Thermique du bâtiment · annales : ITE d\'une école 2023',
+    body:
+      H('1. Conductivité et résistance thermique') +
+      P('La conductivité thermique λ caractérise un matériau : plus elle est faible, plus le matériau est isolant. On parle d\'isolant quand λ < 0,07 W/(m·K).') +
+      M('R = \\frac{e}{\\lambda}') + LEG(['R', 'la résistance thermique en m²·K/W'], ['e', 'l\'épaisseur en m'], ['\\lambda', 'la conductivité thermique en W/(m·K)']) +
+      P('Pour une paroi de plusieurs couches, les résistances s\'additionnent, en ajoutant les résistances superficielles intérieure et extérieure :') +
+      M('R_{totale} = R_{se} + R_1 + R_2 + \\dots + R_{si}') + P('Valeurs courantes pour un mur : Rse = 0,04 et Rsi = 0,13 m²·K/W.') +
+      H('2. Coefficient U et flux') +
+      M('U = \\frac{1}{R_{totale}}') + M('\\Phi = U \\times S \\times (T_{int} - T_{ext})') +
+      LEG(['U', 'le coefficient de transmission en W/(m²·K)'], ['\\Phi', 'le flux thermique (puissance perdue) en W'], ['S', 'la surface de la paroi en m²'], ['T', 'les températures en °C']) +
+      H('3. Déperditions d\'un logement') +
+      P('On additionne les déperditions de chaque paroi (D = U × S, en W/K) et celles du renouvellement d\'air :') + M('D_v = 0{,}34 \\times Q_v') +
+      LEG(['D_v', 'les déperditions par ventilation en W/K'], ['Q_v', 'le débit d\'air en m³/h']) + M('P = D_{totale} \\times (T_{int} - T_{ext})') +
+      P('La puissance P obtenue (en W) est celle que le chauffage doit fournir par la température extérieure de base. L\'isolation par l\'extérieur supprime la plupart des <b>ponts thermiques</b> (liaisons dalle-mur, tableaux de fenêtres).') +
+      EX('Exemple', P('Isolant de 140 mm de laine de verre (λ = 0,035) : R = 0,14 / 0,035 = 4 m²·K/W.')) +
+      BOX(P('R = e / λ ; les résistances en série s\'additionnent ; U = 1 / R.', 'Φ = U × S × ΔT ; ventilation : 0,34 × Q.'))
+  },
+  {
+    chap: 4,
+    title: 'Chauffage et efficacité énergétique',
+    support: 'Cours/TD Efficacité énergétique passive et active · annales : centre aquatique 2025',
+    body:
+      H('1. Puissance de chauffage par le volume') +
+      M('P = K \\times V \\times (T_{int} - T_{ext})') + LEG(['P', 'la puissance de chauffage en W'], ['K', 'un coefficient global en W/(m³·K) (environ 0,8 pour un logement récent)'], ['V', 'le volume de la pièce en m³'], ['T', 'les températures en °C']) +
+      P('On prend la température extérieure de base de la zone climatique (−7 °C en zone D), puis on applique un coefficient de sécurité de 1,2. On arrondit le nombre de radiateurs à l\'entier supérieur.') +
+      H('2. Chauffer de l\'eau') +
+      M('Q = m \\times c \\times \\Delta T') + LEG(['Q', 'l\'énergie en J'], ['m', 'la masse d\'eau en kg (1 L ≈ 1 kg)'], ['c', 'la capacité thermique massique, 4 185 J/(kg·K) pour l\'eau'], ['\\Delta T', 'l\'élévation de température en K ou °C']) +
+      P('La durée de chauffe vaut t = Q / (P × η) avec P la puissance de la résistance.') +
+      H('3. Efficacité passive et active') +
+      UL('<b>Passive</b> : réduire les besoins par l\'enveloppe et la conception (isolation, orientation, inertie, vitrages).', '<b>Active</b> : optimiser les équipements (régulation, programmation, appareils performants).') +
+      table(['Équipement', 'Principe'], [['Pompe à chaleur', 'prélève des calories dans l\'air, le sol ou l\'eau ; COP 3 à 4 : 1 kWh électrique donne 3 à 4 kWh de chaleur'],
+        ['VMC double flux', 'l\'air extrait réchauffe l\'air neuf dans un échangeur (efficacité 70 à 90 %)'], ['Puits canadien', 'l\'air neuf passe dans des tuyaux enterrés : préchauffé l\'hiver, rafraîchi l\'été'],
+        ['Caméra thermique', 'visualise les fuites de chaleur (zones claires en hiver) et les ponts thermiques']]) +
+      P('La chaleur se transmet par <b>conduction</b> (dans un mur), <b>convection</b> (air en mouvement) et <b>rayonnement</b> (soleil, parois chaudes).') +
+      BOX(P('P = K × V × ΔT, puis × 1,2 ; Q = m × c × ΔT.', 'Passif : réduire les besoins. Actif : mieux utiliser l\'énergie.'))
+  },
+  // ===================== Chapitre 5 =====================
+  {
+    chap: 5,
+    title: 'Production d\'électricité renouvelable',
+    support: 'Programme 2I2D, chapitres 2.3 et 4.3.1 · annales : éolien 2025, PV flottant 2024',
+    body:
+      H('1. Photovoltaïque') +
+      M('P_c = S \\times \\eta \\times 1\\,000') + LEG(['P_c', 'la puissance crête en W'], ['S', 'la surface des modules en m²'], ['\\eta', 'le rendement des modules (environ 0,2)']) +
+      P('1 000 W/m² est l\'éclairement des conditions standard. La production annuelle se calcule avec le productible du site (en kWh par kWc et par an, de 900 à 1 400 en France) :') +
+      M('E = P_c \\times \\text{productible}') +
+      P('Les modules perdent environ 0,5 % de production par an : la production de l\'année n vaut E₁ × (1 − 0,005)<sup>n − 1</sup>.') +
+      H('2. Éolien') +
+      P('Le <b>facteur de charge</b> est le rapport entre l\'énergie réellement produite et celle qu\'aurait produite l\'éolienne à pleine puissance toute l\'année (8 760 h). Il vaut 20 à 35 % à terre.') +
+      M('E = P_n \\times 8\\,760 \\times f_c') + LEG(['E', 'l\'énergie annuelle en Wh'], ['P_n', 'la puissance nominale en W'], ['f_c', 'le facteur de charge (sans unité)']) +
+      EX('Exemple', P('Une éolienne de 3 MW avec fc = 0,25 produit 3 × 8 760 × 0,25 = 6 570 MWh par an, soit la consommation (hors chauffage) d\'environ 1 400 foyers à 4,7 MWh.')) +
+      H('3. Intermittence') +
+      P('Le soleil et le vent ne produisent pas à la demande : il faut stocker l\'énergie ou la compléter par d\'autres sources. Les réseaux intelligents (smart grids) ajustent production, stockage et consommation.') +
+      BOX(P('Pc = S × η × 1 000 ; E = Pc × productible.', 'E = Pn × 8 760 × fc pour une éolienne.'))
+  },
+  {
+    chap: 5,
+    title: 'Stocker l\'énergie et convertir les unités',
+    support: 'Programme 2I2D, chapitres 2.3.2 et 5.2.2 · annales : station hydro-éolienne 2026, Trambus 2023',
+    body:
+      H('1. Batteries') +
+      M('E = U \\times Q') + LEG(['E', 'l\'énergie stockée en Wh'], ['U', 'la tension nominale en V'], ['Q', 'la capacité en Ah']) +
+      P('On ne décharge en général que 80 à 90 % de la batterie (profondeur de décharge) pour préserver sa durée de vie. Le nombre de modules se calcule en divisant l\'énergie nécessaire par l\'énergie utile d\'un module, puis en arrondissant à l\'entier supérieur. Durée de recharge : t = E / (P × η).') +
+      H('2. STEP (station de transfert d\'énergie par pompage)') +
+      dSV(340, 170, `<path class="thin" d="M40 30 L50 58 H130 L140 30"/><polygon class="flow" points="42,36 50,58 130,58 138,36"/><path class="thin" d="M200 120 L210 150 H290 L300 120"/><polygon class="flow" points="202,128 210,150 290,150 298,128"/>
+        <polyline class="line" points="130,56 215,140"/><circle class="fillv" cx="190" cy="115" r="11"/><line class="c3" x1="20" y1="36" x2="42" y2="36"/><line class="c3" x1="20" y1="128" x2="202" y2="128"/>` +
+        dCote(20, 36, 20, 128, 'h') + dT(90, 22, 'bassin haut', 'middle', 13) + dT(250, 166, 'bassin bas', 'middle', 13) + dT(206, 104, 'turbine-pompe', 'start', 13),
+        'On pompe quand l\'électricité est abondante, on turbine quand on en a besoin') +
+      M('E = m \\times g \\times h \\times \\eta') + LEG(['E', 'l\'énergie restituée en J'], ['m', 'la masse d\'eau en kg'], ['g', '= 9,81 m/s²'], ['h', 'la hauteur de chute en m'], ['\\eta', 'le rendement de turbinage']) +
+      P('Le rendement d\'un cycle complet (pompage puis turbinage) est d\'environ 75 %.') +
+      H('3. Unités d\'énergie') +
+      table(['Unité', 'Équivalence'], [['1 kWh', '3,6 MJ = 3,6 × 10⁶ J'], ['1 MWh', '3,6 × 10⁹ J'], ['1 tep', '11 630 kWh (énergie d\'une tonne de pétrole)']]) +
+      P('L\'énergie primaire d\'un logement chauffé à l\'électricité se calcule avec un coefficient de conversion (2,3 dans la RE2020) : Ep = 2,3 × énergie finale électrique.') +
+      BOX(P('Batterie : E = U × Q. STEP : E = m × g × h × η.', '1 kWh = 3,6 MJ ; 1 tep = 11 630 kWh.'))
+  },
+  {
+    chap: 5,
+    title: 'Gérer l\'eau : débits et récupération',
+    support: 'Annales : bassins 2026, centre aquatique 2025',
+    body:
+      H('1. Débit') +
+      M('Q = v \\times S') + LEG(['Q', 'le débit volumique en m³/s'], ['v', 'la vitesse du fluide en m/s'], ['S', 'la section de la canalisation en m²']) +
+      M('t = \\frac{V}{Q}') + LEG(['t', 'la durée de remplissage ou de vidange en s'], ['V', 'le volume en m³']) +
+      P('On convertit souvent : 1 m³/h = 1 / 3 600 m³/s. Pour une piscine publique, tout le volume doit être filtré en 4 h au plus : il faut un débit Q = V / 4 (en m³/h).') +
+      H('2. Récupérer l\'eau de pluie') +
+      P('1 mm de pluie correspond à 1 L par m² de toiture.') + M('V = S \\times h \\times C_r \\times \\eta') +
+      LEG(['V', 'le volume récupérable en m³'], ['S', 'la surface de toiture en m²'], ['h', 'la hauteur de pluie annuelle en m'], ['C_r', 'le coefficient de ruissellement (0,9 pour des tuiles, 0,5 pour une toiture végétalisée)'], ['\\eta', 'le rendement du filtre']) +
+      P('Le volume de la cuve se choisit pour quelques semaines d\'autonomie : besoins journaliers × nombre de jours.') +
+      BOX(P('Q = v × S ; t = V / Q.', '1 mm de pluie = 1 L/m².'))
+  },
+  // ===================== Chapitre 6 =====================
+  {
+    chap: 6,
+    title: 'Architectures et équipements réseau',
+    support: 'Cours/TD Architecture des réseaux · programme 2I2D, chapitres 3.4.3 et 5.3.4',
+    body:
+      H('1. Types de réseaux') +
+      table(['Réseau', 'Étendue', 'Exemple'], [['PAN', 'personnelle', 'Bluetooth montre-téléphone'], ['LAN', 'locale', 'réseau d\'un lycée'], ['WAN', 'étendue', 'Internet']]) +
+      UL('<b>Internet</b> est le réseau mondial ; le <b>Web</b> n\'est qu\'un de ses services (pages liées par des liens).', '<b>Client/serveur</b> : un serveur rend un service à des clients qui l\'interrogent ; <b>pair à pair</b> : chaque machine est à la fois client et serveur.') +
+      H('2. Topologies') +
+      P('<b>Étoile</b> (tous les postes reliés à un switch, la plus courante), <b>bus</b> (un câble commun), <b>anneau</b> (une boucle), <b>maillée</b> (plusieurs chemins possibles : une liaison coupée ne bloque pas le réseau, c\'est le cas d\'Internet).') +
+      H('3. Équipements') +
+      table(['Équipement', 'Rôle'], [['Hub', 'renvoie chaque trame sur tous ses ports (obsolète)'], ['Switch', 'envoie la trame au seul port du destinataire grâce à sa table d\'adresses MAC'],
+        ['Routeur', 'relie des réseaux IP différents et choisit le chemin des paquets'], ['Point d\'accès Wi-Fi', 'relie les appareils sans fil au réseau filaire']]) +
+      UL('L\'<b>adresse MAC</b> (48 bits) identifie la carte réseau ; l\'<b>adresse IP</b> identifie la machine sur le réseau.', 'Le protocole <b>ARP</b> trouve l\'adresse MAC qui correspond à une IP du réseau local.',
+        '<b>DHCP</b> attribue automatiquement les adresses IP ; <b>DNS</b> traduit un nom de domaine en adresse IP.', 'Pour joindre un autre réseau, une machine envoie ses paquets à sa <b>passerelle</b> (le routeur).') +
+      BOX(P('Switch : adresses MAC, même réseau. Routeur : adresses IP, entre réseaux.'))
+  },
+  {
+    chap: 6,
+    title: 'Modèles OSI et TCP/IP',
+    support: 'Cours/TD Modèle OSI · programme 2I2D, chapitre 3.4.3',
+    body:
+      P('Pour communiquer, les équipements suivent des règles réparties en couches. Chaque couche rend un service à la couche du dessus.') +
+      table(['Couche OSI', 'Rôle', 'Exemples'], [['7 Application', 'service pour l\'utilisateur', 'HTTP, DNS, FTP'], ['6 Présentation', 'format, chiffrement', 'TLS'], ['5 Session', 'dialogue', '—'],
+        ['4 Transport', 'découpage, fiabilité, ports', 'TCP, UDP'], ['3 Réseau', 'adressage IP, routage', 'IP, routeur'], ['2 Liaison', 'adresses MAC, trames', 'Ethernet, switch'], ['1 Physique', 'bits sur le support', 'câble, onde radio']]) +
+      P('Le modèle <b>TCP/IP</b>, utilisé sur Internet, regroupe ces couches en 4 : accès réseau, Internet, transport, application.') +
+      H('Encapsulation') +
+      P('À l\'envoi, chaque couche ajoute son en-tête aux données reçues de la couche supérieure ; à la réception, chaque couche retire le sien.') +
+      CHAIN([['Données', 'application'], ['Segment', '+ en-tête TCP'], ['Paquet', '+ en-tête IP'], ['Trame', '+ en-tête Ethernet']]) +
+      UL('<b>TCP</b> garantit l\'arrivée et l\'ordre des données (accusés de réception) ; <b>UDP</b> est plus rapide mais sans garantie (vidéo en direct).', 'Le <b>numéro de port</b> identifie l\'application : 80 pour HTTP, 443 pour HTTPS.') +
+      BOX(P('OSI : 7 couches ; TCP/IP : 4 couches.', 'Encapsulation : données → segment → paquet → trame.'))
+  },
+  {
+    chap: 6,
+    title: 'Adressage IPv4',
+    support: 'Cours Adressage et routage · TD adressage',
+    body:
+      H('1. Adresse et masque') +
+      P('Une adresse IPv4 est codée sur <b>32 bits</b>, écrite en 4 octets décimaux (de 0 à 255) : 192.168.1.20. Il existe 2³² ≈ 4,3 milliards d\'adresses. Le <b>masque</b> sépare la partie réseau (bits à 1) de la partie hôte (bits à 0).') +
+      table(['Notation CIDR', 'Masque', 'Machines'], [['/24', '255.255.255.0', '254'], ['/25', '255.255.255.128', '126'], ['/26', '255.255.255.192', '62'], ['/28', '255.255.255.240', '14']]) +
+      H('2. Calculs') +
+      UL('<b>Adresse du réseau</b> = adresse IP ET masque (bit à bit).', '<b>Adresse de diffusion</b> (broadcast) : tous les bits de la partie hôte à 1.', 'Ces deux adresses ne peuvent pas être données à une machine.') +
+      M('N = 2^n - 2') + LEG(['N', 'le nombre de machines adressables'], ['n', 'le nombre de bits de la partie hôte']) +
+      EX('Exemple : 192.168.10.77/26', P('Dernier octet : 77 = 0100 1101 ; masque : 192 = 1100 0000. ET bit à bit : 0100 0000 = 64.', 'Réseau : 192.168.10.64 ; broadcast : 192.168.10.127 ; machines de .65 à .126, soit 2⁶ − 2 = 62.')) +
+      H('3. Choisir un masque') +
+      P('Pour n machines, on cherche le plus petit nombre de bits hôte tel que 2<sup>n</sup> − 2 ≥ nombre de machines. Avec un masque /28, un réseau /24 se découpe en 16 sous-réseaux de 16 adresses (0, 16, 32…).') +
+      P('Dans une trame, l\'adresse IP apparaît en hexadécimal : C0 A8 01 2A = 192.168.1.42.') +
+      BOX(P('Réseau = IP ET masque ; machines = 2<sup>n</sup> − 2.', 'Un octet ne dépasse jamais 255.'))
+  },
+  {
+    chap: 6,
+    title: 'Transmettre l\'information : débit, trames et logique',
+    support: 'Programme 2I2D, chapitres 2.4 et 3.4 · annales : identification à distance 2024, caméra 2026',
+    body:
+      H('1. Débit') +
+      M('D = \\frac{N}{\\Delta t}') + LEG(['D', 'le débit en bit/s'], ['N', 'le nombre de bits transmis'], ['\\Delta t', 'la durée en s']) +
+      P('Sur une liaison synchrone, un bit passe à chaque période d\'horloge : D = f = 1 / T. Une taille en octets se multiplie par 8 pour obtenir des bits.') +
+      H('2. Trame série') +
+      P('Un caractère est encadré par un <b>bit de start</b> (0) et un <b>bit de stop</b> (1). Les données sont souvent envoyées bit de poids faible en premier. Le <b>bit de parité paire</b> rend pair le nombre total de 1 : s\'il ne l\'est plus à la réception, une erreur est détectée. Le code <b>ASCII</b> associe un nombre à chaque caractère (A = 65).') +
+      H('3. Logique') +
+      P('Une table de vérité donne la sortie pour toutes les combinaisons des entrées (2<sup>n</sup> lignes). Notations : « · » pour ET, « + » pour OU, une barre pour NON.') +
+      H('4. Vidéo') +
+      M('D_{brut} = L \\times H \\times b \\times f') + LEG(['L', 'et H la définition en pixels'], ['b', 'le nombre de bits par pixel (24 en couleur)'], ['f', 'le nombre d\'images par seconde']) +
+      P('La compression (H.264, H.265) divise ce débit par 50 à 200. Pour identifier une personne, on vise au moins 250 pixels par mètre de largeur filmée (125 pour la reconnaître).') +
+      BOX(P('D = N / Δt ; octets × 8 = bits.', 'Parité paire : nombre total de 1 pair.'))
+  },
+  // ===================== Chapitre 7 =====================
+  {
+    chap: 7,
+    title: 'Plans, échelles et accessibilité',
+    support: 'Programme 2I2D, chapitre 4.1 · cours Accessibilité',
+    body:
+      H('1. Échelle') +
+      P('À l\'échelle 1:X, une longueur réelle est X fois plus grande que sur le plan. Les surfaces sont multipliées par X² et les volumes par X³.') +
+      M('L_{réelle} = L_{plan} \\times X') +
+      EX('Exemple : maquette imprimée en 3D', P('Une façade de 3,2 m³ de béton imprimée à l\'échelle 1:100 donne 3,2 / 100³ = 3,2 × 10⁻⁶ m³ = 3,2 cm³ de matière.')) +
+      H('2. Pentes et rampes PMR') +
+      M('p = \\frac{\\Delta h}{L} \\times 100') + LEG(['p', 'la pente en %'], ['\\Delta h', 'le dénivelé'], ['L', 'la longueur horizontale (même unité que Δh)']) +
+      dSV(340, 120, `<polygon class="flow" points="20,95 300,95 300,40"/><line class="ax" x1="20" y1="95" x2="300" y2="40"/>` + dCote(20, 110, 300, 110, 'L', -4) + dCote(316, 95, 316, 40, 'Δh'), 'Profil d\'une rampe') +
+      table(['Pente', 'Règle'], [['≤ 5 %', 'autorisée'], ['5 à 8 %', 'tolérée sur 2 m maximum'], ['8 à 10 %', 'tolérée sur 0,5 m maximum'], ['> 10 %', 'interdite']]) +
+      P('Il faut un palier de repos tous les 10 m si la pente dépasse 4 %, et un garde-corps si la hauteur de chute dépasse 40 cm.') +
+      BOX(P('Échelle 1:X : longueurs × X, surfaces × X², volumes × X³.', 'Pente = Δh / L × 100, au plus 5 % pour une rampe PMR.'))
+  },
+  {
+    chap: 7,
+    title: 'Descente de charges, contraintes et fondations',
+    support: 'Programme 2I2D, chapitres 3.2.2 et 5.1.2 · annale : bassins 2026',
+    body:
+      H('1. Les charges') +
+      UL('<b>Charges permanentes G</b> : poids propre de la structure (béton armé : 25 kN/m³) et des revêtements.', '<b>Charges d\'exploitation Q</b> : personnes, mobilier (en kN/m²).', '<b>Charges climatiques</b> : neige, vent.') +
+      P('Un poteau reprend la surface qui l\'entoure, jusqu\'à mi-distance des poteaux voisins. La charge vaut la charge surfacique × cette surface.') +
+      H('2. Contrainte de compression') +
+      M('\\sigma = \\frac{N}{A}') + LEG(['\\sigma', 'la contrainte en Pa (ou en MPa si N en N et A en mm²)'], ['N', 'l\'effort normal en N'], ['A', 'la section en m² (ou mm²)']) +
+      P('Le poteau résiste si σ reste inférieure à la résistance du matériau divisée par le coefficient de sécurité.') +
+      H('3. Pression sur le sol') +
+      M('p = \\frac{F}{S}') + LEG(['p', 'la pression en Pa (1 kPa = 1 kN/m²)'], ['F', 'le poids total transmis en N'], ['S', 'la surface d\'appui en m²']) +
+      P('Le sol convient si p reste inférieure à sa pression admissible (de 100 à 300 kPa pour des sols courants). Sinon on élargit la fondation ou on choisit un radier.') +
+      BOX(P('σ = N / A ; p = F / S.', 'Béton armé : 25 kN/m³ ; eau : 10 kN/m³ environ.'))
+  },
+  {
+    chap: 7,
+    title: 'Sollicitations, sécurité, rigidité et flottaison',
+    support: 'Programme 2I2D, chapitre 3.2.3 · annales : bassins 2026, PV flottant 2024',
+    body:
+      H('1. Sollicitations simples') +
+      table(['Sollicitation', 'Exemple'], [['Traction', 'câble, tirant'], ['Compression', 'poteau, fondation'], ['Flexion', 'poutre, plancher, étagère'], ['Torsion', 'arbre de transmission'], ['Cisaillement', 'rivet, ciseaux']]) +
+      P('Le béton résiste bien à la compression mais mal à la traction : on place des aciers dans la partie tendue (en bas d\'une poutre sur deux appuis).') +
+      H('2. Coefficient de sécurité') +
+      M('s = \\frac{R_e}{\\sigma_{max}}') + LEG(['s', 'le coefficient de sécurité (sans unité, supérieur à 1)'], ['R_e', 'la limite élastique du matériau en MPa'], ['\\sigma_{max}', 'la contrainte maximale calculée ou simulée en MPa']) +
+      H('3. Indice de rigidité') +
+      M('I_s = \\frac{L}{f}') + LEG(['I_s', 'l\'indice de rigidité (sans unité)'], ['L', 'la portée'], ['f', 'la flèche maximale, dans la même unité']) +
+      P('La norme impose un indice minimal (par exemple 250 à 500) : une poutre trop souple fléchit trop, même si elle ne casse pas.') +
+      H('4. Flottaison') +
+      P('Un corps flotte en déplaçant une masse d\'eau égale à sa propre masse (poussée d\'Archimède). Pour un caisson de base S :') +
+      M('h = \\frac{m}{\\rho \\times S}') + LEG(['h', 'la hauteur immergée en m'], ['m', 'la masse totale en kg'], ['\\rho', 'la masse volumique de l\'eau en kg/m³'], ['S', 'la surface de la base en m²']) +
+      BOX(P('s = Re / σmax > 1 ; Is = L / f au-dessus du minimum de la norme.', 'Flottaison : h = m / (ρ × S).'))
+  },
+  // ===================== Chapitre 8 =====================
+  {
+    chap: 8,
+    title: 'Grandeurs photométriques et confort visuel',
+    support: 'Cours Éclairage',
+    body:
+      table(['Grandeur', 'Unité', 'Sens'], [['Flux lumineux Φ', 'lumen (lm)', 'lumière totale émise'], ['Éclairement E', 'lux (lx)', 'flux reçu par m² : 1 lx = 1 lm/m²'],
+        ['Intensité I', 'candela (cd)', 'flux dans une direction'], ['Efficacité', 'lm/W', 'flux produit par watt']]) +
+      M('E = \\frac{\\Phi}{S}') + LEG(['E', 'l\'éclairement en lx'], ['\\Phi', 'le flux reçu en lm'], ['S', 'la surface éclairée en m²']) +
+      P('Efficacités moyennes : halogène 20 lm/W, fluocompacte 55 lm/W, LED 120 lm/W. Éclairements recommandés : 300 à 500 lx dans une salle de classe ou un bureau.') +
+      H('Confort visuel') +
+      UL('<b>Température de couleur</b> (en K) : 2 700 K lumière chaude, 4 000 K neutre, 6 500 K froide.', '<b>IRC</b> (indice de rendu des couleurs, sur 100) : au moins 80 dans un bureau.',
+        '<b>UGR</b> : éblouissement d\'inconfort, au plus 19 dans un bureau.', '<b>Uniformité</b> U = Emin / Emoy : au moins 0,6 en général.') +
+      BOX(P('E = Φ / S ; 1 lx = 1 lm/m².', 'LED : environ 120 lm/W.'))
+  },
+  {
+    chap: 8,
+    title: 'Dimensionner et rentabiliser un éclairage',
+    support: 'Cours Éclairage · exercice salle d\'expédition',
+    body:
+      H('1. Flux nécessaire et nombre de luminaires') +
+      M('\\Phi = \\frac{E \\times d^2}{\\cos(\\alpha / 2)}') + LEG(['\\Phi', 'le flux d\'un luminaire en lm'], ['E', 'l\'éclairement voulu en lx'], ['d', 'la hauteur du luminaire au-dessus du plan de travail en m'], ['\\alpha', 'l\'angle d\'ouverture du luminaire']) +
+      dSV(340, 170, `<line class="thin" x1="20" y1="20" x2="320" y2="20"/><line class="line" x1="20" y1="150" x2="320" y2="150"/><path class="fillv" d="M158 20 H182 L176 32 H164 Z"/><path class="flow" d="M170 32 L96 150 H244 Z" opacity="0.7"/>` +
+        dCote(36, 32, 36, 150, 'd') + dT(170, 110, 'α', 'middle') + dT(170, 166, 'surface éclairée', 'middle', 13), 'Un luminaire éclaire un cône d\'angle α') +
+      P('Surface éclairée par un luminaire : S = Φ / E. Nombre de luminaires : N = surface de la salle / S, arrondi à l\'entier supérieur. Si le flux réel du luminaire choisi est différent, on recalcule N = S<sub>salle</sub> × E / Φ<sub>réel</sub>.') +
+      H('2. Rentabilité d\'un relighting LED') +
+      P('Pour un éclairage allumé 6 h par jour (2 190 h par an) :') + M('C = 2{,}19 \\times N \\times P \\times prix') +
+      LEG(['C', 'le coût annuel en €'], ['N', 'le nombre de luminaires'], ['P', 'la puissance d\'un luminaire en W'], ['prix', 'le prix du kWh en €']) +
+      P('Le temps de retour vaut : investissement / (coût actuel − coût avec LED).') +
+      H('3. Balisage') +
+      P('Sur un parcours fermé, il y a autant de balises que d\'intervalles : n = périmètre / espacement, arrondi à l\'entier supérieur. Énergie annuelle : E = n × P × durée d\'allumage.') +
+      BOX(P('Φ = E × d² / cos(α / 2) ; N = Ssalle / S, arrondi au-dessus.', 'Coût annuel (6 h/jour) : 2,19 × N × P × prix.'))
+  }
+];
+
+// ---------- Affichage ----------
+const nav = document.getElementById('nav');
+const card = document.getElementById('card');
+let current = 0;
+
+function renderMath(root) {
+  root.querySelectorAll('.m').forEach(el => {
+    const tex = el.dataset.tex;
+    if (window.katex) {
+      katex.render(tex, el, { displayMode: !!el.dataset.d, throwOnError: false, strict: false });
+    } else {
+      el.textContent = tex;
+    }
+  });
+}
+
+// Adapte le contenu visible à la largeur de l'écran :
+// - un tableau de 2 ou 3 lignes trop large est présenté en colonnes (transposé) ;
+// - une formule centrée trop large est rendue « en ligne », que KaTeX peut couper après = ou +.
+function fitToWidth(root) {
+  root.querySelectorAll('.tw').forEach(w => {
+    const t = w.querySelector('table');
+    if (!w.offsetParent || !t || t.dataset.tr || t.rows.length > 3 || w.scrollWidth <= w.clientWidth + 1) return;
+    const cells = [...t.rows].map(r => [...r.cells].map(c => c.innerHTML));
+    t.innerHTML = cells[0].map((_, c) => `<tr>${cells.map((row, k) => {
+      const tag = c === 0 || k === 0 ? 'th' : 'td';
+      return `<${tag}>${row[c] ?? ''}</${tag}>`;
+    }).join('')}</tr>`).join('');
+    t.dataset.tr = '1';
+  });
+  if (!window.katex) return;
+  root.querySelectorAll('.mdisp').forEach(el => {
+    if (!el.offsetParent) return;
+    if (el.classList.contains('mwrap')) {
+      katex.render(el.dataset.tex, el, { displayMode: true, throwOnError: false, strict: false });
+      el.classList.remove('mwrap');
+      el.style.overflow = '';
+    }
+    if (el.scrollWidth > el.clientWidth + 1) {
+      katex.render(el.dataset.tex, el, { displayMode: false, throwOnError: false, strict: false });
+      el.classList.add('mwrap');
+      // Quelques pixels de trop (bord d'un cadre) : on laisse déborder dans la marge plutôt que d'afficher un défilement
+      if (el.scrollWidth - el.clientWidth <= 8) el.style.overflow = 'visible';
+    }
+  });
+}
+let fitTimer;
+window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(() => fitToWidth(card), 150); });
+
+// Identifiant d'une fiche dans l'adresse : #c<chapitre>-<rang dans le chapitre>
+const idOf = i => {
+  const c = EXOS[i].chap;
+  return `c${c}-${EXOS.slice(0, i + 1).filter(e => e.chap === c).length}`;
+};
+const ARROW = '<svg class="arrow" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function buildNav() {
+  nav.innerHTML = CHAPITRES.map((titre, c) => `
+    <div class="chap">
+      <button class="chap-btn" aria-expanded="false">
+        ${ARROW}
+        <span><span class="seq">Chapitre ${c + 1}</span><span class="ex">${titre}</span></span>
+      </button>
+      <div class="exlist" hidden>
+        ${EXOS.map((e, i) => e.chap === c + 1 ? `<a href="#${idOf(i)}" data-i="${i}">${e.title}</a>` : '').join('')}
+      </div>
+    </div>`).join('');
+  nav.querySelectorAll('.chap-btn').forEach(b => b.onclick = () => toggleChap(b));
+  nav.querySelectorAll('.exlist a').forEach(a => a.onclick = ev => { ev.preventDefault(); go(+a.dataset.i); });
+}
+
+// Affiche la fiche i et met à jour l'adresse (#c4-1…) sans recharger la page
+function go(i) {
+  show(i);
+  closeMenu();
+  window.scrollTo(0, 0);
+  try { history.pushState(null, '', '#' + idOf(i)); } catch (err) { /* aperçu hors ligne : on ignore */ }
+}
+
+// Ouvre ou ferme un chapitre ; ouvrir un chapitre referme les autres
+function toggleChap(btn, open) {
+  const list = btn.nextElementSibling;
+  list.hidden = open === undefined ? !list.hidden : !open;
+  btn.setAttribute('aria-expanded', String(!list.hidden));
+  if (!list.hidden) {
+    nav.querySelectorAll('.chap-btn').forEach(b => {
+      if (b !== btn) { b.nextElementSibling.hidden = true; b.setAttribute('aria-expanded', 'false'); }
+    });
+  }
+}
+
+function show(i) {
+  current = i;
+  const e = EXOS[i];
+  card.innerHTML = `
+    <div class="crumb">Chapitre ${e.chap} · ${CHAPITRES[e.chap - 1]}</div>
+    <h2>${e.title}</h2>
+    <p class="support">${e.support}</p>
+    ${e.body}
+    <div class="btns"><a class="go" href="Exercices_2I2D.html#c${e.chap}-1">S'entraîner : exercices du chapitre ${e.chap} →</a></div>`;
+  renderMath(card);
+  fitToWidth(card);
+  nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', +a.dataset.i === i));
+  nav.querySelectorAll('.chap').forEach((ch, c) => {
+    const btn = ch.querySelector('.chap-btn');
+    btn.classList.toggle('on', c === e.chap - 1);
+    if (c === e.chap - 1) toggleChap(btn, true);
+  });
+  document.getElementById('prevBtn').style.visibility = i > 0 ? 'visible' : 'hidden';
+  document.getElementById('nextBtn').style.visibility = i < EXOS.length - 1 ? 'visible' : 'hidden';
+}
+
+function fromHash() {
+  const i = EXOS.findIndex((e, k) => '#' + idOf(k) === location.hash);
+  show(i >= 0 ? i : 0);
+  closeMenu();
+  window.scrollTo(0, 0);
+}
+
+// Menu mobile
+const sidebar = document.getElementById('sidebar'), shade = document.getElementById('shade');
+function closeMenu() { sidebar.classList.remove('open'); shade.hidden = true; }
+document.getElementById('menuBtn').onclick = () => { sidebar.classList.add('open'); shade.hidden = false; };
+shade.onclick = closeMenu;
+
+document.getElementById('prevBtn').onclick = () => go(current - 1);
+document.getElementById('nextBtn').onclick = () => go(current + 1);
+window.addEventListener('popstate', fromHash);
+
+buildNav();
+fromHash();
+</script>
 </body>
 </html>

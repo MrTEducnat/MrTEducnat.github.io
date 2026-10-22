@@ -6,33 +6,867 @@
 <title>Cours ITEC</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <style>
-:root { --bg: #f6f5f1; --surface: #ffffff; --text: #1f1e1c; --muted: #6b6a65; --border: #dcd9d0; --accent: #185fa5; --accent-bg: #e6f1fb; }
+:root {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --side: #efede6;
+  --text: #1f1e1c;
+  --muted: #6b6a65;
+  --border: #dcd9d0;
+  --accent: #185fa5;
+  --accent-bg: #e6f1fb;
+  --val: #854f0b;
+  --val-bg: #faeeda;
+  --ok: #27500a;
+  --ok-bg: #eaf3de;
+  --ok-border: #639922;
+  --code-bg: #f1efe8;
+  --bad-bg: #fcebeb;
+  --bad-border: #e24b4a;
+}
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #1b1b1a; --surface: #242422; --text: #ecebe6; --muted: #a3a29b; --border: #3a3a37; --accent: #85b7eb; --accent-bg: #0c447c; }
+  :root:not([data-theme="light"]) {
+    --bg: #1b1b1a;
+    --surface: #242422;
+    --side: #20201e;
+    --text: #ecebe6;
+    --muted: #a3a29b;
+    --border: #3a3a37;
+    --accent: #85b7eb;
+    --accent-bg: #0c447c;
+    --val: #fac775;
+    --val-bg: #4a3209;
+    --ok: #c0dd97;
+    --ok-bg: #1f3309;
+    --ok-border: #639922;
+    --code-bg: #2c2c2a;
+    --bad-bg: #3d1414;
+    --bad-border: #e24b4a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1b1a;
+  --surface: #242422;
+  --side: #20201e;
+  --text: #ecebe6;
+  --muted: #a3a29b;
+  --border: #3a3a37;
+  --accent: #85b7eb;
+  --accent-bg: #0c447c;
+  --val: #fac775;
+  --val-bg: #4a3209;
+  --ok: #c0dd97;
+  --ok-bg: #1f3309;
+  --ok-border: #639922;
+  --code-bg: #2c2c2a;
+  --bad-bg: #3d1414;
+  --bad-border: #e24b4a;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body { background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 16px; line-height: 1.6; }
-main { max-width: 780px; margin: 0 auto; padding: 48px 24px; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); min-height: 100vh; }
+
+/* Barre latérale */
+.sidebar {
+  background: var(--side);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.sidebar h1 { font-size: 18px; font-weight: 600; margin: 0 8px 4px; }
+a.home {
+  display: inline-block; text-decoration: none; color: var(--accent); font-size: 14px;
+  border: 1px solid var(--accent); border-radius: 8px; padding: 4px 10px;
+}
+a.home:hover, a.home:focus-visible { background: var(--accent-bg); outline: none; }
+.sidebar a.home { margin: 0 8px 14px; }
+.topbar a.home { margin-left: auto; }
+.sidebar .sub { font-size: 13px; color: var(--muted); margin: 0 8px 16px; }
+.chap { margin-bottom: 2px; }
+.chap-btn {
+  display: flex; align-items: flex-start; gap: 8px; width: 100%;
+  text-align: left; border: 0; border-radius: 8px; padding: 8px 8px;
+  line-height: 1.35;
+}
+.chap-btn:hover { background: var(--border); }
+.chap-btn .arrow { flex: none; margin-top: 10px; color: var(--muted); transition: transform .15s; }
+.chap-btn[aria-expanded="true"] .arrow { transform: rotate(180deg); }
+.chap-btn.on .seq, .chap-btn.on .arrow { color: var(--accent); }
+.nav .seq { font-size: 12px; color: var(--muted); display: block; }
+.nav .ex { font-size: 14px; font-weight: 500; }
+.exlist { padding: 2px 0 6px 32px; }
+.exlist[hidden] { display: none; }
+.exlist a {
+  display: block; text-decoration: none; color: var(--text); font-size: 14px;
+  padding: 6px 10px; border-radius: 0 8px 8px 0; border-left: 2px solid var(--border);
+}
+.exlist a:hover { background: var(--border); }
+.exlist a.on { background: var(--accent-bg); color: var(--accent); border-left-color: var(--accent); }
+
+/* Barre du haut (mobile) */
+.topbar { display: none; }
+
+/* Contenu */
+main { padding: 32px 24px 48px; }
+.card {
+  max-width: 780px; margin: 0 auto;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 24px 28px;
+}
 .crumb { font-size: 13px; color: var(--muted); }
-h1 { font-size: 26px; font-weight: 600; margin: 2px 0 20px; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; }
-.card p { margin: 0; color: var(--muted); }
-.links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-.go { text-decoration: none; border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; padding: 8px 16px; font-size: 15px; }
-.go:hover, .go:focus-visible { background: var(--accent-bg); outline: none; }
-@media (max-width: 860px) { main { padding: 28px 16px; } .card { padding: 18px 16px; } h1 { font-size: 22px; } }
+.card h2 { font-size: 22px; font-weight: 600; margin: 2px 0 4px; }
+.support { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+.v {
+  background: var(--val-bg); color: var(--val);
+  padding: 1px 5px; border-radius: 5px; font-weight: 500;
+  /* Une valeur longue (suite d'événements, octets…) peut passer à la ligne ; nombre et unité restent liés par une espace insécable */
+  overflow-wrap: anywhere; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+pre .v { overflow-wrap: normal; }
+ol.q { padding-left: 22px; margin: 12px 0 0; }
+ol.q li { margin-bottom: 4px; }
+pre.code {
+  background: var(--code-bg); border-radius: 8px; padding: 12px 14px;
+  font-size: 14px; line-height: 1.5; overflow-x: auto; margin: 12px 0;
+}
+.btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+button {
+  font: inherit; font-size: 15px; cursor: pointer;
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px;
+}
+button:hover { background: var(--side); }
+button.primary { border-color: var(--accent); color: var(--accent); }
+.correction {
+  margin-top: 20px; padding: 14px 18px;
+  background: var(--ok-bg); border-left: 4px solid var(--ok-border);
+}
+.correction[hidden] { display: none; }
+.correction h3 { font-size: 15px; font-weight: 600; color: var(--ok); margin: 0 0 8px; }
+.step { margin-bottom: 12px; }
+.step:last-child { margin-bottom: 0; }
+.step .lab { font-size: 14px; font-weight: 600; color: var(--ok); }
+.step p { margin: 2px 0; }
+.mdisp { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+.mdisp.mwrap { text-align: center; line-height: 2.2; margin: 6px 0; }
+@media (max-width: 600px) {
+  table.t { font-size: 13px; }
+  table.t th, table.t td { padding: 3px 6px; }
+  pre.code { font-size: 12px; padding: 10px; }
+  table.t th, table.t td { overflow-wrap: anywhere; hyphens: auto; }
+}
+/* QCM */
+ol.qcm { padding-left: 22px; margin: 12px 0 0; }
+ol.qcm > li { margin-bottom: 14px; }
+ol.qcm > li > p { margin: 0 0 6px; }
+ol.qcm label {
+  display: flex; align-items: flex-start; gap: 8px; cursor: pointer;
+  padding: 6px 10px; margin-bottom: 4px; border: 1px solid var(--border); border-radius: 8px;
+}
+ol.qcm label:hover { background: var(--side); }
+ol.qcm input { margin-top: 5px; accent-color: var(--accent); }
+ol.qcm label.good { border-color: var(--ok-border); background: var(--ok-bg); }
+ol.qcm label.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+.score { font-weight: 600; color: var(--ok); margin: 0 0 10px; }
+.score:empty { display: none; }
+
+/* Tableaux et schémas */
+table.t { border-collapse: collapse; margin: 10px 0; font-size: 15px; }
+table.t th, table.t td { border: 1px solid var(--border); padding: 4px 10px; text-align: center; }
+table.t th { background: var(--side); font-weight: 600; }
+.tw { overflow-x: auto; }
+figure.fig { margin: 12px 0; text-align: center; }
+figure.fig svg { width: 100%; max-width: 560px; height: auto; }
+figure.fig svg.small { max-width: 220px; }
+svg.sym { display: block; width: 150px; height: auto; margin: 6px 0; }
+figure.fig svg.leds { max-width: 400px; }
+figcaption { font-size: 13px; color: var(--muted); }
+svg text { fill: var(--text); font-size: 12px; font-family: inherit; }
+svg text.lab { fill: var(--muted); font-size: 12px; }
+svg .grid { stroke: var(--border); stroke-width: 1; }
+svg .ax { stroke: var(--muted); stroke-width: 1.4; }
+svg .c1 { fill: none; stroke: var(--accent); stroke-width: 2.2; }
+svg .c2 { fill: none; stroke: var(--val); stroke-width: 2; }
+svg .c3 { fill: none; stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 5 4; }
+svg .pt { fill: var(--val); }
+svg .line { stroke: var(--text); stroke-width: 2; fill: none; }
+svg .thin { stroke: var(--text); stroke-width: 1.2; fill: none; }
+svg .fillv { fill: var(--val-bg); stroke: var(--val); stroke-width: 1.5; }
+svg .arrow { stroke: var(--accent); stroke-width: 2.4; fill: none; }
+svg .arrowv { stroke: var(--val); stroke-width: 2.4; fill: none; }
+svg .flow { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 1; }
+svg .loss { fill: var(--val-bg); stroke: var(--val); stroke-width: 1; }
+svg .ledon { fill: #e5484d; stroke: var(--text); }
+svg .ledoff { fill: var(--side); stroke: var(--muted); }
+
+/* Fiches de cours */
+.card h3 { font-size: 18px; font-weight: 600; color: var(--accent); margin: 26px 0 8px; }
+.card p { margin: 8px 0; }
+.card p.support { margin: 0 0 16px; }
+ul.l { padding-left: 22px; margin: 8px 0; }
+ul.l li { margin-bottom: 4px; }
+.box, .exm { border-radius: 0 8px 8px 0; padding: 10px 16px; margin: 16px 0; }
+.box { background: var(--accent-bg); border-left: 4px solid var(--accent); }
+.exm { background: var(--ok-bg); border-left: 4px solid var(--ok-border); }
+.box-t { font-size: 14px; font-weight: 600; color: var(--accent); }
+.exm .box-t { color: var(--ok); }
+.box p, .exm p { margin: 4px 0; }
+.chain { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 14px 0; }
+.blk { border: 1.5px solid var(--accent); border-radius: 8px; padding: 6px 10px; background: var(--surface); text-align: center; font-size: 14px; }
+.blk span { display: block; font-size: 12px; color: var(--muted); }
+.arr { color: var(--accent); font-weight: 600; }
+a.go {
+  text-decoration: none; border: 1px solid var(--accent); color: var(--accent);
+  border-radius: 8px; padding: 8px 16px; font-size: 15px;
+}
+a.go:hover, a.go:focus-visible { background: var(--accent-bg); outline: none; }
+/* Fiches : on ne coupe pas les mots dans les cases, la colonne prend la largeur du mot le plus long */
+@media (max-width: 600px) {
+  table.t th, table.t td { overflow-wrap: break-word; hyphens: manual; padding: 3px 4px; }
+}
+
+.pager { display: flex; justify-content: space-between; gap: 10px; max-width: 780px; margin: 16px auto 0; }
+.pager button { font-size: 14px; }
+
+@media (max-width: 860px) {
+  .layout { display: block; }
+  .topbar {
+    display: flex; align-items: center; gap: 10px;
+    position: sticky; top: 0; z-index: 5;
+    background: var(--side); border-bottom: 1px solid var(--border); padding: 10px 16px;
+  }
+  .topbar span { font-weight: 600; }
+  .sidebar {
+    position: fixed; left: 0; top: 0; z-index: 10; width: 290px; max-width: 85vw;
+    transform: translateX(-100%); transition: transform .2s;
+  }
+  .sidebar.open { transform: none; }
+  .shade { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 9; }
+  .shade[hidden] { display: none; }
+  main { padding: 16px 16px 40px; }
+  .card { padding: 18px 16px; }
+  .card h2 { font-size: 19px; }
+}
 </style>
 </head>
 <body>
-<main>
-  <div class="crumb">Terminale STI2D</div>
-  <h1>Cours ITEC</h1>
-  <div class="card">
-    <p>Page en construction : les cours seront bientôt disponibles.</p>
-  </div>
-  <div class="links"><a class="go" href="index.html">← Accueil</a><a class="go" href="Exercices_ITEC.html">Exercices ITEC →</a></div>
-</main>
+<div class="topbar">
+  <button id="menuBtn" aria-label="Ouvrir le menu">☰</button>
+  <span>Cours ITEC</span>
+  <a class="home" href="index.html">← Accueil</a>
+</div>
+<div class="shade" id="shade" hidden></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <a class="home" href="index.html">← Accueil</a>
+    <h1>Cours ITEC</h1>
+    <p class="sub">Terminale STI2D · spécialité ITEC</p>
+    <div class="nav" id="nav"></div>
+  </nav>
+  <main>
+    <article class="card" id="card"></article>
+    <div class="pager">
+      <button id="prevBtn">← Précédent</button>
+      <button id="nextBtn">Suivant →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+// ---------- Outils ----------
+const rnd = (a, b, step = 1) => {
+  const n = Math.round((b - a) / step);
+  return +(a + step * Math.floor(Math.random() * (n + 1))).toFixed(6);
+};
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+// Nombre au format français (texte)
+const fr = (x, d = 2) => Number(x).toLocaleString('fr-FR', { maximumFractionDigits: d });
+// Nombre au format français (LaTeX)
+const tx = (x, d = 2) => fr(x, d).replace(',', '{,}').replace(/[\u202f\u00a0]/g, '\\,');
+// Nombre avec un nombre fixe de décimales (texte / LaTeX)
+const frf = (x, d) => Number(x).toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const txf = (x, d) => frf(x, d).replace(',', '{,}').replace(/[  ]/g, '\\,');
+// Écriture scientifique en LaTeX
+const sci = (x, d = 2) => {
+  let e = Math.floor(Math.log10(Math.abs(x)));
+  if (Math.abs(+(x / 10 ** e).toFixed(d)) >= 10) e++;
+  return `${tx(x / 10 ** e, d)} \\times 10^{${e}}`;
+};
+// Nombre avec s chiffres significatifs : décimal si raisonnable, sinon scientifique
+const tn = (x, s = 3) => {
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e-3 && a < 1e6) return tx(x, Math.max(0, s - 1 - Math.floor(Math.log10(a))));
+  return sci(x, s - 1);
+};
+const fn = (x, s = 3) => {
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  return fr(x, Math.max(0, s - 1 - Math.floor(Math.log10(a))));
+};
+const deg = a => a * Math.PI / 180;
+const G = 9.81;
+// Valeur surlignée dans l'énoncé
+const v = (x, unit = '', d = 2) => `<span class="v">${typeof x === 'number' ? fr(x, d) : x}${unit ? '\u00a0' + unit : ''}</span>`;
+// Formules
+const m = t => `<span class="m" data-tex="${t.replace(/"/g, '&quot;')}"></span>`;
+const M = t => `<div class="m mdisp" data-d="1" data-tex="${t.replace(/"/g, '&quot;')}"></div>`;
+// Unité en LaTeX (gère ², ³, ·, °, µ)
+const u = s => '\\,\\text{' + s.replace(/%/g, '\\%').replace(/²/g,'}^2\\text{').replace(/³/g, '}^3\\text{')
+  .replace(/·/g, '}\\cdot\\text{').replace(/°/g, '}{}^\\circ\\text{').replace(/[µμ]/g, '}\\mu\\text{') + '}';
+
+// Liste des questions d'un énoncé
+const ol = (...items) => `<ol class="q">${items.map(i => `<li>${i}</li>`).join('')}</ol>`;
+// Tableau HTML : en-têtes puis lignes
+const table = (head, rows) => `<div class="tw"><table class="t"><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr>${
+  rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const euro = x => frf(x, 2) + ' €';
+const teuro = x => txf(x, 2) + u('€');
+
+// ---------- Tirages ----------
+const shuffle = arr => {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+};
+const sample = (arr, n) => shuffle(arr).slice(0, n);
+
+// ---------- QCM ----------
+// Banque : [question, bonne réponse, [mauvaises réponses], explication]
+const QCM_N = 5;
+function qcm(bank, n = QCM_N) {
+  const id = 'q' + Math.random().toString(36).slice(2, 8);
+  const items = sample(bank, Math.min(n, bank.length)).map(([q, ok, bad, ex]) => {
+    const choices = shuffle([ok, ...sample(bad.filter(b => b !== ok), 3)]);
+    return { q, ok, ex, choices, k: choices.indexOf(ok) };
+  });
+  return {
+    qcm: true,
+    statement: `<p>Choisir la bonne réponse pour chaque question.</p>
+      <ol class="qcm">${items.map((it, i) => `<li data-ok="${it.k}"><p>${it.q}</p>${it.choices.map((c, j) =>
+        `<label><input type="radio" name="${id}${i}" value="${j}"> <span>${c}</span></label>`).join('')}</li>`).join('')}</ol>`,
+    steps: items.map((it, i) => [`${i + 1}. ${it.ok}`, it.ex ? `<p>${it.ex}</p>` : ''])
+  };
+}
+// Questions construites à partir de couples (élément, réponse)
+const fromPairs = (pairs, fmt, ex) =>
+  pairs.map(([a, b]) => [fmt(a), b, [...new Set(pairs.map(p => p[1]))], ex ? ex(a, b) : '']);
+// Exercice QCM
+const Q = (chap, title, support, bank) => ({ chap, title, support, gen: () => qcm(typeof bank === 'function' ? bank() : bank) });
+
+// ---------- Schémas SVG ----------
+const fig = (svg, cap = '') => `<figure class="fig">${svg}${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
+// Graphique gradué : o = {x0, x1, dx, y0, y1, dy, xlab, ylab, series: [{pts, cls}], extra(X, Y), nolab}
+function graph(o) {
+  const W = o.w || 560, H = o.h || 270, L = 50, R = 16, T = 14, B = 34;
+  const X = x => +(L + (x - o.x0) / (o.x1 - o.x0) * (W - L - R)).toFixed(1);
+  const Y = y => +(H - B - (y - o.y0) / (o.y1 - o.y0) * (H - T - B)).toFixed(1);
+  const fx = o.fx || (x => fr(x, 3)), fy = o.fy || (y => fr(y, 3));
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="graph" role="img">`;
+  const nx = Math.round((o.x1 - o.x0) / o.dx), ny = Math.round((o.y1 - o.y0) / o.dy);
+  for (let i = 0; i <= nx; i++) {
+    const x = o.x0 + i * o.dx;
+    s += `<line class="grid" x1="${X(x)}" y1="${T}" x2="${X(x)}" y2="${H - B}"/>`;
+    if (!o.nolab) s += `<text x="${X(x)}" y="${H - B + 15}" text-anchor="middle">${fx(x)}</text>`;
+  }
+  for (let i = 0; i <= ny; i++) {
+    const y = o.y0 + i * o.dy;
+    s += `<line class="grid" x1="${L}" y1="${Y(y)}" x2="${W - R}" y2="${Y(y)}"/>`;
+    if (!o.nolab) s += `<text x="${L - 6}" y="${Y(y) + 4}" text-anchor="end">${fy(y)}</text>`;
+  }
+  if (o.y0 < 0 && o.y1 > 0) s += `<line class="ax" x1="${L}" y1="${Y(0)}" x2="${W - R}" y2="${Y(0)}"/>`;
+  s += `<line class="ax" x1="${L}" y1="${T}" x2="${L}" y2="${H - B}"/><line class="ax" x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/>`;
+  if (o.xlab) s += `<text x="${W - R}" y="${H - 4}" text-anchor="end" class="lab">${o.xlab}</text>`;
+  if (o.ylab) s += `<text x="${L + 6}" y="${T + 12}" class="lab">${o.ylab}</text>`;
+  (o.series || []).forEach(se => {
+    s += `<polyline class="${se.cls || 'c1'}" points="${se.pts.map(([x, y]) => X(x) + ',' + Y(y)).join(' ')}"/>`;
+  });
+  if (o.extra) s += o.extra(X, Y);
+  return fig(s + '</svg>', o.cap);
+}
+// Échantillonne une fonction pour un graphique
+const curve = (f, x0, x1, n = 400) => Array.from({ length: n + 1 }, (_, i) => { const x = x0 + (x1 - x0) * i / n; return [x, f(x)]; });
+// Diagramme de Sankey en ligne : étapes [{name, val}] (val peut être '?') ; les pertes partent vers le bas
+function sankey(stages, vals, unit) {
+  const W = 560, H = 220, top = 40, x0 = 20, x1 = W - 20, seg = (x1 - x0) / stages.length;
+  const k = 90 / vals[0];
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="sankey" role="img">`;
+  stages.forEach((st, i) => {
+    const h = vals[i] * k, xa = x0 + i * seg;
+    s += `<rect class="flow" x="${xa}" y="${top}" width="${seg}" height="${h}"/>`;
+    s += `<text x="${xa + 6}" y="${top - 18}" class="lab">${st.name}</text><text x="${xa + 6}" y="${top - 4}">${st.label}</text>`;
+    if (i < stages.length - 1) {
+      const lw = Math.max(4, (vals[i] - vals[i + 1]) * k), xb = xa + seg;
+      s += `<rect class="loss" x="${xb - lw}" y="${top + vals[i + 1] * k}" width="${lw}" height="${H - 30 - top - vals[i + 1] * k}"/>`;
+      s += `<text x="${xb - lw / 2}" y="${H - 12}" text-anchor="middle">${stages[i].loss}</text>`;
+    }
+  });
+  return fig(s + '</svg>', unit);
+}
+
+// ---------- Dessins (schémas lisibles sur téléphone : viewBox étroit, texte à 14 px) ----------
+// Schéma : largeur et hauteur du viewBox, contenu SVG, légende
+const dSV = (w, h, inner, cap = '', max = 440) => fig(`<svg viewBox="0 0 ${w} ${h}" role="img" style="max-width:${max}px">${inner}</svg>`, cap);
+// Texte : position, contenu, ancrage (start | middle | end), taille
+const dT = (x, y, s, a = 'middle', sz = 14) => `<text x="${+x.toFixed(1)}" y="${+y.toFixed(1)}" text-anchor="${a}" style="font-size:${sz}px">${s}</text>`;
+// Flèche du point 1 au point 2 (cls : arrow = bleu, arrowv = orange)
+function dA(x1, y1, x2, y2, cls = 'arrow') {
+  const a = Math.atan2(y2 - y1, x2 - x1), h = 9, r = n => +n.toFixed(1);
+  const p = s => `${r(x2 - h * Math.cos(a + s))} ${r(y2 - h * Math.sin(a + s))}`;
+  return `<line class="${cls}" x1="${r(x1)}" y1="${r(y1)}" x2="${r(x2)}" y2="${r(y2)}"/><path class="${cls}" d="M${p(-0.45)} L${r(x2)} ${r(y2)} L${p(0.45)}"/>`;
+}
+// Cote horizontale ou verticale avec flèches aux deux bouts et texte au milieu
+function dCote(x1, y1, x2, y2, s, off = -6) {
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, hor = Math.abs(y2 - y1) < Math.abs(x2 - x1);
+  return dA(mx, my, x1, y1, 'thin') + dA(mx, my, x2, y2, 'thin') + (hor ? dT(mx, my + off, s) : dT(mx + 6, my + 5, s, 'start'));
+}
+// Roue dentée : centre, rayon primitif, nombre de dents (dessin simplifié)
+function dGear(cx, cy, r, z, cls = 'fillv') {
+  const n = Math.max(8, Math.min(z, 40)), pts = [];
+  for (let k = 0; k < n; k++) {
+    const a = 2 * Math.PI * k / n, s = Math.PI / n;
+    [[a - s * 0.5, r - 4], [a - s * 0.25, r + 5], [a + s * 0.25, r + 5], [a + s * 0.5, r - 4]]
+      .forEach(([t, rr]) => pts.push(`${(cx + rr * Math.cos(t)).toFixed(1)},${(cy + rr * Math.sin(t)).toFixed(1)}`));
+  }
+  return `<polygon class="${cls}" points="${pts.join(' ')}"/><circle class="thin" cx="${cx}" cy="${cy}" r="${Math.max(3, r * 0.18).toFixed(1)}"/>`;
+}
+// Appui simple (triangle) sous le point x, y, et sol hachuré
+const dAppui = (x, y) => `<path class="thin" d="M${x} ${y} L${x - 10} ${y + 16} H${x + 10} Z"/><line class="thin" x1="${x - 16}" y1="${y + 16}" x2="${x + 16}" y2="${y + 16}"/>` +
+  [0, 1, 2, 3].map(k => `<line class="thin" x1="${x - 14 + k * 9}" y1="${y + 16}" x2="${x - 20 + k * 9}" y2="${y + 23}"/>`).join('');
+// Encastrement (mur hachuré vertical) à l'abscisse x, de y1 à y2
+const dMur = (x, y1, y2) => `<line class="line" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/>` +
+  Array.from({ length: Math.floor((y2 - y1) / 9) + 1 }, (_, k) => `<line class="thin" x1="${x}" y1="${y1 + k * 9}" x2="${x - 8}" y2="${y1 + k * 9 + 8}"/>`).join('');
+// Flèche courbe de rotation autour de (cx, cy), rayon r, de l'angle a1 à a2 (en degrés, sens trigonométrique si a2 > a1)
+function dRot(cx, cy, r, a1, a2, cls = 'arrow') {
+  const P = a => [cx + r * Math.cos(-a * Math.PI / 180), cy + r * Math.sin(-a * Math.PI / 180)], [x1, y1] = P(a1), [x2, y2] = P(a2);
+  const big = Math.abs(a2 - a1) > 180 ? 1 : 0, sweep = a2 > a1 ? 0 : 1, [xp, yp] = P(a2 - Math.sign(a2 - a1) * 12);
+  return `<path class="${cls}" d="M${x1.toFixed(1)} ${y1.toFixed(1)} A${r} ${r} 0 ${big} ${sweep} ${x2.toFixed(1)} ${y2.toFixed(1)}"/>` + dA(xp, yp, x2, y2, cls).replace(/<line[^>]*\/>/, '');
+}
+
+// ---------- Chapitres ----------
+const CHAPITRES = [
+  'Modélisation cinématique',
+  'Cinématique et transmission de puissance',
+  'Statique',
+  'Résistance des matériaux',
+  'Matériaux et éco-conception',
+  'Énergie et chaîne de puissance',
+  'Représentation et conception'
+];
+
+// ---------- Mise en forme des fiches ----------
+const H = t => `<h3>${t}</h3>`;
+const P = (...t) => t.map(x => `<p>${x}</p>`).join('');
+const UL = (...i) => `<ul class="l">${i.map(x => `<li>${x}</li>`).join('')}</ul>`;
+// Encadré « À retenir » et exemple résolu
+const BOX = (...b) => `<div class="box"><div class="box-t">À retenir</div>${b.join('')}</div>`;
+const EX = (t, ...b) => `<div class="exm"><div class="box-t">${t}</div>${b.join('')}</div>`;
+// Suite de blocs fonctionnels : [[titre, sous-titre], …]
+const CHAIN = items => `<div class="chain">${items.map(([t, s]) => `<div class="blk"><b>${t}</b>${s ? `<span>${s}</span>` : ''}</div>`).join('<span class="arr">→</span>')}</div>`;
+const code = s => `<pre class="code">${s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`;
+// Légende d'une formule : [[symbole LaTeX, description], …]
+const LEG = (...t) => {
+  const s = t.map(([a, d]) => `${m(a)} ${d}`);
+  return P('avec ' + (s.length > 1 ? s.slice(0, -1).join(', ') + ' et ' + s[s.length - 1] : s[0]) + '.');
+};
+
+
+// Chronogramme logique : cells = [{l: 0|1, t: 'étiquette'}], repos à l'état haut avant et après
+function wave(cells, cap = '') {
+  const cw = Math.min(46, 500 / (cells.length + 2)), x0 = 30, hi = 24, lo = 64, W = x0 * 2 + cw * (cells.length + 2);
+  let pts = `${x0},${hi} ${x0 + cw},${hi}`, x = x0 + cw, lab = '';
+  cells.forEach(c => {
+    const y = c.l ? hi : lo;
+    pts += ` ${x},${y} ${x + cw},${y}`;
+    lab += `<line class="grid" x1="${x}" y1="14" x2="${x}" y2="${lo + 6}"/><text x="${x + cw / 2}" y="${lo + 22}" text-anchor="middle">${c.t}</text>`;
+    x += cw;
+  });
+  pts += ` ${x},${hi} ${x + cw},${hi}`;
+  lab += `<line class="grid" x1="${x}" y1="14" x2="${x}" y2="${lo + 6}"/>`;
+  return fig(`<svg viewBox="0 0 ${W} 100" role="img">${lab}<polyline class="c1" points="${pts}"/>
+    <text x="4" y="${hi + 4}">1</text><text x="4" y="${lo + 4}">0</text></svg>`, cap);
+}
+
+// ---------- Fiches de cours (chap = numéro du chapitre) ----------
+const EXOS = [
+  // ===================== Chapitre 1 =====================
+  {
+    chap: 1,
+    title: 'Liaisons, classes d\'équivalence et graphe des liaisons',
+    support: 'Programme ITEC, chapitres 3.2.1 et 3.2.2 · annales ITEC 2021 à 2026',
+    body:
+      H('1. Classes d\'équivalence') +
+      P('Une <b>classe d\'équivalence</b> regroupe les pièces sans mouvement relatif pendant le fonctionnement (A = {1 ; 4 ; 7}). Les pièces déformables (ressorts, joints) n\'en font pas partie.') +
+      H('2. Liaisons normalisées') +
+      P('Une liaison se reconnaît à la forme du contact et aux mouvements qu\'elle autorise (R : rotations, T : translations, autour et le long de l\'axe x).') +
+      table(['Liaison', 'ddl', 'Mouvements'], [['Encastrement (complète)', '0', 'aucun'], ['Pivot', '1', 'Rx'], ['Glissière', '1', 'Tx'], ['Hélicoïdale', '1', 'Rx et Tx liés (vis-écrou)'],
+        ['Pivot glissant', '2', 'Rx, Tx'], ['Rotule', '3', 'Rx, Ry, Rz'], ['Appui plan', '3', 'Tx, Ty, Rz'], ['Linéaire annulaire', '4', 'Tx, Rx, Ry, Rz'], ['Linéaire rectiligne', '4', 'Tx, Ty, Rx, Rz'], ['Ponctuelle', '5', 'Tx, Ty, Rx, Ry, Rz']]) +
+      table(['Surface de contact', 'Liaison'], [['Cylindre long dans un alésage', 'pivot glissant (pivot si arrêts axiaux)'], ['Plan sur plan', 'appui plan'], ['Sphère dans une sphère', 'rotule'], ['Sphère sur un plan', 'ponctuelle'], ['Cylindre sur un plan', 'linéaire rectiligne']]) +
+      H('3. Graphe des liaisons et schéma cinématique') +
+      P('Le graphe des liaisons relie les classes d\'équivalence (cercles) par les liaisons (traits nommés). Le schéma cinématique représente chaque liaison par son symbole normalisé, dans la bonne orientation, sans respecter l\'échelle.') +
+      fig(`<svg viewBox="0 0 340 150" role="img" style="max-width:420px"><line class="thin" x1="60" y1="110" x2="170" y2="35"/><line class="thin" x1="170" y1="35" x2="280" y2="110"/><line class="thin" x1="60" y1="110" x2="280" y2="110"/>
+        <circle class="fillv" cx="60" cy="110" r="22"/><circle class="fillv" cx="170" cy="35" r="22"/><circle class="fillv" cx="280" cy="110" r="22"/>` +
+        dT(60, 116, 'bâti', 'middle', 13) + dT(170, 41, 'B') + dT(280, 116, 'C') + dT(104, 64, 'pivot', 'end', 13) + dT(236, 64, 'rotule', 'start', 13) + dT(170, 140, 'glissière', 'middle', 13) + '</svg>',
+        'Exemple de graphe des liaisons') +
+      BOX(P('Nombre de degrés de liberté = nombre de mouvements indépendants possibles.', 'Graphe des liaisons d\'abord, schéma cinématique ensuite.'))
+  },
+  {
+    chap: 1,
+    title: 'Mouvements et trajectoires',
+    support: 'Programme ITEC, chapitre 3.2.1',
+    body:
+      UL('<b>Translation rectiligne</b> : tous les points décrivent des droites parallèles et ont la même vitesse.', '<b>Rotation autour d\'un axe fixe</b> : chaque point décrit un cercle centré sur l\'axe ; sa vitesse est proportionnelle à sa distance à l\'axe.',
+        '<b>Mouvement plan</b> : combinaison des deux dans un plan (bielle, bras articulé).') +
+      P('La <b>trajectoire</b> d\'un point est la courbe qu\'il décrit ; elle dépend du repère choisi (la valve d\'une roue décrit un cercle par rapport au cadre, une cycloïde par rapport au sol).') +
+      H('Vitesse d\'un point') +
+      P('Le vecteur vitesse est tangent à la trajectoire, dans le sens du mouvement. Pour un point à la distance R de l\'axe de rotation :') +
+      M('V = R \\times \\omega') + LEG(['V', 'la vitesse linéaire en m/s'], ['R', 'la distance à l\'axe en m'], ['\\omega', 'la vitesse angulaire en rad/s']) +
+      M('\\omega = \\frac{2 \\pi N}{60}') + LEG(['N', 'la vitesse de rotation en tr/min']) +
+      P('Accélération : a = Δv / Δt (en m/s²). Un mouvement uniformément accéléré part de 0 et atteint v au bout de t = v / a, en parcourant d = v² / (2a).') +
+      BOX(P('V = R × ω ; ω = 2πN / 60.', 'Vitesse tangente à la trajectoire.'))
+  },
+  // ===================== Chapitre 2 =====================
+  {
+    chap: 2,
+    title: 'Transformer un mouvement',
+    support: 'Programme ITEC, chapitre 5.2.3 · annales : monte-personne, dégrilleur, vis de dosage',
+    body:
+      H('1. Pignon-crémaillère') +
+      M('V = \\omega \\times \\frac{m \\times Z}{2}') + LEG(['V', 'la vitesse de la crémaillère (ou du pignon qui la parcourt) en m/s'], ['\\omega', 'la vitesse angulaire du pignon en rad/s'], ['m', 'le module en m'], ['Z', 'le nombre de dents du pignon']) +
+      P('m × Z / 2 est le rayon primitif du pignon.') +
+      H('2. Système vis-écrou') +
+      M('V = p \\times \\frac{N}{60}') + LEG(['V', 'la vitesse de translation en mm/s'], ['p', 'le pas de la vis en mm (déplacement pour un tour)'], ['N', 'la vitesse de rotation en tr/min']) +
+      P('Une vis à plusieurs filets avance du pas × nombre de filets à chaque tour. Une vis d\'Archimède (vis de dosage) déplace à chaque tour le volume compris entre deux spires : débit = volume par tour × nombre de tours par seconde.') +
+      H('3. Loi entrée-sortie d\'un vérin') +
+      P('Quand un vérin fait tourner un levier, sa longueur dépend de l\'angle θ (loi d\'Al-Kashi) :') +
+      M('L = \\sqrt{a^2 + b^2 - 2 a b \\cos\\theta}') + LEG(['L', 'la longueur du vérin'], ['a', 'et b les distances du pivot aux deux attaches'], ['\\theta', 'l\'angle entre ces deux segments']) +
+      P('La course est la différence entre les longueurs aux deux positions extrêmes.') +
+      H('4. Durée d\'un cycle') +
+      P('Pour chaque phase : t = d / v. La durée du cycle est la somme des durées des phases, y compris les temps morts (basculement, attente).') +
+      BOX(P('Crémaillère : V = ω × r ; vis-écrou : V = p × N / 60.', 'Al-Kashi : L² = a² + b² − 2ab cos θ.'))
+  },
+  {
+    chap: 2,
+    title: 'Transmettre la puissance : réducteurs, poulies, treuils',
+    support: 'Programme ITEC, chapitres 2.3.6 et 5.2.3 · annales : éolien, treuil, téléski',
+    body:
+      H('1. Rapport de transmission') +
+      M('r = \\frac{N_s}{N_e}') + LEG(['r', 'le rapport de transmission (sans unité)'], ['N_s', 'la vitesse de sortie'], ['N_e', 'la vitesse d\'entrée (même unité)']) +
+      table(['Transmission', 'Rapport'], [['Engrenage', 'r = Z menante / Z menée'], ['Poulies-courroie', 'r = d menante / d menée'], ['Plusieurs étages', 'r = r₁ × r₂ × …'], ['Réducteur « 1/k »', 'r = 1 / k']]) +
+      P('Une poulie et une courroie tournent sans glisser : la vitesse linéaire de la courroie vaut V = ω × d / 2.') +
+      H('2. Couple et puissance') +
+      M('P = C \\times \\omega') + LEG(['P', 'la puissance en W'], ['C', 'le couple en N·m'], ['\\omega', 'la vitesse angulaire en rad/s']) +
+      M('C_s = \\frac{\\eta \\times C_e}{r}') + LEG(['C_s', 'et Ce les couples de sortie et d\'entrée en N·m'], ['\\eta', 'le rendement de la transmission']) +
+      P('Un réducteur divise la vitesse et multiplie le couple, à la perte près.') +
+      H('3. Treuil et câble') +
+      P('Le câble s\'enroule sur un tambour de diamètre D ; son rayon d\'enroulement vaut (D + d) / 2 avec d le diamètre du câble. Vitesse du câble : V = ω<sub>tambour</sub> × R ; force disponible : F = P / V.') +
+      H('4. Éolienne : vitesse en bout de pale') +
+      P('Le TSR (tip speed ratio) compare la vitesse du bout de pale à celle du vent : λ = ω × R / V<sub>vent</sub>. Il vaut 6 à 8 pour une éolienne tripale.') +
+      BOX(P('r = Ns / Ne ; P = C × ω.', 'Réducteur : vitesse ÷, couple ×.'))
+  },
+  // ===================== Chapitre 3 =====================
+  {
+    chap: 3,
+    title: 'Actions mécaniques et principe fondamental de la statique',
+    support: 'Programme ITEC, chapitre 3.2.2 · annales ITEC',
+    body:
+      H('1. Modéliser les actions') +
+      UL('Une <b>force</b> : point d\'application, direction, sens, intensité (en N).', 'Le <b>poids</b> : P = m × g, vertical vers le bas, au centre de gravité.',
+        'Un <b>moment</b> : M<sub>A</sub>(F) = ± d × F, avec d la distance de A à la droite d\'action de F (bras de levier), en N·m ; positif dans le sens trigonométrique.') +
+      P('Une liaison parfaite transmet des efforts dans les directions où elle bloque un mouvement : une pivot d\'axe z ne transmet aucun moment autour de z.') +
+      H('2. Principe fondamental de la statique') +
+      P('Un solide en équilibre vérifie : la somme des forces est nulle et la somme des moments en un point est nulle. En problème plan, on obtient trois équations :') +
+      M('\\sum F_x = 0 \\qquad \\sum F_y = 0 \\qquad \\sum M_A = 0') +
+      UL('<b>Solide soumis à deux forces</b> : elles sont opposées et portées par la droite qui joint leurs points d\'application.', '<b>Solide soumis à trois forces non parallèles</b> : elles sont concourantes et leur somme vectorielle est nulle (triangle des forces).') +
+      EX('Exemple : charge répartie sur des appuis', P('Un silo de 1 800 kg repose sur 4 pieds identiques, la charge étant également répartie : chaque pied reprend 1 800 × 9,81 / 4 ≈ 4 415 N.')) +
+      H('3. Stabilité') +
+      P('Un équilibre est <b>stable</b> si le solide y revient après une petite perturbation. Une pièce longue et fine comprimée risque le <b>flambement</b> (elle se courbe brusquement) ; une structure se contrevente dans les trois directions.') +
+      BOX(P('PFS : somme des forces nulle et somme des moments nulle.', 'Moment = bras de levier × force.'))
+  },
+  {
+    chap: 3,
+    title: 'Frottement, plan incliné, pression et ressorts',
+    support: 'Programme ITEC, chapitre 3.2.2 · annales ITEC',
+    body:
+      H('1. Plan incliné') +
+      P('Sur une pente d\'angle α, le poids P = m × g se décompose en :') +
+      M('P_t = P \\times \\sin\\alpha \\qquad P_n = P \\times \\cos\\alpha') + LEG(['P_t', 'la composante parallèle à la pente (qui fait glisser) en N'], ['P_n', 'la composante perpendiculaire (qui plaque) en N']) +
+      H('2. Frottement') +
+      M('T = f \\times N') + LEG(['T', 'l\'effort tangentiel maximal en N'], ['f', 'le coefficient de frottement (sans unité)'], ['N', 'l\'effort normal en N']) +
+      P('L\'angle de frottement φ vérifie tan φ = f. Un objet posé sur une pente d\'angle α glisse si α > φ. Pour faire monter une charge à vitesse constante : F = P<sub>t</sub> + f × P<sub>n</sub>.') +
+      H('3. Pression') +
+      M('F = p \\times S') + LEG(['F', 'l\'effort en N'], ['p', 'la pression en Pa (1 bar = 10⁵ Pa)'], ['S', 'la surface en m²']) +
+      P('Dans un vérin, la poussée utilise toute la surface du piston (π D² / 4) ; en traction, on retire la section de la tige. Sur une paroi immergée, la pression augmente avec la profondeur : p = ρ × g × h.') +
+      H('4. Ressort') +
+      M('F = k \\times x') + LEG(['F', 'l\'effort en N'], ['k', 'la raideur en N/mm'], ['x', 'l\'écrasement ou l\'allongement en mm']) +
+      BOX(P('Glissement si α > φ, avec tan φ = f.', 'F = p × S ; F = k × x.'))
+  },
+  // ===================== Chapitre 4 =====================
+  {
+    chap: 4,
+    title: 'Contraintes, loi de Hooke et coefficient de sécurité',
+    support: 'Programme ITEC, chapitre 3.2.3 · annales ITEC',
+    body:
+      H('1. Hypothèses du modèle poutre') +
+      P('On étudie des pièces longues (poutres) en matériau homogène et isotrope, avec de petites déformations. Sollicitations simples : <b>traction</b>, <b>compression</b>, <b>flexion</b> (et, plus rarement, torsion et cisaillement).') +
+      H('2. Contrainte normale') +
+      M('\\sigma = \\frac{F}{S}') + LEG(['\\sigma', 'la contrainte en MPa'], ['F', 'l\'effort de traction ou de compression en N'], ['S', 'la section en mm²']) +
+      P('1 MPa = 1 N/mm². Pour un câble ou une barre ronde : S = π d² / 4.') +
+      H('3. Coefficient de sécurité') +
+      M('s = \\frac{R_e}{\\sigma_{max}}') + LEG(['s', 'le coefficient de sécurité (sans unité)'], ['R_e', 'la limite élastique du matériau en MPa'], ['\\sigma_{max}', 'la contrainte maximale en MPa']) +
+      P('Section minimale pour un coefficient s imposé : S<sub>min</sub> = s × F / R<sub>e</sub>.') +
+      H('4. Loi de Hooke') +
+      M('\\sigma = E \\times \\varepsilon \\qquad \\varepsilon = \\frac{\\Delta L}{L_0}') + LEG(['E', 'le module de Young en MPa'], ['\\varepsilon', 'l\'allongement relatif (sans unité)'], ['\\Delta L', 'l\'allongement'], ['L_0', 'la longueur initiale (même unité)']) +
+      P('Valable seulement dans le domaine élastique (σ < Re). Ordres de grandeur de E : acier 210 GPa, aluminium 70 GPa, bois 10 GPa.') +
+      EX('Exemple', P('Un câble d\'acier de 200 mm², long de 1 000 m, tendu par 40 kN, avec E = 160 GPa (module apparent d\'un câble) :') +
+        M('\\sigma = \\frac{40\\,000}{200} = 200\\,\\text{MPa} \\qquad \\Delta L = \\frac{\\sigma}{E} \\times L_0 = \\frac{200}{160\\,000} \\times 1\\,000 = 1{,}25\\,\\text{m}')) +
+      BOX(P('σ = F / S ; s = Re / σmax ; σ = E × ε.'))
+  },
+  {
+    chap: 4,
+    title: 'Flexion, flèche et simulation',
+    support: 'Programme ITEC, chapitre 3.2.3 · annales ITEC',
+    body:
+      H('1. Poutre en flexion') +
+      P('Une poutre en flexion se courbe : les fibres d\'un côté sont tendues, celles de l\'autre comprimées ; la fibre neutre, au milieu, ne change pas de longueur. La contrainte est maximale sur les bords.') +
+      M('\\sigma_{max} = \\frac{M_f \\times v}{I}') + LEG(['M_f', 'le moment fléchissant maximal en N·mm'], ['v', 'la distance de la fibre neutre au bord (demi-hauteur) en mm'], ['I', 'le moment quadratique de la section en mm⁴']) +
+      M('I = \\frac{b \\times h^3}{12}') + LEG(['b', 'la largeur de la section en mm'], ['h', 'sa hauteur, dans le sens de la charge, en mm']) +
+      P('Comme h est au cube, une planche posée sur chant est beaucoup plus rigide et résistante que posée à plat. Pour une poutre en porte-à-faux de longueur L chargée par F à son extrémité : M<sub>f</sub> = F × L, à l\'encastrement.') +
+      H('2. Flèche') +
+      dSV(340, 130, dMur(40, 30, 90) + `<rect class="fillv" x="40" y="50" width="240" height="12"/><path class="c3" d="M40 56 Q170 58 280 92"/>` + dA(280, 92, 280, 124) + dT(272, 118, 'F', 'end') + dCote(300, 56, 300, 92, 'f') + dCote(40, 22, 280, 22, 'L', -6),
+        'Poutre en porte-à-faux (déformée exagérée)') +
+      M('f = \\frac{F \\times L^3}{3 \\times E \\times I}') + LEG(['f', 'la flèche en mm'], ['F', 'la charge en N'], ['L', 'la longueur en mm'], ['E', 'le module de Young en MPa'], ['I', 'le moment quadratique en mm⁴']) +
+      P('Inversement, une flèche mesurée permet de retrouver E, donc d\'identifier le matériau.') +
+      H('3. Simulation par éléments finis') +
+      P('Un logiciel découpe la pièce en petits éléments (maillage) et calcule contraintes et déplacements. On renseigne le matériau, les fixations et les efforts ; on lit la contrainte maximale (pour le coefficient de sécurité) et le déplacement maximal (pour la flèche). Un maillage plus fin donne un résultat plus précis mais plus long à calculer.') +
+      BOX(P('σmax = Mf × v / I ; I = b h³ / 12 (h dans le sens de la charge).', 'Porte-à-faux : f = F L³ / (3 E I).'))
+  },
+  // ===================== Chapitre 5 =====================
+  {
+    chap: 5,
+    title: 'Familles, propriétés et protection des matériaux',
+    support: 'Programme ITEC, chapitre 4.2.2',
+    body:
+      table(['Famille', 'Exemples', 'Atouts'], [['Métaux', 'acier, aluminium, cuivre', 'résistants, ductiles, recyclables'], ['Polymères', 'PA, PE, ABS, PLA', 'légers, faciles à mouler'],
+        ['Céramiques et verres', 'verre, alumine, béton', 'durs, résistants à la chaleur, fragiles'], ['Composites', 'fibre de carbone ou de verre et résine', 'très rigides et légers'], ['Naturels', 'bois, liège, chanvre', 'biosourcés, peu de CO₂']]) +
+      H('Propriétés utiles') +
+      UL('<b>Masse volumique</b> ρ (kg/m³) : acier 7 850, aluminium 2 700, PLA 1 250, bois 500 à 800.', '<b>Module de Young</b> E (rigidité) et <b>limite élastique</b> Re (résistance).',
+        '<b>Dureté</b>, <b>résilience</b> (résistance aux chocs), <b>conductivités</b> thermique et électrique.', 'Résistance à la <b>corrosion</b> et au vieillissement (UV pour les polymères).') +
+      H('Protéger un matériau') +
+      P('L\'acier rouille : on le protège par galvanisation (couche de zinc), peinture ou on choisit un inox. L\'aluminium peut être anodisé ; le bois est traité (autoclave) ou protégé par un lasure.') +
+      BOX(P('Cinq grandes familles : métaux, polymères, céramiques, composites, naturels.'))
+  },
+  {
+    chap: 5,
+    title: 'Choisir un matériau : Ashby et matrice multicritère',
+    support: 'Programme ITEC, chapitres 4.2.2 et 4.2.3 · annales ITEC',
+    body:
+      H('1. Indices de performance (méthode d\'Ashby)') +
+      P('On cherche le matériau qui remplit la fonction avec la plus petite masse. Selon la sollicitation, on maximise un indice :') +
+      table(['Pièce et objectif', 'Indice à maximiser'], [['Tirant rigide et léger', 'E / ρ'], ['Tirant résistant et léger', 'Re / ρ'], ['Poutre rigide et légère', 'E<sup>1/2</sup> / ρ'], ['Plaque rigide et légère', 'E<sup>1/3</sup> / ρ']]) +
+      P('Sur une carte d\'Ashby (graphique E en fonction de ρ, en échelles logarithmiques), les matériaux de même indice sont sur une même droite : on retient ceux situés au-dessus.') +
+      H('2. Matrice multicritère') +
+      P('On note chaque solution sur chaque critère (masse, coût, résistance, recyclabilité, CO₂…), on multiplie par le coefficient d\'importance du critère et on additionne. Les solutions qui ne respectent pas une exigence impérative sont éliminées avant.') +
+      H('3. Gain de masse et CO₂') +
+      M('m = \\rho \\times V') + P('Le CO₂ de fabrication vaut la masse × l\'émission par kilogramme du matériau (acier environ 2 kg CO₂/kg, aluminium primaire environ 8 à 10, aluminium recyclé environ 1). Un véhicule plus léger consomme aussi moins à l\'usage.') +
+      BOX(P('Ashby : maximiser l\'indice adapté à la sollicitation.', 'Matrice : éliminer, puis noter et pondérer.'))
+  },
+  {
+    chap: 5,
+    title: 'Procédés de fabrication et cycle de vie',
+    support: 'Programme ITEC, chapitres 1.5 et 4.3.4',
+    body:
+      table(['Procédé', 'Principe', 'Exemple'], [['Moulage, injection', 'matière fondue coulée dans un moule', 'carter, coque plastique'], ['Usinage', 'enlèvement de matière (tournage, fraisage)', 'arbre, pièce précise'],
+        ['Mise en forme', 'déformation (pliage, emboutissage)', 'tôlerie, carrosserie'], ['Fabrication additive', 'dépôt couche par couche', 'prototype, pièce complexe'], ['Découpe', 'laser, jet d\'eau, plasma', 'pièces planes']]) +
+      H('Assemblages') +
+      UL('<b>Démontables</b> : vis, boulons, clips (facilitent la réparation et le recyclage).', '<b>Non démontables</b> : soudure, rivets, collage.') +
+      H('Éco-concevoir une pièce') +
+      P('L\'analyse du cycle de vie (extraction, fabrication, transport, utilisation, fin de vie) guide le choix : réduire la masse et le nombre de matériaux différents, préférer des matériaux recyclés ou recyclables, des assemblages démontables, et un procédé qui limite les chutes. Attention aux <b>transferts d\'impact</b> : un composite allège mais se recycle mal.') +
+      BOX(P('Le couple matériau-procédé se choisit ensemble.', 'Assemblages démontables : réparables et recyclables.'))
+  },
+  // ===================== Chapitre 6 =====================
+  {
+    chap: 6,
+    title: 'Chaîne de puissance, moteur et stockage',
+    support: 'Programme ITEC, chapitres 2.3 et 5.2 · annales ITEC',
+    body:
+      H('1. Rendements en cascade') +
+      CHAIN([['Batterie', 'η₁'], ['Variateur', 'η₂'], ['Moteur', 'η₃'], ['Réducteur', 'η₄'], ['Charge', 'P utile']]) +
+      M('P_a = \\frac{P_u}{\\eta_1 \\times \\eta_2 \\times \\eta_3 \\times \\eta_4}') + LEG(['P_a', 'la puissance à fournir en entrée en W'], ['P_u', 'la puissance utile en W']) +
+      P('On remonte la chaîne depuis la charge : chaque constituant doit fournir la puissance de sortie divisée par son rendement.') +
+      H('2. Choisir un moteur') +
+      UL('Puissance utile : P = C × ω (rotation) ou P = F × V (translation), en tenant compte des rendements de la transmission.', 'Couple et vitesse : le point de fonctionnement demandé doit être sous la courbe du moteur.',
+        'On choisit dans le catalogue le moteur de puissance immédiatement supérieure, avec une marge.') +
+      H('3. Vérin électrique') +
+      P('Un moteur entraîne une vis à billes : la vitesse de la tige vaut V = p × N / 60 et la puissance mécanique P = F × V. Son rendement global (moteur × vis) est souvent de 50 à 80 %.') +
+      H('4. Stockeurs d\'énergie') +
+      table(['Stockeur', 'Énergie', 'Usage'], [['Batterie', 'E = U × Q', 'véhicule, outil'], ['Supercondensateur', 'E = ½ C U²', 'pics de puissance'], ['Volant d\'inertie', 'E = ½ J ω²', 'régulation'], ['Masse en hauteur', 'E = m g h', 'STEP, ascenseur']]) +
+      BOX(P('Pa = Pu / (produit des rendements).', 'Moteur : couple et vitesse sous sa courbe, puissance avec marge.'))
+  },
+  // ===================== Chapitre 7 =====================
+  {
+    chap: 7,
+    title: 'Plans, géométrie et maquette numérique',
+    support: 'Programme ITEC, chapitres 4.1 et 4.3.4 · annales ITEC',
+    body:
+      H('1. Échelle') +
+      P('À l\'échelle 1:X, une longueur réelle vaut la longueur mesurée sur le plan × X (échelle 2:1 : le dessin est deux fois plus grand que la pièce).') +
+      H('2. Trigonométrie') +
+      dSV(340, 140, `<polygon class="flow" points="40,115 280,115 280,30"/><path class="thin" d="M85 115 A45 45 0 0 0 82.4 99"/>` + dT(96, 108, 'α', 'start') + dT(160, 132, 'côté adjacent', 'middle', 13) + dT(288, 76, 'opposé', 'start', 13) + dT(150, 60, 'hypoténuse', 'end', 13),
+        'Triangle rectangle') +
+      M('\\sin\\alpha = \\frac{\\text{opposé}}{\\text{hypoténuse}} \\qquad \\cos\\alpha = \\frac{\\text{adjacent}}{\\text{hypoténuse}} \\qquad \\tan\\alpha = \\frac{\\text{opposé}}{\\text{adjacent}}') +
+      P('Théorème de Pythagore : hypoténuse² = adjacent² + opposé². Calculatrice en degrés.') +
+      H('3. Maquette numérique') +
+      UL('Un modeleur volumique paramétrique construit chaque pièce par des fonctions (extrusion, révolution, perçage) ordonnées dans un <b>arbre de construction</b>.', 'L\'<b>assemblage</b> positionne les pièces par des contraintes (coïncidence, coaxialité…) qui correspondent aux liaisons.',
+        'La maquette sert à simuler (mouvements, éléments finis), à produire des plans cotés, des vues éclatées et des fichiers de fabrication (impression 3D, usinage).') +
+      H('4. Jeu de fonctionnement') +
+      P('Le jeu est l\'espace laissé entre deux pièces pour qu\'elles puissent bouger ou se monter. Jeu = dimension de l\'alésage − dimension de l\'arbre. Avec des tolérances, le jeu minimal vaut alésage minimal − arbre maximal et le jeu maximal vaut alésage maximal − arbre minimal ; le jeu minimal doit rester positif pour un ajustement glissant.') +
+      BOX(P('sin = opp / hyp ; cos = adj / hyp ; tan = opp / adj.', 'Jeu min = alésage min − arbre max.'))
+  }
+];
+
+// ---------- Affichage ----------
+const nav = document.getElementById('nav');
+const card = document.getElementById('card');
+let current = 0;
+
+function renderMath(root) {
+  root.querySelectorAll('.m').forEach(el => {
+    const tex = el.dataset.tex;
+    if (window.katex) {
+      katex.render(tex, el, { displayMode: !!el.dataset.d, throwOnError: false, strict: false });
+    } else {
+      el.textContent = tex;
+    }
+  });
+}
+
+// Adapte le contenu visible à la largeur de l'écran :
+// - un tableau de 2 ou 3 lignes trop large est présenté en colonnes (transposé) ;
+// - une formule centrée trop large est rendue « en ligne », que KaTeX peut couper après = ou +.
+function fitToWidth(root) {
+  root.querySelectorAll('.tw').forEach(w => {
+    const t = w.querySelector('table');
+    if (!w.offsetParent || !t || t.dataset.tr || t.rows.length > 3 || w.scrollWidth <= w.clientWidth + 1) return;
+    const cells = [...t.rows].map(r => [...r.cells].map(c => c.innerHTML));
+    t.innerHTML = cells[0].map((_, c) => `<tr>${cells.map((row, k) => {
+      const tag = c === 0 || k === 0 ? 'th' : 'td';
+      return `<${tag}>${row[c] ?? ''}</${tag}>`;
+    }).join('')}</tr>`).join('');
+    t.dataset.tr = '1';
+  });
+  if (!window.katex) return;
+  root.querySelectorAll('.mdisp').forEach(el => {
+    if (!el.offsetParent) return;
+    if (el.classList.contains('mwrap')) {
+      katex.render(el.dataset.tex, el, { displayMode: true, throwOnError: false, strict: false });
+      el.classList.remove('mwrap');
+      el.style.overflow = '';
+    }
+    if (el.scrollWidth > el.clientWidth + 1) {
+      katex.render(el.dataset.tex, el, { displayMode: false, throwOnError: false, strict: false });
+      el.classList.add('mwrap');
+      // Quelques pixels de trop (bord d'un cadre) : on laisse déborder dans la marge plutôt que d'afficher un défilement
+      if (el.scrollWidth - el.clientWidth <= 8) el.style.overflow = 'visible';
+    }
+  });
+}
+let fitTimer;
+window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(() => fitToWidth(card), 150); });
+
+// Identifiant d'une fiche dans l'adresse : #c<chapitre>-<rang dans le chapitre>
+const idOf = i => {
+  const c = EXOS[i].chap;
+  return `c${c}-${EXOS.slice(0, i + 1).filter(e => e.chap === c).length}`;
+};
+const ARROW = '<svg class="arrow" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function buildNav() {
+  nav.innerHTML = CHAPITRES.map((titre, c) => `
+    <div class="chap">
+      <button class="chap-btn" aria-expanded="false">
+        ${ARROW}
+        <span><span class="seq">Chapitre ${c + 1}</span><span class="ex">${titre}</span></span>
+      </button>
+      <div class="exlist" hidden>
+        ${EXOS.map((e, i) => e.chap === c + 1 ? `<a href="#${idOf(i)}" data-i="${i}">${e.title}</a>` : '').join('')}
+      </div>
+    </div>`).join('');
+  nav.querySelectorAll('.chap-btn').forEach(b => b.onclick = () => toggleChap(b));
+  nav.querySelectorAll('.exlist a').forEach(a => a.onclick = ev => { ev.preventDefault(); go(+a.dataset.i); });
+}
+
+// Affiche la fiche i et met à jour l'adresse (#c4-1…) sans recharger la page
+function go(i) {
+  show(i);
+  closeMenu();
+  window.scrollTo(0, 0);
+  try { history.pushState(null, '', '#' + idOf(i)); } catch (err) { /* aperçu hors ligne : on ignore */ }
+}
+
+// Ouvre ou ferme un chapitre ; ouvrir un chapitre referme les autres
+function toggleChap(btn, open) {
+  const list = btn.nextElementSibling;
+  list.hidden = open === undefined ? !list.hidden : !open;
+  btn.setAttribute('aria-expanded', String(!list.hidden));
+  if (!list.hidden) {
+    nav.querySelectorAll('.chap-btn').forEach(b => {
+      if (b !== btn) { b.nextElementSibling.hidden = true; b.setAttribute('aria-expanded', 'false'); }
+    });
+  }
+}
+
+function show(i) {
+  current = i;
+  const e = EXOS[i];
+  card.innerHTML = `
+    <div class="crumb">Chapitre ${e.chap} · ${CHAPITRES[e.chap - 1]}</div>
+    <h2>${e.title}</h2>
+    <p class="support">${e.support}</p>
+    ${e.body}
+    <div class="btns"><a class="go" href="Exercices_ITEC.html#c${e.chap}-1">S'entraîner : exercices du chapitre ${e.chap} →</a></div>`;
+  renderMath(card);
+  fitToWidth(card);
+  nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', +a.dataset.i === i));
+  nav.querySelectorAll('.chap').forEach((ch, c) => {
+    const btn = ch.querySelector('.chap-btn');
+    btn.classList.toggle('on', c === e.chap - 1);
+    if (c === e.chap - 1) toggleChap(btn, true);
+  });
+  document.getElementById('prevBtn').style.visibility = i > 0 ? 'visible' : 'hidden';
+  document.getElementById('nextBtn').style.visibility = i < EXOS.length - 1 ? 'visible' : 'hidden';
+}
+
+function fromHash() {
+  const i = EXOS.findIndex((e, k) => '#' + idOf(k) === location.hash);
+  show(i >= 0 ? i : 0);
+  closeMenu();
+  window.scrollTo(0, 0);
+}
+
+// Menu mobile
+const sidebar = document.getElementById('sidebar'), shade = document.getElementById('shade');
+function closeMenu() { sidebar.classList.remove('open'); shade.hidden = true; }
+document.getElementById('menuBtn').onclick = () => { sidebar.classList.add('open'); shade.hidden = false; };
+shade.onclick = closeMenu;
+
+document.getElementById('prevBtn').onclick = () => go(current - 1);
+document.getElementById('nextBtn').onclick = () => go(current + 1);
+window.addEventListener('popstate', fromHash);
+
+buildNav();
+fromHash();
+</script>
 </body>
 </html>
