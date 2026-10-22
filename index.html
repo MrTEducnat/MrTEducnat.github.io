@@ -1,11 +1,97 @@
 <!doctype html>
 <html lang="fr">
-<head><meta charset="utf-8"><title>Exercices STI2D</title></head>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercices STI2D</title>
+<style>
+:root {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --text: #1f1e1c;
+  --muted: #6b6a65;
+  --border: #dcd9d0;
+  --accent: #185fa5;
+  --accent-bg: #e6f1fb;
+  --val: #854f0b;
+  --val-bg: #faeeda;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1b1a;
+    --surface: #242422;
+    --text: #ecebe6;
+    --muted: #a3a29b;
+    --border: #3a3a37;
+    --accent: #85b7eb;
+    --accent-bg: #0c447c;
+    --val: #fac775;
+    --val-bg: #4a3209;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+main { max-width: 780px; margin: 0 auto; padding: 48px 24px; }
+header { margin-bottom: 28px; }
+h1 { font-size: 26px; font-weight: 600; margin: 0 0 4px; }
+.sub { font-size: 14px; color: var(--muted); margin: 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+a.card {
+  display: block; text-decoration: none; color: var(--text);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 24px 28px; transition: border-color .15s;
+}
+a.card:hover, a.card:focus-visible { border-color: var(--accent); outline: none; }
+.crumb { font-size: 13px; color: var(--muted); }
+.card h2 { font-size: 22px; font-weight: 600; margin: 2px 0 8px; }
+.card p { margin: 0 0 14px; color: var(--muted); font-size: 15px; }
+.tag {
+  display: inline-block; background: var(--val-bg); color: var(--val);
+  padding: 1px 8px; border-radius: 5px; font-size: 13px; font-weight: 500; margin-right: 6px;
+}
+.go {
+  display: inline-block; margin-top: 16px; border: 1px solid var(--accent); color: var(--accent);
+  border-radius: 8px; padding: 8px 16px; font-size: 15px;
+}
+a.card:hover .go { background: var(--accent-bg); }
+footer { margin-top: 28px; font-size: 13px; color: var(--muted); }
+@media (max-width: 860px) {
+  main { padding: 28px 16px; }
+  a.card { padding: 18px 16px; }
+  h1 { font-size: 22px; }
+}
+</style>
+</head>
 <body>
-  <h1>Exercices STI2D</h1>
-  <ul>
-    <li><a href="Exercices_I2D.html">Première : I2D</a></li>
-    <li><a href="Exercices_SIN.html">Terminale : SIN</a></li>
-  </ul>
+<main>
+  <header>
+    <h1>Exercices STI2D</h1>
+    <p class="sub">Exercices corrigés à valeurs aléatoires · choisissez votre niveau</p>
+  </header>
+  <div class="grid">
+    <a class="card" href="Exercices_I2D.html">
+      <div class="crumb">1re STI2D</div>
+      <h2>Exercices I2D</h2>
+      <p>Des exercices par séquence, avec correction détaillée.</p>
+      <span class="tag">Énoncés aléatoires</span><span class="tag">Correction</span><br>
+      <span class="go">Ouvrir →</span>
+    </a>
+    <a class="card" href="Exercices_SIN.html">
+      <div class="crumb">Terminale STI2D</div>
+      <h2>Exercices SIN</h2>
+      <p>Exercices de spécialité Systèmes d'Information et Numérique.</p>
+      <span class="tag">Énoncés aléatoires</span><span class="tag">Correction</span><br>
+      <span class="go">Ouvrir →</span>
+    </a>
+  </div>
+  <footer>Les valeurs changent à chaque clic sur « Nouvelles valeurs ».</footer>
+</main>
 </body>
 </html>
