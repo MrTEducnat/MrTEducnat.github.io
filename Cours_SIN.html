@@ -508,16 +508,20 @@ const EXOS = [
     support: 'Programme SIN, chapitres 2.4 et 3.4.2 · présents dans tous les sujets SIN',
     body:
       H('1. La chaîne d\'information') +
+      P('Elle part d\'une grandeur physique (température, présence, position) et aboutit à une information exploitable : un affichage, une commande d\'actionneur ou un message envoyé sur un réseau.') +
       CHAIN([['Acquérir', 'capteur, bouton'], ['Traiter', 'microcontrôleur'], ['Communiquer', 'écran, bus, réseau']]) +
       table(['Nature du signal', 'Valeurs', 'Exemple'], [['Logique (TOR)', '0 ou 1 (0 V / 5 V)', 'fin de course'], ['Analogique', 'continues', 'tension d\'un capteur'], ['Numérique', 'nombre codé en binaire', 'trame I2C']]) +
-      P('Dans un diagramme de blocs internes (ibd), chaque flux est repéré par sa nature : une sonde donne une grandeur analogique, un bus transporte du numérique, un bouton donne un signal logique.') +
-      H('2. Diagrammes de comportement') +
-      UL('<b>Séquence (sd)</b> : messages échangés entre les éléments, dans l\'ordre du temps (lignes de vie verticales).', '<b>États (stm)</b> : états du système et transitions, déclenchées par un événement et éventuellement une condition [garde].',
-        '<b>Activités (act)</b> : enchaînement des actions, équivalent d\'un algorigramme.') +
+      P('Dans un diagramme de blocs internes (ibd), chaque flux est repéré par sa nature : une sonde donne une grandeur analogique, un bus transporte du numérique, un bouton donne un signal logique. Entre un capteur analogique et un microcontrôleur, il faut un CAN pour passer de l\'analogique au numérique.') +
+      H('2. Diagramme de séquence') +
+      dSV(340, 170, [['Utilisateur', 50], ['Carte', 170], ['Capteur', 290]].map(([n, x]) => `<rect class="fillv" x="${x - 45}" y="10" width="90" height="26" rx="4"/><line class="c3" x1="${x}" y1="36" x2="${x}" y2="165"/>` + dT(x, 28, n, 'middle', 12)).join('') +
+        dA(50, 60, 170, 60) + dT(110, 54, 'appui bouton', 'middle', 11) + dA(170, 90, 290, 90) + dT(230, 84, 'demande mesure', 'middle', 11) + dA(290, 118, 170, 118, 'arrowv') + dT(230, 112, 'température', 'middle', 11) +
+        dA(170, 148, 50, 148, 'arrowv') + dT(110, 142, 'affichage', 'middle', 11), 'Diagramme de séquence : les messages se lisent de haut en bas, dans l\'ordre du temps') +
+      H('3. Diagramme d\'états') +
+      UL('<b>États (stm)</b> : états du système et transitions, déclenchées par un événement et éventuellement une condition entre crochets [garde].', '<b>Activités (act)</b> : enchaînement des actions, équivalent d\'un algorigramme.') +
       dSV(340, 120, `<rect class="flow" x="20" y="40" width="90" height="40" rx="12"/><rect class="flow" x="230" y="40" width="90" height="40" rx="12"/><circle class="pt" cx="65" cy="16" r="6"/>` + dA(65, 22, 65, 40, 'thin') +
         dT(65, 65, 'Veille', 'middle', 13) + dT(275, 65, 'Mesure', 'middle', 13) + dA(110, 52, 230, 52) + dA(230, 70, 110, 70, 'arrowv') + dT(170, 44, 'appui [batterie OK]', 'middle', 12) + dT(170, 92, 'fin de mesure', 'middle', 12),
         'Diagramme d\'états : une transition = événement [condition]') +
-      P('Pour <b>parcourir un diagramme d\'états</b>, on part de l\'état initial et on suit les transitions dont l\'événement se produit et dont la condition est vraie.') +
+      P('Pour <b>parcourir un diagramme d\'états</b>, on part de l\'état initial (point noir) et on suit les transitions : une transition n\'est franchie que si son événement se produit <b>et</b> que sa condition est vraie. Sinon, le système reste dans son état. Ici, un appui avec la batterie faible laisse le système en veille.') +
       BOX(P('TOR : 0/1 ; analogique : continu ; numérique : codé.', 'stm = états et transitions ; sd = messages dans le temps.'))
   },
   // ===================== Chapitre 2 =====================
@@ -527,18 +531,21 @@ const EXOS = [
     support: 'Programme SIN, chapitre 5.3.1 · annales SIN 2021 à 2026',
     body:
       H('1. Types de capteurs') +
-      UL('<b>Détecteur TOR</b> : présence ou absence (fin de course, inductif, capacitif, photoélectrique, ILS).', '<b>Capteur analogique</b> : une tension ou un courant image de la grandeur.',
-        '<b>Capteur numérique</b> : il envoie directement une valeur codée (bus I2C, 1-Wire…).') +
+      UL('<b>Détecteur TOR</b> : présence ou absence (fin de course, inductif pour les métaux, capacitif pour tous les matériaux, photoélectrique, ILS avec un aimant).', '<b>Capteur analogique</b> : une tension ou un courant image de la grandeur.',
+        '<b>Capteur numérique</b> : il contient son propre CAN et envoie directement une valeur codée (bus I2C, 1-Wire…), ce qui évite les erreurs dues aux câbles.') +
       H('2. Caractéristiques') +
       table(['Caractéristique', 'Définition'], [['Étendue de mesure', 'plage des valeurs mesurables'], ['Sensibilité', 'variation de la sortie pour une variation de l\'entrée (ex : 10 mV/°C)'],
         ['Résolution', 'plus petite variation détectable'], ['Précision', 'erreur maximale (± 0,5 °C, ou en % de la pleine échelle)'], ['Temps de réponse', 'délai pour que la sortie suive l\'entrée']]) +
+      P('On choisit un capteur dont l\'étendue de mesure couvre les valeurs du système, avec une précision suffisante et un temps de réponse adapté à la vitesse des phénomènes.') +
       H('3. Capteur à sortie linéaire') +
       M('S = a \\times X + b') + LEG(['S', 'la sortie (tension en V ou courant en mA)'], ['X', 'la grandeur mesurée'], ['a', 'la sensibilité (pente)'], ['b', 'la valeur de la sortie quand X = 0']) +
-      P('On trouve a et b avec deux points connus de la caractéristique : a = (S₂ − S₁) / (X₂ − X₁), puis b = S₁ − a × X₁.') +
+      P('On trouve a et b avec deux points connus de la caractéristique : a = (S₂ − S₁) / (X₂ − X₁), puis b = S₁ − a × X₁. Pour retrouver la grandeur à partir d\'une mesure, on isole X : X = (S − b) / a.') +
       H('4. Boucle de courant 4-20 mA') +
-      P('Le transmetteur délivre 4 mA au début de l\'étendue de mesure et 20 mA à la fin. Le « zéro vivant » à 4 mA permet de détecter une coupure de fil (0 mA). Le courant n\'est pas affaibli par la longueur du câble. Aux bornes d\'une résistance de 250 Ω, on obtient 1 à 5 V.') +
+      graph({ x0: -20, x1: 100, dx: 20, y0: 0, y1: 24, dy: 4, w: 400, h: 220, xlab: 'T (°C)', ylab: 'I (mA)', series: [{ pts: [[-20, 4], [100, 20]] }],
+        extra: (X, Y) => `<polyline class="c3" points="${X(-20)},${Y(12)} ${X(40)},${Y(12)} ${X(40)},${Y(0)}"/>` + dT(X(40) + 4, Y(12) - 6, '12 mA → 40 °C', 'start', 13), cap: 'Transmetteur −20 à 100 °C : 4 mA à −20 °C, 20 mA à 100 °C' }) +
+      P('Le transmetteur délivre 4 mA au début de l\'étendue de mesure et 20 mA à la fin. Le « zéro vivant » à 4 mA permet de détecter une coupure de fil (0 mA). Un courant n\'est pas affaibli par la longueur du câble, contrairement à une tension. Aux bornes d\'une résistance de 250 Ω, on obtient 1 à 5 V.') +
       M('I = 4 + 16 \\times \\frac{X - X_{min}}{X_{max} - X_{min}}') + LEG(['I', 'le courant en mA'], ['X', 'la grandeur mesurée'], ['X_{min}', 'et Xmax les bornes de l\'étendue de mesure']) +
-      BOX(P('Sortie linéaire : S = a·X + b, avec a la sensibilité.', '4-20 mA : 4 mA au minimum, 20 mA au maximum.'))
+      BOX(P('Sortie linéaire : S = a·X + b, avec a la sensibilité.', '4-20 mA : 4 mA au minimum, 20 mA au maximum ; 0 mA = fil coupé.'))
   },
   {
     chap: 2,
@@ -546,18 +553,23 @@ const EXOS = [
     support: 'Programme SIN, chapitre 5.3.1 · annales SIN',
     body:
       H('1. Pont diviseur') +
-      P('Un capteur dont la résistance varie (thermistance, photorésistance) est monté avec une résistance fixe R. La tension mesurée aux bornes du capteur vaut :') +
+      P('Un microcontrôleur mesure des tensions, pas des résistances. On monte donc le capteur résistif (thermistance, photorésistance) en série avec une résistance fixe R : la tension se partage entre les deux, en proportion de leurs résistances.') +
+      dSV(340, 175, `<line class="line" x1="110" y1="14" x2="110" y2="28"/><rect class="fillv" x="98" y="28" width="24" height="44"/><line class="line" x1="110" y1="72" x2="110" y2="98"/><rect class="flow" x="98" y="98" width="24" height="44"/>
+        <line class="thin" x1="88" y1="138" x2="132" y2="102"/><line class="line" x1="110" y1="142" x2="110" y2="158"/><line class="line" x1="96" y1="158" x2="124" y2="158"/><line class="line" x1="80" y1="14" x2="140" y2="14"/><circle class="pt" cx="110" cy="85" r="4"/><line class="line" x1="110" y1="85" x2="240" y2="85"/>` +
+        dT(146, 18, 'Vcc', 'start', 13) + dT(130, 54, 'R fixe', 'start', 13) + dT(136, 124, 'capteur RT', 'start', 13) + dT(246, 90, 'UT → CAN', 'start', 13),
+        'Pont diviseur : UT est prise aux bornes du capteur') +
       M('U_T = V_{cc} \\times \\frac{R_T}{R_T + R}') + LEG(['U_T', 'la tension aux bornes du capteur en V'], ['V_{cc}', 'la tension d\'alimentation en V'], ['R_T', 'la résistance du capteur en Ω'], ['R', 'la résistance fixe en Ω']) +
-      P('Une <b>CTN</b> (coefficient de température négatif) voit sa résistance <b>diminuer</b> quand la température augmente ; une sonde PT100 (platine) augmente : R = 100 × (1 + 0,0039 × T).') +
+      P('Une <b>CTN</b> (coefficient de température négatif) voit sa résistance <b>diminuer</b> quand la température augmente : U<sub>T</sub> diminue donc aussi. Une sonde PT100 (platine) augmente : R = 100 × (1 + 0,0039 × T). Si R = R<sub>T</sub>, U<sub>T</sub> vaut exactement V<sub>cc</sub> / 2.') +
       H('2. Mesure de courant par shunt') +
-      P('Un shunt est une résistance très faible placée <b>en série</b> ; on mesure la petite tension à ses bornes.') +
+      P('Un shunt est une résistance très faible placée <b>en série</b> dans le circuit ; on mesure la petite tension à ses bornes (loi d\'Ohm U = R × I) pour en déduire le courant. Il est marqué par son courant et sa tension nominaux :') +
       M('R_{shunt} = \\frac{U_n}{I_n}') + LEG(['U_n', 'la tension nominale (ex : 75 mV)'], ['I_n', 'le courant nominal (ex : 100 A)']) +
-      P('Il dissipe une puissance P = R × I².') +
+      P('Il dissipe une puissance P = R × I², qui le chauffe : c\'est pourquoi sa résistance est très faible.') +
       H('3. Codeurs') +
-      UL('<b>Codeur incrémental</b> : il délivre N impulsions par tour ; on compte les impulsions pour connaître l\'angle et la vitesse.', '<b>Codeur absolu</b> : chaque position correspond à un code unique sur n bits, soit 2<sup>n</sup> positions par tour (résolution 360° / 2<sup>n</sup>).',
-        'Le <b>code Gray</b> ne change que d\'un bit entre deux positions voisines, ce qui évite les lectures erronées pendant les transitions. Conversion : chaque bit binaire = bit Gray OU EXCLUSIF le bit binaire précédent.') +
+      UL('<b>Codeur incrémental</b> : il délivre N impulsions par tour ; on compte les impulsions pour connaître l\'angle et on les compte par seconde pour connaître la vitesse. Il perd sa position à la coupure de courant.',
+        '<b>Codeur absolu</b> : chaque position correspond à un code unique sur n bits, soit 2<sup>n</sup> positions par tour (résolution 360° / 2<sup>n</sup>). Il connaît sa position dès la mise sous tension.',
+        'Le <b>code Gray</b> ne change que d\'un bit entre deux positions voisines, ce qui évite les lectures erronées pendant les transitions (en binaire naturel, passer de 0111 à 1000 change 4 bits à la fois). Conversion : chaque bit binaire = bit Gray OU EXCLUSIF le bit binaire précédent.') +
       H('4. Mesure par ultrasons') +
-      P('Un émetteur envoie une onde et mesure le temps de vol t. La distance vaut d = v × t / 2 pour un aller-retour (v ≈ 340 m/s dans l\'air). Un anémomètre compare les temps de vol dans les deux sens pour en déduire la vitesse du vent.') +
+      P('Un émetteur envoie une onde et mesure le temps de vol t. La distance vaut d = v × t / 2 pour un aller-retour (v ≈ 340 m/s dans l\'air). Un anémomètre compare les temps de vol dans les deux sens : l\'onde va plus vite dans le sens du vent, ce qui donne sa vitesse.') +
       BOX(P('Pont diviseur : UT = Vcc × RT / (RT + R).', 'Codeur absolu sur n bits : 2<sup>n</sup> positions ; code Gray : un seul bit change à la fois.'))
   },
   // ===================== Chapitre 3 =====================
@@ -566,17 +578,21 @@ const EXOS = [
     title: 'Amplifier, adapter et filtrer',
     support: 'Programme SIN, chapitre 5.3.1 · annales SIN',
     body:
+      P('Le signal d\'un capteur est souvent faible (quelques mV) et bruité. Avant le CAN, on le <b>conditionne</b> : on l\'amplifie, on l\'adapte à la plage du convertisseur et on le filtre.') +
+      CHAIN([['Capteur', 'mV'], ['Amplificateur', 'gain A'], ['Filtre', 'anti-bruit'], ['CAN', '0 à 3,3 V']]) +
       H('1. Amplification') +
       M('A = \\frac{U_s}{U_e}') + LEG(['A', 'le gain en tension (sans unité)'], ['U_s', 'la tension de sortie'], ['U_e', 'la tension d\'entrée (même unité)']) +
-      M('G_{dB} = 20 \\log(A)') + P('Un gain de 10 vaut 20 dB, un gain de 100 vaut 40 dB.') +
+      M('G_{dB} = 20 \\log(A)') + P('Un gain de 10 vaut 20 dB, un gain de 100 vaut 40 dB ; un gain négatif en dB signifie une atténuation. On utilise des amplificateurs intégrés dont le gain se règle par une résistance.') +
       H('2. Adaptateur de dynamique') +
-      P('Il transforme la plage du capteur en la plage complète du CAN (par exemple 0 à 3,3 V), pour profiter de toute la résolution :') +
+      P('Il transforme la plage du capteur en la plage complète du CAN (par exemple 0 à 3,3 V) : on profite ainsi de toutes les valeurs du convertisseur, donc de sa meilleure résolution.') +
+      graph({ x0: -200, x1: 800, dx: 200, y0: 0, y1: 3.5, dy: 0.5, w: 400, h: 220, xlab: 'Vs1 (mV)', ylab: 'Vs2 (V)', series: [{ pts: [[-100, 0], [600, 3.3]] }],
+        cap: 'Capteur de −100 à 600 mV étiré sur 0 à 3,3 V : a = 3,3 / 0,7 ≈ 4,71 ; b = 0,47 V' }) +
       M('V_{s2} = a \\times V_{s1} + b') + LEG(['V_{s1}', 'la tension du capteur'], ['V_{s2}', 'la tension envoyée au CAN'], ['a', 'le gain'], ['b', 'le décalage']) +
-      P('On calcule a et b avec les deux bornes : à V<sub>s1 min</sub> on veut 0 V, à V<sub>s1 max</sub> on veut la pleine échelle du CAN.') +
+      P('On calcule a et b avec les deux bornes : à V<sub>s1 min</sub> on veut 0 V, à V<sub>s1 max</sub> on veut la pleine échelle du CAN. Donc a = pleine échelle / (V<sub>s1 max</sub> − V<sub>s1 min</sub>) et b = −a × V<sub>s1 min</sub>.') +
       H('3. Filtre passe-bas du premier ordre') +
-      P('Un filtre RC laisse passer les basses fréquences et atténue les hautes (le bruit) :') +
+      P('Un filtre RC laisse passer les basses fréquences (le signal utile, qui varie lentement) et atténue les hautes (le bruit) :') +
       M('f_c = \\frac{1}{2 \\pi R C}') + LEG(['f_c', 'la fréquence de coupure en Hz'], ['R', 'la résistance en Ω'], ['C', 'la capacité en F']) +
-      P('À la fréquence de coupure, le gain vaut −3 dB ; au-delà, il diminue de 20 dB par décade (chaque fois que la fréquence est multipliée par 10).') +
+      P('À la fréquence de coupure, le gain vaut −3 dB (le signal est multiplié par 0,7) ; au-delà, il diminue de 20 dB par décade (chaque fois que la fréquence est multipliée par 10, le signal est divisé par 10).') +
       BOX(P('G = 20 log A ; fc = 1 / (2πRC).', 'Adaptateur : la plage du capteur devient la pleine échelle du CAN.'))
   },
   {
@@ -584,15 +600,18 @@ const EXOS = [
     title: 'Conversion analogique-numérique',
     support: 'Cours/TD CAN · programme SIN, chapitre 5.3.1',
     body:
+      P('Le CAN découpe la plage d\'entrée en 2<sup>n</sup> marches égales. La hauteur d\'une marche est le <b>quantum</b> :') +
+      graph({ x0: 0, x1: 8, dx: 1, y0: 0, y1: 7, dy: 1, w: 400, h: 230, xlab: 'U (V)', ylab: 'N', fy: y => y.toString(2).padStart(3, '0'),
+        series: [{ pts: [0, 1, 2, 3, 4, 5, 6, 7].flatMap(k => [[k, k], [k + 1, k]]) }], cap: 'CAN 3 bits sur 0 à 8 V : q = 1 V, 8 valeurs de 000 à 111' }) +
       M('q = \\frac{V_{max} - V_{min}}{2^n}') + LEG(['q', 'le quantum en V'], ['V_{max}', 'et Vmin les bornes de la plage d\'entrée en V'], ['n', 'le nombre de bits du CAN']) +
       M('N = \\left\\lfloor \\frac{U - V_{min}}{q} \\right\\rfloor') + LEG(['N', 'la valeur numérique (entier de 0 à 2ⁿ − 1)'], ['U', 'la tension d\'entrée en V']) +
       P('Les crochets signifient « partie entière » : on arrondit à l\'entier inférieur. Inversement, la tension correspondant à N vaut V<sub>min</sub> + N × q.') +
       H('Erreurs et résolution') +
       UL('L\'erreur de quantification est au plus d\'un quantum q (un demi-quantum si le CAN arrondit au plus proche).', 'Résolution d\'une chaîne de mesure : on ramène le quantum à la grandeur mesurée en le divisant par la sensibilité du capteur et le gain de l\'amplificateur.',
         'L\'erreur totale d\'une chaîne additionne les erreurs du capteur, du conditionnement et de la conversion.') +
-      EX('Exemple', P('CAN 10 bits sur 0 à 5 V : q = 5 / 1 024 ≈ 4,9 mV. Un capteur de 10 mV/°C, amplifié 5 fois, donne 50 mV/°C : la résolution vaut 4,9 / 50 ≈ 0,1 °C.')) +
+      EX('Exemple', P('CAN 10 bits sur 0 à 5 V : q = 5 / 1 024 ≈ 4,9 mV. Un capteur de 10 mV/°C, amplifié 5 fois, donne 50 mV/°C : la résolution vaut 4,9 / 50 ≈ 0,1 °C. Une tension de 1,8 V donne N = 1,8 / 0,0049 ≈ 368 (en arrondissant à l\'entier inférieur).')) +
       H('Échantillonnage') +
-      P('Le CAN prend Fe mesures par seconde (fréquence d\'échantillonnage) ; pour bien reconstituer un signal, Fe doit valoir au moins le double de sa plus haute fréquence (théorème de Shannon).') +
+      P('Le CAN prend Fe mesures par seconde (fréquence d\'échantillonnage). Pour bien reconstituer un signal, Fe doit valoir au moins le double de sa plus haute fréquence (théorème de Shannon) : c\'est pourquoi le son est échantillonné à 44,1 kHz, plus du double de 20 kHz, limite de l\'oreille.') +
       BOX(P('q = (Vmax − Vmin) / 2ⁿ ; N = partie entière de (U − Vmin) / q.', 'Fe ≥ 2 × fmax.'))
   },
   // ===================== Chapitre 4 =====================
@@ -602,13 +621,16 @@ const EXOS = [
     support: 'Programme SIN, chapitre 3.4.1 · annales SIN',
     body:
       H('1. Bases') +
+      P('Un système numérique ne manipule que des 0 et des 1 (bits). L\'hexadécimal sert à écrire ces mots binaires de façon compacte : un chiffre hexadécimal remplace exactement 4 bits.') +
+      dSV(340, 110, [1, 0, 1, 0, 0, 1, 1, 0].map((b, k) => `<rect class="${k < 4 ? 'flow' : 'fillv'}" x="${11 + k * 40}" y="20" width="38" height="30" rx="3"/>` + dT(30 + k * 40, 41, b, 'middle', 15)).join('') +
+        dT(90, 76, '1010 = A', 'middle', 13) + dT(250, 76, '0110 = 6', 'middle', 13) + dT(170, 100, '1010 0110 = A6 = 166', 'middle', 13), 'Un octet = 2 chiffres hexadécimaux') +
       table(['Décimal', 'Binaire', 'Hexadécimal'], [['10', '1010', 'A'], ['15', '1111', 'F'], ['166', '1010 0110', 'A6'], ['255', '1111 1111', 'FF']]) +
       UL('Binaire → hexadécimal : grouper les bits par 4 en partant de la droite.', 'n bits : 2<sup>n</sup> valeurs, de 0 à 2<sup>n</sup> − 1 (8 bits : 0 à 255 ; 16 bits : 0 à 65 535).') +
       H('2. Entiers signés (complément à 2)') +
-      P('Sur n bits signés, le bit de poids fort vaut −2<sup>n−1</sup>. Pour lire une valeur négative sur 16 bits : on la lit comme un entier positif puis on retire 65 536.') +
-      EX('Exemple : température sur deux octets', P('Un capteur envoie FF 38 avec une résolution de 0,1 °C. FF38 = 65 336 ; comme le bit de poids fort est à 1, la valeur vaut 65 336 − 65 536 = −200, soit −20,0 °C.')) +
+      P('Pour coder des valeurs négatives (une température sous 0 °C), on utilise le complément à 2 : sur n bits signés, le bit de poids fort vaut −2<sup>n−1</sup> au lieu de +2<sup>n−1</sup>. Pour lire une valeur négative sur 16 bits : on la lit comme un entier positif puis on retire 65 536.') +
+      EX('Exemple : température sur deux octets', P('Un capteur envoie FF 38 avec une résolution de 0,1 °C. FF38 = 65 336 ; comme le bit de poids fort est à 1 (F = 1111), la valeur vaut 65 336 − 65 536 = −200, soit −20,0 °C. Si l\'octet de poids fort commence par 0 à 7, la valeur est positive et on la lit directement.')) +
       H('3. Caractères et couleurs') +
-      UL('<b>ASCII</b> : un caractère par octet. « A » = 41 (hex) = 65 ; « a » = 61 = 97 ; « 0 » = 30 = 48.', '<b>Couleur RVB</b> : trois octets rouge, vert, bleu (de 00 à FF). #FF8000 = rouge 255, vert 128, bleu 0 : orange.') +
+      UL('<b>ASCII</b> : un caractère par octet. « A » = 41 (hex) = 65 ; « a » = 61 = 97 ; « 0 » = 30 = 48. Dans une trame, une suite d\'octets entre 30 et 7A est souvent du texte.', '<b>Couleur RVB</b> : trois octets rouge, vert, bleu (de 00 à FF, soit 256 niveaux chacun, 16,7 millions de couleurs). #FF8000 = rouge 255, vert 128, bleu 0 : orange.') +
       BOX(P('Binaire ↔ hexadécimal par paquets de 4 bits.', 'Signé sur 16 bits : si le bit de poids fort vaut 1, on retire 65 536.'))
   },
   {
@@ -617,14 +639,16 @@ const EXOS = [
     support: 'Programme SIN, chapitre 3.4.1',
     body:
       H('1. Lire un chronogramme') +
-      UL('<b>Période</b> T : durée d\'un motif ; <b>fréquence</b> f = 1 / T.', '<b>Rapport cyclique</b> α = durée à l\'état haut / T (signal PWM).', '<b>Niveaux logiques</b> : 1 = état haut (5 V ou 3,3 V), 0 = état bas (0 V).') +
+      P('Un chronogramme représente l\'évolution d\'un signal dans le temps. On y lit :') +
+      UL('la <b>période</b> T : durée d\'un motif complet (entre deux fronts montants) ; la <b>fréquence</b> f = 1 / T ;', 'le <b>rapport cyclique</b> α = durée à l\'état haut / T (signal PWM) ;', 'les <b>niveaux logiques</b> : 1 = état haut (5 V ou 3,3 V), 0 = état bas (0 V) ;', 'l\'<b>amplitude</b> pour un signal analogique.') +
       graph({ x0: 0, x1: 4, dx: 1, y0: 0, y1: 6, dy: 1, w: 400, h: 200, xlab: 't (ms)', ylab: 'u (V)', series: [{ pts: [[0, 0], [0, 5], [0.75, 5], [0.75, 0], [1, 0], [1, 5], [1.75, 5], [1.75, 0], [2, 0], [2, 5], [2.75, 5], [2.75, 0], [3, 0], [3, 5], [3.75, 5], [3.75, 0], [4, 0]] }],
-        cap: 'T = 1 ms, f = 1 kHz, α = 0,75 / 1 = 75 %' }) +
+        cap: 'T = 1 ms, f = 1 kHz, α = 0,75 / 1 = 75 % : la tension moyenne vaut 0,75 × 5 = 3,75 V' }) +
+      P('Un signal PWM sert à faire varier la puissance moyenne envoyée à un moteur ou une LED : la tension moyenne vaut α × U<sub>max</sub>.') +
       H('2. Taille des données') +
       M('\\text{taille (bits)} = n \\times N_{valeurs}') + LEG(['n', 'le nombre de bits par valeur'], ['N_{valeurs}', 'le nombre de valeurs stockées']) +
-      P('Une image de L × H pixels en couleur (24 bits par pixel) occupe L × H × 3 octets. Un son occupe Fe × n × voies × durée bits.') +
+      P('Une image de L × H pixels en couleur (24 bits par pixel) occupe L × H × 3 octets : une photo de 12 mégapixels occupe environ 36 Mo avant compression. Un son occupe Fe × n × voies × durée bits.') +
       H('3. Compression') +
-      M('\\tau = \\frac{\\text{taille initiale}}{\\text{taille compressée}}') + P('Une compression <b>sans perte</b> (ZIP, PNG) permet de retrouver exactement les données ; une compression <b>avec perte</b> (JPEG, MP3, H.264) supprime des détails peu perceptibles et va beaucoup plus loin.') +
+      M('\\tau = \\frac{\\text{taille initiale}}{\\text{taille compressée}}') + P('Une compression <b>sans perte</b> (ZIP, PNG) permet de retrouver exactement les données : indispensable pour un programme ou un tableau de mesures. Une compression <b>avec perte</b> (JPEG, MP3, H.264) supprime des détails peu perceptibles et va beaucoup plus loin (taux de 10 à 100).') +
       BOX(P('f = 1 / T ; α = thaut / T.', 'Image : L × H × 3 octets en couleur.'))
   },
   // ===================== Chapitre 5 =====================
@@ -634,19 +658,21 @@ const EXOS = [
     support: 'Cours Liaison série RS232 · programme SIN, chapitre 3.4.3',
     body:
       H('1. Principe') +
-      P('Les bits sont envoyés <b>les uns après les autres</b> sur un seul fil de données. La liaison est <b>asynchrone</b> : il n\'y a pas d\'horloge commune, l\'émetteur et le récepteur doivent être réglés sur le même débit (9 600, 19 200, 115 200 bit/s…).') +
+      P('Les bits sont envoyés <b>les uns après les autres</b> sur un seul fil de données (plus la masse). La liaison est <b>asynchrone</b> : il n\'y a pas d\'horloge commune, l\'émetteur et le récepteur doivent donc être réglés sur le même débit (9 600, 19 200, 115 200 bit/s…). Le front descendant du bit de start resynchronise le récepteur à chaque caractère.') +
       wave([{ l: 0, t: 'S' }, { l: 1, t: 'b0' }, { l: 0, t: 'b1' }, { l: 0, t: 'b2' }, { l: 0, t: 'b3' }, { l: 0, t: 'b4' }, { l: 0, t: 'b5' }, { l: 1, t: 'b6' }, { l: 0, t: 'b7' }, { l: 0, t: 'P' }, { l: 1, t: 'St' }],
         'Octet 0x41 (« A ») envoyé bit de poids faible en premier, avec parité paire') +
-      UL('Au repos, la ligne est à 1. Le <b>bit de start</b> (0) annonce le début du caractère.', 'Les <b>données</b> (7 ou 8 bits) partent bit de poids faible (b0) en premier.',
-        'Le <b>bit de parité</b> (facultatif) permet de détecter une erreur sur un bit : en parité paire, le nombre total de 1 (données + parité) est pair.', 'Le <b>bit de stop</b> (1) termine le caractère.') +
-      P('La notation « 8N1 » signifie 8 bits de données, pas de parité, 1 bit de stop, soit 10 bits par octet.') +
+      UL('Au repos, la ligne est à 1. Le <b>bit de start</b> (0) annonce le début du caractère.', 'Les <b>données</b> (7 ou 8 bits) partent bit de poids faible (b0) en premier : pour relire l\'octet, on les écrit de droite à gauche.',
+        'Le <b>bit de parité</b> (facultatif) permet de détecter une erreur sur un bit : en parité paire, le nombre total de 1 (données + parité) est pair. Il ne détecte pas deux erreurs simultanées et ne corrige rien.', 'Le <b>bit de stop</b> (1) termine le caractère.') +
+      P('La notation « 8N1 » signifie 8 bits de données, pas de parité, 1 bit de stop, soit 10 bits par octet ; « 8E1 » ajoute une parité paire (even), soit 11 bits.') +
       H('2. Durée et débit') +
       M('t_{bit} = \\frac{1}{D}') + M('t_{trame} = n_{octets} \\times n_{bits} \\times t_{bit}') +
       LEG(['t_{bit}', 'la durée d\'un bit en s'], ['D', 'le débit en bit/s'], ['n_{bits}', 'le nombre de bits transmis par octet (start, données, parité, stop)']) +
+      EX('Exemple', P('Une trame Modbus de 8 octets en 8E1 à 19 200 bit/s : 8 × 11 = 88 bits ; t = 88 / 19 200 ≈ 4,6 ms. On peut en envoyer au plus 1 / 0,0046 ≈ 218 par seconde.')) +
       P('Le <b>débit utile</b> ne compte que les bits de données : 8 bits sur 10 en 8N1, soit 80 % du débit.') +
       H('3. Supports physiques') +
       table(['Norme', 'Caractéristiques'], [['UART (TTL)', 'niveaux 0 / 3,3 ou 5 V, quelques dizaines de cm, entre composants d\'une carte'], ['RS232', 'niveaux ±12 V, point à point, une quinzaine de mètres'],
         ['RS485', 'paire différentielle, jusqu\'à 1 200 m, plusieurs équipements sur le même bus (Modbus RTU)']]) +
+      P('En RS485, l\'information est la différence de tension entre deux fils : un parasite qui touche les deux fils de la même façon s\'annule, d\'où la grande portée en milieu industriel.') +
       BOX(P('Start (0), données b0 d\'abord, parité, stop (1).', 'Durée d\'une trame = nombre de bits × 1 / débit.'))
   },
   {
@@ -657,14 +683,19 @@ const EXOS = [
       H('1. Typologie des communications') +
       table(['Notion', 'Signification'], [['Synchrone', 'une horloge commune cadence les bits (I2C, SPI)'], ['Asynchrone', 'pas d\'horloge commune (UART)'], ['Half duplex', 'les deux sens, mais un seul à la fois (talkie-walkie)'],
         ['Full duplex', 'les deux sens en même temps (téléphone)'], ['Maître / esclave', 'le maître interroge, l\'esclave répond'], ['Client / serveur', 'le client demande un service au serveur']]) +
+      P('Un <b>bus</b> relie plusieurs équipements sur les mêmes fils : chacun doit avoir une adresse, et un protocole fixe qui parle et quand.') +
       H('2. Bus I2C') +
-      UL('Deux fils : <b>SDA</b> (données) et <b>SCL</b> (horloge), plus la masse. Bus synchrone, half duplex, maître/esclave.', 'Chaque esclave a une <b>adresse sur 7 bits</b> (jusqu\'à 128 adresses). La trame commence par l\'adresse suivie d\'un bit R/W (1 = lecture, 0 = écriture).',
-        'Chaque octet est suivi d\'un bit d\'acquittement (ACK) envoyé par le récepteur. Débits courants : 100 kbit/s ou 400 kbit/s.') +
+      dSV(340, 150, `<line class="line" x1="20" y1="40" x2="330" y2="40"/><line class="line" x1="20" y1="60" x2="330" y2="60"/>` +
+        [['Maître', 'Arduino', 60], ['Capteur', '0x48', 170], ['Écran', '0x3C', 280]].map(([n, a, x]) => `<line class="thin" x1="${x - 8}" y1="40" x2="${x - 8}" y2="92"/><line class="thin" x1="${x + 8}" y1="60" x2="${x + 8}" y2="92"/><rect class="${x === 60 ? 'flow' : 'fillv'}" x="${x - 42}" y="92" width="84" height="40" rx="6"/>` +
+          dT(x, 110, n, 'middle', 12) + dT(x, 126, a, 'middle', 11)).join('') + dT(330, 34, 'SDA', 'end', 12) + dT(330, 74, 'SCL', 'end', 12),
+        'Bus I2C : tous les composants partagent SDA (données) et SCL (horloge)') +
+      UL('Deux fils : <b>SDA</b> (données) et <b>SCL</b> (horloge, fournie par le maître), plus la masse. Bus synchrone, half duplex, maître/esclave.', 'Chaque esclave a une <b>adresse sur 7 bits</b> (jusqu\'à 128 adresses). La trame commence par une condition de start, puis l\'adresse suivie d\'un bit R/W (1 = lecture, 0 = écriture).',
+        'Chaque octet est suivi d\'un bit d\'acquittement (ACK) envoyé par le récepteur : s\'il manque, le maître sait que l\'esclave n\'a pas répondu. Débits courants : 100 kbit/s ou 400 kbit/s, sur quelques dizaines de cm.') +
       H('3. Modbus') +
-      P('Protocole maître/esclave très utilisé en industrie (souvent sur RS485). Une trame contient : l\'adresse de l\'esclave, le code fonction (03 = lire des registres, 06 = écrire un registre), les données, puis un contrôle d\'erreur (CRC).') +
+      P('Protocole maître/esclave très utilisé en industrie (souvent sur RS485, ou sur Ethernet en Modbus TCP). Une trame contient : l\'adresse de l\'esclave, le code fonction (03 = lire des registres, 06 = écrire un registre), les données, puis un contrôle d\'erreur (CRC). L\'esclave répond en reprenant son adresse et le code fonction.') +
       H('4. Bus de terrain du bâtiment et des véhicules') +
-      UL('<b>KNX</b> : domotique et bâtiment ; adresse physique en trois parties zone.ligne.participant (ex : 1.1.12) et adresses de groupe pour les commandes.', '<b>CAN</b> : automobile, très fiable ; chaque message a un identifiant qui fixe sa priorité.',
-        '<b>EnOcean</b> : sans fil et sans pile (récupération d\'énergie).') +
+      UL('<b>KNX</b> : domotique et bâtiment ; adresse physique en trois parties zone.ligne.participant (ex : 1.1.12) et adresses de groupe pour les commandes (un bouton pilote toutes les lampes d\'un même groupe).', '<b>CAN</b> : automobile, très fiable ; chaque message a un identifiant qui fixe sa priorité.',
+        '<b>EnOcean</b> : sans fil et sans pile (l\'interrupteur récupère l\'énergie de l\'appui).') +
       BOX(P('I2C : SDA + SCL, adresse 7 bits + R/W, ACK après chaque octet.', 'Modbus : adresse, fonction, données, CRC.'))
   },
   // ===================== Chapitre 6 =====================
@@ -673,15 +704,18 @@ const EXOS = [
     title: 'Adressage IP et masques de sous-réseau',
     support: 'Programme SIN, chapitre 3.4.3 · annales SIN',
     body:
-      P('Une adresse IPv4 tient sur 32 bits (4 octets de 0 à 255). Le masque indique la partie réseau (bits à 1) et la partie hôte (bits à 0) ; en notation CIDR, /26 signifie 26 bits à 1.') +
+      P('Une adresse IPv4 tient sur 32 bits (4 octets de 0 à 255). Le masque indique la partie réseau (bits à 1) et la partie hôte (bits à 0) ; en notation CIDR, /26 signifie 26 bits à 1. Deux machines peuvent communiquer directement si elles ont la même adresse de réseau ; sinon, il leur faut un routeur.') +
       M('\\text{réseau} = IP \\ \\text{ET}\\ \\text{masque}') +
+      dSV(340, 130, [['IP', '1100 1000', 20], ['masque', '1110 0000', 52], ['réseau', '1100 0000', 92]].map(([n, b, y]) => dT(70, y + 18, n, 'end', 13) +
+        b.replace(' ', '').split('').map((c, k) => `<rect class="${(n === 'masque' ? c === '1' : k < 3) ? 'flow' : 'fillv'}" x="${80 + k * 30 + (k > 3 ? 8 : 0)}" y="${y}" width="28" height="26" rx="3"/>` + dT(94 + k * 30 + (k > 3 ? 8 : 0), y + 18, c, 'middle', 14)).join('')).join('') +
+        `<line class="line" x1="80" y1="84" x2="330" y2="84"/>`, 'ET bit à bit : 200 ET 224 = 192 (on garde les bits où le masque vaut 1)') +
       UL('<b>Broadcast</b> : partie hôte entièrement à 1.', 'Première adresse utilisable : réseau + 1 ; dernière : broadcast − 1.') +
       M('N = 2^h - 2') + LEG(['N', 'le nombre de machines'], ['h', 'le nombre de bits de la partie hôte']) +
-      EX('Exemple : 172.16.5.200/27', P('Masque : 255.255.255.224 (27 bits à 1). 200 = 1100 1000 ; 224 = 1110 0000 ; ET : 1100 0000 = 192.', 'Réseau 172.16.5.192, broadcast 172.16.5.223, 30 machines possibles (de .193 à .222).')) +
+      EX('Exemple : 172.16.5.200/27', P('Masque : 255.255.255.224 (27 bits à 1). 200 = 1100 1000 ; 224 = 1110 0000 ; ET : 1100 0000 = 192.', 'Réseau 172.16.5.192, broadcast 172.16.5.223 (192 + 31), 30 machines possibles (de .193 à .222).')) +
       H('Masque optimal') +
-      P('Pour un nombre de machines donné, on choisit le plus petit h tel que 2<sup>h</sup> − 2 soit suffisant (sans oublier le routeur, qui a lui aussi une adresse). Le masque vaut alors /(32 − h).') +
+      P('Pour un nombre de machines donné, on choisit le plus petit h tel que 2<sup>h</sup> − 2 soit suffisant (sans oublier le routeur, qui a lui aussi une adresse). Le masque vaut alors /(32 − h). Un masque trop large gaspille des adresses ; trop étroit, il ne permet pas de raccorder toutes les machines.') +
       table(['Machines', 'Bits hôte', 'Masque'], [['jusqu\'à 6', '3', '/29 = 255.255.255.248'], ['jusqu\'à 14', '4', '/28 = 255.255.255.240'], ['jusqu\'à 30', '5', '/27 = 255.255.255.224'], ['jusqu\'à 62', '6', '/26 = 255.255.255.192']]) +
-      P('Adressage <b>statique</b> (fixé à la main, pour les serveurs, imprimantes, automates) ou <b>dynamique</b> (attribué par un serveur DHCP).') +
+      P('Adressage <b>statique</b> (fixé à la main, pour les serveurs, imprimantes, automates, qu\'on doit toujours retrouver à la même adresse) ou <b>dynamique</b> (attribué par un serveur DHCP, pour les ordinateurs et téléphones).') +
       BOX(P('Réseau = IP ET masque ; machines = 2<sup>h</sup> − 2.'))
   },
   {
@@ -690,15 +724,19 @@ const EXOS = [
     support: 'Programme SIN, chapitres 3.4.3 et 5.3.4 · annales SIN',
     body:
       H('1. Encapsulation') +
+      P('Une requête web voyage emballée dans plusieurs en-têtes successifs, chacun ajouté par une couche du modèle :') +
       CHAIN([['Trame Ethernet', 'MAC dest., MAC source'], ['Paquet IP', 'IP source, IP dest.'], ['Segment TCP / UDP', 'ports'], ['Données', 'HTTP, Modbus TCP…']]) +
       P('Dans une capture (Wireshark), l\'en-tête Ethernet commence par l\'adresse MAC de destination (6 octets) puis la source (6 octets) et le type (08 00 = IPv4). Dans l\'en-tête IP, les adresses source et destination occupent 4 octets chacune, écrits en hexadécimal : C0 A8 00 0A = 192.168.0.10.') +
       H('2. Modèle OSI') +
       table(['Couche', 'Équipement ou protocole'], [['7 Application', 'HTTP, FTP, DNS, DHCP, Modbus TCP'], ['4 Transport', 'TCP (fiable), UDP (rapide)'], ['3 Réseau', 'IP, routeur'], ['2 Liaison', 'Ethernet, Wi-Fi, switch'], ['1 Physique', 'câble, fibre, ondes']]) +
       H('3. Services et ports') +
+      dSV(340, 140, `<rect class="flow" x="14" y="40" width="96" height="60" rx="8"/><rect class="fillv" x="230" y="40" width="96" height="60" rx="8"/>` + dA(110, 58, 230, 58) + dA(230, 84, 110, 84, 'arrowv') +
+        dT(62, 66, 'client', 'middle', 13) + dT(62, 84, '192.168.0.10', 'middle', 11) + dT(278, 66, 'serveur web', 'middle', 13) + dT(278, 84, 'port 80', 'middle', 11) + dT(170, 50, 'requête GET', 'middle', 11) + dT(170, 104, 'page HTML', 'middle', 11),
+        'Client et serveur : la requête vise l\'adresse IP du serveur et le port du service') +
       table(['Service', 'Rôle', 'Port'], [['HTTP / HTTPS', 'pages web', '80 / 443'], ['FTP', 'transfert de fichiers', '21'], ['DNS', 'nom → adresse IP', '53'], ['DHCP', 'attribution d\'adresses', '67'], ['Modbus TCP', 'automates', '502']]) +
-      P('Un <b>socket</b> est le couple adresse IP + port qui identifie une extrémité d\'une communication.') +
+      P('Un <b>socket</b> est le couple adresse IP + port qui identifie une extrémité d\'une communication : c\'est ce qu\'un programme ouvre pour envoyer ou recevoir des données sur le réseau.') +
       H('4. Débit Wi-Fi') +
-      P('Le débit réel est nettement inférieur au débit théorique annoncé (souvent la moitié ou moins), car le support est partagé et les en-têtes occupent de la place. Durée d\'un transfert : t = taille en bits / débit réel.') +
+      P('Le débit réel est nettement inférieur au débit théorique annoncé (souvent la moitié ou moins), car le support radio est partagé entre tous les appareils et les en-têtes occupent de la place. Durée d\'un transfert : t = taille en bits / débit réel. Exemple : 200 Mo à 50 Mbit/s réels : 200 × 8 / 50 = 32 s.') +
       BOX(P('Ethernet : MAC ; IP : adresses ; TCP/UDP : ports.', 'Switch : couche 2 ; routeur : couche 3.'))
   },
   // ===================== Chapitre 7 =====================
@@ -710,7 +748,7 @@ const EXOS = [
       H('1. Types de variables') +
       table(['Type (C++ Arduino)', 'Contenu', 'Taille'], [['bool', 'vrai ou faux', '1 octet'], ['byte', 'entier de 0 à 255', '1 octet'], ['int', 'entier de −32 768 à 32 767 (Uno)', '2 octets'],
         ['long', 'entier sur 32 bits', '4 octets'], ['float', 'nombre à virgule', '4 octets']]) +
-      P('Choisir un type trop petit provoque un débordement (un byte qui vaut 255 passe à 0 si on lui ajoute 1).') +
+      P('Choisir un type trop petit provoque un débordement : un byte qui vaut 255 passe à 0 si on lui ajoute 1. À l\'inverse, un type trop grand gaspille la mémoire, très limitée sur un microcontrôleur (2 Ko de RAM sur un Arduino Uno). En Python, le type est déduit automatiquement.') +
       H('2. Structure d\'un programme Arduino') +
       code(`const int LED = 13;
 void setup() {
@@ -725,7 +763,7 @@ void loop() {
   }
   delay(100);
 }`) +
-      P('setup() s\'exécute une fois au démarrage, loop() se répète sans fin. analogRead renvoie une valeur de 0 à 1 023 (CAN 10 bits).') +
+      P('setup() s\'exécute une fois au démarrage (configuration des broches), loop() se répète sans fin. analogRead renvoie une valeur de 0 à 1 023 (CAN 10 bits) : 512 correspond à environ 2,5 V. Ce programme allume la LED quand la tension sur A0 dépasse la moitié de 5 V, et teste dix fois par seconde.') +
       H('3. La même logique en Python') +
       code(`for i in range(3):
     print(i * 2)
@@ -733,7 +771,8 @@ n = 0
 while n < 10:
     n = n + 4
 print(n)`) +
-      P('Ce programme affiche 0, 2, 4 puis 12. Pour faire la <b>trace</b> d\'un programme, on note dans un tableau la valeur de chaque variable à chaque passage dans la boucle.') +
+      table(['Tour du while', 'n avant', 'n < 10 ?', 'n après'], [['1', '0', 'oui', '4'], ['2', '4', 'oui', '8'], ['3', '8', 'oui', '12'], ['—', '12', 'non : fin', '—']]) +
+      P('Ce programme affiche 0, 2, 4 puis 12. Pour faire la <b>trace</b> d\'un programme, on note dans un tableau la valeur de chaque variable à chaque passage dans la boucle, en testant la condition <b>avant</b> chaque tour.') +
       BOX(P('Arduino : setup() une fois, loop() en boucle.', 'Trace : un tableau, une colonne par variable, une ligne par tour.'))
   },
   {
@@ -742,17 +781,20 @@ print(n)`) +
     support: 'Programme SIN, chapitres 3.4.3 et 3.4.4',
     body:
       H('1. Équations logiques') +
-      P('ET (·), OU (+), NON (barre), OU exclusif (⊕). Lois de De Morgan :') + M('\\overline{a \\cdot b} = \\overline{a} + \\overline{b} \\qquad \\overline{a + b} = \\overline{a} \\cdot \\overline{b}') +
+      P('ET (·), OU (+), NON (barre), OU exclusif (⊕). Pour écrire l\'équation d\'une sortie à partir d\'un texte, on repère les conditions reliées par « et » ou « ou ». Lois de De Morgan, utiles pour simplifier :') + M('\\overline{a \\cdot b} = \\overline{a} + \\overline{b} \\qquad \\overline{a + b} = \\overline{a} \\cdot \\overline{b}') +
       H('2. Régulation tout ou rien à hystérésis') +
-      P('Pour éviter que l\'actionneur ne commute sans arrêt autour de la consigne, on utilise deux seuils. Exemple d\'un chauffage réglé à 20 °C avec un écart de ± 0,5 °C : il s\'allume sous 19,5 °C et s\'éteint au-dessus de 20,5 °C ; entre les deux, il garde son état.') +
+      P('Pour éviter que l\'actionneur ne commute sans arrêt autour de la consigne (ce qui l\'userait), on utilise deux seuils. Exemple d\'un chauffage réglé à 20 °C avec un écart de ± 0,5 °C : il s\'allume sous 19,5 °C et s\'éteint au-dessus de 20,5 °C ; entre les deux, il garde son état précédent. C\'est donc de la logique séquentielle : la sortie dépend aussi du passé.') +
       graph({ x0: 0, x1: 60, dx: 10, y0: 18, y1: 22, dy: 1, w: 400, h: 220, xlab: 't (min)', ylab: 'T (°C)',
         series: [{ pts: [[0, 19.5], [8, 20.5], [20, 19.5], [28, 20.5], [40, 19.5], [48, 20.5], [60, 19.5]] }, { pts: [[0, 20.5], [60, 20.5]], cls: 'c3' }, { pts: [[0, 19.5], [60, 19.5]], cls: 'c3' }],
-        cap: 'Température d\'une pièce régulée entre 19,5 et 20,5 °C' }) +
+        cap: 'Température d\'une pièce régulée entre 19,5 et 20,5 °C : chauffage en marche quand elle monte' }) +
+      code(`if (T < 19.5) chauffe = true;
+if (T > 20.5) chauffe = false;
+digitalWrite(RELAIS, chauffe);`) +
       H('3. Régulation et asservissement') +
-      P('Une boucle fermée compare la mesure à la consigne ; l\'écart commande l\'actionneur. On parle de <b>régulation</b> quand la consigne est fixe (température), d\'<b>asservissement</b> quand elle varie (position d\'un bras).') +
+      P('Une boucle fermée compare en permanence la mesure à la consigne ; l\'écart commande l\'actionneur. On parle de <b>régulation</b> quand la consigne est fixe et qu\'on lutte contre des perturbations (température d\'une pièce), d\'<b>asservissement</b> quand la consigne varie et que la sortie doit la suivre (position d\'un bras).') +
       CHAIN([['Consigne', ''], ['Comparateur', 'écart'], ['Correcteur', ''], ['Actionneur', ''], ['Système', 'mesure par capteur']]) +
       H('4. Temps réel') +
-      P('Un système temps réel doit réagir dans un délai garanti. Le <b>temps de cycle</b> est la durée d\'un tour de boucle du programme ; une <b>interruption</b> suspend le programme pour traiter immédiatement un événement (front sur une entrée, minuterie).') +
+      P('Un système temps réel doit réagir dans un délai garanti (un airbag, un frein). Le <b>temps de cycle</b> est la durée d\'un tour de boucle du programme : un événement plus court que lui peut être manqué. Une <b>interruption</b> suspend le programme pour traiter immédiatement un événement (front sur une entrée, minuterie), puis le programme reprend où il en était.') +
       BOX(P('Hystérésis : deux seuils pour éviter les commutations répétées.', 'Régulation : consigne fixe ; asservissement : consigne variable.'))
   },
   // ===================== Chapitre 8 =====================
@@ -764,13 +806,18 @@ print(n)`) +
       H('1. Unités de traitement') +
       table(['Type', 'Exemple', 'Usage'], [['Microcontrôleur', 'Arduino', 'piloter des entrées/sorties en temps réel'], ['Nano-ordinateur', 'Raspberry Pi', 'système d\'exploitation, écran, caméra, serveur web'],
         ['Module connecté', 'ESP32', 'objet connecté à Internet (IoT)']]) +
-      P('On choisit selon le volume de données, la puissance de calcul, le stockage, la consommation et les interfaces nécessaires.') +
-      H('2. Technologies sans fil') +
+      P('On choisit selon le volume de données, la puissance de calcul, le stockage, la consommation et les interfaces nécessaires : un capteur sur pile utilisera un microcontrôleur qui dort la plupart du temps ; une caméra qui analyse des images demandera un nano-ordinateur.') +
+      H('2. Architecture d\'un objet connecté') +
+      CHAIN([['Capteur', 'mesure'], ['Module radio', 'LoRa, Wi-Fi'], ['Passerelle', 'vers Internet'], ['Serveur', 'stockage'], ['Application', 'tableau de bord']]) +
+      H('3. Technologies sans fil') +
       table(['Technologie', 'Portée', 'Débit, usage'], [['RFID / NFC', 'quelques cm à quelques m', 'identification (badges, étiquettes)'], ['Bluetooth', '10 à 100 m', 'moyen débit, accessoires'],
         ['Wi-Fi', 'quelques dizaines de m', 'haut débit, réseau local'], ['Zigbee', 'quelques dizaines de m', 'faible débit, maillé, domotique'], ['LoRa, Sigfox', 'plusieurs km', 'très faible débit, faible consommation (capteurs)']]) +
+      graph({ x0: 0, x1: 4, dx: 1, y0: 0, y1: 4, dy: 1, w: 400, h: 220, xlab: 'portée', ylab: 'débit', nolab: true, series: [],
+        extra: (X, Y) => [['NFC', 0.2, 1.2], ['Bluetooth', 1, 2.3], ['Wi-Fi', 1.8, 3.6], ['Zigbee', 1.6, 1], ['LoRa', 3.5, 0.4]].map(([n, x, y]) => `<circle class="pt" cx="${X(x)}" cy="${Y(y)}" r="5"/>` + dT(X(x) + 8, Y(y) + 5, n, 'start', 13)).join(''),
+        cap: 'Allure qualitative : on ne peut pas avoir à la fois grande portée, haut débit et faible consommation' }) +
       P('Plus la portée et le débit sont grands, plus la consommation augmente : un capteur sur pile qui envoie quelques octets par heure utilisera LoRa plutôt que le Wi-Fi.') +
-      H('3. RFID') +
-      P('Un lecteur alimente à distance une étiquette (tag) passive qui renvoie son identifiant unique (UID), souvent écrit en hexadécimal sur 4 ou 7 octets. Le nombre d\'identifiants possibles sur n bits vaut 2<sup>n</sup>.') +
+      H('4. RFID') +
+      P('Un lecteur alimente à distance une étiquette (tag) passive, sans pile, qui renvoie son identifiant unique (UID), souvent écrit en hexadécimal sur 4 ou 7 octets. Le nombre d\'identifiants possibles sur n bits vaut 2<sup>n</sup> : sur 4 octets (32 bits), plus de 4 milliards.') +
       BOX(P('Longue portée et faible consommation : LoRa ; haut débit : Wi-Fi ; identification : RFID.'))
   }
 ];

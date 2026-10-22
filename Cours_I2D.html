@@ -501,6 +501,10 @@ const EXOS = [
       H('4. Multiples et sous-multiples') +
       table(['Préfixe', 'Symbole', 'Facteur'], [['téra', 'T', '10¹²'], ['giga', 'G', '10⁹'], ['méga', 'M', '10⁶'], ['kilo', 'k', '10³'], ['hecto', 'h', '10²'], ['déca', 'da', '10¹'],
         ['déci', 'd', '10⁻¹'], ['centi', 'c', '10⁻²'], ['milli', 'm', '10⁻³'], ['micro', 'µ', '10⁻⁶'], ['nano', 'n', '10⁻⁹'], ['pico', 'p', '10⁻¹²']]) +
+      dSV(340, 108, ['km', 'hm', 'dam', 'm', 'dm', 'cm', 'mm'].map((s, k) => `<rect class="${s === 'm' ? 'flow' : 'fillv'}" x="${6 + k * 47}" y="18" width="40" height="30" rx="4"/>` + dT(26 + k * 47, 38, s)).join('') +
+        dA(26, 68, 308, 68) + dT(167, 92, '× 10 à chaque marche vers la droite', 'middle', 13),
+        'Tableau de conversion des longueurs : 3,5 km = 3 500 m = 350 000 cm') +
+      P('Pour passer d\'une unité à sa voisine de droite, on multiplie par 10 ; vers la gauche, on divise par 10. Pour les m², chaque marche vaut × 100 ; pour les m³, × 1 000.') +
       P('<b>Piège des surfaces et des volumes</b> : le préfixe est élevé au carré ou au cube.') +
       M(`1${u('m²')} = 10^4${u('cm²')} = 10^6${u('mm²')}`) + M(`1${u('m³')} = 10^3${u('L')} = 10^6${u('cm³')}`) +
       H('5. Écriture scientifique') +
@@ -534,6 +538,10 @@ const EXOS = [
       P('Le poids est la force exercée par la Terre sur un corps. Ne pas le confondre avec la masse : le poids est en newtons, la masse en kilogrammes.') +
       M('P = m \\times g') + P(`avec ${m('P')} le poids en N, ${m('m')} la masse en kg et ${m('g')} l'intensité de la pesanteur, environ 9,81 N/kg sur Terre.`) + P('Une personne de 80 kg a un poids de 80 × 9,81 ≈ 785 N.') +
       H('4. Pression') +
+      dSV(340, 180, `<line class="thin" x1="10" y1="150" x2="330" y2="150"/><rect class="fillv" x="20" y="120" width="120" height="30" rx="2"/><rect class="fillv" x="230" y="60" width="40" height="90" rx="2"/>
+        <rect class="flow" x="20" y="146" width="120" height="4"/><rect class="flow" x="230" y="146" width="40" height="4"/>` + dA(80, 70, 80, 116, 'arrowv') + dA(250, 10, 250, 56, 'arrowv') +
+        dT(88, 95, 'F', 'start') + dT(258, 34, 'F', 'start') + dT(80, 172, 'S grande : p faible', 'middle', 13) + dT(250, 172, 'S petite : p forte', 'middle', 13),
+        'La même brique (même poids F) posée à plat ou debout : la pression sur le sol change') +
       P('La pression est une force répartie sur une surface :') + M('p = \\frac{F}{S}') + P(`avec ${m('p')} en Pa, ${m('F')} en N et ${m('S')} en m².`) +
       P('Plus la surface d\'appui est grande, plus la pression est faible (raquettes à neige, fondations d\'un mur). Rappel : 1 bar = 10⁵ Pa.') +
       H('5. Rendement') +
@@ -569,6 +577,12 @@ const EXOS = [
         ['Agir', 'agir sur la matière d\'œuvre', 'roue, pince, tapis, hélice']]) +
       EX('Exemple : le robot Robovolc', P('Batterie (stocker et restituer l\'électricité) → variateur (faire varier l\'énergie apportée au moteur) → moteur électrique (convertir l\'énergie électrique en énergie mécanique) → réducteur (adapter la vitesse de rotation) → roue (déplacer le robot).')) +
       H('4. Interaction des deux chaînes') +
+      dSV(340, 200, `<rect class="flow" x="20" y="18" width="300" height="44" rx="8"/><rect class="fillv" x="60" y="118" width="220" height="44" rx="8"/>` +
+        dT(170, 38, '<tspan font-weight="600">Chaîne d\'information</tspan>', 'middle') + dT(170, 55, 'Acquérir · Traiter · Communiquer', 'middle', 12) +
+        dT(170, 138, '<tspan font-weight="600">Chaîne de puissance</tspan>', 'middle') + dT(170, 155, 'Alimenter · … · Agir', 'middle', 12) +
+        dA(110, 62, 110, 118) + dT(104, 94, 'ordres', 'end', 13) + dA(230, 118, 230, 62, 'arrowv') + dT(236, 94, 'comptes rendus', 'start', 13) +
+        dA(6, 140, 60, 140, 'arrowv') + dA(280, 140, 334, 140, 'arrowv') + dT(30, 182, 'matière', 'middle', 12) + dT(30, 196, 'entrante', 'middle', 12) + dT(310, 182, 'matière', 'middle', 12) + dT(310, 196, 'sortante', 'middle', 12),
+        'La chaîne d\'information commande la chaîne de puissance, qui transforme la matière d\'œuvre') +
       P('Les deux chaînes travaillent ensemble : la chaîne d\'information envoie des <b>ordres</b> à la fonction Distribuer ; les capteurs lui renvoient des <b>comptes rendus</b> sur l\'état du système. L\'utilisateur dialogue avec la chaîne d\'information grâce à une <b>IHM</b> (interface homme-machine).') +
       P('Entre les constituants circulent trois types de flux : <b>énergie</b>, <b>matière</b> et <b>information</b>. La matière d\'œuvre entre dans le système, est transformée par la chaîne de puissance et ressort avec une valeur ajoutée.') +
       BOX(P('Chaîne d\'information : Acquérir → Traiter → Communiquer.', 'Chaîne de puissance : Alimenter → Distribuer → Convertir → Transmettre → Agir.', 'La chaîne d\'information commande la fonction Distribuer de la chaîne de puissance.'))
@@ -592,6 +606,11 @@ const EXOS = [
       table(['Convertisseur', 'Énergie d\'entrée', 'Énergie de sortie'], [['Moteur électrique', 'électrique', 'mécanique'], ['Alternateur, génératrice', 'mécanique', 'électrique'],
         ['Panneau photovoltaïque', 'rayonnante', 'électrique'], ['Radiateur électrique', 'électrique', 'thermique'], ['Batterie en décharge', 'chimique', 'électrique'], ['Moteur thermique', 'chimique', 'mécanique']]) +
       H('4. Énergie primaire, secondaire, finale et utile') +
+      dSV(340, 190, [['primaire', 100], ['secondaire', 65], ['finale', 60], ['utile', 35]].map(([n, val], k) =>
+        `<rect class="${k === 3 ? 'flow' : 'fillv'}" x="${22 + k * 82}" y="${150 - val * 1.2}" width="56" height="${val * 1.2}" rx="3"/>` + dT(50 + k * 82, 144 - val * 1.2, val + ' %', 'middle', 13) + dT(50 + k * 82, 170, n, 'middle', 13)).join('') +
+        `<line class="thin" x1="10" y1="150" x2="330" y2="150"/>`,
+        'Ordre de grandeur : il ne reste souvent qu\'un tiers de l\'énergie primaire sous forme d\'énergie utile') +
+      P('À chaque transformation (centrale, transport, appareil), une partie de l\'énergie part en pertes, le plus souvent en chaleur. C\'est pourquoi économiser 1 kWh d\'énergie utile évite de prélever bien plus d\'énergie primaire.') +
       table(['Catégorie', 'Définition', 'Exemple'], [['Primaire', 'disponible dans la nature, avant toute transformation', 'pétrole brut, vent, uranium'],
         ['Secondaire', 'issue de la transformation d\'une énergie primaire, en sortie d\'usine ou de centrale', 'essence raffinée, électricité produite'],
         ['Finale', 'livrée au consommateur', 'essence à la pompe, électricité au compteur'], ['Utile', 'réellement utilisée après la conversion par l\'appareil', 'mouvement de la voiture, lumière de la lampe']]) +
@@ -661,6 +680,10 @@ const EXOS = [
       H('1. Définition') +
       P('Selon le rapport Brundtland (1987), le développement durable est <i>« un développement qui répond aux besoins des générations du présent sans compromettre la capacité des générations futures à répondre aux leurs »</i>.') +
       P('Il repose sur <b>trois piliers</b> à concilier :') +
+      dSV(340, 240, `<circle class="flow" cx="128" cy="92" r="66" opacity="0.55"/><circle class="fillv" cx="212" cy="92" r="66" opacity="0.6"/><circle class="flow" cx="170" cy="160" r="66" opacity="0.4"/>` +
+        dT(80, 20, 'environnement', 'middle', 13) + dT(262, 20, 'économie', 'middle', 13) + dT(170, 236, 'social', 'middle', 13) +
+        dT(170, 66, 'viable', 'middle', 12) + dT(124, 140, 'vivable', 'middle', 12) + dT(216, 140, 'équitable', 'middle', 12) + dT(170, 116, '<tspan font-weight="600">durable</tspan>', 'middle', 13),
+        'Le développement durable est à l\'intersection des trois piliers') +
       UL('<b>économique</b> : créer de la richesse et des emplois ;', '<b>social</b> : réduire les inégalités, garantir l\'accès à la santé, à l\'éducation ;', '<b>environnemental</b> : préserver les ressources, le climat et la biodiversité.') +
       H('2. Les constats') +
       UL('Environnement : réchauffement climatique dû aux gaz à effet de serre, épuisement des ressources, pollutions.', 'Société : inégalités d\'accès aux soins et de répartition des richesses, migrations liées au climat et aux conflits.') +
@@ -885,6 +908,11 @@ const EXOS = [
       H('2. Du réseau à l\'appareil électronique') +
       CHAIN([['Transformateur', '230 V → 12 V alternatif'], ['Redresseur', 'tension redressée'], ['Filtrage', 'condensateur'], ['Régulation', 'tension continue stable']]) +
       P('Le transformateur abaisse la tension, le pont de diodes la redresse, le condensateur la lisse et le régulateur la stabilise.') +
+      graph({ x0: 0, x1: 40, dx: 10, y0: -18, y1: 18, dy: 6, w: 420, h: 240, xlab: 't (ms)', ylab: 'u (V)',
+        series: [{ pts: curve(t => 17 * Math.sin(2 * Math.PI * t / 20), 0, 40), cls: 'c3' }, { pts: curve(t => Math.abs(17 * Math.sin(2 * Math.PI * t / 20)), 0, 40), cls: 'c2' },
+          { pts: curve(t => 17 - 2.5 * ((t % 10) / 10), 0, 40, 200) }],
+        cap: 'Pointillés : tension alternative ; orange : tension redressée ; bleu : tension lissée par le condensateur' }) +
+      P('Le redresseur « retourne » les alternances négatives : la tension ne change plus de signe mais varie encore beaucoup. Le condensateur se charge pendant les pics et se décharge entre eux : la tension devient presque constante, avec une petite ondulation.') +
       H('3. Le transformateur') +
       P('Il ne fonctionne qu\'en alternatif. Le rapport des tensions est égal au rapport des nombres de spires :') + M('\\frac{U_2}{U_1} = \\frac{N_2}{N_1}') +
       P(`avec ${m('U_1')} la tension d'entrée (au primaire) et ${m('U_2')} la tension de sortie (au secondaire), en V, ${m('N_1')} et ${m('N_2')} les nombres de spires des bobines primaire et secondaire.`) +
@@ -1222,6 +1250,10 @@ SINON
       H('1. Variables et types') +
       P('Une <b>variable</b> est une case mémoire qui stocke une valeur. Le signe = signifie « prend la valeur » (affectation).') +
       table(['Type', 'Contenu', 'Exemple'], [['int', 'nombre entier', 'n = 12'], ['float', 'nombre décimal (avec un point)', 'u = 3.3'], ['str', 'chaîne de caractères', 'nom = "Robot"'], ['bool', 'vrai ou faux', 'ok = True']]) +
+      dSV(340, 110, [['nom', '"Robot"', 'str'], ['age', '16', 'int'], ['u', '3.3', 'float']].map(([n, val, t], k) =>
+        `<rect class="fillv" x="${14 + k * 110}" y="30" width="92" height="44" rx="6"/>` + dT(60 + k * 110, 22, n, 'middle', 13) + dT(60 + k * 110, 58, val, 'middle', 15) + dT(60 + k * 110, 94, t, 'middle', 12)).join(''),
+        'Une variable est une boîte qui porte un nom et contient une valeur d\'un certain type') +
+      P('Quand on écrit age = age + 1, Python lit d\'abord la valeur actuelle de la boîte (16), calcule 17, puis range 17 dans la boîte : l\'ancienne valeur est perdue.') +
       H('2. Entrées et sorties') +
       code(`# input() renvoie toujours du texte
 nom = input("Nom : ")
@@ -1270,6 +1302,10 @@ print(niveau)`) +
       table(['Famille', 'Exemples'], [['Métaux et alliages', 'acier, fonte (ferreux) ; aluminium, cuivre, zinc, laiton (non ferreux)'],
         ['Organiques', 'plastiques (thermoplastiques comme le PLA ou l\'ABS, thermodurcissables), élastomères, bois, papier, fibres naturelles'],
         ['Minéraux (céramiques)', 'verre, béton, brique, céramique, pierre'], ['Composites', 'association d\'un renfort et d\'une matrice : fibre de carbone et résine, béton armé, contreplaqué']]) +
+      dSV(340, 170, [['Métaux', 'acier, aluminium'], ['Organiques', 'plastiques, bois'], ['Minéraux', 'verre, béton'], ['Composites', 'carbone + résine']].map(([n, e], k) => {
+        const x = 14 + (k % 2) * 160, y = 14 + Math.floor(k / 2) * 76;
+        return `<rect class="${k % 3 ? 'fillv' : 'flow'}" x="${x}" y="${y}" width="152" height="66" rx="8"/>` + dT(x + 76, y + 28, `<tspan font-weight="600">${n}</tspan>`) + dT(x + 76, y + 50, e, 'middle', 12);
+      }).join(''), 'Les quatre familles de matériaux') +
       H('2. Masse volumique') +
       M('\\rho = \\frac{m}{V}') + P(`avec ${m('\\rho')} en kg/m³, ${m('m')} en kg et ${m('V')} en m³.`) +
       table(['Matériau', 'ρ (kg/m³)'], [['Air', '1,2'], ['Bois (chêne)', 'environ 700'], ['Eau', '1 000'], ['PLA', '1 250'], ['Béton', '2 400'], ['Verre', '2 500'], ['Aluminium', '2 700'], ['Acier', '7 850'], ['Cuivre', '8 960']]) +

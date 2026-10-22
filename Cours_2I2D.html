@@ -507,17 +507,22 @@ const EXOS = [
     title: 'Transformer une formule et convertir les unités',
     support: 'Programme 2I2D · révisions initiales · erreurs fréquentes relevées dans les annales',
     body:
-      H('1. Isoler une grandeur') +
-      P(`Une formule est une égalité : on peut faire la même opération des deux côtés. Pour isoler une grandeur, on « défait » les opérations qui l'entourent, dans l'ordre inverse.`) +
-      table(['Formule', 'On cherche…', 'Résultat'], [['X = Y × Z', 'Y', 'Y = X / Z'], ['X = Y / Z', 'Z', 'Z = Y / X'], ['X = Y / Z', 'Y', 'Y = X × Z'], ['X = Y²', 'Y', 'Y = √X']]) +
-      EX('Exemple', P('Le débit vaut Q = v × S. Pour trouver la section S :') + M('S = \\frac{Q}{v}') + P('On vérifie avec les unités : (m³/s) / (m/s) = m², c\'est bien une surface.')) +
-      H('2. Conversions pièges') +
+      H('1. Pourquoi c\'est important') +
+      P('À l\'épreuve, une formule est souvent donnée sous une forme, alors qu\'on cherche une autre grandeur. Une bonne partie des points perdus vient d\'une formule mal transformée ou d\'une unité oubliée, pas d\'une incompréhension du sujet.') +
+      H('2. Isoler une grandeur') +
+      P('Une formule est une égalité, comme une balance en équilibre : on peut faire la même opération des deux côtés sans la déséquilibrer. Pour isoler une grandeur, on « défait » les opérations qui l\'entourent, dans l\'ordre inverse de celui où elles ont été faites.') +
+      dSV(340, 120, `<rect class="flow" x="20" y="30" width="120" height="44" rx="8"/><rect class="flow" x="200" y="30" width="120" height="44" rx="8"/>` + dT(80, 58, 'Q = v × S', 'middle', 15) + dT(260, 58, 'S = Q / v', 'middle', 15) +
+        dA(140, 52, 200, 52) + dT(170, 22, '÷ v des deux côtés', 'middle', 12) + dT(170, 104, 'v multipliait S : on divise par v', 'middle', 12), 'Isoler S dans Q = v × S') +
+      table(['Formule', 'On cherche…', 'Résultat'], [['X = Y × Z', 'Y', 'Y = X / Z'], ['X = Y / Z', 'Z', 'Z = Y / X'], ['X = Y / Z', 'Y', 'Y = X × Z'], ['X = Y²', 'Y', 'Y = √X'], ['X = A + B', 'B', 'B = X − A']]) +
+      EX('Exemple : vitesse et durée', P('On connaît v = d / Δt et on cherche la durée. On multiplie les deux côtés par Δt : v × Δt = d, puis on divise par v :') + M('\\Delta t = \\frac{d}{v}') +
+        P('Vérification par les unités : m / (m/s) = s. C\'est bien une durée.')) +
+      H('3. Conversions pièges') +
       table(['Conversion', 'Règle'], [['km/h → m/s', 'diviser par 3,6'], ['mm² → m²', 'multiplier par 10⁻⁶'], ['cm² → m²', 'multiplier par 10⁻⁴'], ['L → m³', 'diviser par 1 000'],
-        ['bar → Pa', 'multiplier par 10⁵'], ['Wh → J', 'multiplier par 3 600'], ['kWh → MJ', 'multiplier par 3,6'], ['min → h', 'diviser par 60 (90 min = 1,5 h)'], ['°C → K', 'ajouter 273,15']]) +
-      P(`Un piège classique : 1 h 30 min = 1,5 h et non 1,30 h. De même, 1 m² = 10 000 cm² car le préfixe est élevé au carré.`) +
-      H('3. Vérifier un résultat') +
-      UL('Écrire l\'unité à chaque étape : si l\'unité finale n\'est pas celle attendue, il y a une erreur.', 'Comparer avec un ordre de grandeur connu (une maison consomme environ 10 000 kWh par an, une voiture pèse environ 1,5 t).',
-        'Garder 2 ou 3 chiffres significatifs.') +
+        ['bar → Pa', 'multiplier par 10⁵'], ['Wh → J', 'multiplier par 3 600'], ['kWh → MJ', 'multiplier par 3,6'], ['min → h', 'diviser par 60'], ['°C → K', 'ajouter 273,15']]) +
+      P('Pourquoi 3,6 ? Parce que 1 km/h = 1 000 m en 3 600 s, soit 1 000 / 3 600 = 1 / 3,6 m/s. Pourquoi 10⁻⁶ pour les mm² ? Parce que 1 mm = 10⁻³ m et qu\'une surface est le produit de deux longueurs : (10⁻³)² = 10⁻⁶.') +
+      H('4. Erreurs fréquentes') +
+      UL('Écrire 1 h 30 min = 1,30 h : c\'est 1,5 h (30 min = 0,5 h).', 'Oublier de mettre les mm en m avant de calculer une surface ou une pression.', 'Arrondir trop tôt : on garde les valeurs exactes jusqu\'au résultat final.',
+        'Rendre un résultat sans unité : il est faux, même si le nombre est juste.') +
       BOX(P('On isole une grandeur en faisant la même opération des deux côtés, puis on vérifie avec les unités.', 'Toujours convertir en unités SI avant de calculer.'))
   },
   {
@@ -526,22 +531,27 @@ const EXOS = [
     support: 'Programme 2I2D, chapitre 2.3 · annales : éolien 2025, Hélilock 2026, PV flottant 2024',
     body:
       H('1. La puissance : effort × flux') +
-      P('Dans tous les domaines, la puissance est le produit d\'une grandeur d\'effort par une grandeur de flux :') +
+      P('La puissance mesure la vitesse à laquelle l\'énergie est transférée. Dans tous les domaines, elle s\'écrit comme le produit d\'une grandeur d\'<b>effort</b> (ce qui « pousse ») par une grandeur de <b>flux</b> (ce qui « circule ») :') +
       table(['Domaine', 'Puissance', 'Effort × flux'], [['Électrique (continu)', 'P = U × I', 'tension × courant'], ['Rotation', 'P = C × ω', 'couple × vitesse angulaire'],
         ['Translation', 'P = F × v', 'force × vitesse'], ['Hydraulique', 'P = p × Q', 'pression × débit']]) +
-      P('avec P en W, U en V, I en A, C en N·m, ω en rad/s, F en N, v en m/s, p en Pa et Q en m³/s.') +
+      P('avec P en W, U en V, I en A, C en N·m, ω en rad/s, F en N, v en m/s, p en Pa et Q en m³/s. Attention : ω doit être en rad/s, pas en tr/min (ω = 2πN / 60).') +
       H('2. Rendement d\'une chaîne') +
-      M('\\eta = \\frac{P_u}{P_a}') + LEG(['\\eta', 'le rendement (sans unité)'], ['P_u', 'la puissance utile en W'], ['P_a', 'la puissance absorbée en W']) +
-      P('Pour des constituants placés en série, les rendements se multiplient :') + M('\\eta_{global} = \\eta_1 \\times \\eta_2 \\times \\eta_3') +
-      P('Les pertes valent Pa − Pu ; elles partent le plus souvent en chaleur.') +
+      P('Aucun constituant ne restitue toute l\'énergie qu\'il reçoit : une partie part en chaleur (frottements, effet Joule). Le rendement mesure la part utile :') +
+      M('\\eta = \\frac{P_u}{P_a}') + LEG(['\\eta', 'le rendement (sans unité, toujours inférieur à 1)'], ['P_u', 'la puissance utile en W'], ['P_a', 'la puissance absorbée en W']) +
+      dSV(340, 130, [['Batterie', 0.95], ['Moteur', 0.85], ['Réducteur', 0.9]].map(([n, e], k) => `<rect class="flow" x="${20 + k * 110}" y="30" width="80" height="44" rx="6"/>` + dT(60 + k * 110, 50, n, 'middle', 13) +
+        dT(60 + k * 110, 67, `η = ${fr(e)}`, 'middle', 12) + dA(60 + k * 110, 74, 60 + k * 110, 110, 'arrowv') + (k < 2 ? dA(100 + k * 110, 52, 130 + k * 110, 52) : '')).join('') + dT(170, 126, 'pertes en chaleur', 'middle', 12),
+        'Chaîne : η = 0,95 × 0,85 × 0,9 ≈ 0,73') +
+      P('Pour des constituants placés les uns après les autres, la puissance de sortie de l\'un est la puissance d\'entrée du suivant : les rendements se <b>multiplient</b>.') +
+      M('\\eta_{global} = \\eta_1 \\times \\eta_2 \\times \\eta_3') +
+      P('Pour trouver la puissance à fournir en entrée, on divise : P<sub>a</sub> = P<sub>u</sub> / η. Les pertes valent P<sub>a</sub> − P<sub>u</sub>.') +
       H('3. Énergie et coût') +
       M('E = P \\times \\Delta t') + LEG(['E', 'l\'énergie en Wh (ou J)'], ['P', 'la puissance en W'], ['\\Delta t', 'la durée en h (ou s)']) +
-      P('Le coût de l\'énergie vaut : énergie en kWh × prix du kWh.') +
+      P('Le coût de l\'énergie vaut : énergie en kWh × prix du kWh. Pour une production (éolienne, panneaux), la recette se calcule de la même façon avec le prix de vente.') +
       H('4. Temps de retour sur investissement') +
       M('T_R = \\frac{I}{G}') + LEG(['T_R', 'le temps de retour en années'], ['I', 'l\'investissement en €'], ['G', 'le gain net annuel en € (économies ou recettes moins la maintenance)']) +
       EX('Exemple', P('Une installation de 25 kW produit 1 100 h équivalentes par an : E = 25 × 1 100 = 27 500 kWh. Vendue 0,13 €/kWh, elle rapporte 3 575 € ; avec 400 € de maintenance, le gain net est de 3 175 €. Pour un investissement de 38 000 € :') +
-        M('T_R = \\frac{38\\,000}{3\\,175} \\approx 12\\ \\text{ans}')) +
-      BOX(P('P = effort × flux ; η = Pu / Pa ; les rendements en série se multiplient.', 'Temps de retour = investissement / gain net annuel.'))
+        M('T_R = \\frac{38\\,000}{3\\,175} \\approx 12\\ \\text{ans}') + P('Si sa durée de vie est de 25 ans, l\'installation est rentable : elle rapporte encore 13 ans de gains.')) +
+      BOX(P('P = effort × flux ; η = Pu / Pa ; les rendements en série se multiplient.', 'Temps de retour = investissement / gain net annuel, à comparer à la durée de vie.'))
   },
   {
     chap: 1,
@@ -551,12 +561,16 @@ const EXOS = [
       H('1. Formulaire') +
       table(['Forme', 'Périmètre', 'Surface'], [['Rectangle a × b', '2 (a + b)', 'a × b'], ['Disque de rayon r', '2 π r', 'π r²'], ['Demi-disque', 'π r + 2 r', 'π r² / 2'], ['Triangle (base a, hauteur h)', '—', 'a × h / 2']]) +
       table(['Solide', 'Volume'], [['Pavé a × b × c', 'a × b × c'], ['Cylindre (rayon r, hauteur h)', 'π r² × h'], ['Sphère de rayon r', '4/3 × π r³'], ['Cône (base S, hauteur h)', 'S × h / 3']]) +
-      P('Avec le diamètre d : la surface d\'un disque vaut π d² / 4.') +
-      H('2. Méthode') +
-      UL('Décomposer une forme complexe en formes simples, puis additionner ou soustraire.', 'Convertir toutes les longueurs dans la même unité avant de calculer.', 'Un volume de béton vaut surface × épaisseur ; une masse vaut volume × masse volumique.') +
+      P('Avec le diamètre d, la surface d\'un disque vaut π d² / 4 : c\'est la forme la plus utilisée pour la section d\'un tuyau, d\'un câble ou d\'un piston.') +
+      H('2. Décomposer une forme') +
+      P('Une forme complexe se découpe en formes simples que l\'on additionne (ou que l\'on soustrait, pour une ouverture). Un volume de matière vaut surface × épaisseur ; une masse vaut volume × masse volumique.') +
       dSV(340, 150, `<path class="flow" d="M60 120 A90 90 0 0 1 240 120 Z"/><line class="line" x1="60" y1="120" x2="240" y2="120"/><line class="thin" x1="150" y1="120" x2="214" y2="56"/>` +
         dT(190, 82, 'r', 'start') + dT(150, 142, 'diamètre = 2 r', 'middle', 13) + dT(250, 60, 'arc = π r', 'start', 13), 'Demi-disque : périmètre = π r + 2 r ; surface = π r² / 2') +
-      EX('Exemple', P('Un bassin cylindrique de 6 m de diamètre est rempli sur 1,5 m :') + M('V = \\frac{\\pi \\times 6^2}{4} \\times 1{,}5 \\approx 42{,}4\\,\\text{m}^3')) +
+      dSV(340, 130, `<rect class="fillv" x="40" y="20" width="260" height="90"/><rect class="flow" x="80" y="45" width="50" height="45"/><rect class="flow" x="200" y="45" width="50" height="45"/>` +
+        dT(170, 125, 'façade − fenêtres = surface pleine', 'middle', 13), 'Surface d\'une façade : on retire les ouvertures') +
+      EX('Exemple : bassin', P('Un bassin cylindrique de 6 m de diamètre est rempli sur 1,5 m :') + M('V = \\frac{\\pi \\times 6^2}{4} \\times 1{,}5 \\approx 42{,}4\\,\\text{m}^3') + P('Soit 42 400 L, ou une masse d\'eau d\'environ 42 400 kg.')) +
+      H('Erreurs fréquentes') +
+      UL('Confondre rayon et diamètre (un facteur 4 d\'erreur sur la surface).', 'Mélanger des cm et des m dans le même calcul.', 'Oublier qu\'un volume en m³ se convertit en litres en multipliant par 1 000.') +
       BOX(P('Disque : S = π r² = π d² / 4. Cylindre : V = π r² × h. Sphère : V = 4/3 π r³.'))
   },
   // ===================== Chapitre 2 =====================
@@ -565,13 +579,20 @@ const EXOS = [
     title: 'Les diagrammes SysML',
     support: 'Programme 2I2D, chapitres 1.2 et 3.4.2 · présents dans tous les sujets de bac',
     body:
-      P('Le langage SysML décrit un système avec plusieurs diagrammes complémentaires, compréhensibles par tous les métiers.') +
+      H('1. Pourquoi SysML ?') +
+      P('Un système réel mélange mécanique, électricité, informatique et contraintes d\'usage. SysML est un langage graphique commun à tous ces métiers : chacun peut lire la description du système, et chaque diagramme montre un point de vue différent.') +
+      H('2. Les diagrammes') +
       table(['Diagramme', 'À quoi il sert'], [['Cas d\'utilisation (uc)', 'les services rendus aux acteurs ; la frontière du système'], ['Exigences (req)', 'les performances attendues, chiffrées (ex : autonomie ≥ 8 h)'],
         ['Définition de blocs (bdd)', 'la composition du système (un bloc est constitué d\'autres blocs)'], ['Blocs internes (ibd)', 'les flux échangés entre les blocs (énergie, matière, information)'],
         ['Séquence (sd)', 'les messages échangés dans l\'ordre chronologique'], ['États (stm)', 'les modes de marche et le passage de l\'un à l\'autre'], ['Activités (act)', 'l\'enchaînement des actions, comme un algorigramme']]) +
-      H('Quel diagramme modifier ?') +
-      UL('Ajouter un constituant (un buzzer, un capteur) : bdd, puis ibd pour ses flux.', 'Ajouter un service rendu : uc.', 'Changer une performance : req.', 'Ajouter un mode de fonctionnement : stm.') +
-      P('Dans un uc, les acteurs sont à l\'extérieur de la frontière ; un acteur existant (l\'utilisateur) n\'est pas ajouté une seconde fois.') +
+      dSV(340, 160, `<rect class="thin" x="110" y="15" width="200" height="130" rx="6"/><ellipse class="flow" cx="210" cy="55" rx="80" ry="20"/><ellipse class="flow" cx="210" cy="108" rx="80" ry="20"/>
+        <circle class="thin" cx="45" cy="55" r="9"/><line class="thin" x1="45" y1="64" x2="45" y2="92"/><line class="thin" x1="30" y1="74" x2="60" y2="74"/><line class="thin" x1="45" y1="92" x2="33" y2="112"/><line class="thin" x1="45" y1="92" x2="57" y2="112"/>
+        <line class="thin" x1="60" y1="72" x2="130" y2="58"/><line class="thin" x1="60" y1="78" x2="130" y2="104"/>` +
+        dT(45, 132, 'cycliste', 'middle', 12) + dT(210, 60, 'Éclairer la route', 'middle', 12) + dT(210, 113, 'Signaler un défaut', 'middle', 12) + dT(300, 30, 'système', 'end', 12),
+        'Diagramme de cas d\'utilisation : l\'acteur est hors de la frontière, les services à l\'intérieur') +
+      H('3. Quel diagramme modifier ?') +
+      UL('Ajouter un constituant (un buzzer, un capteur) : <b>bdd</b>, puis <b>ibd</b> pour décrire ses flux.', 'Ajouter un service rendu à l\'utilisateur : <b>uc</b>.', 'Changer une performance : <b>req</b>.', 'Ajouter un mode de fonctionnement : <b>stm</b>.') +
+      P('Dans un uc, un acteur déjà présent (l\'utilisateur) n\'est pas ajouté une seconde fois : on relie simplement le nouveau service à cet acteur.') +
       BOX(P('Structure : bdd et ibd. Comportement : sd, stm, act. Besoin : uc et req.'))
   },
   {
@@ -580,14 +601,17 @@ const EXOS = [
     support: 'Programme 2I2D, chapitres 2.1, 2.3 et 2.4 · annales : station hydro-éolienne 2026',
     body:
       H('1. Les deux chaînes') +
+      P('Tout système automatisé se décompose en une chaîne d\'information (le « cerveau ») et une chaîne de puissance (les « muscles »).') +
       CHAIN([['Acquérir', 'capteur'], ['Traiter', 'automate'], ['Communiquer', 'écran, réseau']]) +
       CHAIN([['Alimenter', 'batterie'], ['Distribuer', 'variateur'], ['Convertir', 'moteur'], ['Transmettre', 'réducteur'], ['Agir', 'roue']]) +
-      P('La chaîne d\'information commande la fonction Distribuer de la chaîne de puissance ; les capteurs lui renvoient l\'état du système.') +
+      P('La chaîne d\'information envoie des <b>ordres</b> à la fonction Distribuer ; les capteurs lui renvoient des <b>comptes rendus</b>. Un même constituant peut être identifié par sa fonction : un variateur « distribue » l\'énergie, un réducteur la « transmet » en adaptant vitesse et couple.') +
       H('2. Les flux MEI') +
-      P('Entre les constituants circulent trois natures de flux : <b>matière</b> (eau, granulés), <b>énergie</b> (courant, rotation d\'un arbre) et <b>information</b> (mesure, trame).') +
+      P('Entre les constituants circulent trois natures de flux : <b>matière</b> (eau, granulés), <b>énergie</b> (courant, rotation d\'un arbre) et <b>information</b> (mesure, trame). Dans un diagramme de blocs internes, chaque flux est fléché et nommé.') +
       H('3. Nature et forme de l\'énergie') +
-      table(['Catégorie', 'Exemple'], [['Primaire', 'vent, soleil, gaz extrait'], ['Secondaire', 'électricité produite par une éolienne'], ['Finale', 'électricité au compteur'], ['Utile', 'chaleur d\'un radiateur dans la pièce']]) +
-      P('Formes : mécanique (rotation des pales, cinétique du vent), électrique, thermique, chimique (batterie), potentielle de pesanteur (réservoir d\'une STEP), rayonnante.') +
+      dSV(340, 110, [['vent', 'primaire'], ['à la centrale', 'secondaire'], ['au compteur', 'finale'], ['chaleur', 'utile']].map(([a, b], k) =>
+        `<rect class="${k ? 'fillv' : 'flow'}" x="${6 + k * 84}" y="24" width="76" height="46" rx="6"/>` + dT(44 + k * 84, 44, b, 'middle', 12) + dT(44 + k * 84, 60, a, 'middle', 11) + (k < 3 ? dA(82 + k * 84, 47, 90 + k * 84, 47) : '')).join('') +
+        dT(170, 96, 'pertes à chaque transformation', 'middle', 12), 'De l\'énergie primaire à l\'énergie utile') +
+      P('Formes : mécanique (rotation des pales, cinétique du vent), électrique, thermique, chimique (batterie), potentielle de pesanteur (réservoir d\'une STEP), rayonnante (soleil). Une conversion change la forme ; elle s\'accompagne toujours de pertes.') +
       BOX(P('Acquérir → Traiter → Communiquer ; Alimenter → Distribuer → Convertir → Transmettre → Agir.', 'Primaire → secondaire → finale → utile, avec des pertes à chaque étape.'))
   },
   // ===================== Chapitre 3 =====================
@@ -597,18 +621,22 @@ const EXOS = [
     support: 'Cours ACV · programme 2I2D, chapitre 1.5',
     body:
       H('1. Éco-concevoir') +
-      P('L\'<b>éco-conception</b> consiste à prendre en compte, dès la conception d\'un produit ou d\'un service, les impacts environnementaux qu\'il engendrera sur tout son cycle de vie.') +
-      CHAIN([['Extraction', 'matières premières'], ['Fabrication', ''], ['Transport', 'distribution'], ['Utilisation', ''], ['Fin de vie', 'recyclage']]) +
+      P('L\'<b>éco-conception</b> consiste à prendre en compte, dès la conception d\'un produit ou d\'un service, les impacts environnementaux qu\'il engendrera sur tout son cycle de vie. Agir tôt coûte peu : une fois le produit fabriqué, il est trop tard pour changer son matériau.') +
+      dSV(340, 210, [['Extraction', 0], ['Fabrication', 1], ['Transport', 2], ['Utilisation', 3], ['Fin de vie', 4]].map(([n, k]) => {
+        const a = -Math.PI / 2 + k * 2 * Math.PI / 5, x = 170 + 112 * Math.cos(a), y = 105 + 78 * Math.sin(a);
+        return `<rect class="${k === 3 ? 'flow' : 'fillv'}" x="${(x - 46).toFixed(1)}" y="${(y - 15).toFixed(1)}" width="92" height="30" rx="8"/>` + dT(x, y + 5, n, 'middle', 13);
+      }).join('') + dRot(170, 105, 42, 120, -200, 'arrow') + dT(170, 110, 'cycle', 'middle', 12), 'Les étapes du cycle de vie d\'un produit') +
       H('2. L\'ACV') +
       UL('Méthode <b>normalisée</b> (ISO 14040 à 14044) et <b>multicritère</b>.', 'On recense les <b>flux entrants</b> (matières, énergie, eau) et <b>sortants</b> (déchets, émissions) à chaque étape.',
         'On les traduit en <b>impacts potentiels</b> (le mot rappelle l\'incertitude des calculs).', 'L\'<b>unité fonctionnelle</b> (ex : « éclairer 10 m² pendant 10 ans ») permet de comparer des produits qui rendent le même service.') +
       table(['Indicateur', 'Ce qu\'il mesure'], [['Effet de serre', 'kg éq. CO₂ émis'], ['Énergie primaire', 'énergie consommée sur le cycle de vie (MJ)'], ['Acidification de l\'air', 'SO₂, NO₂ à l\'origine des pluies acides'],
         ['Eutrophisation', 'excès de nitrates et phosphates dans l\'eau (algues)'], ['Épuisement des ressources', 'matières non renouvelables prélevées'], ['Toxicité, couche d\'ozone', 'substances dangereuses, CFC']]) +
       H('3. Analyser les résultats') +
+      P('Dans un résultat d\'ACV (souvent un histogramme), on repère l\'<b>étape</b> qui pèse le plus : c\'est là qu\'il faut agir en priorité. Pour un appareil électrique, c\'est souvent l\'utilisation ; pour un objet passif (meuble, bouteille), la fabrication ou le transport.') +
       UL('<b>Énergie grise</b> : énergie nécessaire sur tout le cycle de vie d\'un matériau ou d\'un produit.', '<b>Bilan carbone</b> : total des émissions de gaz à effet de serre.',
-        '<b>Transfert d\'impact</b> : une amélioration sur une étape ou un critère en dégrade un autre (ex : la voiture électrique).') +
-      P('Pour comparer deux solutions, on calcule la variation de chaque indicateur :') + M('\\text{variation} = \\frac{B - A}{A} \\times 100') + LEG(['A', 'la valeur de départ'], ['B', 'la nouvelle valeur (résultat en %)']) +
-      BOX(P('ACV : normalisée, multicritère, sur tout le cycle de vie.', 'Transfert d\'impact : on gagne sur un critère mais on perd sur un autre.'))
+        '<b>Transfert d\'impact</b> : une amélioration sur une étape ou un critère en dégrade un autre (ex : la voiture électrique émet moins à l\'usage mais plus à la fabrication de sa batterie).') +
+      P('Pour comparer deux solutions, on calcule la variation de chaque indicateur :') + M('\\text{variation} = \\frac{B - A}{A} \\times 100') + LEG(['A', 'la valeur de départ'], ['B', 'la nouvelle valeur (résultat en %, négatif si l\'impact baisse)']) +
+      BOX(P('ACV : normalisée, multicritère, sur tout le cycle de vie.', 'On agit d\'abord sur l\'étape la plus pénalisante ; attention aux transferts d\'impact.'))
   },
   {
     chap: 3,
@@ -618,12 +646,16 @@ const EXOS = [
       H('1. Les symboles à connaître') +
       table(['Symbole', 'Signification'], [['Ruban de Möbius', 'produit recyclable (pas forcément recyclé) ; avec un %, part de matière recyclée'], ['Triman', 'produit à trier ou à rapporter en point de collecte'],
         ['Poubelle barrée', 'collecte séparée obligatoire (piles, électronique)'], ['Info-tri', 'consignes de tri détaillées'], ['Tidy Man', 'ne pas jeter dans la nature'], ['Numéro dans un triangle', 'type de plastique']]) +
+      dSV(340, 120, [0, 1, 2].map(k => { const a = -Math.PI / 2 + k * 2 * Math.PI / 3, b = a + 1.6, cx = 170, cy = 60, r = 38;
+        return dA(cx + r * Math.cos(a + 0.35), cy + r * Math.sin(a + 0.35), cx + r * Math.cos(b), cy + r * Math.sin(b)); }).join('') + dT(170, 116, 'ruban de Möbius : « recyclable »', 'middle', 12),
+        'Recyclable ne veut pas dire recyclé : encore faut-il le trier') +
       H('2. Les labels') +
       UL('<b>NF Environnement</b> (France) et <b>Écolabel européen</b> : impacts limités sur tout le cycle de vie, selon un cahier des charges chiffré.', '<b>FSC</b>, <b>PEFC</b> : bois issu de forêts gérées durablement.') +
-      EX('Exemple : bloc autonome d\'éclairage de sécurité (BAES)', P('Pour être certifié NF Environnement, il doit respecter tous les seuils : énergie sur le cycle de vie ≤ 1 700 MJ, effet de serre ≤ 32 000 g éq. CO₂, circuit imprimé ≤ 30 cm³, batterie ≤ 160 g, puissance < 1,6 W. Un seul critère dépassé suffit à refuser la certification.')) +
+      P('Un label est une garantie contrôlée par un organisme indépendant. À l\'inverse, une simple mention commerciale (« produit vert ») n\'engage à rien.') +
+      EX('Exemple : bloc autonome d\'éclairage de sécurité (BAES)', P('Pour être certifié NF Environnement, il doit respecter tous les seuils : énergie sur le cycle de vie ≤ 1 700 MJ, effet de serre ≤ 32 000 g éq. CO₂, circuit imprimé ≤ 30 cm³, batterie ≤ 160 g, puissance < 1,6 W. Un seul critère dépassé suffit à refuser la certification. Le volume du circuit se calcule en mm³ puis se divise par 1 000 pour obtenir des cm³.')) +
       H('3. Empreinte et développement durable') +
-      UL('L\'<b>empreinte environnementale</b> est la surface nécessaire pour produire ce que l\'on consomme et absorber nos déchets (en hectares globaux, 1 ha = 10 000 m²).',
-        'Le <b>jour du dépassement</b> est la date où l\'humanité a consommé ce que la Terre renouvelle en un an.', 'Règle des <b>3R</b> : réduire, réutiliser, recycler.',
+      UL('L\'<b>empreinte environnementale</b> est la surface nécessaire pour produire ce que l\'on consomme et absorber nos déchets (en hectares globaux, 1 ha = 10 000 m²). Si tout le monde vivait comme un Français, il faudrait près de 3 planètes.',
+        'Le <b>jour du dépassement</b> est la date où l\'humanité a consommé ce que la Terre renouvelle en un an ; il arrive désormais fin juillet ou début août.', 'Règle des <b>3R</b> : réduire, réutiliser, recycler (dans cet ordre de priorité).',
         '<b>Trois piliers</b> du développement durable : environnemental, économique, social.') +
       BOX(P('Recyclable ne veut pas dire recyclé.', 'Un label exige de respecter tous ses critères.'))
   },
@@ -633,14 +665,17 @@ const EXOS = [
     support: 'Annales : Trambus 2023, complexe sportif CIME 2024, PV flottant 2024',
     body:
       H('1. Émissions de CO₂') +
+      P('On calcule les émissions d\'une activité en multipliant la quantité consommée par un <b>facteur d\'émission</b>, fourni dans le sujet :') +
       M('m_{CO_2} = Q \\times f') + LEG(['m_{CO_2}', 'la masse de CO₂ émise en g'], ['Q', 'la quantité consommée (kWh, km parcourus, t·km transportées…)'], ['f', 'le facteur d\'émission en g par unité de Q']) +
-      P('On convertit ensuite en kg (÷ 1 000) ou en tonnes (÷ 10⁶). Facteurs utiles (ordre de grandeur) : électricité en France environ 60 à 100 g/kWh, gaz environ 200 g/kWh, électricité au charbon environ 1 000 g/kWh.') +
-      EX('Exemple', P('Un bus parcourt 200 km par jour pendant 330 jours et 12 ans, soit 792 000 km. Diesel à 1 200 g/km : 950 t de CO₂. Électrique à 300 g/km (cycle de vie) : 238 t. Gain : 712 t, soit 75 %.')) +
+      P('On convertit ensuite en kg (÷ 1 000) ou en tonnes (÷ 10⁶). Ordres de grandeur : électricité en France environ 60 à 100 g/kWh, gaz environ 200 g/kWh, électricité au charbon environ 1 000 g/kWh.') +
+      EX('Exemple : bus diesel ou électrique', P('Un bus parcourt 200 km par jour pendant 330 jours et 12 ans, soit 792 000 km. Diesel à 1 200 g/km : 950 t de CO₂. Électrique à 300 g/km (sur tout le cycle de vie, batterie comprise) : 238 t. Gain : 712 t, soit 75 %.')) +
+      graph({ x0: 0, x1: 12, dx: 2, y0: 0, y1: 1000, dy: 200, w: 400, h: 220, xlab: 'années', ylab: 't CO₂', series: [{ pts: [[0, 0], [12, 950]], cls: 'c2' }, { pts: [[0, 40], [12, 238]] }],
+        cap: 'Émissions cumulées : orange diesel, bleu électrique (la fabrication de la batterie part d\'un peu plus haut)' }) +
       H('2. Choix multicritère') +
-      P('On compare plusieurs solutions sur plusieurs critères (masse, coût, résistance, CO₂…). Dans une <b>matrice de choix</b>, chaque critère reçoit un coefficient (son importance) et chaque solution une note ; on additionne les notes pondérées.') +
+      P('On compare plusieurs solutions sur plusieurs critères (masse, coût, résistance, CO₂…). Dans une <b>matrice de choix</b>, chaque critère reçoit un coefficient (son importance) et chaque solution une note ; on additionne les notes multipliées par les coefficients.') +
       table(['Critère (coefficient)', 'Bois', 'Acier'], [['Masse (3)', '4', '2'], ['Coût (2)', '3', '3'], ['CO₂ (3)', '5', '1'], ['Total pondéré', '33', '15']]) +
-      P('Avant de noter, on élimine les solutions qui ne respectent pas une contrainte impérative (par exemple : le poteau doit résister avec un coefficient de sécurité de 2).') +
-      BOX(P('CO₂ émis = quantité × facteur d\'émission.', 'Matrice de choix : notes × coefficients, après avoir éliminé les solutions non conformes.'))
+      P('Méthode : 1) éliminer les solutions qui ne respectent pas une contrainte impérative (le poteau doit résister avec un coefficient de sécurité de 2) ; 2) noter les solutions restantes ; 3) pondérer et additionner ; 4) argumenter le choix avec les critères qui ont fait la différence.') +
+      BOX(P('CO₂ émis = quantité × facteur d\'émission.', 'Matrice de choix : éliminer, puis noter et pondérer.'))
   },
   // ===================== Chapitre 4 =====================
   {
@@ -649,15 +684,19 @@ const EXOS = [
     support: 'Cours Thermique du bâtiment · programme 2I2D, chapitre 4.3.2',
     body:
       H('1. Les enjeux') +
-      UL('Le bâtiment représente environ <b>43 %</b> de l\'énergie consommée en France et environ 20 % des émissions de gaz à effet de serre.', 'Environ <b>4,8 millions</b> de logements sont des passoires thermiques (étiquettes F et G) : c\'est aussi un problème social de précarité énergétique.') +
+      UL('Le bâtiment représente environ <b>43 %</b> de l\'énergie consommée en France et environ 20 % des émissions de gaz à effet de serre : c\'est le premier secteur consommateur.', 'Environ <b>4,8 millions</b> de logements sont des passoires thermiques (étiquettes F et G) : leurs occupants paient très cher pour avoir froid, c\'est la précarité énergétique.') +
       H('2. Réglementation et étiquettes') +
       table(['Outil', 'Rôle'], [['RE2020', 'réglementation des bâtiments neufs : consommation maximale, impact carbone sur le cycle de vie, confort d\'été'],
         ['DPE', 'diagnostic d\'un logement existant, classé de A (performant) à G (énergivore)'], ['BEPOS', 'bâtiment à énergie positive : il produit plus qu\'il ne consomme sur l\'année']]) +
       H('3. Conception bioclimatique') +
-      P('Elle exploite le site et le climat pour réduire les besoins : grandes baies au sud (soleil d\'hiver), casquettes et brise-soleil contre le soleil d\'été, compacité, inertie des murs lourds, ventilation naturelle, végétation.') +
+      dSV(340, 190, `<polygon class="fillv" points="150,170 150,90 230,50 310,90 310,170"/><rect class="flow" x="146" y="112" width="8" height="54"/><line class="line" x1="150" y1="92" x2="112" y2="92"/><line class="thin" x1="10" y1="170" x2="330" y2="170"/>
+        <circle class="pt" cx="24" cy="128" r="10"/><circle class="pt" cx="30" cy="18" r="10"/>` + dA(36, 132, 190, 158, 'arrowv') + dA(38, 26, 110, 88, 'arrowv') +
+        dT(24, 152, 'hiver', 'middle', 12) + dT(48, 16, 'été', 'start', 12) + dT(110, 84, 'casquette', 'end', 12) + dT(230, 130, 'maison', 'middle', 12) + dT(150, 186, 'baie vitrée au sud', 'middle', 12),
+        'Le soleil bas d\'hiver entre par la baie ; le soleil haut d\'été est arrêté par la casquette') +
+      P('Elle exploite le site et le climat pour réduire les besoins avant même d\'installer des équipements : grandes baies au sud (soleil d\'hiver), casquettes et brise-soleil contre le soleil d\'été, peu d\'ouvertures au nord, compacité, inertie des murs lourds, ventilation naturelle, végétation.') +
       H('4. Compacité') +
       M('C = \\frac{S_p}{V_{ch}}') + LEG(['C', 'la compacité en m⁻¹'], ['S_p', 'la surface des parois déperditives (murs, toiture, plancher bas) en m²'], ['V_{ch}', 'le volume chauffé en m³']) +
-      P('À volume égal, plus la compacité est faible, moins il y a de surface d\'échange, donc moins de déperditions. Une maison à étage est plus compacte qu\'un plain-pied.') +
+      P('La chaleur s\'échappe par les parois : à volume égal, moins il y a de surface d\'échange, moins on perd. Une maison à étage est plus compacte qu\'un plain-pied de même volume ; une sphère serait la forme idéale.') +
       BOX(P('Bâtiment : 43 % de l\'énergie consommée en France.', 'Compacité C = Sp / V : plus elle est petite, mieux c\'est.'))
   },
   {
@@ -666,18 +705,23 @@ const EXOS = [
     support: 'Cours Thermique du bâtiment · annales : ITE d\'une école 2023',
     body:
       H('1. Conductivité et résistance thermique') +
-      P('La conductivité thermique λ caractérise un matériau : plus elle est faible, plus le matériau est isolant. On parle d\'isolant quand λ < 0,07 W/(m·K).') +
+      P('La chaleur traverse une paroi du chaud vers le froid. La <b>conductivité thermique</b> λ caractérise un matériau : plus elle est faible, plus il freine la chaleur. On parle d\'isolant quand λ < 0,07 W/(m·K) (laines minérales 0,035 ; béton 1,75).') +
       M('R = \\frac{e}{\\lambda}') + LEG(['R', 'la résistance thermique en m²·K/W'], ['e', 'l\'épaisseur en m'], ['\\lambda', 'la conductivité thermique en W/(m·K)']) +
-      P('Pour une paroi de plusieurs couches, les résistances s\'additionnent, en ajoutant les résistances superficielles intérieure et extérieure :') +
-      M('R_{totale} = R_{se} + R_1 + R_2 + \\dots + R_{si}') + P('Valeurs courantes pour un mur : Rse = 0,04 et Rsi = 0,13 m²·K/W.') +
+      P('Plus R est grande, plus la couche isole. Doubler l\'épaisseur double R.') +
+      dSV(340, 170, `<rect class="fillv" x="70" y="20" width="18" height="110"/><rect class="fillv" x="88" y="20" width="70" height="110"/><rect class="flow" x="158" y="20" width="80" height="110"/><rect class="fillv" x="238" y="20" width="12" height="110"/>` +
+        dT(62, 70, 'ext.', 'end', 13) + dT(258, 70, 'int.', 'start', 13) + dT(123, 80, 'béton', 'middle', 12) + dT(198, 80, 'isolant', 'middle', 12) + dA(250, 150, 70, 150, 'arrowv') + dT(160, 166, 'flux de chaleur', 'middle', 12),
+        'Paroi multicouche : les résistances des couches s\'additionnent') +
+      P('Pour une paroi de plusieurs couches, la chaleur doit traverser chaque couche l\'une après l\'autre : les résistances s\'additionnent, en ajoutant les résistances superficielles intérieure et extérieure (échanges avec l\'air) :') +
+      M('R_{totale} = R_{se} + R_1 + R_2 + \\dots + R_{si}') + P('Valeurs courantes pour un mur : R<sub>se</sub> = 0,04 et R<sub>si</sub> = 0,13 m²·K/W.') +
       H('2. Coefficient U et flux') +
       M('U = \\frac{1}{R_{totale}}') + M('\\Phi = U \\times S \\times (T_{int} - T_{ext})') +
       LEG(['U', 'le coefficient de transmission en W/(m²·K)'], ['\\Phi', 'le flux thermique (puissance perdue) en W'], ['S', 'la surface de la paroi en m²'], ['T', 'les températures en °C']) +
+      P('U indique combien de watts traversent 1 m² de paroi pour 1 °C d\'écart. Une paroi bien isolée a un U faible (moins de 0,2 W/(m²·K) pour un mur neuf).') +
       H('3. Déperditions d\'un logement') +
       P('On additionne les déperditions de chaque paroi (D = U × S, en W/K) et celles du renouvellement d\'air :') + M('D_v = 0{,}34 \\times Q_v') +
       LEG(['D_v', 'les déperditions par ventilation en W/K'], ['Q_v', 'le débit d\'air en m³/h']) + M('P = D_{totale} \\times (T_{int} - T_{ext})') +
-      P('La puissance P obtenue (en W) est celle que le chauffage doit fournir par la température extérieure de base. L\'isolation par l\'extérieur supprime la plupart des <b>ponts thermiques</b> (liaisons dalle-mur, tableaux de fenêtres).') +
-      EX('Exemple', P('Isolant de 140 mm de laine de verre (λ = 0,035) : R = 0,14 / 0,035 = 4 m²·K/W.')) +
+      P('La puissance P obtenue (en W) est celle que le chauffage doit fournir par la température extérieure de base. L\'isolation par l\'extérieur supprime la plupart des <b>ponts thermiques</b> (liaisons dalle-mur, tableaux de fenêtres), là où l\'isolant est interrompu.') +
+      EX('Exemple', P('140 mm de laine de verre (λ = 0,035) : R = 0,14 / 0,035 = 4 m²·K/W. Un mur de béton seul de 20 cm n\'a que R = 0,20 / 1,75 ≈ 0,11 m²·K/W : l\'isolant fait presque tout le travail.')) +
       BOX(P('R = e / λ ; les résistances en série s\'additionnent ; U = 1 / R.', 'Φ = U × S × ΔT ; ventilation : 0,34 × Q.'))
   },
   {
@@ -686,13 +730,17 @@ const EXOS = [
     support: 'Cours/TD Efficacité énergétique passive et active · annales : centre aquatique 2025',
     body:
       H('1. Puissance de chauffage par le volume') +
+      P('Méthode rapide pour dimensionner les radiateurs d\'une pièce :') +
       M('P = K \\times V \\times (T_{int} - T_{ext})') + LEG(['P', 'la puissance de chauffage en W'], ['K', 'un coefficient global en W/(m³·K) (environ 0,8 pour un logement récent)'], ['V', 'le volume de la pièce en m³'], ['T', 'les températures en °C']) +
-      P('On prend la température extérieure de base de la zone climatique (−7 °C en zone D), puis on applique un coefficient de sécurité de 1,2. On arrondit le nombre de radiateurs à l\'entier supérieur.') +
+      P('On prend la température extérieure de base de la zone climatique (−7 °C en zone D), puis on applique un coefficient de sécurité de 1,2. On arrondit le nombre de radiateurs à l\'entier supérieur : mieux vaut un peu trop que pas assez.') +
       H('2. Chauffer de l\'eau') +
       M('Q = m \\times c \\times \\Delta T') + LEG(['Q', 'l\'énergie en J'], ['m', 'la masse d\'eau en kg (1 L ≈ 1 kg)'], ['c', 'la capacité thermique massique, 4 185 J/(kg·K) pour l\'eau'], ['\\Delta T', 'l\'élévation de température en K ou °C']) +
-      P('La durée de chauffe vaut t = Q / (P × η) avec P la puissance de la résistance.') +
+      P('L\'eau demande beaucoup d\'énergie : chauffer 200 L de 15 à 60 °C demande 200 × 4 185 × 45 ≈ 37,7 MJ, soit 10,5 kWh. La durée de chauffe vaut t = Q / (P × η) avec P la puissance de la résistance.') +
       H('3. Efficacité passive et active') +
-      UL('<b>Passive</b> : réduire les besoins par l\'enveloppe et la conception (isolation, orientation, inertie, vitrages).', '<b>Active</b> : optimiser les équipements (régulation, programmation, appareils performants).') +
+      UL('<b>Passive</b> : réduire les besoins par l\'enveloppe et la conception (isolation, orientation, inertie, vitrages). Elle agit pour toute la durée de vie du bâtiment.', '<b>Active</b> : optimiser les équipements (régulation, programmation, appareils performants).') +
+      dSV(340, 140, `<rect class="fillv" x="70" y="30" width="200" height="80" rx="6"/><line class="line" x1="70" y1="70" x2="270" y2="70"/>` + dA(10, 50, 330, 50, 'arrowv') + dA(330, 90, 10, 90) +
+        dT(170, 44, 'air vicié 20 °C → sort à 3 °C', 'middle', 11) + dT(170, 104, 'air neuf 0 °C → entre à 17 °C', 'middle', 11) + dT(10, 20, 'intérieur', 'start', 12) + dT(330, 20, 'extérieur', 'end', 12) + dT(170, 132, 'échangeur', 'middle', 12),
+        'VMC double flux : l\'air extrait cède sa chaleur à l\'air neuf dans l\'échangeur') +
       table(['Équipement', 'Principe'], [['Pompe à chaleur', 'prélève des calories dans l\'air, le sol ou l\'eau ; COP 3 à 4 : 1 kWh électrique donne 3 à 4 kWh de chaleur'],
         ['VMC double flux', 'l\'air extrait réchauffe l\'air neuf dans un échangeur (efficacité 70 à 90 %)'], ['Puits canadien', 'l\'air neuf passe dans des tuyaux enterrés : préchauffé l\'hiver, rafraîchi l\'été'],
         ['Caméra thermique', 'visualise les fuites de chaleur (zones claires en hiver) et les ponts thermiques']]) +
@@ -706,16 +754,20 @@ const EXOS = [
     support: 'Programme 2I2D, chapitres 2.3 et 4.3.1 · annales : éolien 2025, PV flottant 2024',
     body:
       H('1. Photovoltaïque') +
+      P('Un module photovoltaïque convertit directement la lumière en courant continu ; un onduleur le transforme en alternatif pour le réseau. Sa <b>puissance crête</b> est la puissance mesurée sous un éclairement de 1 000 W/m² à 25 °C :') +
       M('P_c = S \\times \\eta \\times 1\\,000') + LEG(['P_c', 'la puissance crête en W'], ['S', 'la surface des modules en m²'], ['\\eta', 'le rendement des modules (environ 0,2)']) +
-      P('1 000 W/m² est l\'éclairement des conditions standard. La production annuelle se calcule avec le productible du site (en kWh par kWc et par an, de 900 à 1 400 en France) :') +
+      P('En réalité l\'éclairement varie (nuit, nuages, saisons). On utilise donc le <b>productible</b> du site, en kWh produits par kWc installé et par an (de 900 au nord à 1 400 au sud de la France) :') +
       M('E = P_c \\times \\text{productible}') +
-      P('Les modules perdent environ 0,5 % de production par an : la production de l\'année n vaut E₁ × (1 − 0,005)<sup>n − 1</sup>.') +
+      P('Les modules vieillissent et perdent environ 0,5 % de production par an : la production de l\'année n vaut E₁ × (1 − 0,005)<sup>n − 1</sup>. Après 25 ans, il reste environ 89 % de la production initiale.') +
       H('2. Éolien') +
-      P('Le <b>facteur de charge</b> est le rapport entre l\'énergie réellement produite et celle qu\'aurait produite l\'éolienne à pleine puissance toute l\'année (8 760 h). Il vaut 20 à 35 % à terre.') +
+      dSV(340, 200, `<line class="line" x1="170" y1="70" x2="170" y2="190"/><circle class="fillv" cx="170" cy="70" r="7"/>` + [90, 210, 330].map(a => { const r = a * Math.PI / 180; return `<line class="line" x1="170" y1="70" x2="${(170 + 60 * Math.cos(r)).toFixed(1)}" y2="${(70 - 60 * Math.sin(r)).toFixed(1)}"/>`; }).join('') +
+        dA(20, 60, 90, 60) + dA(20, 90, 90, 90) + dT(20, 48, 'vent', 'start', 12) + dCote(240, 70, 240, 10, 'R') + dT(185, 186, 'mât', 'start', 12),
+        'Éolienne : l\'énergie récupérée dépend de la vitesse du vent et de la surface balayée par les pales') +
+      P('Le <b>facteur de charge</b> est le rapport entre l\'énergie réellement produite et celle qu\'aurait produite l\'éolienne à pleine puissance toute l\'année (8 760 h). Il vaut 20 à 35 % à terre, plus en mer, car le vent n\'est pas toujours assez fort.') +
       M('E = P_n \\times 8\\,760 \\times f_c') + LEG(['E', 'l\'énergie annuelle en Wh'], ['P_n', 'la puissance nominale en W'], ['f_c', 'le facteur de charge (sans unité)']) +
-      EX('Exemple', P('Une éolienne de 3 MW avec fc = 0,25 produit 3 × 8 760 × 0,25 = 6 570 MWh par an, soit la consommation (hors chauffage) d\'environ 1 400 foyers à 4,7 MWh.')) +
+      EX('Exemple', P('Une éolienne de 3 MW avec fc = 0,25 produit 3 × 8 760 × 0,25 = 6 570 MWh par an. Si un foyer consomme 4,7 MWh par an (hors chauffage), elle alimente environ 6 570 / 4,7 ≈ 1 400 foyers.')) +
       H('3. Intermittence') +
-      P('Le soleil et le vent ne produisent pas à la demande : il faut stocker l\'énergie ou la compléter par d\'autres sources. Les réseaux intelligents (smart grids) ajustent production, stockage et consommation.') +
+      P('Le soleil et le vent ne produisent pas à la demande : il faut stocker l\'énergie (batteries, STEP) ou la compléter par d\'autres sources. Les réseaux intelligents (smart grids) ajustent production, stockage et consommation, par exemple en décalant la recharge des véhicules.') +
       BOX(P('Pc = S × η × 1 000 ; E = Pc × productible.', 'E = Pn × 8 760 × fc pour une éolienne.'))
   },
   {
@@ -725,17 +777,19 @@ const EXOS = [
     body:
       H('1. Batteries') +
       M('E = U \\times Q') + LEG(['E', 'l\'énergie stockée en Wh'], ['U', 'la tension nominale en V'], ['Q', 'la capacité en Ah']) +
-      P('On ne décharge en général que 80 à 90 % de la batterie (profondeur de décharge) pour préserver sa durée de vie. Le nombre de modules se calcule en divisant l\'énergie nécessaire par l\'énergie utile d\'un module, puis en arrondissant à l\'entier supérieur. Durée de recharge : t = E / (P × η).') +
+      P('On ne décharge en général que 80 à 90 % de la batterie (profondeur de décharge) pour préserver sa durée de vie : l\'énergie <b>utile</b> vaut E × profondeur de décharge.') +
+      EX('Méthode : nombre de modules', P('1) Énergie nécessaire par jour = consommation × distance (ou durée). 2) Énergie utile d\'un module = U × Q × profondeur de décharge. 3) Nombre de modules = énergie nécessaire / énergie utile d\'un module, arrondi à l\'entier <b>supérieur</b>. 4) Durée de recharge : t = E / (P × η).')) +
       H('2. STEP (station de transfert d\'énergie par pompage)') +
       dSV(340, 170, `<path class="thin" d="M40 30 L50 58 H130 L140 30"/><polygon class="flow" points="42,36 50,58 130,58 138,36"/><path class="thin" d="M200 120 L210 150 H290 L300 120"/><polygon class="flow" points="202,128 210,150 290,150 298,128"/>
         <polyline class="line" points="130,56 215,140"/><circle class="fillv" cx="190" cy="115" r="11"/><line class="c3" x1="20" y1="36" x2="42" y2="36"/><line class="c3" x1="20" y1="128" x2="202" y2="128"/>` +
         dCote(20, 36, 20, 128, 'h') + dT(90, 22, 'bassin haut', 'middle', 13) + dT(250, 166, 'bassin bas', 'middle', 13) + dT(206, 104, 'turbine-pompe', 'start', 13),
         'On pompe quand l\'électricité est abondante, on turbine quand on en a besoin') +
-      M('E = m \\times g \\times h \\times \\eta') + LEG(['E', 'l\'énergie restituée en J'], ['m', 'la masse d\'eau en kg'], ['g', '= 9,81 m/s²'], ['h', 'la hauteur de chute en m'], ['\\eta', 'le rendement de turbinage']) +
-      P('Le rendement d\'un cycle complet (pompage puis turbinage) est d\'environ 75 %.') +
+      P('L\'eau stockée en hauteur possède une énergie potentielle de pesanteur. En redescendant, elle fait tourner une turbine :') +
+      M('E = m \\times g \\times h \\times \\eta') + LEG(['E', 'l\'énergie restituée en J'], ['m', 'la masse d\'eau en kg (1 m³ d\'eau = 1 000 kg)'], ['g', '= 9,81 m/s²'], ['h', 'la hauteur de chute en m'], ['\\eta', 'le rendement de turbinage']) +
+      P('Le rendement d\'un cycle complet (pompage puis turbinage) est d\'environ 75 % : on récupère les trois quarts de l\'énergie utilisée pour pomper. C\'est aujourd\'hui le moyen de stockage de masse le plus utilisé au monde.') +
       H('3. Unités d\'énergie') +
       table(['Unité', 'Équivalence'], [['1 kWh', '3,6 MJ = 3,6 × 10⁶ J'], ['1 MWh', '3,6 × 10⁹ J'], ['1 tep', '11 630 kWh (énergie d\'une tonne de pétrole)']]) +
-      P('L\'énergie primaire d\'un logement chauffé à l\'électricité se calcule avec un coefficient de conversion (2,3 dans la RE2020) : Ep = 2,3 × énergie finale électrique.') +
+      P('Pour passer des joules aux kWh, on divise par 3,6 × 10⁶. L\'énergie primaire d\'un logement chauffé à l\'électricité se calcule avec un coefficient de conversion (2,3 dans la RE2020) : E<sub>p</sub> = 2,3 × énergie finale électrique, car produire et acheminer 1 kWh électrique consomme plus d\'énergie primaire.') +
       BOX(P('Batterie : E = U × Q. STEP : E = m × g × h × η.', '1 kWh = 3,6 MJ ; 1 tep = 11 630 kWh.'))
   },
   {
@@ -744,13 +798,17 @@ const EXOS = [
     support: 'Annales : bassins 2026, centre aquatique 2025',
     body:
       H('1. Débit') +
+      P('Le débit est le volume qui passe chaque seconde dans une canalisation. Il dépend de la vitesse de l\'eau et de la section du tuyau :') +
       M('Q = v \\times S') + LEG(['Q', 'le débit volumique en m³/s'], ['v', 'la vitesse du fluide en m/s'], ['S', 'la section de la canalisation en m²']) +
+      dSV(340, 110, `<rect class="flow" x="30" y="35" width="240" height="40" rx="4"/><ellipse class="fillv" cx="270" cy="55" rx="10" ry="20"/>` + dA(60, 55, 130, 55) + dA(140, 55, 210, 55) + dT(100, 30, 'v', 'middle') + dT(296, 60, 'S', 'start') + dT(150, 100, 'en 1 s, l\'eau parcourt v mètres : volume = v × S', 'middle', 12),
+        'Débit dans une canalisation') +
       M('t = \\frac{V}{Q}') + LEG(['t', 'la durée de remplissage ou de vidange en s'], ['V', 'le volume en m³']) +
-      P('On convertit souvent : 1 m³/h = 1 / 3 600 m³/s. Pour une piscine publique, tout le volume doit être filtré en 4 h au plus : il faut un débit Q = V / 4 (en m³/h).') +
+      P('On convertit souvent : 1 m³/h = 1 / 3 600 m³/s. Pour une piscine publique, tout le volume doit être filtré en 4 h au plus : il faut une pompe de débit Q = V / 4 (en m³/h).') +
+      EX('Exemple', P('Un bassin de 300 m³ se vide par un tuyau de 75 mm où l\'eau circule à 2 m/s. S = π × 0,075² / 4 ≈ 4,42 × 10⁻³ m² ; Q = 2 × 4,42 × 10⁻³ ≈ 8,8 × 10⁻³ m³/s ≈ 31,8 m³/h ; durée : 300 / 31,8 ≈ 9,4 h.')) +
       H('2. Récupérer l\'eau de pluie') +
-      P('1 mm de pluie correspond à 1 L par m² de toiture.') + M('V = S \\times h \\times C_r \\times \\eta') +
+      P('1 mm de pluie correspond à 1 L par m² de toiture (0,001 m × 1 m² = 0,001 m³). Une toiture de 150 m² sous 800 mm de pluie par an reçoit donc 120 m³ d\'eau, dont on ne récupère qu\'une partie :') + M('V = S \\times h \\times C_r \\times \\eta') +
       LEG(['V', 'le volume récupérable en m³'], ['S', 'la surface de toiture en m²'], ['h', 'la hauteur de pluie annuelle en m'], ['C_r', 'le coefficient de ruissellement (0,9 pour des tuiles, 0,5 pour une toiture végétalisée)'], ['\\eta', 'le rendement du filtre']) +
-      P('Le volume de la cuve se choisit pour quelques semaines d\'autonomie : besoins journaliers × nombre de jours.') +
+      P('Le taux de couverture compare ce volume aux besoins (WC, arrosage) ; le volume de la cuve se choisit pour quelques semaines d\'autonomie : besoins journaliers × nombre de jours.') +
       BOX(P('Q = v × S ; t = V / Q.', '1 mm de pluie = 1 L/m².'))
   },
   // ===================== Chapitre 6 =====================
@@ -761,12 +819,16 @@ const EXOS = [
     body:
       H('1. Types de réseaux') +
       table(['Réseau', 'Étendue', 'Exemple'], [['PAN', 'personnelle', 'Bluetooth montre-téléphone'], ['LAN', 'locale', 'réseau d\'un lycée'], ['WAN', 'étendue', 'Internet']]) +
-      UL('<b>Internet</b> est le réseau mondial ; le <b>Web</b> n\'est qu\'un de ses services (pages liées par des liens).', '<b>Client/serveur</b> : un serveur rend un service à des clients qui l\'interrogent ; <b>pair à pair</b> : chaque machine est à la fois client et serveur.') +
+      UL('<b>Internet</b> est le réseau mondial ; le <b>Web</b> n\'est qu\'un de ses services (pages liées par des liens), comme la messagerie ou la visioconférence.', '<b>Client/serveur</b> : un serveur rend un service à des clients qui l\'interrogent ; <b>pair à pair</b> : chaque machine est à la fois client et serveur.') +
       H('2. Topologies') +
-      P('<b>Étoile</b> (tous les postes reliés à un switch, la plus courante), <b>bus</b> (un câble commun), <b>anneau</b> (une boucle), <b>maillée</b> (plusieurs chemins possibles : une liaison coupée ne bloque pas le réseau, c\'est le cas d\'Internet).') +
+      dSV(340, 145, `<rect class="fillv" x="60" y="50" width="40" height="22" rx="4"/>` + [[20, 20], [140, 20], [20, 102], [140, 102]].map(([x, y]) => `<line class="thin" x1="80" y1="61" x2="${x + 10}" y2="${y + 8}"/><rect class="flow" x="${x}" y="${y}" width="20" height="16"/>`).join('') +
+        `<line class="thin" x1="200" y1="61" x2="330" y2="61"/>` + [210, 245, 280, 315].map(x => `<line class="thin" x1="${x}" y1="61" x2="${x}" y2="35"/><rect class="flow" x="${x - 10}" y="20" width="20" height="16"/>`).join('') +
+        dT(80, 140, 'étoile (switch au centre)', 'middle', 12) + dT(265, 90, 'bus', 'middle', 12), 'Topologies en étoile et en bus') +
+      P('<b>Étoile</b> : tous les postes reliés à un switch (la plus courante ; si le switch tombe en panne, tout s\'arrête). <b>Bus</b> : un câble commun. <b>Anneau</b> : une boucle. <b>Maillée</b> : plusieurs chemins possibles, une liaison coupée ne bloque pas le réseau (c\'est le cas d\'Internet).') +
       H('3. Équipements') +
       table(['Équipement', 'Rôle'], [['Hub', 'renvoie chaque trame sur tous ses ports (obsolète)'], ['Switch', 'envoie la trame au seul port du destinataire grâce à sa table d\'adresses MAC'],
         ['Routeur', 'relie des réseaux IP différents et choisit le chemin des paquets'], ['Point d\'accès Wi-Fi', 'relie les appareils sans fil au réseau filaire']]) +
+      P('Le switch apprend tout seul : chaque fois qu\'une trame arrive sur un port, il note l\'adresse MAC source et ce port dans sa table. Quand il ne connaît pas encore la destination, il envoie la trame partout, comme un hub.') +
       UL('L\'<b>adresse MAC</b> (48 bits) identifie la carte réseau ; l\'<b>adresse IP</b> identifie la machine sur le réseau.', 'Le protocole <b>ARP</b> trouve l\'adresse MAC qui correspond à une IP du réseau local.',
         '<b>DHCP</b> attribue automatiquement les adresses IP ; <b>DNS</b> traduit un nom de domaine en adresse IP.', 'Pour joindre un autre réseau, une machine envoie ses paquets à sa <b>passerelle</b> (le routeur).') +
       BOX(P('Switch : adresses MAC, même réseau. Routeur : adresses IP, entre réseaux.'))
@@ -776,14 +838,22 @@ const EXOS = [
     title: 'Modèles OSI et TCP/IP',
     support: 'Cours/TD Modèle OSI · programme 2I2D, chapitre 3.4.3',
     body:
-      P('Pour communiquer, les équipements suivent des règles réparties en couches. Chaque couche rend un service à la couche du dessus.') +
+      P('Pour communiquer, les équipements suivent des règles (protocoles) réparties en couches. Chaque couche rend un service à la couche du dessus sans se soucier de la façon dont les autres travaillent : on peut changer de câble (couche 1) sans modifier le navigateur web (couche 7).') +
       table(['Couche OSI', 'Rôle', 'Exemples'], [['7 Application', 'service pour l\'utilisateur', 'HTTP, DNS, FTP'], ['6 Présentation', 'format, chiffrement', 'TLS'], ['5 Session', 'dialogue', '—'],
         ['4 Transport', 'découpage, fiabilité, ports', 'TCP, UDP'], ['3 Réseau', 'adressage IP, routage', 'IP, routeur'], ['2 Liaison', 'adresses MAC, trames', 'Ethernet, switch'], ['1 Physique', 'bits sur le support', 'câble, onde radio']]) +
-      P('Le modèle <b>TCP/IP</b>, utilisé sur Internet, regroupe ces couches en 4 : accès réseau, Internet, transport, application.') +
+      P('Le modèle <b>TCP/IP</b>, utilisé sur Internet, regroupe ces couches en 4 : accès réseau (1 et 2), Internet (3), transport (4), application (5 à 7).') +
       H('Encapsulation') +
-      P('À l\'envoi, chaque couche ajoute son en-tête aux données reçues de la couche supérieure ; à la réception, chaque couche retire le sien.') +
-      CHAIN([['Données', 'application'], ['Segment', '+ en-tête TCP'], ['Paquet', '+ en-tête IP'], ['Trame', '+ en-tête Ethernet']]) +
-      UL('<b>TCP</b> garantit l\'arrivée et l\'ordre des données (accusés de réception) ; <b>UDP</b> est plus rapide mais sans garantie (vidéo en direct).', 'Le <b>numéro de port</b> identifie l\'application : 80 pour HTTP, 443 pour HTTPS.') +
+      P('À l\'envoi, chaque couche ajoute son en-tête aux données reçues de la couche supérieure, comme on glisse une lettre dans une enveloppe, puis dans un colis ; à la réception, chaque couche retire le sien.') +
+      dSV(340, 160, (() => {
+        const blocs = [['données', 236, 100], ['TCP', 164, 72], ['IP', 92, 72], ['Ethernet', 10, 82]];
+        let s = '';
+        for (let k = 0; k < 4; k++) for (let j = 0; j <= k; j++) { const [n, x, w] = blocs[j], y = 12 + k * 36;
+          s += `<rect class="${j === k ? (j ? 'fillv' : 'flow') : 'flow'}" x="${x}" y="${y}" width="${w}" height="28" rx="3"${j < k ? ' opacity="0.45"' : ''}/>` + dT(x + w / 2, y + 19, n, 'middle', 12); }
+        return s;
+      })(),
+        'Chaque couche ajoute son en-tête devant les données qu\'elle reçoit') +
+      UL('<b>TCP</b> garantit l\'arrivée et l\'ordre des données (accusés de réception, retransmission) : pages web, fichiers.', '<b>UDP</b> est plus rapide mais sans garantie : vidéo en direct, jeux, où un paquet perdu compte moins qu\'un retard.',
+        'Le <b>numéro de port</b> identifie l\'application : 80 pour HTTP, 443 pour HTTPS.') +
       BOX(P('OSI : 7 couches ; TCP/IP : 4 couches.', 'Encapsulation : données → segment → paquet → trame.'))
   },
   {
@@ -792,15 +862,18 @@ const EXOS = [
     support: 'Cours Adressage et routage · TD adressage',
     body:
       H('1. Adresse et masque') +
-      P('Une adresse IPv4 est codée sur <b>32 bits</b>, écrite en 4 octets décimaux (de 0 à 255) : 192.168.1.20. Il existe 2³² ≈ 4,3 milliards d\'adresses. Le <b>masque</b> sépare la partie réseau (bits à 1) de la partie hôte (bits à 0).') +
+      P('Une adresse IPv4 est codée sur <b>32 bits</b>, écrite en 4 octets décimaux (de 0 à 255) : 192.168.1.20. Il existe 2³² ≈ 4,3 milliards d\'adresses, trop peu pour tous les appareils du monde (d\'où IPv6). Le <b>masque</b> sépare la partie réseau (bits à 1, communs à toutes les machines du réseau) de la partie hôte (bits à 0, propres à chaque machine).') +
+      dSV(340, 100, `<rect class="flow" x="10" y="30" width="240" height="30"/><rect class="fillv" x="250" y="30" width="80" height="30"/>` + dT(130, 50, 'partie réseau (24 bits)', 'middle', 13) + dT(290, 50, 'hôte (8)', 'middle', 13) +
+        dT(130, 84, '192.168.1', 'middle', 13) + dT(290, 84, '.20', 'middle', 13), 'Adresse 192.168.1.20 avec un masque /24 (255.255.255.0)') +
       table(['Notation CIDR', 'Masque', 'Machines'], [['/24', '255.255.255.0', '254'], ['/25', '255.255.255.128', '126'], ['/26', '255.255.255.192', '62'], ['/28', '255.255.255.240', '14']]) +
       H('2. Calculs') +
-      UL('<b>Adresse du réseau</b> = adresse IP ET masque (bit à bit).', '<b>Adresse de diffusion</b> (broadcast) : tous les bits de la partie hôte à 1.', 'Ces deux adresses ne peuvent pas être données à une machine.') +
+      UL('<b>Adresse du réseau</b> = adresse IP ET masque (bit à bit) : on garde la partie réseau et on met la partie hôte à 0.', '<b>Adresse de diffusion</b> (broadcast) : tous les bits de la partie hôte à 1. Un message envoyé à cette adresse est reçu par toutes les machines du réseau.',
+        'Ces deux adresses ne peuvent pas être données à une machine.') +
       M('N = 2^n - 2') + LEG(['N', 'le nombre de machines adressables'], ['n', 'le nombre de bits de la partie hôte']) +
       EX('Exemple : 192.168.10.77/26', P('Dernier octet : 77 = 0100 1101 ; masque : 192 = 1100 0000. ET bit à bit : 0100 0000 = 64.', 'Réseau : 192.168.10.64 ; broadcast : 192.168.10.127 ; machines de .65 à .126, soit 2⁶ − 2 = 62.')) +
       H('3. Choisir un masque') +
-      P('Pour n machines, on cherche le plus petit nombre de bits hôte tel que 2<sup>n</sup> − 2 ≥ nombre de machines. Avec un masque /28, un réseau /24 se découpe en 16 sous-réseaux de 16 adresses (0, 16, 32…).') +
-      P('Dans une trame, l\'adresse IP apparaît en hexadécimal : C0 A8 01 2A = 192.168.1.42.') +
+      P('Pour n machines, on cherche le plus petit nombre de bits hôte tel que 2<sup>n</sup> − 2 ≥ nombre de machines. Avec un masque /28, un réseau /24 se découpe en 16 sous-réseaux de 16 adresses (0, 16, 32…), chacun pouvant accueillir 14 machines.') +
+      P('Dans une trame, l\'adresse IP apparaît en hexadécimal : C0 A8 01 2A = 192.168.1.42 (C0 = 12 × 16 + 0 = 192).') +
       BOX(P('Réseau = IP ET masque ; machines = 2<sup>n</sup> − 2.', 'Un octet ne dépasse jamais 255.'))
   },
   {
@@ -810,14 +883,16 @@ const EXOS = [
     body:
       H('1. Débit') +
       M('D = \\frac{N}{\\Delta t}') + LEG(['D', 'le débit en bit/s'], ['N', 'le nombre de bits transmis'], ['\\Delta t', 'la durée en s']) +
-      P('Sur une liaison synchrone, un bit passe à chaque période d\'horloge : D = f = 1 / T. Une taille en octets se multiplie par 8 pour obtenir des bits.') +
+      P('Sur une liaison synchrone, un bit passe à chaque période d\'horloge : D = f = 1 / T. On lit donc le débit sur un oscillogramme en mesurant la période de l\'horloge. Une taille en octets se multiplie par 8 pour obtenir des bits.') +
       H('2. Trame série') +
-      P('Un caractère est encadré par un <b>bit de start</b> (0) et un <b>bit de stop</b> (1). Les données sont souvent envoyées bit de poids faible en premier. Le <b>bit de parité paire</b> rend pair le nombre total de 1 : s\'il ne l\'est plus à la réception, une erreur est détectée. Le code <b>ASCII</b> associe un nombre à chaque caractère (A = 65).') +
+      wave([{ l: 0, t: 'S' }, { l: 1, t: 'b0' }, { l: 0, t: 'b1' }, { l: 0, t: 'b2' }, { l: 0, t: 'b3' }, { l: 0, t: 'b4' }, { l: 0, t: 'b5' }, { l: 1, t: 'b6' }, { l: 0, t: 'P' }, { l: 1, t: 'St' }],
+        'Caractère « A » (65 = 100 0001) sur 7 bits, poids faible en premier, parité paire') +
+      P('Un caractère est encadré par un <b>bit de start</b> (0) et un <b>bit de stop</b> (1). Les données sont souvent envoyées bit de poids faible en premier : il faut les remettre dans l\'ordre avant de les convertir. Le <b>bit de parité paire</b> rend pair le nombre total de 1 : s\'il ne l\'est plus à la réception, une erreur est détectée. Le code <b>ASCII</b> associe un nombre à chaque caractère (A = 65).') +
       H('3. Logique') +
-      P('Une table de vérité donne la sortie pour toutes les combinaisons des entrées (2<sup>n</sup> lignes). Notations : « · » pour ET, « + » pour OU, une barre pour NON.') +
+      P('Une table de vérité donne la sortie pour toutes les combinaisons des entrées (2<sup>n</sup> lignes pour n entrées). Notations : « · » pour ET, « + » pour OU, une barre pour NON. Pour remplir la table, on calcule l\'équation ligne par ligne.') +
       H('4. Vidéo') +
       M('D_{brut} = L \\times H \\times b \\times f') + LEG(['L', 'et H la définition en pixels'], ['b', 'le nombre de bits par pixel (24 en couleur)'], ['f', 'le nombre d\'images par seconde']) +
-      P('La compression (H.264, H.265) divise ce débit par 50 à 200. Pour identifier une personne, on vise au moins 250 pixels par mètre de largeur filmée (125 pour la reconnaître).') +
+      P('Une caméra Full HD (1 920 × 1 080) à 25 images/s produit environ 1,2 Gbit/s : c\'est pourquoi on compresse (H.264, H.265), ce qui divise le débit par 50 à 200. Pour identifier une personne, on vise au moins 250 pixels par mètre de largeur filmée (125 pour la reconnaître).') +
       BOX(P('D = N / Δt ; octets × 8 = bits.', 'Parité paire : nombre total de 1 pair.'))
   },
   // ===================== Chapitre 7 =====================
@@ -827,14 +902,14 @@ const EXOS = [
     support: 'Programme 2I2D, chapitre 4.1 · cours Accessibilité',
     body:
       H('1. Échelle') +
-      P('À l\'échelle 1:X, une longueur réelle est X fois plus grande que sur le plan. Les surfaces sont multipliées par X² et les volumes par X³.') +
+      P('À l\'échelle 1:X, une longueur réelle est X fois plus grande que sur le plan (1:100 : 1 cm sur le plan = 1 m en réalité). Les surfaces sont multipliées par X² et les volumes par X³ : c\'est ce qui rend les maquettes si légères.') +
       M('L_{réelle} = L_{plan} \\times X') +
-      EX('Exemple : maquette imprimée en 3D', P('Une façade de 3,2 m³ de béton imprimée à l\'échelle 1:100 donne 3,2 / 100³ = 3,2 × 10⁻⁶ m³ = 3,2 cm³ de matière.')) +
+      EX('Exemple : maquette imprimée en 3D', P('Une façade de 3,2 m³ de béton imprimée à l\'échelle 1:100 donne 3,2 / 100³ = 3,2 × 10⁻⁶ m³ = 3,2 cm³ de matière. En PLA (1 250 kg/m³) remplie à 60 % : 3,2 × 1,25 × 0,6 ≈ 2,4 g.')) +
       H('2. Pentes et rampes PMR') +
       M('p = \\frac{\\Delta h}{L} \\times 100') + LEG(['p', 'la pente en %'], ['\\Delta h', 'le dénivelé'], ['L', 'la longueur horizontale (même unité que Δh)']) +
       dSV(340, 120, `<polygon class="flow" points="20,95 300,95 300,40"/><line class="ax" x1="20" y1="95" x2="300" y2="40"/>` + dCote(20, 110, 300, 110, 'L', -4) + dCote(316, 95, 316, 40, 'Δh'), 'Profil d\'une rampe') +
       table(['Pente', 'Règle'], [['≤ 5 %', 'autorisée'], ['5 à 8 %', 'tolérée sur 2 m maximum'], ['8 à 10 %', 'tolérée sur 0,5 m maximum'], ['> 10 %', 'interdite']]) +
-      P('Il faut un palier de repos tous les 10 m si la pente dépasse 4 %, et un garde-corps si la hauteur de chute dépasse 40 cm.') +
+      P('Il faut un palier de repos tous les 10 m si la pente dépasse 4 %, et un garde-corps si la hauteur de chute dépasse 40 cm. Une pente de 5 % signifie 5 cm de montée pour 1 m parcouru : pour franchir 50 cm, il faut 10 m de rampe.') +
       BOX(P('Échelle 1:X : longueurs × X, surfaces × X², volumes × X³.', 'Pente = Δh / L × 100, au plus 5 % pour une rampe PMR.'))
   },
   {
@@ -842,15 +917,20 @@ const EXOS = [
     title: 'Descente de charges, contraintes et fondations',
     support: 'Programme 2I2D, chapitres 3.2.2 et 5.1.2 · annale : bassins 2026',
     body:
-      H('1. Les charges') +
+      H('1. Le cheminement des charges') +
+      P('Les charges descendent de haut en bas : la toiture et les planchers reposent sur les poutres, qui reposent sur les poteaux et les murs, qui reposent sur les fondations, qui les transmettent au sol. On calcule donc les charges en partant du haut.') +
+      dSV(340, 200, `<rect class="fillv" x="40" y="30" width="260" height="14"/><rect class="fillv" x="70" y="44" width="16" height="110"/><rect class="fillv" x="254" y="44" width="16" height="110"/>
+        <rect class="flow" x="50" y="154" width="56" height="18"/><rect class="flow" x="234" y="154" width="56" height="18"/><line class="thin" x1="20" y1="172" x2="320" y2="172"/>` +
+        [70, 110, 150, 190, 230, 270].map(x => dA(x, 6, x, 28, 'arrowv')).join('') + dA(78, 60, 78, 140) + dT(170, 66, 'dalle', 'middle', 12) + dT(92, 100, 'poteau', 'start', 12) + dT(170, 192, 'fondations → sol', 'middle', 12),
+        'Descente de charges : de la dalle au sol') +
       UL('<b>Charges permanentes G</b> : poids propre de la structure (béton armé : 25 kN/m³) et des revêtements.', '<b>Charges d\'exploitation Q</b> : personnes, mobilier (en kN/m²).', '<b>Charges climatiques</b> : neige, vent.') +
-      P('Un poteau reprend la surface qui l\'entoure, jusqu\'à mi-distance des poteaux voisins. La charge vaut la charge surfacique × cette surface.') +
+      P('Un poteau reprend la surface qui l\'entoure, jusqu\'à mi-distance des poteaux voisins (sa « zone d\'influence »). La charge vaut la charge surfacique × cette surface. Pour une dalle de 20 cm : 0,20 × 25 = 5 kN/m².') +
       H('2. Contrainte de compression') +
       M('\\sigma = \\frac{N}{A}') + LEG(['\\sigma', 'la contrainte en Pa (ou en MPa si N en N et A en mm²)'], ['N', 'l\'effort normal en N'], ['A', 'la section en m² (ou mm²)']) +
       P('Le poteau résiste si σ reste inférieure à la résistance du matériau divisée par le coefficient de sécurité.') +
       H('3. Pression sur le sol') +
       M('p = \\frac{F}{S}') + LEG(['p', 'la pression en Pa (1 kPa = 1 kN/m²)'], ['F', 'le poids total transmis en N'], ['S', 'la surface d\'appui en m²']) +
-      P('Le sol convient si p reste inférieure à sa pression admissible (de 100 à 300 kPa pour des sols courants). Sinon on élargit la fondation ou on choisit un radier.') +
+      P('Le sol convient si p reste inférieure à sa pression admissible (de 100 à 300 kPa pour des sols courants). Sinon on élargit la fondation, ou on choisit un radier (une dalle sous tout l\'ouvrage) qui répartit la charge sur une grande surface.') +
       BOX(P('σ = N / A ; p = F / S.', 'Béton armé : 25 kN/m³ ; eau : 10 kN/m³ environ.'))
   },
   {
@@ -860,15 +940,20 @@ const EXOS = [
     body:
       H('1. Sollicitations simples') +
       table(['Sollicitation', 'Exemple'], [['Traction', 'câble, tirant'], ['Compression', 'poteau, fondation'], ['Flexion', 'poutre, plancher, étagère'], ['Torsion', 'arbre de transmission'], ['Cisaillement', 'rivet, ciseaux']]) +
-      P('Le béton résiste bien à la compression mais mal à la traction : on place des aciers dans la partie tendue (en bas d\'une poutre sur deux appuis).') +
+      dSV(340, 130, dAppui(50, 66) + dAppui(290, 66) + `<path class="fillv" d="M40 50 Q170 66 300 50 L300 62 Q170 78 40 62 Z"/>` + dA(170, 10, 170, 50, 'arrowv') + dT(178, 26, 'F', 'start') +
+        dT(110, 46, 'comprimé', 'middle', 11) + dT(170, 98, 'tendu', 'middle', 11) + dA(130, 90, 100, 90, 'thin') + dA(210, 90, 240, 90, 'thin'),
+        'Poutre en flexion sur deux appuis : le haut est comprimé, le bas est tendu') +
+      P('Le béton résiste bien à la compression mais mal à la traction : on place des aciers dans la partie tendue (en bas d\'une poutre sur deux appuis). C\'est le principe du béton armé.') +
       H('2. Coefficient de sécurité') +
       M('s = \\frac{R_e}{\\sigma_{max}}') + LEG(['s', 'le coefficient de sécurité (sans unité, supérieur à 1)'], ['R_e', 'la limite élastique du matériau en MPa'], ['\\sigma_{max}', 'la contrainte maximale calculée ou simulée en MPa']) +
+      P('Il couvre les incertitudes (défauts du matériau, charges imprévues). Il vaut souvent 1,5 à 3 ; trop grand, il alourdit et renchérit l\'ouvrage.') +
       H('3. Indice de rigidité') +
       M('I_s = \\frac{L}{f}') + LEG(['I_s', 'l\'indice de rigidité (sans unité)'], ['L', 'la portée'], ['f', 'la flèche maximale, dans la même unité']) +
-      P('La norme impose un indice minimal (par exemple 250 à 500) : une poutre trop souple fléchit trop, même si elle ne casse pas.') +
+      P('La norme impose un indice minimal (par exemple 250 à 500) : une poutre trop souple fléchit trop (fissures, sensation de plancher qui bouge), même si elle ne casse pas.') +
       H('4. Flottaison') +
       P('Un corps flotte en déplaçant une masse d\'eau égale à sa propre masse (poussée d\'Archimède). Pour un caisson de base S :') +
       M('h = \\frac{m}{\\rho \\times S}') + LEG(['h', 'la hauteur immergée en m'], ['m', 'la masse totale en kg'], ['\\rho', 'la masse volumique de l\'eau en kg/m³'], ['S', 'la surface de la base en m²']) +
+      P('La hauteur hors de l\'eau (franc-bord) vaut la hauteur du caisson moins h ; si h dépasse la hauteur du caisson, il coule.') +
       BOX(P('s = Re / σmax > 1 ; Is = L / f au-dessus du minimum de la norme.', 'Flottaison : h = m / (ρ × S).'))
   },
   // ===================== Chapitre 8 =====================
@@ -877,13 +962,17 @@ const EXOS = [
     title: 'Grandeurs photométriques et confort visuel',
     support: 'Cours Éclairage',
     body:
+      P('Une lampe émet de la lumière (le flux), qui se répartit dans l\'espace (l\'intensité) et arrive sur une surface (l\'éclairement) :') +
+      dSV(340, 170, `<circle class="fillv" cx="170" cy="30" r="12"/><path class="flow" d="M170 42 L80 140 H260 Z" opacity="0.6"/><line class="line" x1="40" y1="140" x2="300" y2="140"/>` +
+        dT(190, 34, 'flux Φ (lm)', 'start', 12) + dT(98, 92, 'intensité I (cd)', 'end', 12) + dT(170, 160, 'éclairement E (lx) sur la surface', 'middle', 12),
+        'Flux émis, intensité dans une direction, éclairement reçu') +
       table(['Grandeur', 'Unité', 'Sens'], [['Flux lumineux Φ', 'lumen (lm)', 'lumière totale émise'], ['Éclairement E', 'lux (lx)', 'flux reçu par m² : 1 lx = 1 lm/m²'],
         ['Intensité I', 'candela (cd)', 'flux dans une direction'], ['Efficacité', 'lm/W', 'flux produit par watt']]) +
       M('E = \\frac{\\Phi}{S}') + LEG(['E', 'l\'éclairement en lx'], ['\\Phi', 'le flux reçu en lm'], ['S', 'la surface éclairée en m²']) +
-      P('Efficacités moyennes : halogène 20 lm/W, fluocompacte 55 lm/W, LED 120 lm/W. Éclairements recommandés : 300 à 500 lx dans une salle de classe ou un bureau.') +
+      P('Efficacités moyennes : halogène 20 lm/W, fluocompacte 55 lm/W, LED 120 lm/W. Pour un même éclairement, une LED consomme donc 6 fois moins qu\'une halogène. Éclairements recommandés : 300 à 500 lx dans une salle de classe ou un bureau, 100 à 200 lx dans un couloir.') +
       H('Confort visuel') +
-      UL('<b>Température de couleur</b> (en K) : 2 700 K lumière chaude, 4 000 K neutre, 6 500 K froide.', '<b>IRC</b> (indice de rendu des couleurs, sur 100) : au moins 80 dans un bureau.',
-        '<b>UGR</b> : éblouissement d\'inconfort, au plus 19 dans un bureau.', '<b>Uniformité</b> U = Emin / Emoy : au moins 0,6 en général.') +
+      UL('<b>Température de couleur</b> (en K) : 2 700 K lumière chaude (salon), 4 000 K neutre (bureau), 6 500 K froide (atelier).', '<b>IRC</b> (indice de rendu des couleurs, sur 100) : au moins 80 dans un bureau, plus de 90 pour juger des couleurs.',
+        '<b>UGR</b> : éblouissement d\'inconfort, au plus 19 dans un bureau.', '<b>Uniformité</b> U = Emin / Emoy : au moins 0,6 en général, pour éviter les zones sombres.') +
       BOX(P('E = Φ / S ; 1 lx = 1 lm/m².', 'LED : environ 120 lm/W.'))
   },
   {
@@ -895,13 +984,14 @@ const EXOS = [
       M('\\Phi = \\frac{E \\times d^2}{\\cos(\\alpha / 2)}') + LEG(['\\Phi', 'le flux d\'un luminaire en lm'], ['E', 'l\'éclairement voulu en lx'], ['d', 'la hauteur du luminaire au-dessus du plan de travail en m'], ['\\alpha', 'l\'angle d\'ouverture du luminaire']) +
       dSV(340, 170, `<line class="thin" x1="20" y1="20" x2="320" y2="20"/><line class="line" x1="20" y1="150" x2="320" y2="150"/><path class="fillv" d="M158 20 H182 L176 32 H164 Z"/><path class="flow" d="M170 32 L96 150 H244 Z" opacity="0.7"/>` +
         dCote(36, 32, 36, 150, 'd') + dT(170, 110, 'α', 'middle') + dT(170, 166, 'surface éclairée', 'middle', 13), 'Un luminaire éclaire un cône d\'angle α') +
-      P('Surface éclairée par un luminaire : S = Φ / E. Nombre de luminaires : N = surface de la salle / S, arrondi à l\'entier supérieur. Si le flux réel du luminaire choisi est différent, on recalcule N = S<sub>salle</sub> × E / Φ<sub>réel</sub>.') +
+      P('Plus le luminaire est haut, plus il faut de flux (le carré de d), car la lumière s\'étale sur une plus grande surface.') +
+      EX('Méthode', P('1) Calculer Φ avec la formule (calculatrice en degrés). 2) Surface éclairée par un luminaire : S = Φ / E. 3) Nombre de luminaires : N = surface de la salle / S, arrondi à l\'entier supérieur. 4) Si le flux réel du luminaire choisi est différent, recalculer N = S<sub>salle</sub> × E / Φ<sub>réel</sub>.')) +
       H('2. Rentabilité d\'un relighting LED') +
-      P('Pour un éclairage allumé 6 h par jour (2 190 h par an) :') + M('C = 2{,}19 \\times N \\times P \\times prix') +
+      P('Pour un éclairage allumé 6 h par jour (2 190 h par an), l\'énergie d\'un luminaire de P watts vaut 2,19 × P kWh par an :') + M('C = 2{,}19 \\times N \\times P \\times prix') +
       LEG(['C', 'le coût annuel en €'], ['N', 'le nombre de luminaires'], ['P', 'la puissance d\'un luminaire en W'], ['prix', 'le prix du kWh en €']) +
-      P('Le temps de retour vaut : investissement / (coût actuel − coût avec LED).') +
+      P('Le temps de retour vaut : investissement / (coût actuel − coût avec LED). Graphiquement, c\'est le point où la droite du coût cumulé des LED (qui part de l\'investissement) croise celle de l\'éclairage actuel.') +
       H('3. Balisage') +
-      P('Sur un parcours fermé, il y a autant de balises que d\'intervalles : n = périmètre / espacement, arrondi à l\'entier supérieur. Énergie annuelle : E = n × P × durée d\'allumage.') +
+      P('Sur un parcours fermé, il y a autant de balises que d\'intervalles : n = périmètre / espacement, arrondi à l\'entier supérieur. Énergie annuelle : E = n × P × durée d\'allumage (un détecteur crépusculaire allume les balises environ 4 000 h par an).') +
       BOX(P('Φ = E × d² / cos(α / 2) ; N = Ssalle / S, arrondi au-dessus.', 'Coût annuel (6 h/jour) : 2,19 × N × P × prix.'))
   }
 ];

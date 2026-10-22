@@ -507,18 +507,22 @@ const EXOS = [
     support: 'Programme ITEC, chapitres 3.2.1 et 3.2.2 · annales ITEC 2021 à 2026',
     body:
       H('1. Classes d\'équivalence') +
-      P('Une <b>classe d\'équivalence</b> regroupe les pièces sans mouvement relatif pendant le fonctionnement (A = {1 ; 4 ; 7}). Les pièces déformables (ressorts, joints) n\'en font pas partie.') +
+      P('Une <b>classe d\'équivalence</b> regroupe les pièces sans mouvement relatif pendant le fonctionnement (A = {1 ; 4 ; 7}) : vissées, soudées, emmanchées ensemble, elles se comportent comme un seul solide. Les pièces déformables (ressorts, joints) n\'en font pas partie. On commence toujours par le bâti (la partie fixe).') +
       H('2. Liaisons normalisées') +
-      P('Une liaison se reconnaît à la forme du contact et aux mouvements qu\'elle autorise (R : rotations, T : translations, autour et le long de l\'axe x).') +
+      P('Une liaison se reconnaît à la forme du contact et aux mouvements qu\'elle autorise. Le nombre de <b>degrés de liberté</b> (ddl) est le nombre de mouvements indépendants possibles : au plus 6 (3 translations T et 3 rotations R).') +
       table(['Liaison', 'ddl', 'Mouvements'], [['Encastrement (complète)', '0', 'aucun'], ['Pivot', '1', 'Rx'], ['Glissière', '1', 'Tx'], ['Hélicoïdale', '1', 'Rx et Tx liés (vis-écrou)'],
         ['Pivot glissant', '2', 'Rx, Tx'], ['Rotule', '3', 'Rx, Ry, Rz'], ['Appui plan', '3', 'Tx, Ty, Rz'], ['Linéaire annulaire', '4', 'Tx, Rx, Ry, Rz'], ['Linéaire rectiligne', '4', 'Tx, Ty, Rx, Rz'], ['Ponctuelle', '5', 'Tx, Ty, Rx, Ry, Rz']]) +
+      dSV(340, 130, `<rect class="fillv" x="30" y="40" width="60" height="50"/><line class="line" x1="10" y1="65" x2="110" y2="65"/><line class="line" x1="30" y1="40" x2="30" y2="90"/><line class="line" x1="90" y1="40" x2="90" y2="90"/>
+        <rect class="fillv" x="200" y="45" width="80" height="40"/><line class="line" x1="180" y1="65" x2="300" y2="65"/>` + dT(60, 118, 'pivot (vue de côté)', 'middle', 12) + dT(240, 118, 'glissière', 'middle', 12) + dRot(60, 65, 22, 60, 120, 'arrowv') + dA(250, 30, 300, 30, 'arrowv'),
+        'Symboles simplifiés : la pivot autorise une rotation autour de l\'axe, la glissière une translation le long de l\'axe') +
       table(['Surface de contact', 'Liaison'], [['Cylindre long dans un alésage', 'pivot glissant (pivot si arrêts axiaux)'], ['Plan sur plan', 'appui plan'], ['Sphère dans une sphère', 'rotule'], ['Sphère sur un plan', 'ponctuelle'], ['Cylindre sur un plan', 'linéaire rectiligne']]) +
       H('3. Graphe des liaisons et schéma cinématique') +
-      P('Le graphe des liaisons relie les classes d\'équivalence (cercles) par les liaisons (traits nommés). Le schéma cinématique représente chaque liaison par son symbole normalisé, dans la bonne orientation, sans respecter l\'échelle.') +
+      P('Le graphe des liaisons relie les classes d\'équivalence (cercles) par les liaisons (traits nommés). Il n\'y a liaison entre deux classes que si une pièce de l\'une touche une pièce de l\'autre. Le schéma cinématique représente ensuite chaque liaison par son symbole normalisé, dans la bonne orientation, sans respecter l\'échelle.') +
       fig(`<svg viewBox="0 0 340 150" role="img" style="max-width:420px"><line class="thin" x1="60" y1="110" x2="170" y2="35"/><line class="thin" x1="170" y1="35" x2="280" y2="110"/><line class="thin" x1="60" y1="110" x2="280" y2="110"/>
         <circle class="fillv" cx="60" cy="110" r="22"/><circle class="fillv" cx="170" cy="35" r="22"/><circle class="fillv" cx="280" cy="110" r="22"/>` +
         dT(60, 116, 'bâti', 'middle', 13) + dT(170, 41, 'B') + dT(280, 116, 'C') + dT(104, 64, 'pivot', 'end', 13) + dT(236, 64, 'rotule', 'start', 13) + dT(170, 140, 'glissière', 'middle', 13) + '</svg>',
-        'Exemple de graphe des liaisons') +
+        'Exemple de graphe des liaisons (système bielle-manivelle à trois classes)') +
+      EX('Méthode', P('1) Colorier les pièces d\'une même classe d\'équivalence. 2) Repérer les contacts entre classes. 3) Pour chaque contact, lister les mouvements possibles et en déduire la liaison. 4) Tracer le graphe, puis le schéma.')) +
       BOX(P('Nombre de degrés de liberté = nombre de mouvements indépendants possibles.', 'Graphe des liaisons d\'abord, schéma cinématique ensuite.'))
   },
   {
@@ -526,14 +530,20 @@ const EXOS = [
     title: 'Mouvements et trajectoires',
     support: 'Programme ITEC, chapitre 3.2.1',
     body:
-      UL('<b>Translation rectiligne</b> : tous les points décrivent des droites parallèles et ont la même vitesse.', '<b>Rotation autour d\'un axe fixe</b> : chaque point décrit un cercle centré sur l\'axe ; sa vitesse est proportionnelle à sa distance à l\'axe.',
+      UL('<b>Translation rectiligne</b> : tous les points décrivent des droites parallèles et ont la même vitesse (un tiroir, un ascenseur).', '<b>Rotation autour d\'un axe fixe</b> : chaque point décrit un cercle centré sur l\'axe ; sa vitesse est proportionnelle à sa distance à l\'axe (une roue, une porte).',
         '<b>Mouvement plan</b> : combinaison des deux dans un plan (bielle, bras articulé).') +
-      P('La <b>trajectoire</b> d\'un point est la courbe qu\'il décrit ; elle dépend du repère choisi (la valve d\'une roue décrit un cercle par rapport au cadre, une cycloïde par rapport au sol).') +
+      dSV(340, 196, `<circle class="c3" cx="100" cy="90" r="60"/><circle class="pt" cx="100" cy="90" r="4"/><line class="line" x1="100" y1="90" x2="160" y2="90"/><circle class="pt" cx="160" cy="90" r="5"/><line class="line" x1="100" y1="90" x2="130" y2="90"/>` +
+        dA(160, 90, 160, 30, 'arrowv') + dA(130, 90, 130, 60, 'arrowv') + dT(166, 44, 'V<tspan baseline-shift="sub" font-size="10">B</tspan>', 'start', 13) + dT(122, 66, 'V<tspan baseline-shift="sub" font-size="10">A</tspan>', 'end', 13) +
+        dT(100, 172, 'B deux fois plus loin que A :', 'middle', 12) + dT(100, 188, 'vitesse deux fois plus grande', 'middle', 12) +
+        `<line class="line" x1="230" y1="40" x2="320" y2="40"/><line class="line" x1="230" y1="100" x2="320" y2="100"/>` + dA(240, 40, 300, 40, 'arrowv') + dA(240, 100, 300, 100, 'arrowv') + dT(275, 130, 'translation :', 'middle', 12) + dT(275, 146, 'même vitesse', 'middle', 12),
+        'En rotation, la vitesse dépend de la distance à l\'axe ; en translation, tous les points ont la même vitesse') +
+      P('La <b>trajectoire</b> d\'un point est la courbe qu\'il décrit ; elle dépend du repère choisi (la valve d\'une roue décrit un cercle par rapport au cadre du vélo, mais une cycloïde par rapport au sol).') +
       H('Vitesse d\'un point') +
       P('Le vecteur vitesse est tangent à la trajectoire, dans le sens du mouvement. Pour un point à la distance R de l\'axe de rotation :') +
       M('V = R \\times \\omega') + LEG(['V', 'la vitesse linéaire en m/s'], ['R', 'la distance à l\'axe en m'], ['\\omega', 'la vitesse angulaire en rad/s']) +
       M('\\omega = \\frac{2 \\pi N}{60}') + LEG(['N', 'la vitesse de rotation en tr/min']) +
-      P('Accélération : a = Δv / Δt (en m/s²). Un mouvement uniformément accéléré part de 0 et atteint v au bout de t = v / a, en parcourant d = v² / (2a).') +
+      H('Accélération') +
+      P('a = Δv / Δt (en m/s²). Un mouvement uniformément accéléré part de 0 et atteint v au bout de t = v / a, en parcourant d = v² / (2a). Un cycle de déplacement typique comporte une phase d\'accélération, une phase à vitesse constante et une phase de freinage.') +
       BOX(P('V = R × ω ; ω = 2πN / 60.', 'Vitesse tangente à la trajectoire.'))
   },
   // ===================== Chapitre 2 =====================
@@ -542,18 +552,22 @@ const EXOS = [
     title: 'Transformer un mouvement',
     support: 'Programme ITEC, chapitre 5.2.3 · annales : monte-personne, dégrilleur, vis de dosage',
     body:
+      P('Un moteur fournit presque toujours une rotation. Pour obtenir une translation (monter une cabine, pousser une tige), on utilise un système de transformation de mouvement.') +
       H('1. Pignon-crémaillère') +
+      dSV(340, 130, `<rect class="fillv" x="20" y="90" width="300" height="16"/>` + Array.from({ length: 20 }, (_, i) => `<rect class="fillv" x="${24 + i * 15}" y="84" width="7" height="6"/>`).join('') + dGear(150, 52, 30, 16, 'flow') +
+        dRot(150, 52, 44, 60, 150, 'arrowv') + dA(200, 120, 260, 120) + dT(230, 116, 'V', 'middle') + dT(100, 18, 'ω', 'end'),
+        'Le pignon tourne, la crémaillère avance (ou le pignon roule sur une crémaillère fixe)') +
       M('V = \\omega \\times \\frac{m \\times Z}{2}') + LEG(['V', 'la vitesse de la crémaillère (ou du pignon qui la parcourt) en m/s'], ['\\omega', 'la vitesse angulaire du pignon en rad/s'], ['m', 'le module en m'], ['Z', 'le nombre de dents du pignon']) +
-      P('m × Z / 2 est le rayon primitif du pignon.') +
+      P('m × Z / 2 est le rayon primitif du pignon. À chaque tour, la crémaillère avance de la circonférence primitive π × m × Z.') +
       H('2. Système vis-écrou') +
       M('V = p \\times \\frac{N}{60}') + LEG(['V', 'la vitesse de translation en mm/s'], ['p', 'le pas de la vis en mm (déplacement pour un tour)'], ['N', 'la vitesse de rotation en tr/min']) +
-      P('Une vis à plusieurs filets avance du pas × nombre de filets à chaque tour. Une vis d\'Archimède (vis de dosage) déplace à chaque tour le volume compris entre deux spires : débit = volume par tour × nombre de tours par seconde.') +
+      P('Le système vis-écrou réduit fortement la vitesse et multiplie l\'effort : un petit couple suffit pour obtenir une grande poussée (cric, étau, vérin électrique). Une vis à plusieurs filets avance du pas × nombre de filets à chaque tour. Une vis d\'Archimède (vis de dosage) déplace à chaque tour le volume compris entre deux spires : débit = volume par tour × nombre de tours par seconde.') +
       H('3. Loi entrée-sortie d\'un vérin') +
-      P('Quand un vérin fait tourner un levier, sa longueur dépend de l\'angle θ (loi d\'Al-Kashi) :') +
+      P('Quand un vérin fait tourner un levier, sa longueur dépend de l\'angle θ. Dans le triangle formé par le pivot et les deux attaches, la loi d\'Al-Kashi donne :') +
       M('L = \\sqrt{a^2 + b^2 - 2 a b \\cos\\theta}') + LEG(['L', 'la longueur du vérin'], ['a', 'et b les distances du pivot aux deux attaches'], ['\\theta', 'l\'angle entre ces deux segments']) +
-      P('La course est la différence entre les longueurs aux deux positions extrêmes.') +
+      P('La course est la différence entre les longueurs aux deux positions extrêmes. Si θ = 90°, on retrouve Pythagore : L² = a² + b².') +
       H('4. Durée d\'un cycle') +
-      P('Pour chaque phase : t = d / v. La durée du cycle est la somme des durées des phases, y compris les temps morts (basculement, attente).') +
+      P('Pour chaque phase : t = d / v. La durée du cycle est la somme des durées des phases, y compris les temps morts (basculement, attente). On la compare à la durée imposée par le cahier des charges.') +
       BOX(P('Crémaillère : V = ω × r ; vis-écrou : V = p × N / 60.', 'Al-Kashi : L² = a² + b² − 2ab cos θ.'))
   },
   {
@@ -561,18 +575,22 @@ const EXOS = [
     title: 'Transmettre la puissance : réducteurs, poulies, treuils',
     support: 'Programme ITEC, chapitres 2.3.6 et 5.2.3 · annales : éolien, treuil, téléski',
     body:
+      P('Un moteur électrique tourne vite (1 500 à 3 000 tr/min) avec un faible couple. La plupart des récepteurs demandent l\'inverse : on place entre les deux un <b>réducteur</b>.') +
       H('1. Rapport de transmission') +
       M('r = \\frac{N_s}{N_e}') + LEG(['r', 'le rapport de transmission (sans unité)'], ['N_s', 'la vitesse de sortie'], ['N_e', 'la vitesse d\'entrée (même unité)']) +
       table(['Transmission', 'Rapport'], [['Engrenage', 'r = Z menante / Z menée'], ['Poulies-courroie', 'r = d menante / d menée'], ['Plusieurs étages', 'r = r₁ × r₂ × …'], ['Réducteur « 1/k »', 'r = 1 / k']]) +
-      P('Une poulie et une courroie tournent sans glisser : la vitesse linéaire de la courroie vaut V = ω × d / 2.') +
+      dSV(340, 140, `<circle class="flow" cx="70" cy="70" r="25"/><circle class="fillv" cx="250" cy="70" r="55"/><line class="line" x1="70" y1="45" x2="250" y2="15"/><line class="line" x1="70" y1="95" x2="250" y2="125"/>` +
+        dT(70, 75, 'd₁', 'middle', 13) + dT(250, 75, 'd₂', 'middle', 13) + dRot(70, 70, 34, 120, 200, 'arrowv') + dT(160, 136, 'r = d₁ / d₂ : la grande poulie tourne moins vite', 'middle', 12),
+        'Poulies-courroie : la courroie a la même vitesse sur les deux poulies') +
+      P('Une poulie et une courroie tournent sans glisser : la vitesse linéaire de la courroie vaut V = ω × d / 2, la même sur les deux poulies, d\'où ω₁ × d₁ = ω₂ × d₂.') +
       H('2. Couple et puissance') +
       M('P = C \\times \\omega') + LEG(['P', 'la puissance en W'], ['C', 'le couple en N·m'], ['\\omega', 'la vitesse angulaire en rad/s']) +
       M('C_s = \\frac{\\eta \\times C_e}{r}') + LEG(['C_s', 'et Ce les couples de sortie et d\'entrée en N·m'], ['\\eta', 'le rendement de la transmission']) +
-      P('Un réducteur divise la vitesse et multiplie le couple, à la perte près.') +
+      P('Un réducteur divise la vitesse et multiplie le couple, à la perte près : la puissance se conserve (P<sub>s</sub> = η × P<sub>e</sub>). Avec r = 1/40 et η = 0,9, un couple de 10 N·m devient 10 × 40 × 0,9 = 360 N·m.') +
       H('3. Treuil et câble') +
-      P('Le câble s\'enroule sur un tambour de diamètre D ; son rayon d\'enroulement vaut (D + d) / 2 avec d le diamètre du câble. Vitesse du câble : V = ω<sub>tambour</sub> × R ; force disponible : F = P / V.') +
+      P('Le câble s\'enroule sur un tambour de diamètre D ; son rayon d\'enroulement vaut (D + d) / 2 avec d le diamètre du câble (le câble s\'enroule par son centre). Vitesse du câble : V = ω<sub>tambour</sub> × R ; force disponible : F = P / V ; masse levable : m = F / g.') +
       H('4. Éolienne : vitesse en bout de pale') +
-      P('Le TSR (tip speed ratio) compare la vitesse du bout de pale à celle du vent : λ = ω × R / V<sub>vent</sub>. Il vaut 6 à 8 pour une éolienne tripale.') +
+      P('Le TSR (tip speed ratio) compare la vitesse du bout de pale à celle du vent : λ = ω × R / V<sub>vent</sub>. Il vaut 6 à 8 pour une éolienne tripale. Le rotor tourne lentement (une quinzaine de tr/min) : un multiplicateur (r > 1) entraîne la génératrice.') +
       BOX(P('r = Ns / Ne ; P = C × ω.', 'Réducteur : vitesse ÷, couple ×.'))
   },
   // ===================== Chapitre 3 =====================
@@ -583,15 +601,19 @@ const EXOS = [
     body:
       H('1. Modéliser les actions') +
       UL('Une <b>force</b> : point d\'application, direction, sens, intensité (en N).', 'Le <b>poids</b> : P = m × g, vertical vers le bas, au centre de gravité.',
-        'Un <b>moment</b> : M<sub>A</sub>(F) = ± d × F, avec d la distance de A à la droite d\'action de F (bras de levier), en N·m ; positif dans le sens trigonométrique.') +
-      P('Une liaison parfaite transmet des efforts dans les directions où elle bloque un mouvement : une pivot d\'axe z ne transmet aucun moment autour de z.') +
+        'Un <b>moment</b> : M<sub>A</sub>(F) = ± d × F, avec d la distance de A à la droite d\'action de F (bras de levier), en N·m ; positif dans le sens trigonométrique. Il mesure l\'effet de rotation d\'une force.') +
+      dSV(340, 150, `<line class="line" x1="40" y1="100" x2="300" y2="100"/><circle class="pt" cx="60" cy="100" r="5"/>` + dA(260, 40, 260, 96, 'arrowv') + `<line class="c3" x1="260" y1="20" x2="260" y2="130"/>` +
+        dCote(60, 120, 260, 120, 'd = bras de levier', 16) + dT(54, 90, 'A', 'end') + dT(268, 56, 'F', 'start') + dRot(60, 100, 26, 330, 200, 'arrow'),
+        'Moment de F en A : MA = d × F (d mesuré perpendiculairement à la droite d\'action)') +
+      P('Une liaison parfaite transmet des efforts dans les directions où elle bloque un mouvement : une pivot d\'axe z ne transmet aucun moment autour de z (sinon l\'arbre ne pourrait pas tourner).') +
       H('2. Principe fondamental de la statique') +
-      P('Un solide en équilibre vérifie : la somme des forces est nulle et la somme des moments en un point est nulle. En problème plan, on obtient trois équations :') +
+      P('Un solide en équilibre vérifie : la somme des forces est nulle et la somme des moments en un point est nulle. En problème plan, on obtient trois équations, donc trois inconnues au plus :') +
       M('\\sum F_x = 0 \\qquad \\sum F_y = 0 \\qquad \\sum M_A = 0') +
-      UL('<b>Solide soumis à deux forces</b> : elles sont opposées et portées par la droite qui joint leurs points d\'application.', '<b>Solide soumis à trois forces non parallèles</b> : elles sont concourantes et leur somme vectorielle est nulle (triangle des forces).') +
-      EX('Exemple : charge répartie sur des appuis', P('Un silo de 1 800 kg repose sur 4 pieds identiques, la charge étant également répartie : chaque pied reprend 1 800 × 9,81 / 4 ≈ 4 415 N.')) +
+      P('Astuce : on écrit l\'équation des moments au point où s\'appliquent les forces inconnues ; leurs moments y sont nuls et il ne reste qu\'une inconnue.') +
+      UL('<b>Solide soumis à deux forces</b> : elles sont opposées et portées par la droite qui joint leurs points d\'application.', '<b>Solide soumis à trois forces non parallèles</b> : elles sont concourantes en un point et leur somme vectorielle est nulle (triangle des forces, tracé à l\'échelle).') +
+      EX('Exemple : charge répartie sur des appuis', P('Un silo de 1 800 kg repose sur 4 pieds identiques, la charge étant également répartie : chaque pied reprend 1 800 × 9,81 / 4 ≈ 4 415 N, soit l\'équivalent de 450 kg. On choisit un capteur de pesage de capacité supérieure.')) +
       H('3. Stabilité') +
-      P('Un équilibre est <b>stable</b> si le solide y revient après une petite perturbation. Une pièce longue et fine comprimée risque le <b>flambement</b> (elle se courbe brusquement) ; une structure se contrevente dans les trois directions.') +
+      P('Un équilibre est <b>stable</b> si le solide y revient après une petite perturbation (une bille au fond d\'un bol), <b>instable</b> sinon (une bille sur une bosse). Une pièce longue et fine comprimée risque le <b>flambement</b> : elle se courbe brusquement bien avant d\'atteindre sa limite de résistance. Une structure se contrevente (croix de Saint-André) dans les trois directions.') +
       BOX(P('PFS : somme des forces nulle et somme des moments nulle.', 'Moment = bras de levier × force.'))
   },
   {
@@ -600,16 +622,21 @@ const EXOS = [
     support: 'Programme ITEC, chapitre 3.2.2 · annales ITEC',
     body:
       H('1. Plan incliné') +
+      dSV(340, 170, `<polygon class="flow" points="20,150 300,150 300,50"/><line class="line" x1="20" y1="150" x2="300" y2="50"/><g transform="translate(170 96.4) rotate(-19.65)"><rect class="fillv" x="-25" y="-30" width="50" height="30"/></g>` +
+        dA(165, 82, 165, 150, 'arrowv') + dA(165, 82, 143, 90) + dA(165, 82, 186, 142) + dT(160, 152, 'P', 'end') + dT(138, 84, 'Pt', 'end', 13) + dT(194, 140, 'Pn', 'start', 13) +
+        `<path class="thin" d="M70 150 A50 50 0 0 0 67.1 133.2"/>` + dT(78, 144, 'α', 'start'),
+        'Le poids P se décompose : Pt (parallèle à la pente) fait glisser, Pn (perpendiculaire) plaque l\'objet contre la pente') +
       P('Sur une pente d\'angle α, le poids P = m × g se décompose en :') +
       M('P_t = P \\times \\sin\\alpha \\qquad P_n = P \\times \\cos\\alpha') + LEG(['P_t', 'la composante parallèle à la pente (qui fait glisser) en N'], ['P_n', 'la composante perpendiculaire (qui plaque) en N']) +
       H('2. Frottement') +
       M('T = f \\times N') + LEG(['T', 'l\'effort tangentiel maximal en N'], ['f', 'le coefficient de frottement (sans unité)'], ['N', 'l\'effort normal en N']) +
-      P('L\'angle de frottement φ vérifie tan φ = f. Un objet posé sur une pente d\'angle α glisse si α > φ. Pour faire monter une charge à vitesse constante : F = P<sub>t</sub> + f × P<sub>n</sub>.') +
+      P('L\'angle de frottement φ vérifie tan φ = f. Un objet posé sur une pente d\'angle α glisse si α > φ : par exemple, avec f = 0,3, φ ≈ 16,7° ; l\'objet tient sur une pente de 15° mais glisse sur une pente de 20°. Pour faire monter une charge à vitesse constante : F = P<sub>t</sub> + f × P<sub>n</sub>.') +
       H('3. Pression') +
       M('F = p \\times S') + LEG(['F', 'l\'effort en N'], ['p', 'la pression en Pa (1 bar = 10⁵ Pa)'], ['S', 'la surface en m²']) +
-      P('Dans un vérin, la poussée utilise toute la surface du piston (π D² / 4) ; en traction, on retire la section de la tige. Sur une paroi immergée, la pression augmente avec la profondeur : p = ρ × g × h.') +
+      P('Dans un vérin, la poussée utilise toute la surface du piston (π D² / 4) ; en traction, on retire la section de la tige, l\'effort est donc plus faible. Pour un effort donné, on calcule la surface nécessaire S = F / p puis le diamètre, et on choisit le diamètre normalisé immédiatement supérieur. Sur une paroi immergée, la pression augmente avec la profondeur : p = ρ × g × h.') +
       H('4. Ressort') +
       M('F = k \\times x') + LEG(['F', 'l\'effort en N'], ['k', 'la raideur en N/mm'], ['x', 'l\'écrasement ou l\'allongement en mm']) +
+      P('La raideur se mesure : on applique un effort connu et on mesure l\'écrasement (k = F / x). Dans un clapet de sécurité, le ressort s\'ouvre quand l\'effort de pression p × S dépasse son effort de tarage.') +
       BOX(P('Glissement si α > φ, avec tan φ = f.', 'F = p × S ; F = k × x.'))
   },
   // ===================== Chapitre 4 =====================
@@ -620,17 +647,21 @@ const EXOS = [
     body:
       H('1. Hypothèses du modèle poutre') +
       P('On étudie des pièces longues (poutres) en matériau homogène et isotrope, avec de petites déformations. Sollicitations simples : <b>traction</b>, <b>compression</b>, <b>flexion</b> (et, plus rarement, torsion et cisaillement).') +
+      dSV(340, 120, `<rect class="fillv" x="40" y="30" width="200" height="30"/><rect class="c3" x="40" y="30" width="230" height="30" fill="none"/>` + dMur(40, 20, 70) + dA(240, 45, 310, 45) +
+        dT(296, 36, 'F', 'middle') + dCote(40, 85, 240, 85, 'L₀', -6) + dCote(240, 105, 270, 105, 'ΔL', -6), 'Barre en traction : elle s\'allonge de ΔL sous l\'effort F') +
       H('2. Contrainte normale') +
+      P('Deux barres du même acier, l\'une fine et l\'autre épaisse, ne cassent pas sous le même effort : ce qui compte est l\'effort par unité de surface, la <b>contrainte</b>.') +
       M('\\sigma = \\frac{F}{S}') + LEG(['\\sigma', 'la contrainte en MPa'], ['F', 'l\'effort de traction ou de compression en N'], ['S', 'la section en mm²']) +
       P('1 MPa = 1 N/mm². Pour un câble ou une barre ronde : S = π d² / 4.') +
       H('3. Coefficient de sécurité') +
       M('s = \\frac{R_e}{\\sigma_{max}}') + LEG(['s', 'le coefficient de sécurité (sans unité)'], ['R_e', 'la limite élastique du matériau en MPa'], ['\\sigma_{max}', 'la contrainte maximale en MPa']) +
-      P('Section minimale pour un coefficient s imposé : S<sub>min</sub> = s × F / R<sub>e</sub>.') +
+      P('La pièce est validée si s est supérieur ou égal à la valeur imposée par le cahier des charges (souvent 2 à 5 pour un câble de levage). Section minimale pour un coefficient s imposé : S<sub>min</sub> = s × F / R<sub>e</sub>, puis on choisit la section normalisée immédiatement supérieure.') +
       H('4. Loi de Hooke') +
       M('\\sigma = E \\times \\varepsilon \\qquad \\varepsilon = \\frac{\\Delta L}{L_0}') + LEG(['E', 'le module de Young en MPa'], ['\\varepsilon', 'l\'allongement relatif (sans unité)'], ['\\Delta L', 'l\'allongement'], ['L_0', 'la longueur initiale (même unité)']) +
-      P('Valable seulement dans le domaine élastique (σ < Re). Ordres de grandeur de E : acier 210 GPa, aluminium 70 GPa, bois 10 GPa.') +
-      EX('Exemple', P('Un câble d\'acier de 200 mm², long de 1 000 m, tendu par 40 kN, avec E = 160 GPa (module apparent d\'un câble) :') +
-        M('\\sigma = \\frac{40\\,000}{200} = 200\\,\\text{MPa} \\qquad \\Delta L = \\frac{\\sigma}{E} \\times L_0 = \\frac{200}{160\\,000} \\times 1\\,000 = 1{,}25\\,\\text{m}')) +
+      P('Valable seulement dans le domaine élastique (σ < Re) : la pièce reprend sa forme quand on la relâche. Au-delà, elle se déforme définitivement. Ordres de grandeur de E : acier 210 GPa, aluminium 70 GPa, bois 10 GPa (1 GPa = 1 000 MPa).') +
+      EX('Exemple', P('Un câble d\'acier de 200 mm², long de 1 000 m, tendu par 40 kN, avec E = 160 GPa (module apparent d\'un câble, plus faible que celui de l\'acier car les fils sont torsadés) :') +
+        M('\\sigma = \\frac{40\\,000}{200} = 200\\,\\text{MPa}') + M('\\Delta L = \\frac{\\sigma}{E} \\times L_0 = \\frac{200}{160\\,000} \\times 1\\,000 = 1{,}25\\,\\text{m}') +
+        P('Le dispositif de tension doit pouvoir rattraper au moins 1,25 m.')) +
       BOX(P('σ = F / S ; s = Re / σmax ; σ = E × ε.'))
   },
   {
@@ -639,17 +670,19 @@ const EXOS = [
     support: 'Programme ITEC, chapitre 3.2.3 · annales ITEC',
     body:
       H('1. Poutre en flexion') +
-      P('Une poutre en flexion se courbe : les fibres d\'un côté sont tendues, celles de l\'autre comprimées ; la fibre neutre, au milieu, ne change pas de longueur. La contrainte est maximale sur les bords.') +
+      P('Une poutre en flexion se courbe : les fibres d\'un côté sont tendues, celles de l\'autre comprimées ; la fibre neutre, au milieu, ne change pas de longueur. La contrainte est nulle sur la fibre neutre et maximale sur les bords.') +
       M('\\sigma_{max} = \\frac{M_f \\times v}{I}') + LEG(['M_f', 'le moment fléchissant maximal en N·mm'], ['v', 'la distance de la fibre neutre au bord (demi-hauteur) en mm'], ['I', 'le moment quadratique de la section en mm⁴']) +
       M('I = \\frac{b \\times h^3}{12}') + LEG(['b', 'la largeur de la section en mm'], ['h', 'sa hauteur, dans le sens de la charge, en mm']) +
-      P('Comme h est au cube, une planche posée sur chant est beaucoup plus rigide et résistante que posée à plat. Pour une poutre en porte-à-faux de longueur L chargée par F à son extrémité : M<sub>f</sub> = F × L, à l\'encastrement.') +
+      dSV(340, 145, `<rect class="flow" x="60" y="30" width="30" height="90"/><rect class="fillv" x="200" y="60" width="90" height="30"/>` + dA(75, 4, 75, 26, 'arrowv') + dA(245, 34, 245, 56, 'arrowv') +
+        dT(75, 138, 'sur chant : I grand', 'middle', 12) + dT(245, 138, 'à plat : I petit', 'middle', 12), 'Même section, même charge verticale : sur chant, h est grand et I = b h³ / 12 est beaucoup plus grand') +
+      P('Comme h est au cube, une planche posée sur chant est beaucoup plus rigide et résistante que posée à plat : pour une section 20 × 100, I vaut 1,67 × 10⁶ mm⁴ sur chant contre 6,7 × 10⁴ mm⁴ à plat, 25 fois moins. Pour une poutre en porte-à-faux de longueur L chargée par F à son extrémité : M<sub>f</sub> = F × L, maximal à l\'encastrement (c\'est là qu\'elle casse).') +
       H('2. Flèche') +
       dSV(340, 130, dMur(40, 30, 90) + `<rect class="fillv" x="40" y="50" width="240" height="12"/><path class="c3" d="M40 56 Q170 58 280 92"/>` + dA(280, 92, 280, 124) + dT(272, 118, 'F', 'end') + dCote(300, 56, 300, 92, 'f') + dCote(40, 22, 280, 22, 'L', -6),
         'Poutre en porte-à-faux (déformée exagérée)') +
       M('f = \\frac{F \\times L^3}{3 \\times E \\times I}') + LEG(['f', 'la flèche en mm'], ['F', 'la charge en N'], ['L', 'la longueur en mm'], ['E', 'le module de Young en MPa'], ['I', 'le moment quadratique en mm⁴']) +
-      P('Inversement, une flèche mesurée permet de retrouver E, donc d\'identifier le matériau.') +
+      P('Doubler la longueur multiplie la flèche par 8. Inversement, une flèche mesurée permet de retrouver E (E = F L³ / (3 f I)), donc d\'identifier le matériau.') +
       H('3. Simulation par éléments finis') +
-      P('Un logiciel découpe la pièce en petits éléments (maillage) et calcule contraintes et déplacements. On renseigne le matériau, les fixations et les efforts ; on lit la contrainte maximale (pour le coefficient de sécurité) et le déplacement maximal (pour la flèche). Un maillage plus fin donne un résultat plus précis mais plus long à calculer.') +
+      P('Un logiciel découpe la pièce en petits éléments (maillage) et calcule contraintes et déplacements. On renseigne le matériau, les fixations et les efforts ; on lit la contrainte maximale (pour le coefficient de sécurité) et le déplacement maximal (pour la flèche). Un maillage plus fin donne un résultat plus précis mais plus long à calculer. Les zones rouges de la carte des contraintes montrent où la pièce risque de casser ; on peut y ajouter de la matière, ou en retirer ailleurs pour alléger.') +
       BOX(P('σmax = Mf × v / I ; I = b h³ / 12 (h dans le sens de la charge).', 'Porte-à-faux : f = F L³ / (3 E I).'))
   },
   // ===================== Chapitre 5 =====================
@@ -661,11 +694,14 @@ const EXOS = [
       table(['Famille', 'Exemples', 'Atouts'], [['Métaux', 'acier, aluminium, cuivre', 'résistants, ductiles, recyclables'], ['Polymères', 'PA, PE, ABS, PLA', 'légers, faciles à mouler'],
         ['Céramiques et verres', 'verre, alumine, béton', 'durs, résistants à la chaleur, fragiles'], ['Composites', 'fibre de carbone ou de verre et résine', 'très rigides et légers'], ['Naturels', 'bois, liège, chanvre', 'biosourcés, peu de CO₂']]) +
       H('Propriétés utiles') +
-      UL('<b>Masse volumique</b> ρ (kg/m³) : acier 7 850, aluminium 2 700, PLA 1 250, bois 500 à 800.', '<b>Module de Young</b> E (rigidité) et <b>limite élastique</b> Re (résistance).',
-        '<b>Dureté</b>, <b>résilience</b> (résistance aux chocs), <b>conductivités</b> thermique et électrique.', 'Résistance à la <b>corrosion</b> et au vieillissement (UV pour les polymères).') +
+      UL('<b>Masse volumique</b> ρ (kg/m³) : acier 7 850, aluminium 2 700, PLA 1 250, bois 500 à 800.', '<b>Module de Young</b> E (rigidité : résistance à la déformation) et <b>limite élastique</b> Re (résistance : effort avant déformation définitive). Un matériau peut être rigide mais fragile (verre).',
+        '<b>Dureté</b> (résistance à l\'usure et à la rayure), <b>résilience</b> (résistance aux chocs), <b>conductivités</b> thermique et électrique.', 'Résistance à la <b>corrosion</b> et au vieillissement (UV pour les polymères).') +
+      graph({ x0: 0, x1: 8000, dx: 2000, y0: 0, y1: 240, dy: 40, w: 400, h: 230, xlab: 'ρ (kg/m³)', ylab: 'E (GPa)', series: [], fx: x => fr(x),
+        extra: (X, Y) => [['acier', 7850, 210], ['alu', 2700, 70], ['bois', 600, 10], ['PLA', 1250, 3.5], ['carbone', 1600, 120], ['verre', 2500, 70]].map(([n, x, y]) => `<circle class="pt" cx="${X(x)}" cy="${Y(y)}" r="5"/>` + dT(X(x) + (x > 6000 || n === 'verre' ? -8 : 8), Y(y) - 6, n, x > 6000 || n === 'verre' ? 'end' : 'start', 12)).join(''),
+        cap: 'Rigidité en fonction de la masse volumique : le composite carbone est rigide et léger' }) +
       H('Protéger un matériau') +
-      P('L\'acier rouille : on le protège par galvanisation (couche de zinc), peinture ou on choisit un inox. L\'aluminium peut être anodisé ; le bois est traité (autoclave) ou protégé par un lasure.') +
-      BOX(P('Cinq grandes familles : métaux, polymères, céramiques, composites, naturels.'))
+      P('L\'acier rouille au contact de l\'eau et de l\'air : on le protège par galvanisation (couche de zinc qui s\'oxyde à sa place), peinture, ou on choisit un inox. L\'aluminium peut être anodisé (couche d\'oxyde dure et protectrice) ; le bois est traité (autoclave) ou protégé par une lasure ; les polymères reçoivent des additifs anti-UV.') +
+      BOX(P('Cinq grandes familles : métaux, polymères, céramiques, composites, naturels.', 'Rigidité (E) et résistance (Re) sont deux propriétés différentes.'))
   },
   {
     chap: 5,
@@ -673,13 +709,14 @@ const EXOS = [
     support: 'Programme ITEC, chapitres 4.2.2 et 4.2.3 · annales ITEC',
     body:
       H('1. Indices de performance (méthode d\'Ashby)') +
-      P('On cherche le matériau qui remplit la fonction avec la plus petite masse. Selon la sollicitation, on maximise un indice :') +
+      P('Comparer seulement les résistances ne suffit pas : un matériau très résistant mais très lourd peut être moins bon qu\'un matériau moyen mais léger. Pour une pièce qui doit remplir sa fonction avec la plus petite masse, on maximise un <b>indice de performance</b> qui dépend de la sollicitation :') +
       table(['Pièce et objectif', 'Indice à maximiser'], [['Tirant rigide et léger', 'E / ρ'], ['Tirant résistant et léger', 'Re / ρ'], ['Poutre rigide et légère', 'E<sup>1/2</sup> / ρ'], ['Plaque rigide et légère', 'E<sup>1/3</sup> / ρ']]) +
-      P('Sur une carte d\'Ashby (graphique E en fonction de ρ, en échelles logarithmiques), les matériaux de même indice sont sur une même droite : on retient ceux situés au-dessus.') +
+      EX('Exemple : tirant rigide', P('Acier : E / ρ = 210 000 / 7 850 ≈ 26,8 ; aluminium : 70 000 / 2 700 ≈ 25,9 ; composite carbone : 120 000 / 1 600 = 75 (avec E en MPa et ρ en kg/m³). Pour la même rigidité, le carbone est environ trois fois plus léger que l\'acier ou l\'aluminium.')) +
+      P('Sur une carte d\'Ashby (graphique E en fonction de ρ, en échelles logarithmiques), les matériaux de même indice sont sur une même droite : on trace la droite et on retient ceux situés au-dessus.') +
       H('2. Matrice multicritère') +
-      P('On note chaque solution sur chaque critère (masse, coût, résistance, recyclabilité, CO₂…), on multiplie par le coefficient d\'importance du critère et on additionne. Les solutions qui ne respectent pas une exigence impérative sont éliminées avant.') +
+      P('Le choix final tient compte d\'autres critères : coût, disponibilité, procédé, recyclabilité, CO₂. On note chaque solution sur chaque critère, on multiplie par le coefficient d\'importance du critère et on additionne. Les solutions qui ne respectent pas une exigence impérative sont éliminées avant.') +
       H('3. Gain de masse et CO₂') +
-      M('m = \\rho \\times V') + P('Le CO₂ de fabrication vaut la masse × l\'émission par kilogramme du matériau (acier environ 2 kg CO₂/kg, aluminium primaire environ 8 à 10, aluminium recyclé environ 1). Un véhicule plus léger consomme aussi moins à l\'usage.') +
+      M('m = \\rho \\times V') + P('Le CO₂ de fabrication vaut la masse × l\'émission par kilogramme du matériau (acier environ 2 kg CO₂/kg, aluminium primaire environ 8 à 10, aluminium recyclé environ 1). Un matériau plus léger peut donc émettre plus à la fabrication mais moins à l\'usage (un véhicule plus léger consomme moins) : il faut raisonner sur tout le cycle de vie.') +
       BOX(P('Ashby : maximiser l\'indice adapté à la sollicitation.', 'Matrice : éliminer, puis noter et pondérer.'))
   },
   {
@@ -689,11 +726,15 @@ const EXOS = [
     body:
       table(['Procédé', 'Principe', 'Exemple'], [['Moulage, injection', 'matière fondue coulée dans un moule', 'carter, coque plastique'], ['Usinage', 'enlèvement de matière (tournage, fraisage)', 'arbre, pièce précise'],
         ['Mise en forme', 'déformation (pliage, emboutissage)', 'tôlerie, carrosserie'], ['Fabrication additive', 'dépôt couche par couche', 'prototype, pièce complexe'], ['Découpe', 'laser, jet d\'eau, plasma', 'pièces planes']]) +
+      P('Le choix dépend aussi de la <b>série</b> : un moule d\'injection coûte cher mais chaque pièce revient à quelques centimes, rentable pour des milliers de pièces ; l\'impression 3D n\'a pas d\'outillage, idéale pour un prototype ou une petite série.') +
+      graph({ x0: 0, x1: 1000, dx: 200, y0: 0, y1: 50, dy: 10, w: 400, h: 220, xlab: 'nombre de pièces', ylab: 'coût unitaire (€)',
+        series: [{ pts: curve(n => Math.min(50, 8 + 20000 / Math.max(n, 1) / 10), 40, 1000) }, { pts: [[0, 15], [1000, 15]], cls: 'c2' }],
+        cap: 'Allure : moulage (bleu, cher pour peu de pièces) et impression 3D (orange, coût constant)' }) +
       H('Assemblages') +
-      UL('<b>Démontables</b> : vis, boulons, clips (facilitent la réparation et le recyclage).', '<b>Non démontables</b> : soudure, rivets, collage.') +
+      UL('<b>Démontables</b> : vis, boulons, clips (facilitent la réparation et le recyclage).', '<b>Non démontables</b> : soudure, rivets, collage (plus légers ou plus étanches, mais on ne peut plus séparer les matériaux).') +
       H('Éco-concevoir une pièce') +
-      P('L\'analyse du cycle de vie (extraction, fabrication, transport, utilisation, fin de vie) guide le choix : réduire la masse et le nombre de matériaux différents, préférer des matériaux recyclés ou recyclables, des assemblages démontables, et un procédé qui limite les chutes. Attention aux <b>transferts d\'impact</b> : un composite allège mais se recycle mal.') +
-      BOX(P('Le couple matériau-procédé se choisit ensemble.', 'Assemblages démontables : réparables et recyclables.'))
+      P('L\'analyse du cycle de vie (extraction, fabrication, transport, utilisation, fin de vie) guide le choix : réduire la masse et le nombre de matériaux différents, préférer des matériaux recyclés ou recyclables, des assemblages démontables, et un procédé qui limite les chutes (l\'usinage peut transformer plus de la moitié du brut en copeaux). Attention aux <b>transferts d\'impact</b> : un composite allège mais se recycle mal.') +
+      BOX(P('Le couple matériau-procédé se choisit ensemble, en tenant compte de la série.', 'Assemblages démontables : réparables et recyclables.'))
   },
   // ===================== Chapitre 6 =====================
   {
@@ -704,14 +745,18 @@ const EXOS = [
       H('1. Rendements en cascade') +
       CHAIN([['Batterie', 'η₁'], ['Variateur', 'η₂'], ['Moteur', 'η₃'], ['Réducteur', 'η₄'], ['Charge', 'P utile']]) +
       M('P_a = \\frac{P_u}{\\eta_1 \\times \\eta_2 \\times \\eta_3 \\times \\eta_4}') + LEG(['P_a', 'la puissance à fournir en entrée en W'], ['P_u', 'la puissance utile en W']) +
-      P('On remonte la chaîne depuis la charge : chaque constituant doit fournir la puissance de sortie divisée par son rendement.') +
+      P('On remonte la chaîne depuis la charge : chaque constituant doit fournir la puissance de sortie divisée par son rendement. Exemple : 500 W utiles avec η₄ = 0,9 et η₃ = 0,85 demandent 500 / 0,9 = 556 W en sortie de moteur, puis 556 / 0,85 = 654 W en entrée de moteur.') +
       H('2. Choisir un moteur') +
+      graph({ x0: 0, x1: 3000, dx: 500, y0: 0, y1: 12, dy: 2, w: 400, h: 220, xlab: 'N (tr/min)', ylab: 'C (N·m)', series: [{ pts: [[0, 10], [3000, 0]] }],
+        extra: (X, Y) => `<circle class="pt" cx="${X(1500)}" cy="${Y(4)}" r="6"/>` + dT(X(1500) + 8, Y(4) + 16, 'point demandé', 'start', 12) + dT(X(200), Y(10.5), 'courbe du moteur', 'start', 12),
+        cap: 'Le point de fonctionnement demandé (couple, vitesse) doit se trouver sous la courbe du moteur' }) +
       UL('Puissance utile : P = C × ω (rotation) ou P = F × V (translation), en tenant compte des rendements de la transmission.', 'Couple et vitesse : le point de fonctionnement demandé doit être sous la courbe du moteur.',
-        'On choisit dans le catalogue le moteur de puissance immédiatement supérieure, avec une marge.') +
+        'On choisit dans le catalogue le moteur de puissance immédiatement supérieure, avec une marge (démarrage, usure).') +
       H('3. Vérin électrique') +
-      P('Un moteur entraîne une vis à billes : la vitesse de la tige vaut V = p × N / 60 et la puissance mécanique P = F × V. Son rendement global (moteur × vis) est souvent de 50 à 80 %.') +
+      P('Un moteur entraîne une vis à billes : la vitesse de la tige vaut V = p × N / 60 et la puissance mécanique P = F × V. Son rendement global (moteur × vis) est souvent de 50 à 80 %. Il est plus précis et plus propre qu\'un vérin hydraulique, mais moins puissant.') +
       H('4. Stockeurs d\'énergie') +
       table(['Stockeur', 'Énergie', 'Usage'], [['Batterie', 'E = U × Q', 'véhicule, outil'], ['Supercondensateur', 'E = ½ C U²', 'pics de puissance'], ['Volant d\'inertie', 'E = ½ J ω²', 'régulation'], ['Masse en hauteur', 'E = m g h', 'STEP, ascenseur']]) +
+      P('Une batterie stocke beaucoup d\'énergie mais la restitue lentement ; un supercondensateur stocke peu mais la restitue très vite (freinage récupératif d\'un bus).') +
       BOX(P('Pa = Pu / (produit des rendements).', 'Moteur : couple et vitesse sous sa courbe, puissance avec marge.'))
   },
   // ===================== Chapitre 7 =====================
@@ -721,17 +766,20 @@ const EXOS = [
     support: 'Programme ITEC, chapitres 4.1 et 4.3.4 · annales ITEC',
     body:
       H('1. Échelle') +
-      P('À l\'échelle 1:X, une longueur réelle vaut la longueur mesurée sur le plan × X (échelle 2:1 : le dessin est deux fois plus grand que la pièce).') +
+      P('À l\'échelle 1:X, une longueur réelle vaut la longueur mesurée sur le plan × X (échelle 2:1 : le dessin est deux fois plus grand que la pièce, pour les petites pièces). On mesure sur le plan, on multiplie, puis on convertit dans l\'unité voulue.') +
       H('2. Trigonométrie') +
       dSV(340, 140, `<polygon class="flow" points="40,115 280,115 280,30"/><path class="thin" d="M85 115 A45 45 0 0 0 82.4 99"/>` + dT(96, 108, 'α', 'start') + dT(160, 132, 'côté adjacent', 'middle', 13) + dT(288, 76, 'opposé', 'start', 13) + dT(150, 60, 'hypoténuse', 'end', 13),
         'Triangle rectangle') +
       M('\\sin\\alpha = \\frac{\\text{opposé}}{\\text{hypoténuse}} \\qquad \\cos\\alpha = \\frac{\\text{adjacent}}{\\text{hypoténuse}} \\qquad \\tan\\alpha = \\frac{\\text{opposé}}{\\text{adjacent}}') +
-      P('Théorème de Pythagore : hypoténuse² = adjacent² + opposé². Calculatrice en degrés.') +
+      P('Théorème de Pythagore : hypoténuse² = adjacent² + opposé². Calculatrice en degrés. Pour retrouver un angle, on utilise la fonction inverse : α = arctan(opposé / adjacent).') +
+      EX('Exemple', P('Une rampe monte de 0,8 m sur 6 m horizontaux : tan α = 0,8 / 6 ≈ 0,133, donc α ≈ 7,6° ; la longueur de la rampe vaut √(6² + 0,8²) ≈ 6,05 m.')) +
       H('3. Maquette numérique') +
-      UL('Un modeleur volumique paramétrique construit chaque pièce par des fonctions (extrusion, révolution, perçage) ordonnées dans un <b>arbre de construction</b>.', 'L\'<b>assemblage</b> positionne les pièces par des contraintes (coïncidence, coaxialité…) qui correspondent aux liaisons.',
+      UL('Un modeleur volumique paramétrique construit chaque pièce par des fonctions (extrusion, révolution, perçage) ordonnées dans un <b>arbre de construction</b> ; modifier une cote met toute la pièce à jour.', 'L\'<b>assemblage</b> positionne les pièces par des contraintes (coïncidence, coaxialité…) qui correspondent aux liaisons.',
         'La maquette sert à simuler (mouvements, éléments finis), à produire des plans cotés, des vues éclatées et des fichiers de fabrication (impression 3D, usinage).') +
       H('4. Jeu de fonctionnement') +
-      P('Le jeu est l\'espace laissé entre deux pièces pour qu\'elles puissent bouger ou se monter. Jeu = dimension de l\'alésage − dimension de l\'arbre. Avec des tolérances, le jeu minimal vaut alésage minimal − arbre maximal et le jeu maximal vaut alésage maximal − arbre minimal ; le jeu minimal doit rester positif pour un ajustement glissant.') +
+      dSV(340, 120, `<rect class="fillv" x="40" y="20" width="260" height="80"/><rect class="flow" x="20" y="44" width="300" height="32"/>` + dCote(330, 38, 330, 82, '') + dT(326, 112, 'alésage', 'end', 12) + dT(170, 64, 'arbre', 'middle', 13) +
+        `<line class="c3" x1="20" y1="38" x2="330" y2="38"/><line class="c3" x1="20" y1="82" x2="330" y2="82"/>`, 'Le jeu est l\'écart entre l\'alésage (le trou) et l\'arbre') +
+      P('Le jeu est l\'espace laissé entre deux pièces pour qu\'elles puissent bouger ou se monter. Jeu = dimension de l\'alésage − dimension de l\'arbre. Avec des tolérances, le jeu minimal vaut alésage minimal − arbre maximal et le jeu maximal vaut alésage maximal − arbre minimal ; le jeu minimal doit rester positif pour un ajustement glissant. S\'il est négatif, on a un ajustement serré : les pièces se montent en force.') +
       BOX(P('sin = opp / hyp ; cos = adj / hyp ; tan = opp / adj.', 'Jeu min = alésage min − arbre max.'))
   }
 ];
