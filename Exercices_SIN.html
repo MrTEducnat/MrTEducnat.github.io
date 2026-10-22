@@ -84,6 +84,13 @@ body {
   position: sticky; top: 0; height: 100vh; overflow-y: auto;
 }
 .sidebar h1 { font-size: 18px; font-weight: 600; margin: 0 8px 4px; }
+a.home {
+  display: inline-block; text-decoration: none; color: var(--accent); font-size: 14px;
+  border: 1px solid var(--accent); border-radius: 8px; padding: 4px 10px;
+}
+a.home:hover, a.home:focus-visible { background: var(--accent-bg); outline: none; }
+.sidebar a.home { margin: 0 8px 14px; }
+.topbar a.home { margin-left: auto; }
 .sidebar .sub { font-size: 13px; color: var(--muted); margin: 0 8px 16px; }
 .chap { margin-bottom: 2px; }
 .chap-btn {
@@ -232,10 +239,12 @@ svg .ledoff { fill: var(--side); stroke: var(--muted); }
 <div class="topbar">
   <button id="menuBtn" aria-label="Ouvrir le menu">☰</button>
   <span>Exercices SIN</span>
+  <a class="home" href="index.html">← Accueil</a>
 </div>
 <div class="shade" id="shade" hidden></div>
 <div class="layout">
   <nav class="sidebar" id="sidebar">
+    <a class="home" href="index.html">← Accueil</a>
     <h1>Exercices SIN</h1>
     <p class="sub">Terminale STI2D SIN · exercices à valeurs aléatoires</p>
     <div class="nav" id="nav"></div>
@@ -404,6 +413,45 @@ function sankey(stages, vals, unit) {
   return fig(s + '</svg>', unit);
 }
 
+// ---------- Dessins (schémas lisibles sur téléphone : viewBox étroit, texte à 14 px) ----------
+// Schéma : largeur et hauteur du viewBox, contenu SVG, légende
+const dSV = (w, h, inner, cap = '', max = 440) => fig(`<svg viewBox="0 0 ${w} ${h}" role="img" style="max-width:${max}px">${inner}</svg>`, cap);
+// Texte : position, contenu, ancrage (start | middle | end), taille
+const dT = (x, y, s, a = 'middle', sz = 14) => `<text x="${+x.toFixed(1)}" y="${+y.toFixed(1)}" text-anchor="${a}" style="font-size:${sz}px">${s}</text>`;
+// Flèche du point 1 au point 2 (cls : arrow = bleu, arrowv = orange)
+function dA(x1, y1, x2, y2, cls = 'arrow') {
+  const a = Math.atan2(y2 - y1, x2 - x1), h = 9, r = n => +n.toFixed(1);
+  const p = s => `${r(x2 - h * Math.cos(a + s))} ${r(y2 - h * Math.sin(a + s))}`;
+  return `<line class="${cls}" x1="${r(x1)}" y1="${r(y1)}" x2="${r(x2)}" y2="${r(y2)}"/><path class="${cls}" d="M${p(-0.45)} L${r(x2)} ${r(y2)} L${p(0.45)}"/>`;
+}
+// Cote horizontale ou verticale avec flèches aux deux bouts et texte au milieu
+function dCote(x1, y1, x2, y2, s, off = -6) {
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, hor = Math.abs(y2 - y1) < Math.abs(x2 - x1);
+  return dA(mx, my, x1, y1, 'thin') + dA(mx, my, x2, y2, 'thin') + (hor ? dT(mx, my + off, s) : dT(mx + 6, my + 5, s, 'start'));
+}
+// Roue dentée : centre, rayon primitif, nombre de dents (dessin simplifié)
+function dGear(cx, cy, r, z, cls = 'fillv') {
+  const n = Math.max(8, Math.min(z, 40)), pts = [];
+  for (let k = 0; k < n; k++) {
+    const a = 2 * Math.PI * k / n, s = Math.PI / n;
+    [[a - s * 0.5, r - 4], [a - s * 0.25, r + 5], [a + s * 0.25, r + 5], [a + s * 0.5, r - 4]]
+      .forEach(([t, rr]) => pts.push(`${(cx + rr * Math.cos(t)).toFixed(1)},${(cy + rr * Math.sin(t)).toFixed(1)}`));
+  }
+  return `<polygon class="${cls}" points="${pts.join(' ')}"/><circle class="thin" cx="${cx}" cy="${cy}" r="${Math.max(3, r * 0.18).toFixed(1)}"/>`;
+}
+// Appui simple (triangle) sous le point x, y, et sol hachuré
+const dAppui = (x, y) => `<path class="thin" d="M${x} ${y} L${x - 10} ${y + 16} H${x + 10} Z"/><line class="thin" x1="${x - 16}" y1="${y + 16}" x2="${x + 16}" y2="${y + 16}"/>` +
+  [0, 1, 2, 3].map(k => `<line class="thin" x1="${x - 14 + k * 9}" y1="${y + 16}" x2="${x - 20 + k * 9}" y2="${y + 23}"/>`).join('');
+// Encastrement (mur hachuré vertical) à l'abscisse x, de y1 à y2
+const dMur = (x, y1, y2) => `<line class="line" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/>` +
+  Array.from({ length: Math.floor((y2 - y1) / 9) + 1 }, (_, k) => `<line class="thin" x1="${x}" y1="${y1 + k * 9}" x2="${x - 8}" y2="${y1 + k * 9 + 8}"/>`).join('');
+// Flèche courbe de rotation autour de (cx, cy), rayon r, de l'angle a1 à a2 (en degrés, sens trigonométrique si a2 > a1)
+function dRot(cx, cy, r, a1, a2, cls = 'arrow') {
+  const P = a => [cx + r * Math.cos(-a * Math.PI / 180), cy + r * Math.sin(-a * Math.PI / 180)], [x1, y1] = P(a1), [x2, y2] = P(a2);
+  const big = Math.abs(a2 - a1) > 180 ? 1 : 0, sweep = a2 > a1 ? 0 : 1, [xp, yp] = P(a2 - Math.sign(a2 - a1) * 12);
+  return `<path class="${cls}" d="M${x1.toFixed(1)} ${y1.toFixed(1)} A${r} ${r} 0 ${big} ${sweep} ${x2.toFixed(1)} ${y2.toFixed(1)}"/>` + dA(xp, yp, x2, y2, cls).replace(/<line[^>]*\/>/, '');
+}
+
 // ---------- Chapitres ----------
 const CHAPITRES = [
   'Chaîne d\'information et SysML',
@@ -541,6 +589,10 @@ const EXOS = [
       return {
         statement: `<p>Un transmetteur de température délivre un courant de 4 mA pour ${v(Tmin, '°C')} et de 20 mA pour ${v(Tmax, '°C')},
           proportionnel entre les deux. Le courant traverse une résistance de ${v(R, 'Ω')} à l'entrée de l'automate.</p>` +
+          graph({ ...(d => ({ x0: Math.floor(Tmin / d) * d, x1: Math.ceil(Tmax / d) * d, dx: d }))(Tmax - Tmin <= 110 ? 20 : 50), y0: 0, y1: 24, dy: 4, w: 400, h: 230, xlab: 'T (°C)', ylab: 'I (mA)', series: [{ pts: [[Tmin, 4], [Tmax, 20]] }],
+            extra: (X, Y) => `<polyline class="c3" points="${X(Tmin)},${Y(I2)} ${X(T2)},${Y(I2)} ${X(T2)},${Y(0)}"/>` + dT(X(Tmin) + 6, Y(I2) - 6, `${fr(I2)} mA`, 'start', 13) +
+              dT(X(T2) + (T2 > (Tmin + Tmax) / 2 ? -4 : 4), Y(0) - 8, 'T = ?', T2 > (Tmin + Tmax) / 2 ? 'end' : 'start', 13),
+            cap: 'Caractéristique du transmetteur : 4 mA au minimum de l\'étendue de mesure, 20 mA au maximum' }) +
           ol('Pourquoi le zéro de la mesure correspond-il à 4 mA et non à 0 mA ?', `Calculer le courant pour ${v(T1, '°C', 1)}.`,
             `L'automate mesure ${v(I2, 'mA')}. Quelle est la température ?`, 'Quelle plage de tension obtient-on aux bornes de la résistance ?'),
         steps: [
@@ -564,6 +616,14 @@ const EXOS = [
       return {
         statement: `<p>Une thermistance CTN de ${v(R25, 'kΩ')} à 25 °C est montée en pont diviseur avec une résistance fixe R = ${v(Rf, 'kΩ')},
           sous ${v(Vcc, 'V', 1)}. La tension U<sub>T</sub> est prise aux bornes de la CTN. Extrait de la documentation :</p>` +
+          dSV(340, 200, `<line class="line" x1="110" y1="20" x2="110" y2="34"/><rect class="fillv" x="98" y="34" width="24" height="48"/><line class="line" x1="110" y1="82" x2="110" y2="112"/>
+            <rect class="flow" x="98" y="112" width="24" height="48"/><line class="thin" x1="88" y1="156" x2="132" y2="116"/><line class="thin" x1="88" y1="156" x2="80" y2="156"/>
+            <line class="line" x1="110" y1="160" x2="110" y2="176"/><line class="line" x1="96" y1="176" x2="124" y2="176"/><line class="line" x1="102" y1="182" x2="118" y2="182"/>
+            <line class="line" x1="80" y1="20" x2="140" y2="20"/><circle class="pt" cx="110" cy="97" r="4"/><line class="line" x1="110" y1="97" x2="240" y2="97"/>
+            <rect class="thin" x="240" y="78" width="60" height="38" rx="4"/>` +
+            dT(146, 16, `V<tspan baseline-shift="sub" font-size="10">cc</tspan> = ${fr(Vcc, 1)} V`, 'start', 13) + dT(130, 62, `R = ${Rf} kΩ`, 'start', 13) + dT(136, 140, 'CTN', 'start', 13) +
+            dT(270, 102, 'CAN', 'middle', 13) + dT(180, 88, 'U<tspan baseline-shift="sub" font-size="10">T</tspan>', 'middle'),
+            'Pont diviseur : la tension U<sub>T</sub> aux bornes de la CTN est envoyée au CAN') +
           table(['T (°C)', ...Ts], [['R<sub>CTN</sub> (kΩ)', ...Ts.map(t => fr(Rt(t), 2))]]) +
           ol(`Relever R<sub>CTN</sub> à ${v(T, '°C')}.`, 'Calculer la tension U<sub>T</sub> = V<sub>cc</sub> × R<sub>CTN</sub> / (R<sub>CTN</sub> + R).',
             `Cette tension est convertie par un CAN ${n} bits de pleine échelle ${Vcc} V. Calculer le quantum puis la valeur N.`, 'Quand la température augmente, U<sub>T</sub> augmente-t-elle ou diminue-t-elle ?'),
@@ -585,6 +645,12 @@ const EXOS = [
       const R = Un / 1000 / In, U1 = R * I1, P = R * In * In, I2 = U2 / 1000 / R;
       return {
         statement: `<p>Un shunt est marqué ${v(`${In} A / ${Un} mV`)} : il délivre ${Un} mV lorsqu'il est traversé par ${In} A.</p>` +
+          dSV(340, 190, `<polyline class="line" points="40,95 40,30 300,30 300,130 230,130"/><polyline class="line" points="150,130 40,130 40,95"/>
+            <circle class="fillv" cx="40" cy="95" r="20"/><rect class="fillv" x="140" y="18" width="70" height="24" rx="3"/><rect class="flow" x="150" y="122" width="80" height="16"/>
+            <polyline class="thin" points="160,138 160,165 175,165"/><polyline class="thin" points="220,138 220,165 205,165"/><circle class="thin" cx="190" cy="165" r="15"/>` +
+            dT(40, 100, 'G', 'middle') + dT(175, 35, 'charge', 'middle', 13) + dT(190, 117, 'shunt', 'middle', 13) + dT(190, 170, 'mV', 'middle', 12) +
+            dA(250, 30, 280, 30) + dT(265, 22, 'I', 'middle'),
+            'Le shunt est placé en série dans le circuit ; on mesure la petite tension à ses bornes') +
           ol('Calculer la résistance du shunt.', `Quelle tension mesure-t-on pour un courant de ${v(I1, 'A')} ?`,
             'Calculer la puissance dissipée dans le shunt au courant nominal.', `On mesure ${v(U2, 'mV', 1)}. Quel est le courant ?`),
         steps: [
@@ -701,6 +767,11 @@ const EXOS = [
       return {
         statement: `<p>Un capteur de température délivre ${m('V_{s1}')} = 10 mV/°C × T (0 V à 0 °C). On veut mesurer de ${v(Tmin, '°C')} à ${v(Tmax, '°C')}.
           Un adaptateur de dynamique transforme ${m('V_{s1}')} en ${m('V_{s2} = a \\cdot V_{s1} + b')} pour couvrir exactement la plage 0 à ${v(Upe, 'V', 1)} du CAN (${n} bits).</p>` +
+          dSV(340, 110, `<rect class="fillv" x="10" y="35" width="74" height="40" rx="5"/><rect class="flow" x="124" y="35" width="96" height="40" rx="5"/><rect class="fillv" x="260" y="35" width="70" height="40" rx="5"/>` +
+            dA(84, 55, 124, 55) + dA(220, 55, 260, 55) + dT(47, 60, 'capteur', 'middle', 13) + dT(172, 52, 'adaptateur', 'middle', 13) + dT(172, 68, 'a·V + b', 'middle', 12) + dT(295, 60, 'CAN', 'middle', 13) +
+            dT(104, 26, 'V<tspan baseline-shift="sub" font-size="10">s1</tspan>', 'middle') + dT(240, 26, 'V<tspan baseline-shift="sub" font-size="10">s2</tspan>', 'middle') +
+            dT(104, 98, `${fr(V1min * 1000)} à ${fr(V1max * 1000)} mV`, 'middle', 12) + dT(240, 98, `0 à ${fr(Upe, 1)} V`, 'middle', 12),
+            'Chaîne d\'acquisition : l\'adaptateur étire la plage du capteur sur toute la plage du CAN') +
           ol(`Calculer les valeurs minimale et maximale de ${m('V_{s1}')}.`, 'Calculer a et b.', `Calculer ${m('V_{s1}')} et ${m('V_{s2}')} pour ${v(T, '°C', 1)}.`, 'En déduire la valeur N du CAN.'),
         steps: [
           ['1. Plage de V<sub>s1</sub>', M(`V_{s1\\,min} = 0{,}01 \\times (${Tmin}) = ${tx(V1min, 2)}${u('V')} \\qquad V_{s1\\,max} = 0{,}01 \\times ${Tmax} = ${tx(V1max, 2)}${u('V')}`)],
@@ -719,7 +790,7 @@ const EXOS = [
       const R = pick([1, 2.2, 4.7, 10, 22, 47]) * 1000, C = pick([10e-9, 47e-9, 100e-9, 220e-9, 470e-9, 1e-6]), k = pick([5, 10, 20, 50]);
       const fc = 1 / (2 * Math.PI * R * C), fp = fc * k, Gp = 1 / Math.sqrt(1 + k * k), GdB = 20 * Math.log10(Gp);
       const lx = Math.floor(Math.log10(fc)) - 2, gdb = x => -10 * Math.log10(1 + (10 ** x / fc) ** 2);
-      const g = graph({ x0: lx, x1: lx + 5, dx: 1, y0: -50, y1: 5, dy: 5, xlab: 'f (Hz, échelle log)', ylab: 'G (dB)', fx: x => fn(10 ** x, 1), fy: y => y % 10 === 0 ? fr(y) : '',
+      const g = graph({ x0: lx, x1: lx + 5, dx: 1, y0: -50, y1: 5, dy: 5, w: 420, h: 250, xlab: 'f (Hz, échelle log)', ylab: 'G (dB)', fx: x => `10<tspan baseline-shift="super" font-size="9">${x}</tspan>`, fy: y => y % 10 === 0 ? fr(y) : '',
         series: [{ pts: curve(gdb, lx, lx + 5), cls: 'c1' }], extra: (X, Y) => `<line class="c3" x1="${X(lx)}" y1="${Y(-3)}" x2="${X(lx + 5)}" y2="${Y(-3)}"/>` });
       const Cs = C >= 1e-6 ? `${fr(C * 1e6)} µF` : `${fr(C * 1e9)} nF`;
       return {
@@ -748,6 +819,10 @@ const EXOS = [
       return {
         statement: `<p>Un CAN ${v(n, 'bits')} accepte en entrée des tensions de ${v(pl[0], 'V')} à ${v(pl[1], 'V', 1)}.
           On prend ${m('q = \\dfrac{V_{max} - V_{min}}{2^n}')} et ${m('N = \\left\\lfloor \\dfrac{U - V_{min}}{q} \\right\\rfloor')}.</p>` +
+          graph({ x0: pl[0], x1: pl[1], dx: dV / 4, y0: 0, y1: 7, dy: 1, w: 400, h: 240, xlab: 'U (V)', ylab: 'N', fy: y => y.toString(2).padStart(3, '0'),
+            series: [{ pts: [0, 1, 2, 3, 4, 5, 6, 7].flatMap(k => [[pl[0] + k * dV / 8, k], [pl[0] + (k + 1) * dV / 8, k]]) }],
+            extra: (X, Y) => dT((X(pl[0]) + X(pl[0] + dV / 8)) / 2, Y(0) - 6, 'q', 'middle', 13),
+            cap: `Principe de la quantification, dessiné pour 3 bits seulement (8 marches) : avec ${n} bits il y a ${fr(2 ** n)} marches` }) +
           ol('Donner la tension pleine échelle et le nombre de valeurs possibles en sortie.', 'Calculer le quantum q.',
             `Calculer N pour ${v(U, 'V', 3)}.`, `Quelle tension correspond à N = ${v(N2)} ?`, 'Quelle est l\'erreur maximale due à la quantification ?'),
         steps: [
@@ -961,6 +1036,11 @@ const EXOS = [
         statement: `<p>Un capteur communique par ${v(bus[0])} à ${v(D, 'bit/s', 0)}. Chaque octet est encadré par un bit de start et un bit de stop
           (et éventuellement un bit de parité) : il faut donc ${v(b, 'bits')} pour transmettre un octet. Une trame complète contient ${v(n, 'octets')}.
           Le cahier des charges impose de rafraîchir la mesure toutes les ${v(per, 'ms')}.</p>` +
+          (() => {
+            const data = Array.from({ length: 8 }, () => rnd(0, 1, 1)), par = data.reduce((a, x) => a ^ x, 0);
+            const cells = [{ l: 0, t: 'S' }, ...data.map((x, i) => ({ l: x, t: 'b' + i })), ...(b === 11 ? [{ l: par, t: 'P' }] : []), { l: 1, t: 'St' }];
+            return wave(cells, `Un octet sur le bus : ${b} bits (S : start, b0 à b7 : données${b === 11 ? ', P : parité' : ''}, St : stop) ; chaque bit dure 1/${fr(D, 0)} s`);
+          })() +
           ol('Calculer le nombre de bits transmis pour une trame.', 'Calculer la durée de transmission d\'une trame.',
             'Combien de trames peut-on transmettre au maximum par seconde ?', 'Calculer le débit utile (seuls les bits de données comptent).', 'Le cahier des charges est-il respecté ?'),
         steps: [

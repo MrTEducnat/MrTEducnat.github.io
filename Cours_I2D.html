@@ -84,6 +84,13 @@ body {
   position: sticky; top: 0; height: 100vh; overflow-y: auto;
 }
 .sidebar h1 { font-size: 18px; font-weight: 600; margin: 0 8px 4px; }
+a.home {
+  display: inline-block; text-decoration: none; color: var(--accent); font-size: 14px;
+  border: 1px solid var(--accent); border-radius: 8px; padding: 4px 10px;
+}
+a.home:hover, a.home:focus-visible { background: var(--accent-bg); outline: none; }
+.sidebar a.home { margin: 0 8px 14px; }
+.topbar a.home { margin-left: auto; }
 .sidebar .sub { font-size: 13px; color: var(--muted); margin: 0 8px 16px; }
 .chap { margin-bottom: 2px; }
 .chap-btn {
@@ -256,10 +263,12 @@ a.go:hover, a.go:focus-visible { background: var(--accent-bg); outline: none; }
 <div class="topbar">
   <button id="menuBtn" aria-label="Ouvrir le menu">☰</button>
   <span>Cours I2D</span>
+  <a class="home" href="index.html">← Accueil</a>
 </div>
 <div class="shade" id="shade" hidden></div>
 <div class="layout">
   <nav class="sidebar" id="sidebar">
+    <a class="home" href="index.html">← Accueil</a>
     <h1>Cours I2D</h1>
     <p class="sub">1re STI2D · fiches de cours</p>
     <div class="nav" id="nav"></div>
@@ -404,6 +413,45 @@ function sankey(stages, vals, unit) {
     }
   });
   return fig(s + '</svg>', unit);
+}
+
+// ---------- Dessins (schémas lisibles sur téléphone : viewBox étroit, texte à 14 px) ----------
+// Schéma : largeur et hauteur du viewBox, contenu SVG, légende
+const dSV = (w, h, inner, cap = '', max = 440) => fig(`<svg viewBox="0 0 ${w} ${h}" role="img" style="max-width:${max}px">${inner}</svg>`, cap);
+// Texte : position, contenu, ancrage (start | middle | end), taille
+const dT = (x, y, s, a = 'middle', sz = 14) => `<text x="${+x.toFixed(1)}" y="${+y.toFixed(1)}" text-anchor="${a}" style="font-size:${sz}px">${s}</text>`;
+// Flèche du point 1 au point 2 (cls : arrow = bleu, arrowv = orange)
+function dA(x1, y1, x2, y2, cls = 'arrow') {
+  const a = Math.atan2(y2 - y1, x2 - x1), h = 9, r = n => +n.toFixed(1);
+  const p = s => `${r(x2 - h * Math.cos(a + s))} ${r(y2 - h * Math.sin(a + s))}`;
+  return `<line class="${cls}" x1="${r(x1)}" y1="${r(y1)}" x2="${r(x2)}" y2="${r(y2)}"/><path class="${cls}" d="M${p(-0.45)} L${r(x2)} ${r(y2)} L${p(0.45)}"/>`;
+}
+// Cote horizontale ou verticale avec flèches aux deux bouts et texte au milieu
+function dCote(x1, y1, x2, y2, s, off = -6) {
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, hor = Math.abs(y2 - y1) < Math.abs(x2 - x1);
+  return dA(mx, my, x1, y1, 'thin') + dA(mx, my, x2, y2, 'thin') + (hor ? dT(mx, my + off, s) : dT(mx + 6, my + 5, s, 'start'));
+}
+// Roue dentée : centre, rayon primitif, nombre de dents (dessin simplifié)
+function dGear(cx, cy, r, z, cls = 'fillv') {
+  const n = Math.max(8, Math.min(z, 40)), pts = [];
+  for (let k = 0; k < n; k++) {
+    const a = 2 * Math.PI * k / n, s = Math.PI / n;
+    [[a - s * 0.5, r - 4], [a - s * 0.25, r + 5], [a + s * 0.25, r + 5], [a + s * 0.5, r - 4]]
+      .forEach(([t, rr]) => pts.push(`${(cx + rr * Math.cos(t)).toFixed(1)},${(cy + rr * Math.sin(t)).toFixed(1)}`));
+  }
+  return `<polygon class="${cls}" points="${pts.join(' ')}"/><circle class="thin" cx="${cx}" cy="${cy}" r="${Math.max(3, r * 0.18).toFixed(1)}"/>`;
+}
+// Appui simple (triangle) sous le point x, y, et sol hachuré
+const dAppui = (x, y) => `<path class="thin" d="M${x} ${y} L${x - 10} ${y + 16} H${x + 10} Z"/><line class="thin" x1="${x - 16}" y1="${y + 16}" x2="${x + 16}" y2="${y + 16}"/>` +
+  [0, 1, 2, 3].map(k => `<line class="thin" x1="${x - 14 + k * 9}" y1="${y + 16}" x2="${x - 20 + k * 9}" y2="${y + 23}"/>`).join('');
+// Encastrement (mur hachuré vertical) à l'abscisse x, de y1 à y2
+const dMur = (x, y1, y2) => `<line class="line" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/>` +
+  Array.from({ length: Math.floor((y2 - y1) / 9) + 1 }, (_, k) => `<line class="thin" x1="${x}" y1="${y1 + k * 9}" x2="${x - 8}" y2="${y1 + k * 9 + 8}"/>`).join('');
+// Flèche courbe de rotation autour de (cx, cy), rayon r, de l'angle a1 à a2 (en degrés, sens trigonométrique si a2 > a1)
+function dRot(cx, cy, r, a1, a2, cls = 'arrow') {
+  const P = a => [cx + r * Math.cos(-a * Math.PI / 180), cy + r * Math.sin(-a * Math.PI / 180)], [x1, y1] = P(a1), [x2, y2] = P(a2);
+  const big = Math.abs(a2 - a1) > 180 ? 1 : 0, sweep = a2 > a1 ? 0 : 1, [xp, yp] = P(a2 - Math.sign(a2 - a1) * 12);
+  return `<path class="${cls}" d="M${x1.toFixed(1)} ${y1.toFixed(1)} A${r} ${r} 0 ${big} ${sweep} ${x2.toFixed(1)} ${y2.toFixed(1)}"/>` + dA(xp, yp, x2, y2, cls).replace(/<line[^>]*\/>/, '');
 }
 
 // ---------- Chapitres ----------
@@ -562,6 +610,9 @@ const EXOS = [
       H('1. Énergie et puissance') +
       P('La puissance est la quantité d\'énergie transférée par unité de temps. Avec une même quantité d\'énergie, on peut utiliser beaucoup de puissance pendant peu de temps, ou peu de puissance pendant longtemps :') +
       M(`E = P \\times \\Delta t`) + P(`avec ${m('E')} l'énergie, ${m('P')} la puissance et ${m('\\Delta t')} la durée. Les unités vont ensemble :`) + table(['Si P est en…', 'et Δt en…', 'alors E est en…'], [['W', 's', 'J'], ['W', 'h', 'Wh'], ['kW', 'h', 'kWh']]) +
+      graph({ x0: 0, x1: 4, dx: 1, y0: 0, y1: 3, dy: 1, w: 400, h: 220, xlab: 't (h)', ylab: 'P (kW)', series: [],
+        extra: (X, Y) => `<rect class="flow" x="${X(0)}" y="${Y(2)}" width="${X(3) - X(0)}" height="${Y(0) - Y(2)}"/><polyline class="c1" points="${X(0)},${Y(2)} ${X(3)},${Y(2)} ${X(3)},${Y(0)}"/>` +
+          dT((X(0) + X(3)) / 2, (Y(0) + Y(2)) / 2 + 5, 'E = 2 kW × 3 h = 6 kWh'), cap: 'Un appareil de 2 kW pendant 3 h : l\'énergie est l\'aire sous la courbe de puissance' }) +
       P('On utilise le Wh ou le kWh pour l\'électricité car le joule est une unité trop petite : un foyer consomme de l\'ordre de 10 000 kWh par an, soit 3,6 × 10¹⁰ J.') +
       H('2. Convertir les durées') +
       P('Les durées doivent être en heures décimales pour un calcul en Wh : 1 h 30 min = 1,5 h ; 45 min = 45 / 60 = 0,75 h ; 10 min ≈ 0,167 h. Attention : 1,5 h ne fait pas 1 h 50 min.') +
@@ -648,6 +699,11 @@ const EXOS = [
       H('4. Les mouvements élémentaires') +
       P('Dans l\'espace, on se repère avec un repère d\'origine O et trois axes x, y, z. Il existe <b>6 mouvements élémentaires</b> : 3 translations (Tx, Ty, Tz) et 3 rotations (Rx, Ry, Rz). Tout mouvement est une combinaison de ces six.') +
       UL('<b>Translation rectiligne</b> : tous les points du solide se déplacent sur des droites parallèles.', '<b>Rotation autour d\'un axe fixe</b> : tous les points décrivent des cercles centrés sur l\'axe.') +
+      dSV(340, 210, dA(150, 125, 150, 25) + dA(150, 125, 300, 125) + dA(150, 125, 55, 185) +
+        dT(150, 17, 'z') + dT(310, 130, 'y', 'start') + dT(44, 197, 'x') + dT(146, 132, 'O', 'end') +
+        dRot(150, 62, 16, 200, 340, 'arrowv') + dRot(262, 125, 16, 110, 250, 'arrowv') + dRot(88, 164, 16, 20, 160, 'arrowv') +
+        dT(140, 42, 'Tz', 'end') + dT(172, 88, 'Rz', 'start') + dT(292, 113, 'Ty') + dT(262, 157, 'Ry') + dT(64, 172, 'Tx', 'end') + dT(88, 140, 'Rx'),
+        'Les 6 mouvements élémentaires : une translation le long de chaque axe et une rotation autour de chaque axe') +
       H('5. Degrés de liberté') +
       P('Les <b>degrés de liberté</b> (ddl) sont les mouvements indépendants possibles entre deux pièces. Il y en a au maximum 6, et 0 quand les pièces sont fixées.') +
       table(['Situation', 'Mouvements possibles', 'ddl'], [['Téléphone posé sur une table', 'Tx, Ty (glisser) et Rz (tourner à plat)', '3'], ['Porte sur ses gonds', 'une rotation', '1'],
@@ -699,6 +755,10 @@ const EXOS = [
       M('\\omega = \\frac{2 \\pi N}{60}') + P(`avec ${m('\\omega')} en rad/s et ${m('N')} en tr/min : on multiplie par 2π pour passer des tours aux radians et on divise par 60 pour passer des minutes aux secondes.`) + P('Inversement :') + M('N = \\frac{60\\, \\omega}{2 \\pi}') +
       H('3. Lien entre rotation et translation') +
       P('Pour une roue, une poulie ou une pale de rayon R (en m) :') +
+      dSV(340, 190, `<circle class="flow" cx="130" cy="100" r="70"/><line class="line" x1="130" y1="100" x2="200" y2="100"/><circle class="pt" cx="130" cy="100" r="3"/><circle class="pt" cx="200" cy="100" r="4"/>` +
+        dA(200, 100, 200, 28, 'arrowv') + dRot(130, 100, 30, 200, 330) + dT(165, 94, 'R') + dT(124, 96, 'O', 'end') + dT(208, 108, 'M', 'start') +
+        dT(208, 40, 'V = R × ω', 'start') + dT(130, 152, 'ω'),
+        'Le point M tourne avec la roue : sa vitesse V est tangente au cercle') +
       UL(`distance parcourue en un tour : ${m('d = 2 \\pi R = \\pi D')}, avec D le diamètre en m ;`, `distance parcourue pour un angle θ en radians : ${m('d = R \\times \\theta')} ;`, 'vitesse linéaire d\'un point situé à la distance R de l\'axe :') +
       M('V = R \\times \\omega') + P(`avec ${m('V')} en m/s, ${m('R')} en m et ${m('\\omega')} en rad/s.`) +
       EX('Exemple : pale d\'éolienne', P('Une pale de 40 m tourne à 14 tr/min :') + M('\\omega = \\frac{2 \\pi \\times 14}{60} = 1{,}47\\,\\text{rad/s}') +
@@ -792,6 +852,15 @@ const EXOS = [
       H('3. Associer des accumulateurs') +
       table(['Montage', 'Tension', 'Capacité', 'Énergie'], [['Série', 'les tensions s\'ajoutent', 'celle d\'un élément', 'somme des énergies'], ['Parallèle', 'celle d\'un élément', 'les capacités s\'ajoutent', 'somme des énergies']]) +
       EX('Exemple : deux éléments 3,7 V et 800 mAh', P('En série : U = 7,4 V, Q = 0,8 Ah, E = 5,92 Wh. En parallèle : U = 3,7 V, Q = 1,6 Ah, E = 5,92 Wh. L\'énergie totale est la même.')) +
+      dSV(340, 165, dT(90, 22, '<tspan font-weight="600">Série</tspan>') + dT(258, 22, '<tspan font-weight="600">Parallèle</tspan>') +
+        `<rect class="fillv" x="20" y="50" width="55" height="30" rx="3"/><rect class="fillv" x="95" y="50" width="55" height="30" rx="3"/>
+        <polyline class="line" points="8,65 20,65"/><polyline class="line" points="75,65 95,65"/><polyline class="line" points="150,65 166,65"/>
+        <rect class="fillv" x="230" y="36" width="55" height="28" rx="3"/><rect class="fillv" x="230" y="82" width="55" height="28" rx="3"/>
+        <polyline class="line" points="198,73 212,73"/><polyline class="line" points="230,50 212,50 212,96 230,96"/>
+        <polyline class="line" points="285,50 303,50 303,96 285,96"/><polyline class="line" points="303,73 318,73"/>` +
+        dT(47.5, 70, '3,7 V', 'middle', 13) + dT(122.5, 70, '3,7 V', 'middle', 13) + dT(257.5, 55, '3,7 V', 'middle', 13) + dT(257.5, 101, '3,7 V', 'middle', 13) +
+        dT(90, 130, 'U = 7,4 V') + dT(90, 150, 'Q = 0,8 Ah') + dT(258, 130, 'U = 3,7 V') + dT(258, 150, 'Q = 1,6 Ah'),
+        'Deux accumulateurs de 3,7 V et 0,8 Ah associés en série ou en parallèle') +
       H('4. Énergie massique et volumique') +
       P('Pour un véhicule ou un objet portable, on compare l\'énergie stockée par kilogramme ou par m³ :') + M('E_m = \\frac{E}{m} \\qquad E_V = \\frac{E}{V}') +
       P(`avec ${m('E_m')} l'énergie massique en Wh/kg, ${m('E_V')} l'énergie volumique en Wh/m³, ${m('E')} l'énergie stockée en Wh, ${m('m')} la masse en kg et ${m('V')} le volume en m³.`) +
@@ -872,6 +941,9 @@ const EXOS = [
       H('3. Capteur à sortie en tension') +
       P('Beaucoup de capteurs donnent une tension proportionnelle à la grandeur mesurée. On l\'exploite avec un produit en croix.') +
       EX('Exemple', P('Un capteur de vitesse fournit 0 à 10 V pour 0 à 130 km/h. Il délivre 4,3 V :') + M('v = \\frac{4{,}3 \\times 130}{10} = 55{,}9\\,\\text{km/h}')) +
+      graph({ x0: 0, x1: 140, dx: 20, y0: 0, y1: 10, dy: 2, w: 400, h: 240, xlab: 'v (km/h)', ylab: 'U (V)', series: [{ pts: [[0, 0], [130, 10]] }],
+        extra: (X, Y) => `<polyline class="c3" points="${X(0)},${Y(4.3)} ${X(55.9)},${Y(4.3)} ${X(55.9)},${Y(0)}"/>` + dT(X(58), Y(4.3) + 18, '4,3 V → 55,9 km/h', 'start', 13),
+        cap: 'Caractéristique du capteur : la tension est proportionnelle à la vitesse' }) +
       H('4. Détecteurs (tout ou rien)') +
       P('Un <b>détecteur</b> indique seulement la présence (état haut, 1, par exemple 5 V) ou l\'absence (état bas, 0, 0 V) d\'un objet.') +
       table(['Détecteur', 'Principe', 'Usage'], [['Interrupteur de position', 'contact mécanique', 'fin de course d\'un mécanisme'], ['Inductif', 'sans contact, détecte les métaux à quelques mm', 'position d\'une pièce métallique'],
@@ -891,6 +963,9 @@ const EXOS = [
       H('1. Bit, octet et mot') +
       UL('Le <b>bit</b> (b, binary digit) vaut 0 ou 1 : c\'est l\'unité élémentaire de l\'information.', 'L\'<b>octet</b> (en anglais <i>byte</i>, noté B ou o) est un groupe de 8 bits, la plus petite unité adressable d\'un ordinateur.',
         'Un <b>mot</b> de 16 bits contient 2 octets.', 'Dans un mot binaire, le bit de gauche est le bit de poids fort (MSB), celui de droite le bit de poids faible (LSB).') +
+      dSV(340, 105, [1, 0, 1, 0, 0, 1, 1, 0].map((b, k) => `<rect class="${b ? 'flow' : 'fillv'}" x="${11 + k * 40}" y="30" width="38" height="32" rx="3"/>` +
+        dT(30 + k * 40, 52, b, 'middle', 16) + dT(30 + k * 40, 82, 2 ** (7 - k), 'middle', 12)).join('') + dT(30, 20, 'MSB', 'middle', 12) + dT(310, 20, 'LSB', 'middle', 12) + dT(170, 100, 'poids', 'middle', 12),
+        'Un octet : 1010 0110 = 128 + 32 + 4 + 2 = 166') +
       table(['Multiples décimaux', 'Multiples binaires'], [['1 ko = 10³ octets', '1 Kio = 2¹⁰ = 1 024 octets'], ['1 Mo = 10⁶ octets', '1 Mio = 2²⁰ octets'], ['1 Go = 10⁹ octets', '1 Gio = 2³⁰ octets']]) +
       H('2. Les bases') +
       table(['Base', 'Symboles', 'Poids des rangs'], [['10 (décimal)', '0 à 9', '1, 10, 100, 1 000…'], ['2 (binaire)', '0 et 1', '1, 2, 4, 8, 16, 32, 64, 128…'], ['16 (hexadécimal)', '0 à 9 puis A à F (A = 10 … F = 15)', '1, 16, 256, 4 096…']]) +
@@ -995,6 +1070,9 @@ const EXOS = [
       P('Un engrenage peut transmettre une rotation, réduire ou augmenter la vitesse (et donc augmenter ou réduire le couple), changer l\'axe de rotation (renvoi d\'angle) ou transformer une rotation en translation.') +
       table(['Type', 'Particularité'], [['Droit à denture droite', 'le plus courant, simple et économique ; arbres parallèles'], ['Droit à denture hélicoïdale', 'plus silencieux et plus résistant'],
         ['Conique', 'arbres non parallèles (renvoi d\'angle)'], ['Roue et vis sans fin', 'renvoi à angle droit, grande réduction ; la roue ne peut pas entraîner la vis'], ['Pignon-crémaillère', 'rotation ↔ translation']]) +
+      dSV(340, 200, dGear(70, 100, 34, 12, 'flow') + dGear(174, 100, 68, 24) + dRot(70, 100, 48, 100, 175, 'arrowv') + dRot(174, 100, 82, 75, 15) +
+        dT(70, 124, 'Z₁', 'middle', 13) + dT(174, 134, 'Z₂', 'middle', 13) + dT(70, 160, 'pignon') + dT(70, 177, 'menant') + dT(296, 120, 'roue', 'middle') + dT(296, 137, 'menée', 'middle'),
+        'Engrenage : le pignon (Z₁ = 12) entraîne la roue (Z₂ = 24) en sens inverse ; r = 12 / 24 = 0,5') +
       H('2. Le module') +
       P('Les dimensions d\'une roue à denture droite sont fixées par son <b>module</b> m (en mm) et son nombre de dents Z (entier) :') +
       M('d = m \\times Z \\qquad a = \\frac{d_1 + d_2}{2} = \\frac{m\\,(Z_1 + Z_2)}{2}') +
@@ -1027,6 +1105,11 @@ const EXOS = [
       H('2. Les forces qui s\'opposent au mouvement') +
       table(['Force', 'Expression', 'Origine'], [['Traînée (force fluidique)', '½ × Cx × ρ × S × V²', 'frottement de l\'air'], ['Résistance au roulement', 'Cr × m × g', 'écrasement des pneus'],
         ['Gravité (en pente)', 'm × g × sin α', 'poids du véhicule dans la montée'], ['Inertie', 'm × a', 'accélérer la masse']]) +
+      dSV(340, 225, `<line class="line" x1="10" y1="200" x2="330" y2="105"/><line class="thin" x1="10" y1="200" x2="95" y2="200"/><path class="thin" d="M55 200 A45 45 0 0 0 53.1 187.2"/>
+        <g transform="translate(180 149.5) rotate(-16.5)"><rect class="fillv" x="-60" y="-40" width="120" height="32" rx="6"/><circle class="thin" cx="-38" cy="-8" r="8"/><circle class="thin" cx="38" cy="-8" r="8"/></g>` +
+        dA(230.7, 109.5, 283.5, 93.8) + dA(115.7, 143.5, 62.9, 159.2, 'arrowv') + dA(141.3, 152.6, 96.2, 165.9, 'arrowv') + dA(173.2, 126.5, 173.2, 205, 'arrowv') +
+        dT(262, 82, 'F traction', 'middle', 13) + dT(60, 145, 'F fluidique', 'middle', 13) + dT(118, 216, 'F roulement', 'middle', 13) + dT(181, 216, 'P = m × g', 'start', 13) + dT(62, 196, 'α', 'start', 13),
+        'Forces sur un véhicule en montée : la traction doit vaincre la traînée, le roulement et la composante du poids') +
       UL('Cx : coefficient de traînée (0,25 à 0,35 pour une voiture, 0,5 à 0,9 pour un camion) ; ρ : masse volumique de l\'air (≈ 1,2 kg/m³) ; S : surface frontale (m²) ; V : vitesse (m/s).',
         'Cr : coefficient de résistance au roulement (0,008 à 0,015 pour un pneu sur route).', 'α : angle de la pente ; a : accélération (m/s²).') +
       P('La force de traction nécessaire est la somme de toutes ces forces :') +
@@ -1113,6 +1196,15 @@ SINON
       H('4. Autres représentations') +
       UL('<b>Logigramme</b> : l\'équation dessinée avec des portes logiques (entrées à gauche, sortie à droite).', '<b>Schéma à contacts</b> : le ET correspond à des contacts en série, le OU à des contacts en parallèle.',
         '<b>Chronogramme</b> : l\'évolution des entrées et de la sortie dans le temps.') +
+      dSV(340, 140, `<polyline class="line" points="12,50 40,50"/><line class="line" x1="40" y1="50" x2="66" y2="38"/><polyline class="line" points="70,50 85,50"/>
+        <line class="line" x1="85" y1="50" x2="111" y2="38"/><polyline class="line" points="115,50 130,50"/><circle class="thin" cx="142" cy="50" r="12"/>
+        <path class="thin" d="M133.5 41.5 L150.5 58.5 M150.5 41.5 L133.5 58.5"/><polyline class="line" points="154,50 164,50"/>
+        <polyline class="line" points="184,60 196,60"/><polyline class="line" points="216,38 196,38 196,82 216,82"/><line class="line" x1="216" y1="38" x2="242" y2="26"/>
+        <line class="line" x1="216" y1="82" x2="242" y2="70"/><polyline class="line" points="246,38 266,38 266,82 246,82"/><polyline class="line" points="266,60 285,60"/>
+        <circle class="thin" cx="297" cy="60" r="12"/><path class="thin" d="M288.5 51.5 L305.5 68.5 M305.5 51.5 L288.5 68.5"/><polyline class="line" points="309,60 328,60"/>` +
+        dT(54, 30, 'a') + dT(99, 30, 'b') + dT(142, 80, 'S') + dT(229, 20, 'a') + dT(229, 100, 'b') + dT(297, 90, 'S') +
+        dT(88, 125, 'ET : S = a · b') + dT(258, 125, 'OU : S = a + b'),
+        'Schémas à contacts : en série pour le ET, en parallèle pour le OU (contacts ouverts au repos)') +
       H('5. Règles de calcul') +
       table(['Règle', 'Résultat'], [['a + ā', '1'], ['a · ā', '0'], ['a + 1', '1'], ['a · 0', '0'], ['a + a', 'a'], ['a · a', 'a'], ['(a + b) · c', 'a · c + b · c']]) +
       P('<b>Lois de De Morgan</b> :') + M('\\overline{a \\cdot b} = \\overline{a} + \\overline{b} \\qquad \\overline{a + b} = \\overline{a} \\cdot \\overline{b}') +

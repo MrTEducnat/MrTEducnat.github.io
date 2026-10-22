@@ -84,6 +84,13 @@ body {
   position: sticky; top: 0; height: 100vh; overflow-y: auto;
 }
 .sidebar h1 { font-size: 18px; font-weight: 600; margin: 0 8px 4px; }
+a.home {
+  display: inline-block; text-decoration: none; color: var(--accent); font-size: 14px;
+  border: 1px solid var(--accent); border-radius: 8px; padding: 4px 10px;
+}
+a.home:hover, a.home:focus-visible { background: var(--accent-bg); outline: none; }
+.sidebar a.home { margin: 0 8px 14px; }
+.topbar a.home { margin-left: auto; }
 .sidebar .sub { font-size: 13px; color: var(--muted); margin: 0 8px 16px; }
 .chap { margin-bottom: 2px; }
 .chap-btn {
@@ -232,10 +239,12 @@ svg .ledoff { fill: var(--side); stroke: var(--muted); }
 <div class="topbar">
   <button id="menuBtn" aria-label="Ouvrir le menu">☰</button>
   <span>Exercices 2I2D</span>
+  <a class="home" href="index.html">← Accueil</a>
 </div>
 <div class="shade" id="shade" hidden></div>
 <div class="layout">
   <nav class="sidebar" id="sidebar">
+    <a class="home" href="index.html">← Accueil</a>
     <h1>Exercices 2I2D</h1>
     <p class="sub">Terminale STI2D · enseignement commun 2I2D</p>
     <div class="nav" id="nav"></div>
@@ -402,6 +411,45 @@ function sankey(stages, vals, unit) {
     }
   });
   return fig(s + '</svg>', unit);
+}
+
+// ---------- Dessins (schémas lisibles sur téléphone : viewBox étroit, texte à 14 px) ----------
+// Schéma : largeur et hauteur du viewBox, contenu SVG, légende
+const dSV = (w, h, inner, cap = '', max = 440) => fig(`<svg viewBox="0 0 ${w} ${h}" role="img" style="max-width:${max}px">${inner}</svg>`, cap);
+// Texte : position, contenu, ancrage (start | middle | end), taille
+const dT = (x, y, s, a = 'middle', sz = 14) => `<text x="${+x.toFixed(1)}" y="${+y.toFixed(1)}" text-anchor="${a}" style="font-size:${sz}px">${s}</text>`;
+// Flèche du point 1 au point 2 (cls : arrow = bleu, arrowv = orange)
+function dA(x1, y1, x2, y2, cls = 'arrow') {
+  const a = Math.atan2(y2 - y1, x2 - x1), h = 9, r = n => +n.toFixed(1);
+  const p = s => `${r(x2 - h * Math.cos(a + s))} ${r(y2 - h * Math.sin(a + s))}`;
+  return `<line class="${cls}" x1="${r(x1)}" y1="${r(y1)}" x2="${r(x2)}" y2="${r(y2)}"/><path class="${cls}" d="M${p(-0.45)} L${r(x2)} ${r(y2)} L${p(0.45)}"/>`;
+}
+// Cote horizontale ou verticale avec flèches aux deux bouts et texte au milieu
+function dCote(x1, y1, x2, y2, s, off = -6) {
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, hor = Math.abs(y2 - y1) < Math.abs(x2 - x1);
+  return dA(mx, my, x1, y1, 'thin') + dA(mx, my, x2, y2, 'thin') + (hor ? dT(mx, my + off, s) : dT(mx + 6, my + 5, s, 'start'));
+}
+// Roue dentée : centre, rayon primitif, nombre de dents (dessin simplifié)
+function dGear(cx, cy, r, z, cls = 'fillv') {
+  const n = Math.max(8, Math.min(z, 40)), pts = [];
+  for (let k = 0; k < n; k++) {
+    const a = 2 * Math.PI * k / n, s = Math.PI / n;
+    [[a - s * 0.5, r - 4], [a - s * 0.25, r + 5], [a + s * 0.25, r + 5], [a + s * 0.5, r - 4]]
+      .forEach(([t, rr]) => pts.push(`${(cx + rr * Math.cos(t)).toFixed(1)},${(cy + rr * Math.sin(t)).toFixed(1)}`));
+  }
+  return `<polygon class="${cls}" points="${pts.join(' ')}"/><circle class="thin" cx="${cx}" cy="${cy}" r="${Math.max(3, r * 0.18).toFixed(1)}"/>`;
+}
+// Appui simple (triangle) sous le point x, y, et sol hachuré
+const dAppui = (x, y) => `<path class="thin" d="M${x} ${y} L${x - 10} ${y + 16} H${x + 10} Z"/><line class="thin" x1="${x - 16}" y1="${y + 16}" x2="${x + 16}" y2="${y + 16}"/>` +
+  [0, 1, 2, 3].map(k => `<line class="thin" x1="${x - 14 + k * 9}" y1="${y + 16}" x2="${x - 20 + k * 9}" y2="${y + 23}"/>`).join('');
+// Encastrement (mur hachuré vertical) à l'abscisse x, de y1 à y2
+const dMur = (x, y1, y2) => `<line class="line" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/>` +
+  Array.from({ length: Math.floor((y2 - y1) / 9) + 1 }, (_, k) => `<line class="thin" x1="${x}" y1="${y1 + k * 9}" x2="${x - 8}" y2="${y1 + k * 9 + 8}"/>`).join('');
+// Flèche courbe de rotation autour de (cx, cy), rayon r, de l'angle a1 à a2 (en degrés, sens trigonométrique si a2 > a1)
+function dRot(cx, cy, r, a1, a2, cls = 'arrow') {
+  const P = a => [cx + r * Math.cos(-a * Math.PI / 180), cy + r * Math.sin(-a * Math.PI / 180)], [x1, y1] = P(a1), [x2, y2] = P(a2);
+  const big = Math.abs(a2 - a1) > 180 ? 1 : 0, sweep = a2 > a1 ? 0 : 1, [xp, yp] = P(a2 - Math.sign(a2 - a1) * 12);
+  return `<path class="${cls}" d="M${x1.toFixed(1)} ${y1.toFixed(1)} A${r} ${r} 0 ${big} ${sweep} ${x2.toFixed(1)} ${y2.toFixed(1)}"/>` + dA(xp, yp, x2, y2, cls).replace(/<line[^>]*\/>/, '');
 }
 
 // ---------- Chapitres ----------
@@ -760,6 +808,13 @@ const EXOS = [
           table(['Couche', 'e (mm)', 'λ (W/(m·K))'], C.map(c => [c[0], c[1], fr(c[2], 3)])) +
           `<p>Résistances superficielles : ${m(`R_{se} = 0{,}04`)} et ${m(`R_{si} = 0{,}13${u('m²·K/W')}`)}.
           Il fait ${v(Ti, '°C')} à l'intérieur et ${v(Te, '°C')} à l'extérieur.</p>` +
+          (() => {
+            const k = 170 / C.reduce((s, c) => s + c[1], 0), ws = C.map(c => Math.max(18, c[1] * k)), xs = ws.map((w, i) => 80 + ws.slice(0, i).reduce((a, b) => a + b, 0)), xe = xs[3] + ws[3];
+            return dSV(340, 195, C.map((c, i) => `<rect class="${i === 2 ? 'flow' : 'fillv'}" x="${xs[i].toFixed(1)}" y="30" width="${ws[i].toFixed(1)}" height="120"/>` + dT(xs[i] + ws[i] / 2, 95, i + 1)).join('') +
+              dT(72, 80, 'extérieur', 'end', 13) + dT(72, 98, `${Te} °C`, 'end', 13) + dT(xe + 8, 80, 'intérieur', 'start', 13) + dT(xe + 8, 98, `${Ti} °C`, 'start', 13) +
+              dA(xe, 168, 80, 168, 'arrowv') + dT((80 + xe) / 2, 188, 'flux de chaleur Φ', 'middle', 13),
+              `Coupe de la paroi : ${C.map((c, i) => `${i + 1} ${c[0].toLowerCase()}`).join(', ')}`);
+          })() +
           ol('Quelle couche est un isolant ? Justifier.', 'Calculer la résistance thermique de chaque couche.', 'Calculer la résistance totale de la paroi.',
             'En déduire son coefficient de transmission U.', 'Calculer le flux thermique qui traverse le mur.'),
         steps: [
@@ -834,6 +889,14 @@ const EXOS = [
       return {
         statement: `<p>On compare deux maisons de même volume chauffé, assimilées à des pavés :</p>` +
           table(['Maison', 'Longueur', 'Largeur', 'Hauteur'], sh.map(o => [o.n, `${fr(o.L, 2)} m`, `${fr(o.l, 2)} m`, `${fr(o.H, 1)} m`])) +
+          (() => {
+            const k = Math.min(270 / (sh[0].L + sh[1].L), 20), xb = 20 + sh[0].L * k + 30, y0 = Math.max(...sh.map(o => o.H)) * k + 30;
+            return dSV(340, y0 + 32, `<line class="thin" x1="10" y1="${y0}" x2="330" y2="${y0}"/>` + sh.map((o, i) => {
+              const x = i ? xb : 20, w = o.L * k, hh = o.H * k;
+              return `<rect class="${i ? 'fillv' : 'flow'}" x="${x}" y="${(y0 - hh).toFixed(1)}" width="${w.toFixed(1)}" height="${hh.toFixed(1)}"/>` + dT(x + w / 2, y0 - hh / 2 + 5, i ? 'B' : 'A') +
+                dT(x + w / 2, y0 + 20, `${fr(o.L, 2)} m`, 'middle', 13) + dT(x + w / 2, y0 - hh - 8, `h = ${fr(o.H, 1)} m`, 'middle', 13);
+            }).join(''), 'Façades des deux maisons, à la même échelle');
+          })() +
           `<p>La compacité est le rapport ${m('C = \\frac{S_{\\text{dép}}}{V}')}, où ${m('S_{\\text{dép}}')} est la surface des parois déperditives (murs, toiture et plancher bas).</p>` +
           ol('Calculer, pour chaque maison, la surface déperditive et le volume.', 'Calculer la compacité de chaque maison.', 'Quelle maison est la plus performante ? Pourquoi ?'),
         steps: [
@@ -954,7 +1017,12 @@ const EXOS = [
           ['3. Première année', M(`E_1 = ${tx(Pc, 2)} \\times ${prod} = \\boxed{${tx(E1, 0)}${u('kWh')}}`)],
           ['4. Année 25', '<p>Chaque année la production est multipliée par ' + m(`(1 - ${tx(deg / 100, 3)})`) + ' :</p>' + M(`E_{25} = E_1 \\times ${tx(1 - deg / 100, 3)}^{24} = \\boxed{${tx(E25, 0)}${u('kWh')}}`) +
             `<p>Soit ${fr(E25 / E1 * 100, 1)} % de la production initiale.</p>`],
-          ['5. Cumul', '<p>Somme des 25 termes d\'une suite géométrique :</p>' + M(`E = E_1 \\times \\frac{1 - ${tx(1 - deg / 100, 3)}^{25}}{${tx(deg / 100, 3)}} = \\boxed{${tx(Etot, 0)}${u('kWh')}}`)]
+          ['5. Cumul', '<p>Somme des 25 termes d\'une suite géométrique :</p>' + M(`E = E_1 \\times \\frac{1 - ${tx(1 - deg / 100, 3)}^{25}}{${tx(deg / 100, 3)}} = \\boxed{${tx(Etot, 0)}${u('kWh')}}`) +
+            (() => {
+              const p = 10 ** Math.floor(Math.log10(E1 / 4)), f = E1 / 4 / p, dy = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p, y1 = Math.ceil(E1 * 1.05 / dy) * dy;
+              return graph({ x0: 0, x1: 25, dx: 5, y0: 0, y1, dy, w: 420, h: 240, xlab: 'année', ylab: 'E (kWh)', fy: y => fr(y, 0),
+                series: [{ pts: Array.from({ length: 25 }, (_, i) => [i + 1, E1 * (1 - deg / 100) ** i]) }], cap: 'Production annuelle : elle baisse un peu chaque année ; le cumul est l\'aire sous la courbe' });
+            })()]
         ]
       };
     }
@@ -1014,6 +1082,12 @@ const EXOS = [
       return {
         statement: `<p>Une STEP dispose d'un bassin supérieur de ${v(V, 'millions de m³', 1)} situé ${v(h, 'm')} au-dessus du bassin inférieur.
           Le rendement de turbinage est ${v(eta, '', 2)} et celui du pompage ${v(etaP, '', 2)}. Les turbines ont une puissance totale de ${v(Pt, 'MW')}. On prend ${m('g = 9{,}81\\ \\text{m/s}^2')}.</p>` +
+          dSV(340, 205, `<path class="thin" d="M60 30 L70 62 H150 L160 30"/><polygon class="flow" points="62,38 70,62 150,62 158,38"/>
+            <path class="thin" d="M225 148 L235 180 H315 L325 148"/><polygon class="flow" points="227,156 235,180 315,180 323,156"/>
+            <polyline class="line" points="150,60 240,170"/><circle class="fillv" cx="213" cy="137" r="12"/>
+            <line class="c3" x1="40" y1="38" x2="62" y2="38"/><line class="c3" x1="40" y1="156" x2="227" y2="156"/>` +
+            dCote(40, 38, 40, 156, `h = ${h} m`) + dT(110, 22, 'bassin supérieur', 'middle', 13) + dT(275, 198, 'bassin inférieur', 'middle', 13) + dT(230, 124, 'turbine-pompe', 'start', 13),
+            'STEP : on pompe l\'eau vers le haut quand l\'électricité est abondante, on la turbine quand on en a besoin') +
           ol('Calculer la masse d\'eau stockée.', 'Calculer l\'énergie potentielle de pesanteur stockée.', 'Calculer l\'énergie électrique restituée, en MWh.',
             'Pendant combien de temps la STEP peut-elle produire à pleine puissance ?', 'Calculer le rendement global d\'un cycle pompage puis turbinage.'),
         steps: [
@@ -1370,6 +1444,14 @@ const EXOS = [
         statement: `<p>Un poteau porte la zone de toiture-terrasse qui l'entoure, de ${v(a, 'm', 1)} × ${v(b, 'm', 1)}. La dalle en béton armé fait ${v(e * 100, 'cm', 0)}
           d'épaisseur (poids volumique 25 kN/m³) ; l'étanchéité et l'isolant ajoutent ${v(gs, 'kN/m²', 1)}. Charge d'exploitation : ${v(q, 'kN/m²', 1)} ; neige : ${v(s, 'kN/m²')}.
           Le poteau a une section carrée de ${v(c * 100, 'cm', 0)} de côté ; le béton résiste à ${v(fc, 'MPa')}.</p>` +
+          (() => {
+            const k = Math.min(110 / a, 75 / b), A = a * k, B = b * k, cx = 170, cy = B + 26;
+            let g = `<rect class="flow" x="${(cx - A / 2).toFixed(1)}" y="${(cy - B / 2).toFixed(1)}" width="${A.toFixed(1)}" height="${B.toFixed(1)}"/>`;
+            [-1, 0, 1].forEach(i => { g += `<line class="c3" x1="${cx - A - 20}" y1="${cy + i * B}" x2="${cx + A + 20}" y2="${cy + i * B}"/><line class="c3" x1="${cx + i * A}" y1="${cy - B - 18}" x2="${cx + i * A}" y2="${cy + B + 18}"/>`; });
+            [-1, 0, 1].forEach(i => [-1, 0, 1].forEach(j => { g += `<rect class="fillv" x="${(cx + i * A - 5).toFixed(1)}" y="${(cy + j * B - 5).toFixed(1)}" width="10" height="10"/>`; }));
+            return dSV(340, cy + B + 46, g + dT(cx, cy + B + 38, `zone reprise : ${fr(a, 1)} m × ${fr(b, 1)} m`, 'middle', 13),
+              'Vue de dessus : le poteau central reprend la zone colorée (la moitié de la distance jusqu\'aux poteaux voisins de chaque côté)');
+          })() +
           ol('Calculer la surface reprise par le poteau.', 'Calculer la charge permanente G (poids de la dalle et des revêtements).', 'Calculer la charge d\'exploitation et la charge de neige.',
             'En déduire l\'effort total N sur le poteau.', 'Calculer la contrainte de compression dans le poteau et conclure.'),
         steps: [
@@ -1435,6 +1517,10 @@ const EXOS = [
       return {
         statement: `<p>Un ponton flottant est assimilé à un caisson de ${v(L, 'm', 1)} × ${v(l, 'm', 1)} et de ${v(H, 'm', 1)} de haut. Sa masse à vide est de ${v(m0 / 1000, 't', 1)}.
           Il flotte dans une eau de masse volumique ${v(rho, 'kg/m³')}. D'après la poussée d'Archimède, il s'enfonce jusqu'à déplacer une masse d'eau égale à sa propre masse.</p>` +
+          dSV(340, 185, `<rect class="flow" x="10" y="110" width="320" height="65"/><rect class="fillv" x="60" y="60" width="220" height="90"/>
+            <line class="c3" x1="60" y1="110" x2="280" y2="110"/><line class="line" x1="10" y1="110" x2="60" y2="110"/><line class="line" x1="280" y1="110" x2="330" y2="110"/>` +
+            dCote(48, 60, 48, 150, '') + dT(40, 90, 'H', 'end') + dCote(296, 110, 296, 150, 'h') + dCote(60, 46, 280, 46, `L = ${fr(L, 1)} m`) + dT(170, 168, 'eau', 'middle', 13),
+            'Caisson flottant vu de côté : h est la hauteur immergée, H la hauteur totale') +
           ol('Calculer la surface de la base du caisson.', 'Calculer la hauteur immergée à vide.', `On ajoute ${fr(ch)} kg de charge. Calculer la nouvelle hauteur immergée et la hauteur hors de l'eau.`,
             'On impose une hauteur hors de l\'eau d\'au moins 20 cm. Quelle charge maximale peut-on embarquer ?'),
         steps: [
@@ -1525,6 +1611,14 @@ const EXOS = [
         statement: `<p>On veut éclairer une salle de ${v(Ss, 'm²')} avec un éclairement de ${v(E, 'lx')}. Les luminaires sont fixés à ${v(d, 'm', 1)} du plan de travail
           et ont un angle d'ouverture de ${v(a, '°')}. Le flux nécessaire pour un luminaire vaut :</p>` + M('\\Phi = \\frac{E \\times d^2}{\\cos(\\alpha / 2)}') +
           `<p>Le luminaire choisi consomme ${v(Pl, 'W')} et a une efficacité de ${v(eff, 'lm/W')}.</p>` +
+          (() => {
+            const hw = 128 * Math.tan(deg(a / 2));
+            return dSV(340, 200, `<line class="thin" x1="10" y1="30" x2="330" y2="30"/><line class="line" x1="10" y1="170" x2="330" y2="170"/>
+              <path class="fillv" d="M158 30 H182 L176 42 H164 Z"/><path class="flow" d="M170 42 L${(170 - hw).toFixed(1)} 170 H${(170 + hw).toFixed(1)} Z" opacity="0.7"/>` +
+              dCote(26, 42, 26, 170, 'd') + dRot(170, 42, 34, 270 - a / 2, 270 + a / 2, 'thin') + dT(170, 98, `α = ${a}°`, 'middle', 13) +
+              dT(170, 190, 'surface éclairée S', 'middle', 13) + dT(326, 162, 'plan de travail', 'end', 12) + dT(326, 24, 'plafond', 'end', 12),
+              'Luminaire à la hauteur d au-dessus du plan de travail, d\'angle d\'ouverture α');
+          })() +
           ol('Calculer le flux nécessaire pour un luminaire.', 'En déduire la surface éclairée par un luminaire.', 'Calculer le nombre de luminaires nécessaires.',
             'Calculer le flux réel du luminaire choisi et le comparer au besoin (en %).', 'Recalculer le nombre de luminaires avec ce flux réel et la puissance installée.'),
         steps: [
@@ -1600,6 +1694,17 @@ const EXOS = [
         statement: `<p>Une allée fait le tour d'un parking rectangulaire de ${v(L, 'm')} × ${v(l, 'm')} dont les quatre angles sont arrondis (quarts de cercle de rayon ${v(r, 'm', 1)}).
           On place des balises lumineuses tous les ${v(e, 'm')}. Chaque balise consomme ${v(P, 'W')} et s'allume ${v(h, 'h')} par an grâce à un détecteur crépusculaire.
           Le kWh coûte ${v(frf(prix, 2), '€')}.</p>` +
+          (() => {
+            const k = Math.min(300 / L, 150 / l), x0 = (340 - L * k) / 2, y0 = 18, A = L - 2 * r, B = l - 2 * r, q = Math.PI * r / 2;
+            const arc = (cx, cy, t0) => s => [cx + r * Math.cos(t0 + s / r), cy + r * Math.sin(t0 + s / r)], lin = (x, y, dx, dy) => s => [x + dx * s, y + dy * s];
+            const segs = [[A, lin(r, 0, 1, 0)], [q, arc(L - r, r, -Math.PI / 2)], [B, lin(L, r, 0, 1)], [q, arc(L - r, l - r, 0)],
+              [A, lin(L - r, l, -1, 0)], [q, arc(r, l - r, Math.PI / 2)], [B, lin(0, l - r, 0, -1)], [q, arc(r, r, Math.PI)]];
+            const at = s => { for (const [len, f] of segs) { if (s <= len) return f(s); s -= len; } return segs[0][1](0); };
+            const dots = Array.from({ length: n }, (_, i) => at(i * Per / n)).map(([x, y]) => `<circle class="pt" cx="${(x0 + x * k).toFixed(1)}" cy="${(y0 + y * k).toFixed(1)}" r="2.6"/>`).join('');
+            return dSV(340, l * k + 36, `<rect class="thin" x="${x0.toFixed(1)}" y="${y0}" width="${(L * k).toFixed(1)}" height="${(l * k).toFixed(1)}" rx="${(r * k).toFixed(1)}"/>` + dots +
+              dT(170, y0 + l * k / 2 - 4, `${L} m × ${l} m`, 'middle', 13) + dT(170, y0 + l * k / 2 + 14, `angles : r = ${fr(r, 1)} m`, 'middle', 13),
+              `Vue de dessus de l'allée : chaque point est une balise (${n} au total)`);
+          })() +
           ol('Calculer le périmètre de l\'allée.', 'Calculer le nombre de balises.', 'Calculer l\'énergie consommée par an.', 'Calculer le coût annuel.'),
         steps: [
           ['1. Périmètre', '<p>Les 4 quarts de cercle forment un cercle complet ; on retire aux côtés droits 2 rayons par angle :</p>' +

@@ -84,6 +84,13 @@ body {
   position: sticky; top: 0; height: 100vh; overflow-y: auto;
 }
 .sidebar h1 { font-size: 18px; font-weight: 600; margin: 0 8px 4px; }
+a.home {
+  display: inline-block; text-decoration: none; color: var(--accent); font-size: 14px;
+  border: 1px solid var(--accent); border-radius: 8px; padding: 4px 10px;
+}
+a.home:hover, a.home:focus-visible { background: var(--accent-bg); outline: none; }
+.sidebar a.home { margin: 0 8px 14px; }
+.topbar a.home { margin-left: auto; }
 .sidebar .sub { font-size: 13px; color: var(--muted); margin: 0 8px 16px; }
 .chap { margin-bottom: 2px; }
 .chap-btn {
@@ -230,10 +237,12 @@ svg .ledoff { fill: var(--side); stroke: var(--muted); }
 <div class="topbar">
   <button id="menuBtn" aria-label="Ouvrir le menu">☰</button>
   <span>Exercices I2D</span>
+  <a class="home" href="index.html">← Accueil</a>
 </div>
 <div class="shade" id="shade" hidden></div>
 <div class="layout">
   <nav class="sidebar" id="sidebar">
+    <a class="home" href="index.html">← Accueil</a>
     <h1>Exercices I2D</h1>
     <p class="sub">1re STI2D · exercices à valeurs aléatoires</p>
     <div class="nav" id="nav"></div>
@@ -380,6 +389,60 @@ function sankey(stages, vals, unit) {
   return fig(s + '</svg>', unit);
 }
 
+// ---------- Dessins (schémas lisibles sur téléphone : viewBox étroit, texte à 14 px) ----------
+// Schéma : largeur et hauteur du viewBox, contenu SVG, légende
+const dSV = (w, h, inner, cap = '', max = 440) => fig(`<svg viewBox="0 0 ${w} ${h}" role="img" style="max-width:${max}px">${inner}</svg>`, cap);
+// Texte : position, contenu, ancrage (start | middle | end), taille
+const dT = (x, y, s, a = 'middle', sz = 14) => `<text x="${+x.toFixed(1)}" y="${+y.toFixed(1)}" text-anchor="${a}" style="font-size:${sz}px">${s}</text>`;
+// Flèche du point 1 au point 2 (cls : arrow = bleu, arrowv = orange)
+function dA(x1, y1, x2, y2, cls = 'arrow') {
+  const a = Math.atan2(y2 - y1, x2 - x1), h = 9, r = n => +n.toFixed(1);
+  const p = s => `${r(x2 - h * Math.cos(a + s))} ${r(y2 - h * Math.sin(a + s))}`;
+  return `<line class="${cls}" x1="${r(x1)}" y1="${r(y1)}" x2="${r(x2)}" y2="${r(y2)}"/><path class="${cls}" d="M${p(-0.45)} L${r(x2)} ${r(y2)} L${p(0.45)}"/>`;
+}
+// Cote horizontale ou verticale avec flèches aux deux bouts et texte au milieu
+function dCote(x1, y1, x2, y2, s, off = -6) {
+  const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, hor = Math.abs(y2 - y1) < Math.abs(x2 - x1);
+  return dA(mx, my, x1, y1, 'thin') + dA(mx, my, x2, y2, 'thin') + (hor ? dT(mx, my + off, s) : dT(mx + 6, my + 5, s, 'start'));
+}
+// Roue dentée : centre, rayon primitif, nombre de dents (dessin simplifié)
+function dGear(cx, cy, r, z, cls = 'fillv') {
+  const n = Math.max(8, Math.min(z, 40)), pts = [];
+  for (let k = 0; k < n; k++) {
+    const a = 2 * Math.PI * k / n, s = Math.PI / n;
+    [[a - s * 0.5, r - 4], [a - s * 0.25, r + 5], [a + s * 0.25, r + 5], [a + s * 0.5, r - 4]]
+      .forEach(([t, rr]) => pts.push(`${(cx + rr * Math.cos(t)).toFixed(1)},${(cy + rr * Math.sin(t)).toFixed(1)}`));
+  }
+  return `<polygon class="${cls}" points="${pts.join(' ')}"/><circle class="thin" cx="${cx}" cy="${cy}" r="${Math.max(3, r * 0.18).toFixed(1)}"/>`;
+}
+// Appui simple (triangle) sous le point x, y, et sol hachuré
+const dAppui = (x, y) => `<path class="thin" d="M${x} ${y} L${x - 10} ${y + 16} H${x + 10} Z"/><line class="thin" x1="${x - 16}" y1="${y + 16}" x2="${x + 16}" y2="${y + 16}"/>` +
+  [0, 1, 2, 3].map(k => `<line class="thin" x1="${x - 14 + k * 9}" y1="${y + 16}" x2="${x - 20 + k * 9}" y2="${y + 23}"/>`).join('');
+// Encastrement (mur hachuré vertical) à l'abscisse x, de y1 à y2
+const dMur = (x, y1, y2) => `<line class="line" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/>` +
+  Array.from({ length: Math.floor((y2 - y1) / 9) + 1 }, (_, k) => `<line class="thin" x1="${x}" y1="${y1 + k * 9}" x2="${x - 8}" y2="${y1 + k * 9 + 8}"/>`).join('');
+// Flèche courbe de rotation autour de (cx, cy), rayon r, de l'angle a1 à a2 (en degrés, sens trigonométrique si a2 > a1)
+function dRot(cx, cy, r, a1, a2, cls = 'arrow') {
+  const P = a => [cx + r * Math.cos(-a * Math.PI / 180), cy + r * Math.sin(-a * Math.PI / 180)], [x1, y1] = P(a1), [x2, y2] = P(a2);
+  const big = Math.abs(a2 - a1) > 180 ? 1 : 0, sweep = a2 > a1 ? 0 : 1, [xp, yp] = P(a2 - Math.sign(a2 - a1) * 12);
+  return `<path class="${cls}" d="M${x1.toFixed(1)} ${y1.toFixed(1)} A${r} ${r} 0 ${big} ${sweep} ${x2.toFixed(1)} ${y2.toFixed(1)}"/>` + dA(xp, yp, x2, y2, cls).replace(/<line[^>]*\/>/, '');
+}
+
+// Association de s éléments en série sur b branches en parallèle (panneaux, batteries)
+function dGrid(s, b, lab, cap) {
+  const w = Math.min(34, 250 / s - 6), x0 = 45, xe = x0 + s * (w + 6) + 6, H = b * 40 + 40, yl = 34 + (b - 1) * 40, ym = (34 + yl) / 2;
+  let g = `<line class="line" x1="${x0 - 12}" y1="34" x2="${x0 - 12}" y2="${yl}"/><line class="line" x1="${xe}" y1="34" x2="${xe}" y2="${yl}"/>` +
+    `<line class="line" x1="${x0 - 30}" y1="${ym}" x2="${x0 - 12}" y2="${ym}"/><line class="line" x1="${xe}" y1="${ym}" x2="${xe + 18}" y2="${ym}"/>` +
+    dT(x0 - 33, ym + 5, '−', 'end') + dT(xe + 21, ym + 5, '+', 'start');
+  for (let r = 0; r < b; r++) {
+    const y = 34 + r * 40;
+    g += `<line class="line" x1="${x0 - 12}" y1="${y}" x2="${xe}" y2="${y}"/>`;
+    for (let c = 0; c < s; c++) g += `<rect class="fillv" x="${(x0 + c * (w + 6)).toFixed(1)}" y="${y - 12}" width="${w.toFixed(1)}" height="24" rx="3"/>` +
+      (w >= 30 ? dT(x0 + c * (w + 6) + w / 2, y + 4, lab, 'middle', 11) : '');
+  }
+  return dSV(340, H, g + dT(170, H - 8, `${b} branche${b > 1 ? 's' : ''} en parallèle × ${s} élément${s > 1 ? 's' : ''} en série`, 'middle', 13), cap);
+}
+
 // ---------- Chapitres ----------
 const CHAPITRES = [
   'Du besoin à la solution technique',
@@ -490,6 +553,9 @@ const EXOS = [
         statement: `<p>Un mur en béton armé a une épaisseur de ${v(e, 'cm')}, une hauteur de ${v(h, 'm', 1)}
           et une longueur de ${v(L, 'm')}. Il repose sur des fondations de ${v(lF, 'cm')} de largeur.
           La masse volumique du béton armé est de ${v(rho, 'kg/m³')}. On prendra g = 9,81 N/kg.</p>` +
+          dSV(340, 215, `<line class="thin" x1="50" y1="175" x2="290" y2="175"/><rect class="fillv" x="110" y="150" width="120" height="25"/><rect class="flow" x="145" y="40" width="50" height="110"/>` +
+            dA(170, 75, 170, 125, 'arrowv') + dT(178, 104, 'P', 'start') + dCote(145, 30, 195, 30, `e = ${e} cm`) + dCote(215, 40, 215, 150, `h = ${fr(h, 1)} m`) +
+            dCote(110, 190, 230, 190, `largeur = ${lF} cm`, 20) + dT(100, 166, 'fondation', 'end', 13), 'Coupe du mur sur sa fondation (longueur L perpendiculaire au dessin)') +
           ol('Calculer la masse linéique du mur (masse par mètre de longueur), en kg/m.',
             'Calculer le poids du mur.', 'Calculer la surface d\'appui sur les fondations.',
             'En déduire la pression exercée par le mur sur ses fondations, en Pa puis en bar.'),
@@ -535,6 +601,9 @@ const EXOS = [
       return {
         statement: `<p>Un dérouleur permet d'installer ${v(L, 'm')} de fibre optique. On suppose que le diamètre du rouleau
           reste constant et vaut ${v(d, 'cm')}. Le dérouleur fait un tour en ${v(T, 's', 1)}.</p>` +
+          dSV(340, 185, `<circle class="fillv" cx="110" cy="95" r="60"/>` + dA(110, 155, 315, 155) +
+            dCote(50, 95, 170, 95, `d = ${d} cm`) + dRot(110, 95, 74, 20, 100, 'arrowv') + dT(196, 42, `1 tour en ${fr(T, 1)} s`, 'start') + dT(315, 175, 'fibre', 'end'),
+            'Dérouleur : à chaque tour, il tire une longueur de fibre égale au périmètre du rouleau') +
           ol('Calculer la longueur de fibre tirée à chaque tour.', 'Calculer le nombre de tours effectués.',
             'Calculer la vitesse de rotation N du dérouleur en tr/min.', 'Combien de temps dure l\'opération, en minutes ?'),
         steps: [
@@ -599,6 +668,12 @@ const EXOS = [
           <p>La chaîne de puissance du vélo à assistance électrique est composée d'une batterie qui fournit
           ${v(P, 'W')}, d'un variateur de rendement ${v(e1)}, d'un moteur de rendement ${v(e2)}
           et d'un réducteur de rendement ${v(e3)}.</p>` +
+          dSV(340, 140, dA(4, 60, 34, 60) + dT(4, 44, 'P<tspan baseline-shift="sub" font-size="10">bat</tspan>', 'start', 13) + dT(4, 86, `${P} W`, 'start', 12) +
+            [['Variateur', e1], ['Moteur', e2], ['Réducteur', e3]].map(([n, e], k) => `<rect class="flow" x="${36 + k * 100}" y="38" width="78" height="44" rx="6"/>` +
+              dT(75 + k * 100, 56, n, 'middle', 13) + dT(75 + k * 100, 74, `η = ${fr(e)}`, 'middle', 12) + dA(75 + k * 100, 82, 75 + k * 100, 118, 'arrowv') +
+              (k < 2 ? dA(114 + k * 100, 60, 136 + k * 100, 60) : dA(314, 60, 338, 60))).join('') +
+            dT(338, 44, 'P<tspan baseline-shift="sub" font-size="10">u</tspan>', 'end', 13) + dT(170, 134, 'pertes (chaleur)', 'middle', 12),
+            'Chaîne de puissance du vélo : les rendements se multiplient') +
           ol(`Calculer le rendement global ${m('\\eta')} de la chaîne de puissance.`,
             'En déduire la puissance mécanique disponible à la roue.', 'Calculer la puissance perdue dans la chaîne.'),
         steps: [
@@ -1009,6 +1084,17 @@ const EXOS = [
           Les relations entre les angles des articulations et la position des points sont :</p>` +
           M('X_B = 135 \\sin(J_2) + 147 \\cos(J_3) \\qquad Z_B = 135 \\cos(J_2) - 147 \\sin(J_3) \\qquad X_C = X_B + 60') +
           `<p>Le logiciel affiche ${m('J_2')} = ${v(J2, '°')} et ${m('J_3')} = ${v(J3, '°')}. La position réelle mesurée de C est X = ${v(XCr, 'mm', 0)}.</p>` +
+          (() => {
+            const k = 0.8, O = [40, 205], A = [O[0] + k * 135 * Math.sin(deg(J2)), O[1] - k * 135 * Math.cos(deg(J2))];
+            const B = [A[0] + k * 147 * Math.cos(deg(J3)), A[1] + k * 147 * Math.sin(deg(J3))], C = [B[0] + k * 60, B[1]];
+            const pt = p => `<circle class="pt" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4"/>`;
+            return dSV(340, 245, dA(O[0], O[1], O[0], 25, 'thin') + dA(O[0], O[1], 330, O[1], 'thin') + dT(O[0] + 8, 32, 'Z', 'start') + dT(326, O[1] - 8, 'X', 'end') +
+              `<polyline class="line" points="${[O, A, B, C].map(p => p.map(c => c.toFixed(1)).join(',')).join(' ')}"/>` +
+              `<line class="c3" x1="${A[0].toFixed(1)}" y1="${A[1].toFixed(1)}" x2="${(A[0] + 70).toFixed(1)}" y2="${A[1].toFixed(1)}"/>` +
+              pt(O) + pt(A) + pt(B) + pt(C) + dT(O[0] - 8, O[1] + 4, 'O', 'end') + dT(A[0] - 8, A[1] - 6, 'A', 'end') + dT(B[0] - 8, B[1] + 5, 'B', 'end') + dT(C[0] + 6, C[1] - 8, 'C', 'start') +
+              dT(O[0] + 12, O[1] - 60, 'J₂', 'start', 13) + dT(A[0] + 62, A[1] + 20, 'J₃', 'start', 13),
+              'Bras dans le plan (O, X, Z) : J₂ est mesuré depuis la verticale, J₃ depuis l\'horizontale');
+          })() +
           ol('Calculer X<sub>B</sub> et Z<sub>B</sub> (calculatrice en degrés).', 'En déduire X<sub>C</sub>.',
             'Calculer l\'écart relatif entre la valeur calculée et la valeur réelle de X<sub>C</sub>. Le modèle est-il valide ?'),
         steps: [
@@ -1032,6 +1118,10 @@ const EXOS = [
         statement: `
           <p>La base d'un bras robotisé tourne autour d'un axe vertical à la vitesse de ${v(N, 'tr/min')}.
           La pince se trouve à ${v(R, 'm', 2)} de l'axe de rotation.</p>` +
+          dSV(340, 200, `<circle class="c3" cx="150" cy="105" r="75"/><rect class="fillv" x="138" y="93" width="24" height="24" rx="4"/><line class="line" x1="150" y1="105" x2="225" y2="105"/><circle class="pt" cx="225" cy="105" r="5"/>` +
+            dA(225, 105, 225, 38, 'arrowv') + dRot(150, 105, 30, 200, 330) + dT(196, 97, `R = ${fr(R)} m`, 'middle', 13) + dT(233, 50, 'V', 'start') +
+            dT(150, 166, `N = ${N} tr/min`, 'middle', 13) + dT(234, 125, 'pince', 'start', 13) + dT(150, 22, 'trajectoire de la pince', 'middle', 12),
+            'Base du bras vue de dessus : la pince décrit un cercle de rayon R') +
           ol('Convertir la vitesse de rotation en rad/s.', 'Calculer la vitesse linéaire de la pince, en m/s.',
             'Combien de temps faut-il au bras pour tourner d\'un quart de tour (90°) ?'),
         steps: [
@@ -1174,7 +1264,7 @@ const EXOS = [
       return {
         statement: `<p>Une installation comporte ${v(N, 'panneaux')} identiques. Lors d'une mesure, chaque panneau présente une tension
           de ${v(Up, 'V', 1)} et délivre un courant de ${v(Ip, 'A', 1)}. Les panneaux sont associés en ${v(b, 'branches')} en parallèle,
-          chacune comportant ${v(s, 'panneaux')} en série.</p>` +
+          chacune comportant ${v(s, 'panneaux')} en série.</p>` + dGrid(s, b, '', 'Câblage de l\'installation photovoltaïque') +
           ol('Calculer la tension U aux bornes de l\'installation.', 'Calculer le courant I délivré par l\'installation.',
             'Calculer la puissance totale délivrée.', 'Calculer la puissance d\'un panneau et la multiplier par le nombre de panneaux. Conclure.'),
         steps: [
@@ -1285,7 +1375,7 @@ const EXOS = [
       const [s, b, desc] = cfg, U = s * U1, Q = b * Q1, I = U / R, dt = Q / I, E = U * Q;
       return {
         statement: `<p>On dispose de ${v(n, 'batteries')} de ${v(U1, 'V')} et ${v(Q1, 'Ah')}. Elles sont branchées ${v(desc)}
-          et alimentent une charge résistive de ${v(R, 'Ω')}.</p>` +
+          et alimentent une charge résistive de ${v(R, 'Ω')}.</p>` + dGrid(s, b, `${U1} V`, 'Association des batteries') +
           ol('Calculer la tension U aux bornes de l\'association.', 'Calculer sa capacité Q.', 'Calculer le courant I dans la charge.',
             'Calculer l\'autonomie si les batteries se vident entièrement.', 'Calculer l\'énergie stockée et vérifier qu\'elle vaut n fois celle d\'une batterie.'),
         steps: [
@@ -1513,6 +1603,9 @@ const EXOS = [
       return {
         statement: `<p>Un capteur de vitesse a une sortie 0/${Um} V : il délivre 0 V à 0 km/h et ${v(Um, 'V')} à ${v(Vm, 'km/h')}.
           Sa caractéristique est linéaire.</p>` +
+          graph({ x0: 0, x1: Math.ceil(Vm / 50) * 50, dx: 50, y0: 0, y1: Um, dy: Um === 5 ? 1 : 2, w: 400, h: 230, xlab: 'V (km/h)', ylab: 'U (V)', series: [{ pts: [[0, 0], [Vm, Um]] }],
+            extra: (X, Y) => `<polyline class="c3" points="${X(0)},${Y(U1)} ${X(V1)},${Y(U1)} ${X(V1)},${Y(0)}"/>` + dT(X(0) + 6, Y(U1) - 6, `${fr(U1)} V`, 'start', 13) + dT(X(V1) + 4, Y(0) - 8, 'V = ?', 'start', 13),
+            cap: 'Caractéristique du capteur' }) +
           ol('Écrire la relation entre la tension U et la vitesse V.', `Quelle est la vitesse pour une tension de ${v(U1, 'V')} ?`,
             `Quelle tension le capteur délivre-t-il à ${v(v2, 'm/s', 1)} ?`),
         steps: [
@@ -1533,6 +1626,9 @@ const EXOS = [
       return {
         statement: `<p>Une sonde PT100 (résistance de 100 Ω à 0 °C, en platine) suit la loi ${m('R_T = R_0 (1 + A \\cdot T)')}
           avec ${m('A = 3{,}9 \\times 10^{-3}')} °C⁻¹.</p>` +
+          graph({ x0: 0, x1: 300, dx: 50, y0: 100, y1: 220, dy: 20, w: 400, h: 230, xlab: 'T (°C)', ylab: 'R (Ω)', series: [{ pts: [[0, 100], [300, 100 * (1 + A * 300)]] }],
+            extra: (X, Y) => `<polyline class="c3" points="${X(0)},${Y(R1)} ${X(T1)},${Y(R1)} ${X(T1)},${Y(100)}"/>` + dT(X(0) + 6, Y(R1) - 6, `${fr(R1, 1)} Ω`, 'start', 13) + dT(X(T1) + (T1 > 220 ? -4 : 4), Y(100) - 8, 'T = ?', T1 > 220 ? 'end' : 'start', 13),
+            cap: 'Caractéristique de la sonde PT100 : R augmente avec la température' }) +
           ol(`Une mesure donne ${v(R1, 'Ω', 1)}. Quelle est la température ?`, `Quelle résistance mesure-t-on à ${v(T2, '°C')} ?`,
             'Ce capteur est-il actif ou passif ?'),
         steps: [
@@ -1797,6 +1893,11 @@ const EXOS = [
         statement: `<p>Un balcon AB de ${v(AB, 'm', 1)} est encastré dans le mur en A. Il exerce une charge répartie de ${v(p, 'kN/m', 1)}.
           Une personne de ${v(mp, 'kg')} se tient au bout, en B, et pousse horizontalement sur la rambarde avec ${v(F, 'N')}
           à ${v(BH, 'm', 1)} au-dessus du balcon. On applique un coefficient de sécurité de ${v(Cs)} au poids et à la poussée.</p>` +
+          dSV(340, 200, dMur(40, 60, 160) + `<rect class="fillv" x="40" y="124" width="245" height="12"/><line class="line" x1="285" y1="124" x2="285" y2="62"/>
+            <line class="thin" x1="50" y1="95" x2="246" y2="95"/>` + [0, 1, 2, 3, 4, 5, 6, 7, 8].map(k => dA(50 + k * 24.5, 95, 50 + k * 24.5, 121, 'arrowv')).join('') +
+            dA(266, 64, 266, 121, 'arrowv') + dA(285, 62, 330, 62) + dT(148, 88, `p = ${fr(p, 1)} kN/m`, 'middle', 13) + dT(258, 74, 'P', 'end') + dT(322, 54, 'F', 'end') +
+            dCote(300, 120, 300, 68, 'BH') + dT(48, 152, 'A', 'start') + dT(282, 152, 'B', 'end') + dCote(40, 172, 285, 172, `AB = ${fr(AB, 1)} m`, 20),
+            'Balcon encastré en A : charge répartie, poids P de la personne en B et poussée F sur la rambarde') +
           ol('Calculer la résultante R de la charge répartie et préciser son point d\'application.', 'Calculer le poids de la personne et la poussée, coefficient de sécurité compris.',
             'Calculer le moment en A de chacune des trois actions (toutes font tourner dans le sens horaire).', 'En déduire le moment total que doit reprendre le mur.'),
         steps: [
@@ -1821,6 +1922,11 @@ const EXOS = [
       return {
         statement: `<p>Un vérin double effet a un piston de ${v(D, 'mm')} de diamètre et une tige de ${v(d, 'mm')}.
           Il est alimenté sous une pression de ${v(p, 'bar', 1)}.</p>` +
+          dSV(340, 150, `<rect class="thin" x="30" y="40" width="200" height="70" rx="4"/><rect class="flow" x="120" y="42" width="14" height="66"/><rect class="flow" x="134" y="68" width="166" height="14"/>
+            <line class="line" x1="50" y1="40" x2="50" y2="22"/><line class="line" x1="210" y1="40" x2="210" y2="22"/>` +
+            dT(50, 16, 'sortie', 'middle', 12) + dT(210, 16, 'rentrée', 'middle', 12) + dT(75, 80, 'S₁', 'middle') + dT(182, 102, 'S₁ − s', 'middle', 13) +
+            dT(127, 128, `piston Ø ${D} mm`, 'middle', 13) + dT(284, 104, `tige Ø ${d} mm`, 'middle', 13) + dA(300, 75, 336, 75) + dT(320, 62, 'F', 'middle'),
+            'Vérin double effet : en sortie, la pression agit sur tout le piston ; en rentrée, la tige réduit la surface utile') +
           ol('Convertir la pression en pascals.', 'Calculer la surface du piston et la force à la sortie de la tige.',
             'Calculer la surface sur laquelle agit la pression lors de la rentrée de la tige.', 'En déduire la force lors de la rentrée. Pourquoi est-elle plus faible ?'),
         steps: [
@@ -1844,6 +1950,17 @@ const EXOS = [
         statement: `<p>Un véhicule de ${v(mv, 'kg', 0)} (C<sub>x</sub> = ${v(Cx)}, surface frontale ${v(S, 'm²')}, C<sub>r</sub> = ${v(Cr, '', 3)})
           roule à ${v(Vk, 'km/h')} sur une pente de ${v(al, '°')} avec une accélération de ${v(a, 'm/s²', 1)}.
           Masse volumique de l'air : 1,24 kg/m³. Rendement de la transmission : ${v(eta)}.</p>` +
+          (() => {
+            const th = al === 0 ? 0 : deg(6 + al * 1.2), cx = 170, cy = 112, cs = Math.cos(-th), sn = Math.sin(-th);
+            const L = (x, y) => [cx + x * cs - y * sn, cy + x * sn + y * cs], ar = (a, b, c) => dA(...L(...a), ...L(...b), c);
+            const yAt = x => cy - (x - cx) * Math.tan(th), [wx, wy] = L(0, -24), [tx2, ty2] = L(115, -24), [fx, fy] = L(-115, -24), [rx, ry] = L(-85, -8);
+            return dSV(340, 195, `<line class="line" x1="10" y1="${yAt(10).toFixed(1)}" x2="330" y2="${yAt(330).toFixed(1)}"/>` +
+              (al ? `<line class="thin" x1="10" y1="${yAt(10).toFixed(1)}" x2="70" y2="${yAt(10).toFixed(1)}"/>` + dT(36, yAt(10) - 4, 'α', 'start', 13) : '') +
+              `<g transform="translate(${cx} ${cy}) rotate(${(-th * 180 / Math.PI).toFixed(2)})"><rect class="fillv" x="-60" y="-40" width="120" height="32" rx="6"/><circle class="thin" cx="-38" cy="-8" r="8"/><circle class="thin" cx="38" cy="-8" r="8"/></g>` +
+              ar([60, -24], [115, -24]) + ar([-60, -24], [-115, -24], 'arrowv') + ar([-38, -8], [-85, -8], 'arrowv') + dA(wx, wy, wx, wy + 75, 'arrowv') +
+              dT(tx2, ty2 - 12, 'F traction', 'middle', 13) + dT(fx + 10, fy - 12, 'F aéro', 'middle', 13) + dT(rx, yAt(rx) + 20, 'F roulement', 'start', 13) + dT(wx + 8, wy + 72, 'P', 'start'),
+              al ? `Forces sur le véhicule, pente α = ${al}° (exagérée sur le dessin)` : 'Forces sur le véhicule, route plate');
+          })() +
           M('F_{aéro} = \\tfrac{1}{2} \\rho C_x S V^2 \\quad F_{roul} = C_r\\, m\\, g \\quad F_{grav} = m\\, g \\sin\\alpha \\quad F_{traction} = F_{aéro} + F_{roul} + F_{grav} + m\\, a') +
           ol('Convertir la vitesse en m/s.', 'Calculer les forces aérodynamique, de roulement et de gravité.', 'En déduire la force de traction.',
             'Calculer la puissance nécessaire aux roues puis la puissance utile du moteur.'),
@@ -1882,6 +1999,11 @@ const EXOS = [
       return {
         statement: `<p>Un engrenage est composé d'une roue menante de ${v(za, 'dents')} et d'une roue menée de ${v(zb, 'dents')}, de module ${v(mod, 'mm', 1)}.
           La roue menante tourne à ${v(Ne, 'tr/min')}.</p>` +
+          (() => {
+            const c = Math.min(85 / Math.max(za, zb), 150 / (za + zb)), ra = c * za, rb = c * zb, rm = Math.max(ra, rb), y = rm + 14, xa = 26 + ra, xb = xa + ra + rb;
+            return dSV(340, 2 * rm + 50, dGear(xa, y, ra, za, 'flow') + dGear(xb, y, rb, zb) + dT(8, y + rm + 30, `menante : ${za} dents`, 'start', 13) + dT(332, y + rm + 30, `menée : ${zb} dents`, 'end', 13),
+              'Engrenage (roues dessinées à l\'échelle de leur nombre de dents)');
+          })() +
           ol('Calculer le rapport de transmission r.', 'S\'agit-il d\'un réducteur ou d\'un multiplicateur ?', 'Calculer la vitesse de la roue menée.',
             'Calculer le diamètre primitif (D = m × Z) de chaque roue, puis l\'entraxe.', 'Calculer le diamètre de tête (D<sub>a</sub> = m × (Z + 2)) de la roue menante.'),
         steps: [
@@ -1905,6 +2027,13 @@ const EXOS = [
         statement: `<p>Un train d'engrenages comporte deux engrenages : la roue 1 (${v(Z[0], 'dents')}) entraîne la roue 2 (${v(Z[1], 'dents')}) ;
           la roue 3 (${v(Z[2], 'dents')}), fixée sur le même axe que la roue 2, entraîne la roue 4 (${v(Z[3], 'dents')}).
           La roue 1 tourne à ${v(N1, 'tr/min')} et reçoit ${v(Pe, 'kW', 1)}. Le rendement du train est de ${v(eta)}.</p>` +
+          (() => {
+            const c = Math.min(1.5, 320 / (2 * Z[0] + Z[1] + Z[2] + 2 * Z[3])), [r1, r2, r3, r4] = Z.map(z => c * z), rm = Math.max(r2, r4), y = rm + 12;
+            const x1 = 10 + r1, x2 = x1 + r1 + r2, x4 = x2 + r3 + r4;
+            return dSV(340, 2 * rm + 46, dGear(x1, y, r1, Z[0], 'flow') + dGear(x2, y, r2, Z[1]) + dGear(x2, y, r3, Z[2], 'flow') + dGear(x4, y, r4, Z[3]) +
+              dT(x1, y + r1 + 22, '1') + dT(x2 - r2 * 0.6, y + r2 * 0.6 + 4, '2') + dT(x2, y - r3 - 10, '3') + dT(x4, y + r4 + 22, '4'),
+              'Train d\'engrenages : les roues 2 et 3 sont fixées sur le même axe');
+          })() +
           ol('Calculer le rapport de transmission du train.', 'Calculer la vitesse de la roue 4.', 'La roue 4 tourne-t-elle dans le même sens que la roue 1 ?',
             'Calculer la puissance de sortie.', 'Calculer le couple disponible sur la roue 4.'),
         steps: [
@@ -2278,6 +2407,9 @@ print(n, x)</pre>` +
       return {
         statement: `<p>Une éprouvette en ${v(mat[0])}, de section carrée ${v(h, 'mm', 1)} × ${v(h, 'mm', 1)} et de longueur ${v(L, 'mm')}, est encastrée à une
           extrémité. Un dynamomètre tire à l'autre bout avec ${v(F, 'N', 1)}. On mesure une flèche de ${v(f, 'mm', 1)}. Pour cette poutre :</p>` +
+          dSV(340, 185, dMur(40, 40, 125) + `<rect class="fillv" x="40" y="72" width="250" height="12"/><path class="c3" d="M40 78 Q190 80 290 118"/>` +
+            dA(290, 118, 290, 150) + dT(282, 146, `F = ${fr(F, 1)} N`, 'end', 13) + dCote(310, 78, 310, 118, 'f') + dT(165, 62, `section ${fr(h, 1)} × ${fr(h, 1)} mm`, 'middle', 13) +
+            dCote(40, 170, 290, 170, `L = ${L} mm`), 'Éprouvette encastrée : en pointillé, la position déformée (flèche exagérée)') +
           M('f = \\frac{4 \\, F \\, L^3}{E \\, h^4}') +
           ol('Quelle masse suspendue produirait la même force ?', 'Calculer le module d\'Young E du matériau, en GPa.',
             `Une simulation donne une flèche de ${v(fsim, 'mm')}. Calculer l'écart relatif avec la mesure.`, 'Le matériau est-il plutôt rigide ou plutôt souple ?'),
