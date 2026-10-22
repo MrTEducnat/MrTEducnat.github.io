@@ -119,8 +119,11 @@ main { padding: 32px 24px 48px; }
 .support { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
 .v {
   background: var(--val-bg); color: var(--val);
-  padding: 1px 5px; border-radius: 5px; white-space: nowrap; font-weight: 500;
+  padding: 1px 5px; border-radius: 5px; font-weight: 500;
+  /* Une valeur longue (suite d'événements, octets…) peut passer à la ligne ; nombre et unité restent liés par une espace insécable */
+  overflow-wrap: anywhere; -webkit-box-decoration-break: clone; box-decoration-break: clone;
 }
+pre .v { overflow-wrap: normal; }
 ol.q { padding-left: 22px; margin: 12px 0 0; }
 ol.q li { margin-bottom: 4px; }
 pre.code {
@@ -146,6 +149,15 @@ button.primary { border-color: var(--accent); color: var(--accent); }
 .step .lab { font-size: 14px; font-weight: 600; color: var(--ok); }
 .step p { margin: 2px 0; }
 .mdisp { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+.mdisp.mwrap { text-align: center; line-height: 2.2; margin: 6px 0; }
+@media (max-width: 600px) {
+  table.t { font-size: 13px; }
+  table.t th, table.t td { padding: 3px 6px; }
+  pre.code { font-size: 12px; padding: 10px; }
+  table.t th, table.t td { overflow-wrap: anywhere; hyphens: auto; }
+}
+/* Mots binaires longs : police à chasse fixe, coupure possible si l'écran est trop étroit */
+.bin { font-family: ui-monospace, Consolas, monospace; text-align: center; overflow-wrap: anywhere; }
 /* QCM */
 ol.qcm { padding-left: 22px; margin: 12px 0 0; }
 ol.qcm > li { margin-bottom: 14px; }
@@ -807,7 +819,7 @@ const EXOS = [
             'Comment reconnaît-on une température négative ?'),
         steps: [
           ['1. Codage', M(`${txf(T1, 4)} \\times 16 = ${Math.round(T1 * 16)}${T1 < 0 ? ` \\;\\Rightarrow\\; 65\\,536 ${Math.round(T1 * 16)} = ${r1}` : ''}`) +
-            M(`${tt(grp4(BW(r1, 16)))} \\qquad \\text{data[1]} = \\boxed{${tt(H2(m1))}} \\quad \\text{data[0]} = \\boxed{${tt(H2(l1))}}`)],
+            `<p class="bin">${grp4(BW(r1, 16))}</p>` + M(`\\text{data[1]} = \\boxed{${tt(H2(m1))}} \\quad \\text{data[0]} = \\boxed{${tt(H2(l1))}}`)],
           ['2. Décodage', M(`${tt(H2(m2) + H2(l2))}_{16} = ${r2}${r2 >= 32768 ? ` \\;\\Rightarrow\\; ${r2} - 65\\,536 = ${s2}` : ''} \\qquad T = \\frac{${s2}}{16} = \\boxed{${txf(s2 / 16, 4)}${u('°C')}}`)],
           ['3. Signe', '<p>En complément à 2, une valeur est négative quand son bit de poids fort (bit 15) vaut 1, c\'est-à-dire quand data[1] ≥ 80<sub>(16)</sub>.</p>']
         ]
@@ -1113,7 +1125,7 @@ const EXOS = [
           'Combien d\'adresses ce réseau contient-il ?', 'Combien de machines peut-on y connecter ?'),
         steps: [
           ['1. CIDR', `<p>/${n} signifie que les <b>${n} premiers bits</b> de l'adresse identifient le réseau ; les ${h} bits restants identifient les machines.</p>`],
-          ['2. Masque', M(oct.map(o => tt(BW(o))).join('.')) + M(`\\boxed{${oct.join('.')}}`)],
+          ['2. Masque', `<p class="bin">${oct.map(o => BW(o)).join('.')}</p>` + M(`\\boxed{${oct.join('.')}}`)],
           ['3. Nombre d\'adresses', M(`2^{${h}} = \\boxed{${tx(2 ** h)}}`)],
           ['4. Machines', M(`2^{${h}} - 2 = \\boxed{${tx(2 ** h - 2)}}`) + '<p>On retire l\'adresse du réseau et l\'adresse de broadcast.</p>']
         ]
@@ -1137,7 +1149,7 @@ const EXOS = [
           ['1. Masque', M(`\\boxed{${toA(mask)}}`)],
           ['2. Adresse réseau', `<p>Le dernier octet non entièrement à 255 du masque est ${toA(mask).split('.').find(o => o !== '255')} : on fait le ET sur l'octet correspondant.</p>` + M(`\\boxed{${toA(net)}}`)],
           ['3. Broadcast', '<p>On met à 1 tous les bits de la partie machine :</p>' + M(`\\boxed{${toA(bc)}}`)],
-          ['4. Plage', M(`${toA(net + 1)} \\ \\text{à}\\ ${toA(bc - 1)} \\qquad 2^{${32 - n}} - 2 = \\boxed{${tx(2 ** (32 - n) - 2)}\\ \\text{adresses}}`)]
+          ['4. Plage', `<p>De <b>${toA(net + 1)}</b> à <b>${toA(bc - 1)}</b>.</p>` + M(`2^{${32 - n}} - 2 = \\boxed{${tx(2 ** (32 - n) - 2)}\\ \\text{adresses}}`)]
         ]
       };
     }
@@ -1170,7 +1182,8 @@ const EXOS = [
       const md = mac(), ms = mac(), net = [192, 168, rnd(0, 20, 1)], ipS = [...net, rnd(2, 250, 1)], ipD = [...net, rnd(2, 250, 1)];
       const len = rnd(60, 400, 1), id = rnd(0, 65535, 1), ck = rnd(0, 65535, 1), proto = pick([[6, 'TCP'], [17, 'UDP']]);
       const bytes = [...md, ...ms, 0x08, 0x00, 0x45, 0x00, len >> 8, len & 255, id >> 8, id & 255, 0x40, 0x00, 64, proto[0], ck >> 8, ck & 255, ...ipS, ...ipD];
-      const rows = []; for (let i = 0; i < bytes.length; i += 16) rows.push([H2(i).padStart(4, '0'), bytes.slice(i, i + 16).map(H2).join(' ')]);
+      // 8 octets par ligne pour rester lisible sur téléphone
+      const rows = []; for (let i = 0; i < bytes.length; i += 8) rows.push([H2(i).padStart(4, '0'), bytes.slice(i, i + 8).map(H2).join(' ')]);
       return {
         statement: `<p>Voici le début d'une trame capturée avec Wireshark. Structure : adresse MAC destination (6 octets), adresse MAC source (6 octets), type (2 octets),
           puis l'en-tête IPv4 ; dans cet en-tête, le protocole est à l'octet 23, l'adresse IP source aux octets 26 à 29 et l'adresse IP destination aux octets 30 à 33
@@ -1259,12 +1272,15 @@ const EXOS = [
 POUR chaque passage détecté FAIRE
     SI passage = Entrée ALORS
         SI nb &lt; ${Cmax} ALORS
-            nb ← nb + 1 ; débloquer le tourniquet
+            nb ← nb + 1
+            débloquer le tourniquet
         SINON
-            allumer le voyant rouge (refus)
+            voyant rouge (refus)
         FIN SI
     SINON
-        SI nb &gt; 0 ALORS nb ← nb − 1 FIN SI
+        SI nb &gt; 0 ALORS
+            nb ← nb − 1
+        FIN SI
     FIN SI
 FIN POUR</pre><p>Passages détectés dans l'ordre : ${v(ev.join(' '))} (E = entrée, S = sortie).</p>` +
           ol('Compléter la trace de l\'algorithme (valeur de nb après chaque passage).', 'Quelle est la valeur finale de nb ?', 'Combien d\'entrées ont été refusées ?'),
@@ -1326,7 +1342,8 @@ void loop() {
         return 1
     return 0
 
-mesures = [${mes.map(x => String(x)).join(', ')}]
+mesures = [${mes.slice(0, 3).map(String).join(', ')},
+           ${mes.slice(3).map(String).join(', ')}]
 nb = 0
 for T in mesures:
     nb = nb + check_alarm(T, ${Tmin}, ${Tmax})
@@ -1455,6 +1472,39 @@ function renderMath(root) {
   });
 }
 
+// Adapte le contenu visible à la largeur de l'écran :
+// - un tableau de 2 ou 3 lignes trop large est présenté en colonnes (transposé) ;
+// - une formule centrée trop large est rendue « en ligne », que KaTeX peut couper après = ou +.
+function fitToWidth(root) {
+  root.querySelectorAll('.tw').forEach(w => {
+    const t = w.querySelector('table');
+    if (!w.offsetParent || !t || t.dataset.tr || t.rows.length > 3 || w.scrollWidth <= w.clientWidth + 1) return;
+    const cells = [...t.rows].map(r => [...r.cells].map(c => c.innerHTML));
+    t.innerHTML = cells[0].map((_, c) => `<tr>${cells.map((row, k) => {
+      const tag = c === 0 || k === 0 ? 'th' : 'td';
+      return `<${tag}>${row[c] ?? ''}</${tag}>`;
+    }).join('')}</tr>`).join('');
+    t.dataset.tr = '1';
+  });
+  if (!window.katex) return;
+  root.querySelectorAll('.mdisp').forEach(el => {
+    if (!el.offsetParent) return;
+    if (el.classList.contains('mwrap')) {
+      katex.render(el.dataset.tex, el, { displayMode: true, throwOnError: false, strict: false });
+      el.classList.remove('mwrap');
+      el.style.overflow = '';
+    }
+    if (el.scrollWidth > el.clientWidth + 1) {
+      katex.render(el.dataset.tex, el, { displayMode: false, throwOnError: false, strict: false });
+      el.classList.add('mwrap');
+      // Quelques pixels de trop (bord d'un cadre) : on laisse déborder dans la marge plutôt que d'afficher un défilement
+      if (el.scrollWidth - el.clientWidth <= 8) el.style.overflow = 'visible';
+    }
+  });
+}
+let fitTimer;
+window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(() => fitToWidth(card), 150); });
+
 // QCM : colore les réponses et affiche le score (on = correction visible)
 function markQcm(on) {
   let score = 0, n = 0;
@@ -1532,6 +1582,7 @@ function show(i) {
       ${data.steps.map(([lab, body]) => `<div class="step"><div class="lab">${lab}</div>${body}</div>`).join('')}
     </section>`;
   renderMath(card);
+  fitToWidth(card);
   document.getElementById('newBtn').onclick = () => show(current);
   const ans = document.getElementById('ansBtn'), corr = document.getElementById('corr');
   ans.onclick = () => {
@@ -1539,6 +1590,7 @@ function show(i) {
     ans.textContent = corr.hidden ? 'Afficher la réponse' : 'Masquer la réponse';
     ans.setAttribute('aria-expanded', String(!corr.hidden));
     if (data.qcm) markQcm(!corr.hidden);
+    if (!corr.hidden) fitToWidth(corr);
   };
   nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', +a.dataset.i === i));
   nav.querySelectorAll('.chap').forEach((ch, c) => {

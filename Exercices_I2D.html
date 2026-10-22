@@ -119,8 +119,11 @@ main { padding: 32px 24px 48px; }
 .support { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
 .v {
   background: var(--val-bg); color: var(--val);
-  padding: 1px 5px; border-radius: 5px; white-space: nowrap; font-weight: 500;
+  padding: 1px 5px; border-radius: 5px; font-weight: 500;
+  /* Une valeur longue (suite d'événements, octets…) peut passer à la ligne ; nombre et unité restent liés par une espace insécable */
+  overflow-wrap: anywhere; -webkit-box-decoration-break: clone; box-decoration-break: clone;
 }
+pre .v { overflow-wrap: normal; }
 ol.q { padding-left: 22px; margin: 12px 0 0; }
 ol.q li { margin-bottom: 4px; }
 pre.code {
@@ -146,6 +149,13 @@ button.primary { border-color: var(--accent); color: var(--accent); }
 .step .lab { font-size: 14px; font-weight: 600; color: var(--ok); }
 .step p { margin: 2px 0; }
 .mdisp { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+.mdisp.mwrap { text-align: center; line-height: 2.2; margin: 6px 0; }
+@media (max-width: 600px) {
+  table.t { font-size: 13px; }
+  table.t th, table.t td { padding: 3px 6px; }
+  pre.code { font-size: 12px; padding: 10px; }
+  table.t th, table.t td { overflow-wrap: anywhere; hyphens: auto; }
+}
 /* QCM */
 ol.qcm { padding-left: 22px; margin: 12px 0 0; }
 ol.qcm > li { margin-bottom: 14px; }
@@ -1791,7 +1801,8 @@ const EXOS = [
           ['1. Résultante', M(`R = p \\times AB = ${tx(p, 1)} \\times ${tx(AB, 1)} = \\boxed{${tx(R / 1000, 2)}${u('kN')}}`) + '<p>Elle s\'applique au milieu de AB, à ' + fr(AB / 2, 2) + ' m de A.</p>'],
           ['2. Efforts majorés', M(`P = ${mp} \\times 9{,}81 \\times ${Cs} = \\boxed{${tx(P, 0)}${u('N')}} \\qquad F = ${F} \\times ${Cs} = \\boxed{${Fs}${u('N')}}`)],
           ['3. Moments en A', M(`M_A(\\vec P) = -${tx(AB, 1)} \\times ${tx(P, 0)} = ${tx(MP, 0)}${u('N·m')}`) +
-            M(`M_A(\\vec F) = -${tx(BH, 1)} \\times ${Fs} = ${tx(MF, 0)}${u('N·m')} \\quad \\text{(bras de levier : la hauteur BH)}`) +
+            '<p>Pour la poussée horizontale, le bras de levier est la hauteur BH :</p>' +
+            M(`M_A(\\vec F) = -${tx(BH, 1)} \\times ${Fs} = ${tx(MF, 0)}${u('N·m')}`) +
             M(`M_A(\\vec R) = -${tx(AB / 2, 2)} \\times ${tx(R, 0)} = ${tx(MR, 0)}${u('N·m')}`)],
           ['4. Moment total', M(`M_A = ${tx(MP, 0)} ${tx(MF, 0)} ${tx(MR, 0)} = \\boxed{${tx(tot, 0)}${u('N·m')}}`)]
         ]
@@ -2023,7 +2034,7 @@ print(s)</pre>
             'Combien de fois l\'instruction <code>s = s + i</code> est-elle exécutée ?', 'Quelle valeur le programme affiche-t-il ?'),
         steps: [
           ['1. Valeurs de i', `<p><code>range(1, n + 1)</code> produit les entiers de 1 à ${n} inclus.</p>`],
-          ['2. Condition vraie', `<p>La condition est vraie quand <code>i</code> est un multiple de ${k} :</p>` + M(`i \\in \\{${vals.join(';\\ ')}\\}`)],
+          ['2. Condition vraie', `<p>La condition est vraie quand <code>i</code> est un multiple de ${k} :</p>` + `<p>i ∈ { ${vals.join(' ; ')} }</p>`],
           ['3. Nombre d\'exécutions', M(`\\boxed{${vals.length}}\\ \\text{fois}`)],
           ['4. Valeur affichée', `<p>Évolution de <code>s</code> : 0 → ${partial.join(' → ')}</p>` + M(`s = ${vals.join(' + ')} = \\boxed{${s}}`)]
         ]
@@ -2150,9 +2161,11 @@ print(n, x)</pre>` +
         statement: `<p>Des gommes sont alignées tous les ${v(d, 'mm')} à partir du point (${x0} ; ${y0}). Le bras doit les déposer tous les ${v(d2, 'mm')}
           à partir du point (${x1} ; ${y1}). Les coordonnées sont en mm. Programme :</p>
 <pre class="code">pour i allant de 0 à ${n - 1} :
-    MoveTo(${x0} + i × ${d}, ${y0})     # va prendre la gomme
+    # va prendre la gomme
+    MoveTo(${x0} + i × ${d}, ${y0})
     fermer la pince
-    JumpTo(${x1} + i × ${d2}, ${y1})    # va la déposer
+    # va la déposer
+    JumpTo(${x1} + i × ${d2}, ${y1})
     ouvrir la pince</pre>` +
           ol('Combien de gommes le programme déplace-t-il ?', `Quelles sont les coordonnées de prise de la gomme n° ${k} ?`,
             'Où la dernière gomme est-elle déposée ?', 'Pourquoi utilise-t-on JumpTo plutôt que MoveTo pour aller déposer la gomme ?'),
@@ -2306,6 +2319,39 @@ function renderMath(root) {
   });
 }
 
+// Adapte le contenu visible à la largeur de l'écran :
+// - un tableau de 2 ou 3 lignes trop large est présenté en colonnes (transposé) ;
+// - une formule centrée trop large est rendue « en ligne », que KaTeX peut couper après = ou +.
+function fitToWidth(root) {
+  root.querySelectorAll('.tw').forEach(w => {
+    const t = w.querySelector('table');
+    if (!w.offsetParent || !t || t.dataset.tr || t.rows.length > 3 || w.scrollWidth <= w.clientWidth + 1) return;
+    const cells = [...t.rows].map(r => [...r.cells].map(c => c.innerHTML));
+    t.innerHTML = cells[0].map((_, c) => `<tr>${cells.map((row, k) => {
+      const tag = c === 0 || k === 0 ? 'th' : 'td';
+      return `<${tag}>${row[c] ?? ''}</${tag}>`;
+    }).join('')}</tr>`).join('');
+    t.dataset.tr = '1';
+  });
+  if (!window.katex) return;
+  root.querySelectorAll('.mdisp').forEach(el => {
+    if (!el.offsetParent) return;
+    if (el.classList.contains('mwrap')) {
+      katex.render(el.dataset.tex, el, { displayMode: true, throwOnError: false, strict: false });
+      el.classList.remove('mwrap');
+      el.style.overflow = '';
+    }
+    if (el.scrollWidth > el.clientWidth + 1) {
+      katex.render(el.dataset.tex, el, { displayMode: false, throwOnError: false, strict: false });
+      el.classList.add('mwrap');
+      // Quelques pixels de trop (bord d'un cadre) : on laisse déborder dans la marge plutôt que d'afficher un défilement
+      if (el.scrollWidth - el.clientWidth <= 8) el.style.overflow = 'visible';
+    }
+  });
+}
+let fitTimer;
+window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(() => fitToWidth(card), 150); });
+
 // QCM : colore les réponses et affiche le score (on = correction visible)
 function markQcm(on) {
   let score = 0, n = 0;
@@ -2383,6 +2429,7 @@ function show(i) {
       ${data.steps.map(([lab, body]) => `<div class="step"><div class="lab">${lab}</div>${body}</div>`).join('')}
     </section>`;
   renderMath(card);
+  fitToWidth(card);
   document.getElementById('newBtn').onclick = () => show(current);
   const ans = document.getElementById('ansBtn'), corr = document.getElementById('corr');
   ans.onclick = () => {
@@ -2390,6 +2437,7 @@ function show(i) {
     ans.textContent = corr.hidden ? 'Afficher la réponse' : 'Masquer la réponse';
     ans.setAttribute('aria-expanded', String(!corr.hidden));
     if (data.qcm) markQcm(!corr.hidden);
+    if (!corr.hidden) fitToWidth(corr);
   };
   nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', +a.dataset.i === i));
   nav.querySelectorAll('.chap').forEach((ch, c) => {

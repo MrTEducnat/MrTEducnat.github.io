@@ -1,0 +1,1471 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercices ITEC</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<style>
+:root {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --side: #efede6;
+  --text: #1f1e1c;
+  --muted: #6b6a65;
+  --border: #dcd9d0;
+  --accent: #185fa5;
+  --accent-bg: #e6f1fb;
+  --val: #854f0b;
+  --val-bg: #faeeda;
+  --ok: #27500a;
+  --ok-bg: #eaf3de;
+  --ok-border: #639922;
+  --code-bg: #f1efe8;
+  --bad-bg: #fcebeb;
+  --bad-border: #e24b4a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1b1b1a;
+    --surface: #242422;
+    --side: #20201e;
+    --text: #ecebe6;
+    --muted: #a3a29b;
+    --border: #3a3a37;
+    --accent: #85b7eb;
+    --accent-bg: #0c447c;
+    --val: #fac775;
+    --val-bg: #4a3209;
+    --ok: #c0dd97;
+    --ok-bg: #1f3309;
+    --ok-border: #639922;
+    --code-bg: #2c2c2a;
+    --bad-bg: #3d1414;
+    --bad-border: #e24b4a;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1b1b1a;
+  --surface: #242422;
+  --side: #20201e;
+  --text: #ecebe6;
+  --muted: #a3a29b;
+  --border: #3a3a37;
+  --accent: #85b7eb;
+  --accent-bg: #0c447c;
+  --val: #fac775;
+  --val-bg: #4a3209;
+  --ok: #c0dd97;
+  --ok-bg: #1f3309;
+  --ok-border: #639922;
+  --code-bg: #2c2c2a;
+  --bad-bg: #3d1414;
+  --bad-border: #e24b4a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); min-height: 100vh; }
+
+/* Barre latérale */
+.sidebar {
+  background: var(--side);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.sidebar h1 { font-size: 18px; font-weight: 600; margin: 0 8px 4px; }
+.sidebar .sub { font-size: 13px; color: var(--muted); margin: 0 8px 16px; }
+.chap { margin-bottom: 2px; }
+.chap-btn {
+  display: flex; align-items: flex-start; gap: 8px; width: 100%;
+  text-align: left; border: 0; border-radius: 8px; padding: 8px 8px;
+  line-height: 1.35;
+}
+.chap-btn:hover { background: var(--border); }
+.chap-btn .arrow { flex: none; margin-top: 10px; color: var(--muted); transition: transform .15s; }
+.chap-btn[aria-expanded="true"] .arrow { transform: rotate(180deg); }
+.chap-btn.on .seq, .chap-btn.on .arrow { color: var(--accent); }
+.nav .seq { font-size: 12px; color: var(--muted); display: block; }
+.nav .ex { font-size: 14px; font-weight: 500; }
+.exlist { padding: 2px 0 6px 32px; }
+.exlist[hidden] { display: none; }
+.exlist a {
+  display: block; text-decoration: none; color: var(--text); font-size: 14px;
+  padding: 6px 10px; border-radius: 0 8px 8px 0; border-left: 2px solid var(--border);
+}
+.exlist a:hover { background: var(--border); }
+.exlist a.on { background: var(--accent-bg); color: var(--accent); border-left-color: var(--accent); }
+
+/* Barre du haut (mobile) */
+.topbar { display: none; }
+
+/* Contenu */
+main { padding: 32px 24px 48px; }
+.card {
+  max-width: 780px; margin: 0 auto;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 24px 28px;
+}
+.crumb { font-size: 13px; color: var(--muted); }
+.card h2 { font-size: 22px; font-weight: 600; margin: 2px 0 4px; }
+.support { font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+.v {
+  background: var(--val-bg); color: var(--val);
+  padding: 1px 5px; border-radius: 5px; font-weight: 500;
+  /* Une valeur longue (suite d'événements, octets…) peut passer à la ligne ; nombre et unité restent liés par une espace insécable */
+  overflow-wrap: anywhere; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+pre .v { overflow-wrap: normal; }
+ol.q { padding-left: 22px; margin: 12px 0 0; }
+ol.q li { margin-bottom: 4px; }
+pre.code {
+  background: var(--code-bg); border-radius: 8px; padding: 12px 14px;
+  font-size: 14px; line-height: 1.5; overflow-x: auto; margin: 12px 0;
+}
+.btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+button {
+  font: inherit; font-size: 15px; cursor: pointer;
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px;
+}
+button:hover { background: var(--side); }
+button.primary { border-color: var(--accent); color: var(--accent); }
+.correction {
+  margin-top: 20px; padding: 14px 18px;
+  background: var(--ok-bg); border-left: 4px solid var(--ok-border);
+}
+.correction[hidden] { display: none; }
+.correction h3 { font-size: 15px; font-weight: 600; color: var(--ok); margin: 0 0 8px; }
+.step { margin-bottom: 12px; }
+.step:last-child { margin-bottom: 0; }
+.step .lab { font-size: 14px; font-weight: 600; color: var(--ok); }
+.step p { margin: 2px 0; }
+.mdisp { overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+.mdisp.mwrap { text-align: center; line-height: 2.2; margin: 6px 0; }
+@media (max-width: 600px) {
+  table.t { font-size: 13px; }
+  table.t th, table.t td { padding: 3px 6px; }
+  pre.code { font-size: 12px; padding: 10px; }
+  table.t th, table.t td { overflow-wrap: anywhere; hyphens: auto; }
+}
+/* Mots binaires longs : police à chasse fixe, coupure possible si l'écran est trop étroit */
+.bin { font-family: ui-monospace, Consolas, monospace; text-align: center; overflow-wrap: anywhere; }
+/* QCM */
+ol.qcm { padding-left: 22px; margin: 12px 0 0; }
+ol.qcm > li { margin-bottom: 14px; }
+ol.qcm > li > p { margin: 0 0 6px; }
+ol.qcm label {
+  display: flex; align-items: flex-start; gap: 8px; cursor: pointer;
+  padding: 6px 10px; margin-bottom: 4px; border: 1px solid var(--border); border-radius: 8px;
+}
+ol.qcm label:hover { background: var(--side); }
+ol.qcm input { margin-top: 5px; accent-color: var(--accent); }
+ol.qcm label.good { border-color: var(--ok-border); background: var(--ok-bg); }
+ol.qcm label.bad { border-color: var(--bad-border); background: var(--bad-bg); }
+.score { font-weight: 600; color: var(--ok); margin: 0 0 10px; }
+.score:empty { display: none; }
+
+/* Tableaux et schémas */
+table.t { border-collapse: collapse; margin: 10px 0; font-size: 15px; }
+table.t th, table.t td { border: 1px solid var(--border); padding: 4px 10px; text-align: center; }
+table.t th { background: var(--side); font-weight: 600; }
+.tw { overflow-x: auto; }
+figure.fig { margin: 12px 0; text-align: center; }
+figure.fig svg { width: 100%; max-width: 560px; height: auto; }
+figure.fig svg.small { max-width: 220px; }
+svg.sym { display: block; width: 150px; height: auto; margin: 6px 0; }
+figure.fig svg.leds { max-width: 400px; }
+figcaption { font-size: 13px; color: var(--muted); }
+svg text { fill: var(--text); font-size: 12px; font-family: inherit; }
+svg text.lab { fill: var(--muted); font-size: 12px; }
+svg .grid { stroke: var(--border); stroke-width: 1; }
+svg .ax { stroke: var(--muted); stroke-width: 1.4; }
+svg .c1 { fill: none; stroke: var(--accent); stroke-width: 2.2; }
+svg .c2 { fill: none; stroke: var(--val); stroke-width: 2; }
+svg .c3 { fill: none; stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 5 4; }
+svg .pt { fill: var(--val); }
+svg .line { stroke: var(--text); stroke-width: 2; fill: none; }
+svg .thin { stroke: var(--text); stroke-width: 1.2; fill: none; }
+svg .fillv { fill: var(--val-bg); stroke: var(--val); stroke-width: 1.5; }
+svg .arrow { stroke: var(--accent); stroke-width: 2.4; fill: none; }
+svg .arrowv { stroke: var(--val); stroke-width: 2.4; fill: none; }
+svg .flow { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 1; }
+svg .loss { fill: var(--val-bg); stroke: var(--val); stroke-width: 1; }
+svg .ledon { fill: #e5484d; stroke: var(--text); }
+svg .ledoff { fill: var(--side); stroke: var(--muted); }
+
+.pager { display: flex; justify-content: space-between; gap: 10px; max-width: 780px; margin: 16px auto 0; }
+.pager button { font-size: 14px; }
+
+@media (max-width: 860px) {
+  .layout { display: block; }
+  .topbar {
+    display: flex; align-items: center; gap: 10px;
+    position: sticky; top: 0; z-index: 5;
+    background: var(--side); border-bottom: 1px solid var(--border); padding: 10px 16px;
+  }
+  .topbar span { font-weight: 600; }
+  .sidebar {
+    position: fixed; left: 0; top: 0; z-index: 10; width: 290px; max-width: 85vw;
+    transform: translateX(-100%); transition: transform .2s;
+  }
+  .sidebar.open { transform: none; }
+  .shade { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 9; }
+  .shade[hidden] { display: none; }
+  main { padding: 16px 16px 40px; }
+  .card { padding: 18px 16px; }
+  .card h2 { font-size: 19px; }
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button id="menuBtn" aria-label="Ouvrir le menu">☰</button>
+  <span>Exercices ITEC</span>
+</div>
+<div class="shade" id="shade" hidden></div>
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <h1>Exercices ITEC</h1>
+    <p class="sub">Terminale STI2D ITEC · exercices à valeurs aléatoires</p>
+    <div class="nav" id="nav"></div>
+  </nav>
+  <main>
+    <article class="card" id="card"></article>
+    <div class="pager">
+      <button id="prevBtn">← Précédent</button>
+      <button id="nextBtn">Suivant →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+// ---------- Outils ----------
+const rnd = (a, b, step = 1) => {
+  const n = Math.round((b - a) / step);
+  return +(a + step * Math.floor(Math.random() * (n + 1))).toFixed(6);
+};
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+// Nombre au format français (texte)
+const fr = (x, d = 2) => Number(x).toLocaleString('fr-FR', { maximumFractionDigits: d });
+// Nombre au format français (LaTeX)
+const tx = (x, d = 2) => fr(x, d).replace(',', '{,}').replace(/[\u202f\u00a0]/g, '\\,');
+// Nombre avec un nombre fixe de décimales (texte / LaTeX)
+const frf = (x, d) => Number(x).toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const txf = (x, d) => frf(x, d).replace(',', '{,}').replace(/[  ]/g, '\\,');
+// Écriture scientifique en LaTeX
+const sci = (x, d = 2) => {
+  let e = Math.floor(Math.log10(Math.abs(x)));
+  if (Math.abs(+(x / 10 ** e).toFixed(d)) >= 10) e++;
+  return `${tx(x / 10 ** e, d)} \\times 10^{${e}}`;
+};
+// Nombre avec s chiffres significatifs : décimal si raisonnable, sinon scientifique
+const tn = (x, s = 3) => {
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e-3 && a < 1e6) return tx(x, Math.max(0, s - 1 - Math.floor(Math.log10(a))));
+  return sci(x, s - 1);
+};
+const fn = (x, s = 3) => {
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  return fr(x, Math.max(0, s - 1 - Math.floor(Math.log10(a))));
+};
+const deg = a => a * Math.PI / 180;
+const G = 9.81;
+// Valeur surlignée dans l'énoncé
+const v = (x, unit = '', d = 2) => `<span class="v">${typeof x === 'number' ? fr(x, d) : x}${unit ? '\u00a0' + unit : ''}</span>`;
+// Formules
+const m = t => `<span class="m" data-tex="${t.replace(/"/g, '&quot;')}"></span>`;
+const M = t => `<div class="m mdisp" data-d="1" data-tex="${t.replace(/"/g, '&quot;')}"></div>`;
+// Unité en LaTeX (gère ², ³, ·, °, µ)
+const u = s => '\\,\\text{' + s.replace(/%/g, '\\%').replace(/²/g,'}^2\\text{').replace(/³/g, '}^3\\text{')
+  .replace(/·/g, '}\\cdot\\text{').replace(/°/g, '}{}^\\circ\\text{').replace(/[µμ]/g, '}\\mu\\text{') + '}';
+
+// Numération : octet en hexadécimal, mot binaire sur w bits, police machine en LaTeX
+const H2 = x => x.toString(16).toUpperCase().padStart(2, '0');
+const BW = (x, w = 8) => x.toString(2).padStart(w, '0');
+const tt = s => `\\texttt{${String(s).replace(/ /g, '\\ ')}}`;
+const grp4 = s => s.replace(/(?=(\d{4})+$)/g, ' ').trim();
+
+// Chronogramme logique : cells = [{l: 0|1, t: 'étiquette'}], repos à l'état haut avant et après
+function wave(cells, cap = '') {
+  const cw = Math.min(46, 500 / (cells.length + 2)), x0 = 30, hi = 24, lo = 64, W = x0 * 2 + cw * (cells.length + 2);
+  let pts = `${x0},${hi} ${x0 + cw},${hi}`, x = x0 + cw, lab = '';
+  cells.forEach(c => {
+    const y = c.l ? hi : lo;
+    pts += ` ${x},${y} ${x + cw},${y}`;
+    lab += `<line class="grid" x1="${x}" y1="14" x2="${x}" y2="${lo + 6}"/><text x="${x + cw / 2}" y="${lo + 22}" text-anchor="middle">${c.t}</text>`;
+    x += cw;
+  });
+  pts += ` ${x},${hi} ${x + cw},${hi}`;
+  lab += `<line class="grid" x1="${x}" y1="14" x2="${x}" y2="${lo + 6}"/>`;
+  return fig(`<svg viewBox="0 0 ${W} 100" role="img">${lab}<polyline class="c1" points="${pts}"/>
+    <text x="4" y="${hi + 4}">1</text><text x="4" y="${lo + 4}">0</text></svg>`, cap);
+}
+
+// Liste des questions d'un énoncé
+const ol =(...items) => `<ol class="q">${items.map(i => `<li>${i}</li>`).join('')}</ol>`;
+// Tableau HTML : en-têtes puis lignes
+const table = (head, rows) => `<div class="tw"><table class="t"><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr>${
+  rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const euro = x => frf(x, 2) + ' €';
+const teuro = x => txf(x, 2) + u('€');
+
+// ---------- Tirages ----------
+const shuffle = arr => {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+};
+const sample = (arr, n) => shuffle(arr).slice(0, n);
+
+// ---------- QCM ----------
+// Banque : [question, bonne réponse, [mauvaises réponses], explication]
+const QCM_N = 5;
+function qcm(bank, n = QCM_N) {
+  const id = 'q' + Math.random().toString(36).slice(2, 8);
+  const items = sample(bank, Math.min(n, bank.length)).map(([q, ok, bad, ex]) => {
+    const choices = shuffle([ok, ...sample(bad.filter(b => b !== ok), 3)]);
+    return { q, ok, ex, choices, k: choices.indexOf(ok) };
+  });
+  return {
+    qcm: true,
+    statement: `<p>Choisir la bonne réponse pour chaque question.</p>
+      <ol class="qcm">${items.map((it, i) => `<li data-ok="${it.k}"><p>${it.q}</p>${it.choices.map((c, j) =>
+        `<label><input type="radio" name="${id}${i}" value="${j}"> <span>${c}</span></label>`).join('')}</li>`).join('')}</ol>`,
+    steps: items.map((it, i) => [`${i + 1}. ${it.ok}`, it.ex ? `<p>${it.ex}</p>` : ''])
+  };
+}
+// Questions construites à partir de couples (élément, réponse)
+const fromPairs = (pairs, fmt, ex) =>
+  pairs.map(([a, b]) => [fmt(a), b, [...new Set(pairs.map(p => p[1]))], ex ? ex(a, b) : '']);
+// Exercice QCM
+const Q = (chap, title, support, bank) => ({ chap, title, support, gen: () => qcm(typeof bank === 'function' ? bank() : bank) });
+
+// ---------- Schémas SVG ----------
+const fig = (svg, cap = '') => `<figure class="fig">${svg}${cap ? `<figcaption>${cap}</figcaption>` : ''}</figure>`;
+// Graphique gradué : o = {x0, x1, dx, y0, y1, dy, xlab, ylab, series: [{pts, cls}], extra(X, Y), nolab}
+function graph(o) {
+  const W = o.w || 560, H = o.h || 270, L = 50, R = 16, T = 14, B = 34;
+  const X = x => +(L + (x - o.x0) / (o.x1 - o.x0) * (W - L - R)).toFixed(1);
+  const Y = y => +(H - B - (y - o.y0) / (o.y1 - o.y0) * (H - T - B)).toFixed(1);
+  const fx = o.fx || (x => fr(x, 3)), fy = o.fy || (y => fr(y, 3));
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="graph" role="img">`;
+  const nx = Math.round((o.x1 - o.x0) / o.dx), ny = Math.round((o.y1 - o.y0) / o.dy);
+  for (let i = 0; i <= nx; i++) {
+    const x = o.x0 + i * o.dx;
+    s += `<line class="grid" x1="${X(x)}" y1="${T}" x2="${X(x)}" y2="${H - B}"/>`;
+    if (!o.nolab) s += `<text x="${X(x)}" y="${H - B + 15}" text-anchor="middle">${fx(x)}</text>`;
+  }
+  for (let i = 0; i <= ny; i++) {
+    const y = o.y0 + i * o.dy;
+    s += `<line class="grid" x1="${L}" y1="${Y(y)}" x2="${W - R}" y2="${Y(y)}"/>`;
+    if (!o.nolab) s += `<text x="${L - 6}" y="${Y(y) + 4}" text-anchor="end">${fy(y)}</text>`;
+  }
+  if (o.y0 < 0 && o.y1 > 0) s += `<line class="ax" x1="${L}" y1="${Y(0)}" x2="${W - R}" y2="${Y(0)}"/>`;
+  s += `<line class="ax" x1="${L}" y1="${T}" x2="${L}" y2="${H - B}"/><line class="ax" x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/>`;
+  if (o.xlab) s += `<text x="${W - R}" y="${H - 4}" text-anchor="end" class="lab">${o.xlab}</text>`;
+  if (o.ylab) s += `<text x="${L + 6}" y="${T + 12}" class="lab">${o.ylab}</text>`;
+  (o.series || []).forEach(se => {
+    s += `<polyline class="${se.cls || 'c1'}" points="${se.pts.map(([x, y]) => X(x) + ',' + Y(y)).join(' ')}"/>`;
+  });
+  if (o.extra) s += o.extra(X, Y);
+  return fig(s + '</svg>', o.cap);
+}
+// Échantillonne une fonction pour un graphique
+const curve = (f, x0, x1, n = 400) => Array.from({ length: n + 1 }, (_, i) => { const x = x0 + (x1 - x0) * i / n; return [x, f(x)]; });
+// Diagramme de Sankey en ligne : étapes [{name, val}] (val peut être '?') ; les pertes partent vers le bas
+function sankey(stages, vals, unit) {
+  const W = 560, H = 220, top = 40, x0 = 20, x1 = W - 20, seg = (x1 - x0) / stages.length;
+  const k = 90 / vals[0];
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="sankey" role="img">`;
+  stages.forEach((st, i) => {
+    const h = vals[i] * k, xa = x0 + i * seg;
+    s += `<rect class="flow" x="${xa}" y="${top}" width="${seg}" height="${h}"/>`;
+    s += `<text x="${xa + 6}" y="${top - 18}" class="lab">${st.name}</text><text x="${xa + 6}" y="${top - 4}">${st.label}</text>`;
+    if (i < stages.length - 1) {
+      const lw = Math.max(4, (vals[i] - vals[i + 1]) * k), xb = xa + seg;
+      s += `<rect class="loss" x="${xb - lw}" y="${top + vals[i + 1] * k}" width="${lw}" height="${H - 30 - top - vals[i + 1] * k}"/>`;
+      s += `<text x="${xb - lw / 2}" y="${H - 12}" text-anchor="middle">${stages[i].loss}</text>`;
+    }
+  });
+  return fig(s + '</svg>', unit);
+}
+
+// ---------- Chapitres ----------
+const CHAPITRES = [
+  'Modélisation cinématique',
+  'Cinématique et transmission de puissance',
+  'Statique',
+  'Résistance des matériaux',
+  'Matériaux et éco-conception',
+  'Énergie et chaîne de puissance',
+  'Représentation et conception'
+];
+
+// ---------- Exercices (chap = numéro du chapitre) ----------
+const EXOS = [
+  // ===================== Chapitre 1 =====================
+  Q(1, 'Degrés de liberté et nom des liaisons', 'BO 3.2.2 · annales : Hélilock 2026, siège de piscine 2025', () => {
+    const L = [['aucune translation et aucune rotation', 'Encastrement (liaison complète)'], ['aucune translation et 1 rotation', 'Pivot'],
+      ['1 translation et aucune rotation', 'Glissière'], ['1 translation et 1 rotation indépendantes', 'Pivot glissant'],
+      ['aucune translation et 3 rotations', 'Rotule'], ['2 translations et 1 rotation', 'Appui plan'],
+      ['1 translation et 3 rotations', 'Linéaire annulaire'], ['2 translations et 2 rotations', 'Linéaire rectiligne'], ['2 translations et 3 rotations', 'Ponctuelle']];
+    return [
+      ...fromPairs(L, a => `Une liaison qui autorise ${a} est une liaison :`),
+      ...fromPairs([['pivot', '1'], ['glissière', '1'], ['pivot glissant', '2'], ['rotule', '3'], ['appui plan', '3'], ['ponctuelle', '5'], ['encastrement', '0']],
+        a => `Combien de degrés de liberté possède une liaison ${a} ?`).map(q => { q[2] = ['0', '1', '2', '3', '4', '5']; return q; }),
+      ['Une vis qui tourne dans un écrou fixe réalise une liaison :', 'Hélicoïdale', ['Pivot glissant', 'Glissière', 'Pivot'], 'Rotation et translation sont liées par le pas.'],
+      ['Une liaison complète démontable est par exemple réalisée par :', 'des vis ou des boulons', ['une soudure', 'un collage définitif', 'un rivet'], 'Soudure, collage et rivetage donnent des liaisons non démontables.'],
+      ['Le guidage en rotation d\'un arbre par deux roulements réalise une liaison :', 'Pivot', ['Glissière', 'Rotule', 'Appui plan'], '']
+    ];
+  }),
+  Q(1, 'Symboles normalisés des liaisons', 'BO 3.2.2 · annales : schémas cinématiques (serrure 2021, Hélilock 2026)', () => {
+    const S = {
+      'Pivot': '<rect class="line" x="40" y="28" width="40" height="24"/><line class="arrowv" x1="8" y1="40" x2="112" y2="40"/><line class="arrowv" x1="33" y1="31" x2="33" y2="49"/><line class="arrowv" x1="87" y1="31" x2="87" y2="49"/>',
+      'Pivot glissant': '<rect class="line" x="40" y="28" width="40" height="24"/><line class="arrowv" x1="8" y1="40" x2="112" y2="40"/>',
+      'Glissière': '<rect class="line" x="40" y="22" width="40" height="36"/><rect class="arrowv" x="8" y="33" width="104" height="14"/>',
+      'Hélicoïdale': '<rect class="line" x="40" y="26" width="40" height="28"/><line class="arrowv" x1="8" y1="40" x2="112" y2="40"/><path class="line" d="M46 52 L54 28 M58 52 L66 28 M70 52 L78 28"/>',
+      'Rotule': '<path class="line" d="M74 26 A20 20 0 1 0 74 54"/><line class="line" x1="80" y1="40" x2="112" y2="40"/><circle class="arrowv" cx="60" cy="40" r="12"/><line class="arrowv" x1="8" y1="40" x2="48" y2="40"/>',
+      'Appui plan': '<line class="line" x1="25" y1="46" x2="95" y2="46"/><line class="line" x1="60" y1="46" x2="60" y2="72"/><line class="arrowv" x1="35" y1="36" x2="85" y2="36"/><line class="arrowv" x1="60" y1="36" x2="60" y2="8"/>',
+      'Ponctuelle': '<line class="line" x1="25" y1="52" x2="95" y2="52"/><line class="line" x1="60" y1="52" x2="60" y2="74"/><circle class="arrowv" cx="60" cy="42" r="10"/><line class="arrowv" x1="60" y1="32" x2="60" y2="6"/>',
+      'Linéaire annulaire': '<line class="line" x1="30" y1="26" x2="90" y2="26"/><line class="line" x1="30" y1="54" x2="90" y2="54"/><line class="line" x1="60" y1="54" x2="60" y2="74"/><circle class="arrowv" cx="60" cy="40" r="12"/><line class="arrowv" x1="72" y1="40" x2="112" y2="40"/>',
+      'Encastrement': '<line class="line" x1="10" y1="40" x2="60" y2="40"/><line class="arrowv" x1="60" y1="40" x2="60" y2="8"/><path class="pt" d="M60 40 L70 40 L60 30 Z"/><path class="pt" d="M60 40 L50 40 L60 30 Z"/>'
+    };
+    const names = Object.keys(S);
+    return names.map(n => [`Quelle liaison ce symbole représente-t-il ?<svg viewBox="0 0 120 80" class="sym">${S[n]}</svg>`, n, names, '']);
+  }),
+  {
+    chap: 1,
+    title: 'Classes d\'équivalence et graphe des liaisons',
+    support: 'Annales : serrure 2021, Hélilock 2026',
+    gen() {
+      const N = rnd(8, 11, 1), spring = rnd(1, N, 1), k = rnd(3, 4, 1);
+      const others = shuffle(Array.from({ length: N }, (_, i) => i + 1).filter(p => p !== spring));
+      const cuts = sample(Array.from({ length: others.length - 1 }, (_, i) => i + 1), k - 1).sort((a, b) => a - b);
+      const ends = [...cuts, others.length];
+      const groups = [0, ...cuts].map((c, i) => others.slice(c, ends[i]).sort((a, b) => a - b)).sort((a, b) => a[0] - b[0]);
+      const verbs = ['est vissée sur', 'est soudée à', 'est goupillée sur', 'est emmanchée en force dans', 'est collée sur'];
+      const facts = shuffle(groups.flatMap(g => { const s = shuffle(g); return s.slice(1).map((p, i) => `La pièce ${p} ${pick(verbs)} la pièce ${s[i]}.`); }));
+      const letters = 'ABCD', links = groups.slice(1).map((_, i) => `${letters[i]} – ${letters[i + 1]}`);
+      return {
+        statement: `<p>Un mécanisme comporte ${v(N, 'pièces')}. La pièce ${v(spring)} est un ressort. Les autres pièces sont mobiles entre elles, sauf :</p>
+          <ul>${facts.map(f => `<li>${f}</li>`).join('')}</ul>
+          <p>On sait de plus que chaque classe est en liaison uniquement avec la suivante (dans l'ordre de la pièce de plus petit numéro).</p>` +
+          ol('Quelle pièce exclut-on des classes d\'équivalence ? Pourquoi ?', 'Donner la composition de chaque classe d\'équivalence.',
+            'Combien le graphe des liaisons comporte-t-il de sommets et d\'arcs ? Lister les liaisons.', 'Le mécanisme forme-t-il une chaîne ouverte ou fermée ?'),
+        steps: [
+          ['1. Pièce exclue', `<p>La pièce ${spring} est un ressort, donc déformable : elle n'appartient à aucune classe d'équivalence.</p>`],
+          ['2. Classes', M(groups.map((g, i) => `${letters[i]} = \\{${g.join(' ; ')}\\}`).join(' \\qquad '))],
+          ['3. Graphe', `<p><b>${groups.length} sommets</b> (une par classe) et <b>${links.length} arcs</b> : ${links.join(', ')}.</p>`],
+          ['4. Chaîne', '<p>Aucune boucle : c\'est une chaîne ouverte.</p>']
+        ]
+      };
+    }
+  },
+  Q(1, 'Surfaces de contact et liaison associée', 'BO 3.2.2 · annales : serrure 2021, propulseur éolien 2022', fromPairs([
+    ['un cylindre long dans un alésage de même diamètre', 'Pivot glissant'], ['un cylindre long avec un épaulement en appui sur une face', 'Pivot'],
+    ['deux plans en contact', 'Appui plan'], ['une sphère dans une sphère creuse de même diamètre', 'Rotule'],
+    ['une sphère posée sur un plan', 'Ponctuelle'], ['une sphère dans un cylindre de même diamètre', 'Linéaire annulaire'],
+    ['un cylindre couché sur un plan', 'Linéaire rectiligne'], ['un prisme dans une rainure de même forme', 'Glissière'],
+    ['un filetage dans un taraudage', 'Hélicoïdale']], a => `Quelle liaison modélise le contact entre ${a} ?`).concat([
+    ['Le contact entre un excentrique et une face plane très étroite peut être modélisé par une liaison ponctuelle car :', 'la zone de contact est très petite',
+      ['les pièces sont soudées', 'le contact est surfacique', 'il n\'y a aucun mouvement'], ''],
+    ['Une surface fonctionnelle est :', 'une surface d\'une pièce en contact avec une autre pièce et qui participe à une fonction', ['une surface peinte', 'la surface la plus grande', 'une surface invisible'], '']
+  ])),
+  Q(1, 'Mouvements et trajectoires', 'BO 3.2.1 · annales : siège PMR 2022, pantographe 2023, éolienne 2025', [
+    ['Lors d\'une rotation autour d\'un axe fixe, la trajectoire d\'un point du solide est :', 'un cercle centré sur l\'axe', ['une droite', 'une parabole', 'une hélice'], ''],
+    ['Lors d\'une translation rectiligne, la trajectoire d\'un point est :', 'une droite', ['un cercle', 'une spirale', 'un arc de cercle'], ''],
+    ['Le bras d\'un parallélogramme déformable (comme celui d\'un siège de levage) est animé d\'un mouvement :', 'de translation circulaire', ['de rotation autour d\'un axe fixe', 'de translation rectiligne', 'hélicoïdal'], 'Tous ses points décrivent des cercles de même rayon.'],
+    ['Le rotor d\'une éolienne par rapport à la nacelle est animé d\'un mouvement :', 'de rotation autour d\'un axe fixe', ['de translation rectiligne', 'de translation circulaire', 'quelconque'], ''],
+    ['La tige d\'un vérin par rapport à son corps est animée d\'un mouvement :', 'de translation rectiligne', ['de rotation', 'hélicoïdal', 'de translation circulaire'], ''],
+    ['Le vecteur vitesse d\'un point d\'un solide en rotation est :', 'perpendiculaire au rayon, tangent à la trajectoire', ['dirigé vers le centre', 'parallèle au rayon', 'toujours vertical'], ''],
+    ['Pour un solide en rotation, la vitesse d\'un point est d\'autant plus grande que :', 'le point est loin de l\'axe', ['le point est proche de l\'axe', 'le solide est lourd', 'le solide est petit'], 'V = R × ω.'],
+    ['Une structure matérielle immobile (ossature, châssis) se distingue d\'un mécanisme car :', 'ses pièces n\'ont pas de mouvement relatif', ['elle n\'a pas de liaisons', 'elle est en bois', 'elle est forcément soudée'], ''],
+    ['Une loi entrée-sortie d\'un mécanisme relie :', 'le mouvement d\'entrée au mouvement de sortie', ['la masse et le poids', 'la contrainte et la déformation', 'le prix et la qualité'], '']
+  ]),
+  // ===================== Chapitre 2 =====================
+  {
+    chap: 2,
+    title: 'Vitesse en bout de pale et TSR',
+    support: 'Annales : éolienne 2025',
+    gen() {
+      const D = rnd(80, 160, 2), N = rnd(8, 18, 0.5), Vv = rnd(8, 15, 0.5);
+      const w = 2 * Math.PI * N / 60, Vt = w * D / 2, tsr = Vt / Vv;
+      return {
+        statement: `<p>Le rotor d'une éolienne a un diamètre de ${v(D, 'm')} et tourne à ${v(N, 'tr/min', 1)} pour un vent de ${v(Vv, 'm/s', 1)}.
+          Le TSR (Tip Speed Ratio) est le rapport entre la vitesse en bout de pale et la vitesse du vent.</p>` +
+          ol('Quel est le mouvement du rotor par rapport à la nacelle ? Quelle est la trajectoire d\'un point M en bout de pale ?', 'Calculer la vitesse angulaire du rotor.',
+            'Calculer la vitesse tangentielle du point M en m/s puis en km/h.', 'Calculer le TSR.'),
+        steps: [
+          ['1. Mouvement', `<p>Rotation autour d'un axe fixe ; M décrit un cercle de rayon R = ${fr(D / 2)} m.</p>`],
+          ['2. Vitesse angulaire', M(`\\omega = \\frac{2\\pi N}{60} = \\frac{2\\pi \\times ${tx(N, 1)}}{60} = \\boxed{${tx(w, 3)}${u('rad/s')}}`)],
+          ['3. Vitesse tangentielle', M(`V_t = R \\times \\omega = ${tx(D / 2, 1)} \\times ${tx(w, 3)} = \\boxed{${tx(Vt, 1)}${u('m/s')}} = \\boxed{${tx(Vt * 3.6, 0)}${u('km/h')}}`)],
+          ['4. TSR', M(`TSR = \\frac{V_t}{V_{vent}} = \\frac{${tx(Vt, 1)}}{${tx(Vv, 1)}} = \\boxed{${tx(tsr, 2)}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Pignon-crémaillère',
+    support: 'Annales : monte-personne du vélodrome 2023',
+    gen() {
+      const Nm = pick([1400, 1450, 2800, 2900]), k = pick([20, 25, 30, 40, 50]), mod = pick([2, 3, 4, 5]), Z = rnd(14, 24, 1), H = rnd(3, 12, 0.5);
+      const ws = 2 * Math.PI * Nm / k / 60, r = mod * Z / 2 / 1000, V = ws * r, t = H / V;
+      return {
+        statement: `<p>Un monte-personne est entraîné par un moteur tournant à ${v(Nm, 'tr/min', 0)}, suivi d'un réducteur de rapport ${v('1/' + k)}.
+          Le pignon de sortie (module ${v(mod, 'mm')}, ${v(Z, 'dents')}) engrène sur une crémaillère fixe verticale.</p>` +
+          ol('Quel mouvement le système pignon-crémaillère permet-il d\'obtenir ?', 'Calculer la vitesse angulaire en sortie du réducteur.',
+            'Calculer le rayon primitif du pignon (d = m × Z).', 'Calculer la vitesse de déplacement du monte-personne.', `Combien de temps faut-il pour monter de ${v(H, 'm', 1)} ?`),
+        steps: [
+          ['1. Mouvement', '<p>Il transforme la rotation du pignon en translation rectiligne de la cabine.</p>'],
+          ['2. Vitesse angulaire', M(`\\omega_s = \\frac{2\\pi \\times ${Nm}}{60} \\times \\frac{1}{${k}} = \\boxed{${tx(ws, 3)}${u('rad/s')}}`)],
+          ['3. Rayon primitif', M(`r = \\frac{m \\times Z}{2} = \\frac{${mod} \\times ${Z}}{2} = ${tx(r * 1000, 1)}${u('mm')} = \\boxed{${tx(r, 4)}${u('m')}}`)],
+          ['4. Vitesse', M(`V = r \\times \\omega_s = ${tx(r, 4)} \\times ${tx(ws, 3)} = \\boxed{${tx(V, 3)}${u('m/s')}}`)],
+          ['5. Durée', M(`t = \\frac{H}{V} = \\frac{${tx(H, 1)}}{${tx(V, 3)}} = \\boxed{${tx(t, 1)}${u('s')}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Transmission par poulies et courroie',
+    support: 'Annales : lanceurs du téléphérique 2024, alimentation en granulés 2021',
+    gen() {
+      const N1 = pick([960, 1450, 2900]), d1 = rnd(60, 150, 10), d2 = rnd(200, 500, 10), d3 = rnd(80, 160, 10), d4 = rnd(200, 400, 10), Rp = rnd(0.2, 0.4, 0.01);
+      const r1 = d1 / d2, r2 = d3 / d4, r = r1 * r2, N4 = N1 * r, Vc = Math.PI * d1 / 1000 * N1 / 60, w4 = 2 * Math.PI * N4 / 60, V = w4 * Rp;
+      return {
+        statement: `<p>Un moteur tournant à ${v(N1, 'tr/min', 0)} entraîne une roue en deux étages de poulies-courroie :
+          poulie motrice ⌀ ${v(d1, 'mm')} → poulie ⌀ ${v(d2, 'mm')}, puis, sur le même arbre, poulie ⌀ ${v(d3, 'mm')} → poulie ⌀ ${v(d4, 'mm')}.
+          La roue finale (pneu) a un rayon de ${v(Rp, 'm')} et entraîne un véhicule sans glissement.</p>` +
+          ol('Calculer le rapport de transmission de chaque étage puis le rapport global.', 'Calculer la vitesse de rotation de la roue finale.',
+            'Calculer la vitesse linéaire de la première courroie.', 'Calculer la vitesse du véhicule en m/s puis en km/h.', 'Citer un avantage d\'une chaîne par rapport à une courroie.'),
+        steps: [
+          ['1. Rapports', M(`r_1 = \\frac{d_{menante}}{d_{menée}} = \\frac{${d1}}{${d2}} = ${tx(r1, 3)} \\quad r_2 = \\frac{${d3}}{${d4}} = ${tx(r2, 3)} \\quad r = r_1 \\times r_2 = \\boxed{${tx(r, 4)}}`)],
+          ['2. Vitesse de la roue', M(`N = r \\times N_1 = ${tx(r, 4)} \\times ${N1} = \\boxed{${tx(N4, 1)}${u('tr/min')}}`)],
+          ['3. Vitesse de la courroie', M(`V_c = \\pi \\times d_1 \\times \\frac{N_1}{60} = \\pi \\times ${tx(d1 / 1000, 3)} \\times \\frac{${N1}}{60} = \\boxed{${tx(Vc, 2)}${u('m/s')}}`)],
+          ['4. Vitesse du véhicule', M(`V = R \\times \\omega = ${tx(Rp, 2)} \\times \\frac{2\\pi \\times ${tx(N4, 1)}}{60} = \\boxed{${tx(V, 2)}${u('m/s')}} = \\boxed{${tx(V * 3.6, 1)}${u('km/h')}}`)],
+          ['5. Chaîne', '<p>Une chaîne ne glisse pas (transmission synchrone) et supporte des efforts plus importants ; une courroie est plus silencieuse et n\'a pas besoin de lubrification.</p>']
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Réducteur : couple, vitesse et puissance',
+    support: 'Annales : tracker solaire 2022',
+    gen() {
+      const Cp = rnd(80, 200, 5), n = rnd(9, 15, 1), ang = pick([90, 100, 110, 120]), dur = rnd(5, 20, 1), R = pick([1000, 1500, 2000, 3000]), eta = rnd(0.4, 0.8, 0.05), PN = pick([370, 550, 750, 1100]);
+      const Cu = Cp * n, Nu = ang / 360 / dur, wu = 2 * Math.PI * Nu / 60, Pu = Cu * wu, Pm = Pu / eta, Nm = Nu * R, nl = Math.floor(PN / Pm);
+      return {
+        statement: `<p>Une ligne de ${v(n, 'panneaux')} solaires doit être orientée. Chaque panneau oppose un couple résistant de ${v(Cp, 'N·m')} (vent fort).
+          La structure doit tourner de ${v(ang, '°')} en ${v(dur, 'min')}. Le motoréducteur a un rapport de réduction ${v('1/' + R)}, un rendement de ${v(eta)}
+          et le moteur a une puissance nominale de ${v(PN, 'W')}.</p>` +
+          ol('Calculer le couple utile nécessaire pour une ligne.', 'Calculer la vitesse de rotation imposée N<sub>u</sub> en tr/min, puis ω<sub>u</sub> en rad/s.',
+            'Calculer la puissance utile P<sub>u</sub>.', 'Calculer la puissance que doit fournir le moteur.', 'Calculer la vitesse du moteur.', 'Combien de lignes un moteur peut-il manœuvrer ?'),
+        steps: [
+          ['1. Couple utile', M(`C_u = ${n} \\times ${Cp} = \\boxed{${tx(Cu)}${u('N·m')}}`)],
+          ['2. Vitesse', M(`N_u = \\frac{${ang}/360}{${dur}} = \\boxed{${tn(Nu, 3)}${u('tr/min')}} \\qquad \\omega_u = \\frac{2\\pi N_u}{60} = \\boxed{${sci(wu, 2)}${u('rad/s')}}`)],
+          ['3. Puissance utile', M(`P_u = C_u \\times \\omega_u = ${tx(Cu)} \\times ${sci(wu, 2)} = \\boxed{${tx(Pu, 2)}${u('W')}}`)],
+          ['4. Puissance moteur', M(`P_m = \\frac{P_u}{\\eta} = \\frac{${tx(Pu, 2)}}{${tx(eta)}} = \\boxed{${tx(Pm, 2)}${u('W')}}`)],
+          ['5. Vitesse du moteur', M(`N_m = N_u \\times ${R} = \\boxed{${tx(Nm, 1)}${u('tr/min')}}`)],
+          ['6. Nombre de lignes', M(`\\frac{${PN}}{${tx(Pm, 2)}} = ${tx(PN / Pm, 2)} \\;\\Rightarrow\\; \\boxed{${nl}\\ \\text{lignes}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Système vis-écrou',
+    support: 'Annales : Hélilock 2026 (vis trapézoïdale)',
+    gen() {
+      const p = pick([2, 3, 4, 5, 6]), N = pick([300, 600, 900, 1200, 1500]), F = rnd(500, 3000, 100), eta = rnd(0.3, 0.6, 0.05), c = rnd(20, 120, 5);
+      const V = p * N / 60, Pu = F * V / 1000, Pm = Pu / eta, w = 2 * Math.PI * N / 60, C = Pm / w, t = c / V;
+      return {
+        statement: `<p>Un moteur tournant à ${v(N, 'tr/min', 0)} entraîne une vis trapézoïdale de pas ${v(p, 'mm')}. L'écrou, guidé en translation, déplace un mors
+          qui doit exercer un effort de ${v(F, 'N', 0)}. Le rendement du système vis-écrou est de ${v(eta)}. La course du mors est de ${v(c, 'mm')}.</p>` +
+          ol('Quelle liaison y a-t-il entre la vis et l\'écrou ?', 'Calculer la vitesse de translation de l\'écrou en mm/s.', 'Calculer la puissance utile nécessaire.',
+            'Calculer la puissance et le couple que doit fournir le moteur.', 'Combien de temps dure la course complète ?'),
+        steps: [
+          ['1. Liaison', '<p>Liaison hélicoïdale : à chaque tour, l\'écrou avance d\'un pas.</p>'],
+          ['2. Vitesse', M(`V = p \\times \\frac{N}{60} = ${p} \\times \\frac{${N}}{60} = \\boxed{${tx(V, 1)}${u('mm/s')}}`)],
+          ['3. Puissance utile', M(`P_u = F \\times V = ${F} \\times ${tx(V / 1000, 3)} = \\boxed{${tx(Pu, 2)}${u('W')}}`)],
+          ['4. Moteur', M(`P_m = \\frac{${tx(Pu, 2)}}{${tx(eta)}} = ${tx(Pm, 2)}${u('W')} \\qquad C = \\frac{P_m}{\\omega} = \\frac{${tx(Pm, 2)}}{${tx(w, 2)}} = \\boxed{${tx(C, 3)}${u('N·m')}}`)],
+          ['5. Durée', M(`t = \\frac{${c}}{${tx(V, 1)}} = \\boxed{${tx(t, 2)}${u('s')}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Treuil : vitesse et force du câble',
+    support: 'Annales : dégrilleur 2025',
+    gen() {
+      const D = rnd(150, 400, 10), d = rnd(8, 16, 1), Nm = pick([1400, 1450, 2800]), k = pick([50, 80, 100, 120]), Pt = rnd(300, 1500, 50), mp = rnd(30, 120, 5);
+      const R = (D + d) / 2 / 1000, wt = 2 * Math.PI * Nm / k / 60, V = wt * R, F = Pt / V, mmax = F / G - mp;
+      return {
+        statement: `<p>Un treuil enroule un câble de ⌀ ${v(d, 'mm')} sur un tambour de ⌀ ${v(D, 'mm')}. Il est entraîné par un moteur à ${v(Nm, 'tr/min', 0)}
+          via un réducteur de rapport ${v('1/' + k)}. La puissance disponible en sortie du treuil est de ${v(Pt, 'W')}. La poche de raclage pèse ${v(mp, 'kg')} à vide.</p>` +
+          ol('Calculer le rayon d\'enroulement (au centre du câble).', 'Calculer la vitesse angulaire du tambour.', 'En déduire la vitesse du câble.',
+            'Calculer la force que peut exercer le câble.', 'En déduire la masse maximale de déchets que l\'on peut remonter.'),
+        steps: [
+          ['1. Rayon d\'enroulement', M(`R = \\frac{D + d}{2} = \\frac{${D} + ${d}}{2} = ${tx(R * 1000, 1)}${u('mm')}`)],
+          ['2. Vitesse angulaire', M(`\\omega_t = \\frac{2\\pi \\times ${Nm}}{60 \\times ${k}} = \\boxed{${tx(wt, 3)}${u('rad/s')}}`)],
+          ['3. Vitesse du câble', M(`V = R \\times \\omega_t = ${tx(R, 4)} \\times ${tx(wt, 3)} = \\boxed{${tx(V, 3)}${u('m/s')}}`)],
+          ['4. Force', M(`P = F \\times V \\;\\Rightarrow\\; F = \\frac{${Pt}}{${tx(V, 3)}} = \\boxed{${tx(F, 0)}${u('N')}}`)],
+          ['5. Masse de déchets', M(`m_{max} = \\frac{F}{g} - m_{poche} = \\frac{${tx(F, 0)}}{9{,}81} - ${mp} = \\boxed{${tx(mmax, 0)}${u('kg')}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Vis de dosage : débit volumique',
+    support: 'Annales : méthaniseur 2022, convoyeur à vis 2023',
+    gen() {
+      const D = rnd(200, 500, 10), dA = rnd(60, 120, 10), p = rnd(150, 400, 10), kr = rnd(0.3, 0.6, 0.05), N = rnd(5, 40, 1), Q = rnd(2, 15, 0.5);
+      const Vt = kr * Math.PI * ((D / 1000) ** 2 - (dA / 1000) ** 2) / 4 * (p / 1000), Qh = Vt * N * 60, Nmin = Q / (Vt * 60);
+      return {
+        statement: `<p>Une vis sans fin de diamètre extérieur ${v(D, 'mm')}, de diamètre d'âme ${v(dA, 'mm')} et de pas ${v(p, 'mm')} transporte des intrants.
+          Son coefficient de remplissage est de ${v(kr)}. Elle tourne à ${v(N, 'tr/min')}. On doit doser ${v(Q, 'm³/h', 1)}.</p>` +
+          ol('Calculer le volume transporté par tour, en m³.', 'Calculer le débit horaire de la vis.', 'La vis peut-elle doser le volume attendu ?',
+            'Quelle vitesse de rotation minimale faudrait-il ?'),
+        steps: [
+          ['1. Volume par tour', M(`V = k \\times \\frac{\\pi (D^2 - d^2)}{4} \\times p = ${tx(kr)} \\times \\frac{\\pi (${tx(D / 1000, 3)}^2 - ${tx(dA / 1000, 3)}^2)}{4} \\times ${tx(p / 1000, 3)} = \\boxed{${tn(Vt, 3)}${u('m³/tr')}}`)],
+          ['2. Débit', M(`Q = V \\times N \\times 60 = ${tn(Vt, 3)} \\times ${N} \\times 60 = \\boxed{${tx(Qh, 2)}${u('m³/h')}}`)],
+          ['3. Conclusion', `<p>${Qh >= Q ? `${fr(Qh, 2)} ≥ ${fr(Q, 1)} m³/h : la vis peut doser le volume attendu.` : `${fr(Qh, 2)} < ${fr(Q, 1)} m³/h : la vis ne suffit pas à cette vitesse.`}</p>`],
+          ['4. Vitesse minimale', M(`N_{min} = \\frac{${tx(Q, 1)}}{${tn(Vt, 3)} \\times 60} = \\boxed{${tx(Nmin, 1)}${u('tr/min')}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Loi entrée-sortie : course d\'un vérin',
+    support: 'Annales : calage des pales d\'éolienne 2025 et 2026',
+    gen() {
+      const a = rnd(400, 900, 10), b = rnd(200, 500, 10), t1 = rnd(20, 50, 5), t2 = t1 + rnd(40, 90, 5);
+      const L = t => Math.sqrt(a * a + b * b - 2 * a * b * Math.cos(deg(t))), L1 = L(t1), L2 = L(t2);
+      const ox = 60, oy = 150, sc = 300 / (a + b), Ax = ox + a * sc, Bx = ox + b * sc * Math.cos(deg(t2)), By = oy - b * sc * Math.sin(deg(t2));
+      const svg = `<svg viewBox="0 0 420 180" role="img"><line class="line" x1="${ox}" y1="${oy}" x2="${Ax}" y2="${oy}"/><line class="arrowv" x1="${ox}" y1="${oy}" x2="${Bx}" y2="${By}"/>
+        <line class="c1" x1="${Ax}" y1="${oy}" x2="${Bx}" y2="${By}"/><circle class="pt" cx="${ox}" cy="${oy}" r="4"/><circle class="pt" cx="${Ax}" cy="${oy}" r="4"/><circle class="pt" cx="${Bx}" cy="${By}" r="4"/>
+        <text x="${ox - 6}" y="${oy + 18}">O</text><text x="${Ax}" y="${oy + 18}">A</text><text x="${Bx + 6}" y="${By - 4}">B</text>
+        <text x="${(ox + Ax) / 2}" y="${oy + 16}" text-anchor="middle">a</text><text x="${(ox + Bx) / 2 - 12}" y="${(oy + By) / 2}">b</text><text x="${(Ax + Bx) / 2 + 8}" y="${(oy + By) / 2}" class="lab">vérin L</text>
+        <path class="thin" d="M${ox + 30} ${oy} A30 30 0 0 0 ${ox + 30 * Math.cos(deg(t2))} ${oy - 30 * Math.sin(deg(t2))}"/><text x="${ox + 36}" y="${oy - 10}">θ</text></svg>`;
+      return {
+        statement: `<p>Un vérin relie le point fixe A au point B d'un levier OB qui pivote autour de O. On a OA = a = ${v(a, 'mm')} et OB = b = ${v(b, 'mm')}.
+          La longueur du vérin dépend de l'angle θ (loi d'Al-Kashi) :</p>${fig(svg)}` + M('L = \\sqrt{a^2 + b^2 - 2ab\\cos\\theta}') +
+          ol(`Calculer la longueur du vérin pour θ<sub>1</sub> = ${v(t1, '°')}.`, `Calculer la longueur pour θ<sub>2</sub> = ${v(t2, '°')}.`,
+            'En déduire la course minimale du vérin.', 'Quel est le débattement angulaire du levier ?'),
+        steps: [
+          // Le carré d'abord, puis la racine : la formule peut alors se couper sur un écran étroit
+          ['1. Longueur L<sub>1</sub>', M(`L_1^2 = ${a}^2 + ${b}^2 - 2 \\times ${a} \\times ${b} \\times \\cos ${t1}^\\circ = ${tx(L1 * L1, 0)}`) +
+            M(`L_1 = \\sqrt{${tx(L1 * L1, 0)}} = \\boxed{${tx(L1, 1)}${u('mm')}}`)],
+          ['2. Longueur L<sub>2</sub>', M(`L_2^2 = ${a}^2 + ${b}^2 - 2 \\times ${a} \\times ${b} \\times \\cos ${t2}^\\circ = ${tx(L2 * L2, 0)}`) +
+            M(`L_2 = \\sqrt{${tx(L2 * L2, 0)}} = \\boxed{${tx(L2, 1)}${u('mm')}}`)],
+          ['3. Course', M(`c = L_2 - L_1 = \\boxed{${tx(L2 - L1, 1)}${u('mm')}}`)],
+          ['4. Débattement', M(`\\Delta\\theta = ${t2} - ${t1} = \\boxed{${t2 - t1}^\\circ}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 2,
+    title: 'Durée d\'un cycle de déplacement',
+    support: 'Annales : dégrilleur 2025, pantographe 2023',
+    gen() {
+      const steps = [['descente de la poche', rnd(2, 6, 0.5), rnd(0.1, 0.3, 0.01)], ['raclage de la grille (remontée)', rnd(2, 6, 0.5), rnd(0.05, 0.15, 0.01)],
+        ['basculement et vidage', 0, 0], ['retour en position haute', rnd(0.5, 2, 0.1), rnd(0.1, 0.3, 0.01)]];
+      const tv = rnd(5, 15, 1), lim = pick([60, 90, 120, 150]);
+      const ts = steps.map(s => s[1] ? s[1] / s[2] : tv), tot = ts.reduce((a, b) => a + b, 0);
+      return {
+        statement: `<p>Un cycle de dégrillage comporte quatre étapes :</p>` +
+          table(['Étape', 'Distance', 'Vitesse'], steps.map(s => [s[0], s[1] ? `${fr(s[1], 1)} m` : '—', s[1] ? `${fr(s[2], 2)} m/s` : `durée ${tv} s`])) +
+          `<p>Le cahier des charges impose un cycle de moins de ${v(lim, 's')}.</p>` +
+          ol('Calculer la durée de chaque étape (mouvements à vitesse constante).', 'Calculer la durée totale du cycle.', 'Le cahier des charges est-il respecté ?'),
+        steps: [
+          ['1. Durées', table(['Étape', 'Calcul', 'Durée'], steps.map((s, i) => [s[0], s[1] ? `${fr(s[1], 1)} / ${fr(s[2], 2)}` : 'donnée', `${fr(ts[i], 1)} s`]))],
+          ['2. Durée totale', M(`t = ${ts.map(x => tx(x, 1)).join(' + ')} = \\boxed{${tx(tot, 1)}${u('s')}}`)],
+          ['3. Conclusion', `<p>${tot <= lim ? `${fr(tot, 1)} s ≤ ${lim} s : l'exigence est respectée.` : `${fr(tot, 1)} s > ${lim} s : l'exigence n'est pas respectée.`}</p>`]
+        ]
+      };
+    }
+  },
+  // ===================== Chapitre 3 =====================
+  Q(3, 'Actions mécaniques, PFS et stabilité', 'BO 3.2.2', [
+    ['Faire le BAME d\'un solide, c\'est :', 'faire le bilan des actions mécaniques extérieures qui s\'exercent sur lui', ['calculer sa masse', 'dessiner son schéma cinématique', 'choisir son matériau'], ''],
+    ['Pour appliquer le PFS, on isole :', 'un solide ou un ensemble de solides et on ne garde que les actions extérieures', ['toutes les pièces du mécanisme en même temps', 'uniquement les forces intérieures', 'le bâti seul, toujours'], ''],
+    ['Le principe fondamental de la statique dit qu\'un solide en équilibre :', 'a une somme des forces nulle et une somme des moments nulle', ['a une vitesse constante non nulle', 'ne subit aucune force', 'subit uniquement son poids'], ''],
+    ['Un solide soumis à deux forces est en équilibre si ces forces sont :', 'directement opposées (même droite d\'action, même norme, sens opposés)', ['perpendiculaires', 'de même sens', 'parallèles et de même sens'], ''],
+    ['Un solide soumis à trois forces non parallèles est en équilibre si :', 'les forces sont concourantes et leur somme (triangle des forces) est nulle', ['les trois forces sont parallèles', 'deux forces sont nulles', 'les forces ont la même norme'], ''],
+    ['Une liaison pivot parfaite d\'axe z peut transmettre :', 'des forces dans toutes les directions mais aucun moment autour de z', ['uniquement un moment autour de z', 'aucune action', 'uniquement une force selon z'], ''],
+    ['Le flambement concerne :', 'une pièce longue et élancée soumise à de la compression', ['une pièce en traction', 'une pièce en torsion uniquement', 'une pièce immobile sans effort'], 'Elle se courbe brusquement et peut casser.'],
+    ['Les contreventements d\'une structure servent à :', 'la stabiliser vis-à-vis des efforts horizontaux (vent…)', ['l\'alléger', 'la décorer', 'augmenter les vibrations'], ''],
+    ['Un équilibre est instable si :', 'une petite perturbation éloigne le système de sa position d\'équilibre', ['le système revient toujours à sa position', 'le système est soudé', 'le système est au repos'], ''],
+    ['Le poids d\'un corps s\'applique :', 'en son centre de gravité, verticalement vers le bas', ['au point de contact avec le sol', 'horizontalement', 'au centre de la Terre'], '']
+  ]),
+  {
+    chap: 3,
+    title: 'Poids et répartition de la charge sur des appuis',
+    support: 'Annales : silo à granulés 2021, chariot brancard 2026',
+    gen() {
+      const ms = rnd(150, 400, 5), mg = rnd(500, 2500, 50), np = pick([3, 4, 6]), Cn = pick([300, 500, 1000, 2000]);
+      const P = (ms + mg) * G, Pp = P / np, mc = Pp / G;
+      return {
+        statement: `<p>Un silo et sa structure ont une masse de ${v(ms, 'kg')}. Rempli, il contient ${v(mg, 'kg')} de granulés. Il repose sur ${v(np, 'pieds')} identiques,
+          la charge étant supposée également répartie. Chaque pied est posé sur un capteur de pesage de capacité nominale ${v(Cn, 'kg')}.</p>` +
+          ol('Calculer le poids total du silo plein.', 'Calculer l\'effort supporté par chaque pied.', 'Quelle est la sollicitation subie par un pied ?',
+            'Calculer la charge équivalente (en kg) supportée par un capteur. La capacité nominale est-elle suffisante ?'),
+        steps: [
+          ['1. Poids total', M(`P = (m_s + m_g) \\times g = (${ms} + ${mg}) \\times 9{,}81 = \\boxed{${tx(P, 0)}${u('N')}}`)],
+          ['2. Effort par pied', M(`F = \\frac{P}{${np}} = \\boxed{${tx(Pp, 0)}${u('N')}}`)],
+          ['3. Sollicitation', '<p>Chaque pied est comprimé : sollicitation de <b>compression</b>.</p>'],
+          ['4. Capteur', M(`m_{éq} = \\frac{F}{g} = \\boxed{${tx(mc, 1)}${u('kg')}}`) +
+            `<p>${mc <= Cn ? `${fr(mc, 1)} kg ≤ ${Cn} kg : la capacité convient.` : `${fr(mc, 1)} kg > ${Cn} kg : il faut un capteur de plus grande capacité.`}</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 3,
+    title: 'Plan incliné : composantes du poids',
+    support: 'Annales : téléphérique 2024, auge inclinée 2023',
+    gen() {
+      const mm = rnd(200, 8000, 50), al = rnd(10, 40, 1), f = rnd(0.05, 0.4, 0.05);
+      const P = mm * G, Pt = P * Math.sin(deg(al)), Pn = P * Math.cos(deg(al)), F2 = Pt + f * Pn;
+      const c = Math.cos(deg(al)), s = Math.sin(deg(al)), x0 = 40, y0 = 160, L = 300;
+      const svg = `<svg viewBox="0 0 420 180" role="img"><path class="thin" d="M${x0} ${y0} L${x0 + L * c} ${y0} L${x0 + L * c} ${y0 - L * s} Z"/>
+        <path class="thin" d="M${x0 + 45} ${y0} A45 45 0 0 0 ${x0 + 45 * c} ${y0 - 45 * s}"/><text x="${x0 + 52}" y="${y0 - 6}">α</text>
+        <g transform="translate(${x0 + 180 * c} ${y0 - 180 * s}) rotate(${-al})"><rect class="fillv" x="-25" y="-30" width="50" height="30"/></g>
+        <line class="arrowv" x1="${x0 + 180 * c - 15 * s}" y1="${y0 - 180 * s - 15 * c}" x2="${x0 + 180 * c - 15 * s}" y2="${y0 - 180 * s - 15 * c + 70}"/><text x="${x0 + 180 * c - 15 * s + 6}" y="${y0 - 180 * s + 50}">P</text></svg>`;
+      return {
+        statement: `<p>Une charge de ${v(mm, 'kg', 0)} est posée sur un plan incliné d'un angle α = ${v(al, '°')}. Le coefficient de frottement vaut f = ${v(f, '', 2)}.</p>${fig(svg)}` +
+          ol('Calculer le poids P de la charge.', 'Calculer la composante du poids parallèle à la pente.', 'Calculer la composante perpendiculaire à la pente.',
+            'Quelle force faut-il exercer parallèlement à la pente pour retenir la charge sans frottement ?', 'Quelle force faut-il pour la faire monter à vitesse constante, avec frottement ?'),
+        steps: [
+          ['1. Poids', M(`P = m \\times g = ${mm} \\times 9{,}81 = \\boxed{${tx(P, 0)}${u('N')}}`)],
+          ['2. Composante parallèle', M(`P_{//} = P \\times \\sin\\alpha = ${tx(P, 0)} \\times \\sin ${al}^\\circ = \\boxed{${tx(Pt, 0)}${u('N')}}`)],
+          ['3. Composante perpendiculaire', M(`P_{\\perp} = P \\times \\cos\\alpha = \\boxed{${tx(Pn, 0)}${u('N')}}`)],
+          ['4. Sans frottement', M(`F = P_{//} = \\boxed{${tx(Pt, 0)}${u('N')}}`)],
+          ['5. Avec frottement', M(`F = P \\sin\\alpha + f \\times P \\cos\\alpha = ${tx(Pt, 0)} + ${tx(f, 2)} \\times ${tx(Pn, 0)} = \\boxed{${tx(F2, 0)}${u('N')}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 3,
+    title: 'Moment d\'une force et couple moteur',
+    support: 'Annales : téléphérique 2024, serrure 2021',
+    gen() {
+      const T = rnd(5, 40, 1) * 1000, D = rnd(1.5, 5, 0.1), k = pick([20, 30, 40, 50, 60]), eta = rnd(0.85, 0.97, 0.01);
+      const Cp = T * D / 2, Cm = Cp / (k * eta);
+      return {
+        statement: `<p>Le câble tracteur exerce un effort de ${v(T / 1000, 'kN')} tangentiellement à la poulie motrice de diamètre ${v(D, 'm', 1)}.
+          La poulie est entraînée par un réducteur de rapport ${v('1/' + k)} et de rendement ${v(eta)}.</p>` +
+          ol('Calculer le bras de levier de l\'effort par rapport à l\'axe de la poulie.', 'Calculer le couple résistant sur l\'axe de la poulie.',
+            'En déduire le couple que doit fournir le moteur.', 'Comment évolue ce couple si le câble est deux fois plus chargé ?'),
+        steps: [
+          ['1. Bras de levier', `<p>L'effort est tangent à la poulie : le bras de levier est le rayon, soit ${fr(D / 2, 2)} m.</p>`],
+          ['2. Couple sur la poulie', M(`C = F \\times \\frac{D}{2} = ${tx(T)} \\times ${tx(D / 2, 2)} = \\boxed{${tx(Cp, 0)}${u('N·m')}}`)],
+          ['3. Couple moteur', '<p>Le réducteur multiplie le couple par 1/r mais avec des pertes :</p>' +
+            M(`C_m = \\frac{C}{${k} \\times \\eta} = \\frac{${tx(Cp, 0)}}{${k} \\times ${tx(eta)}} = \\boxed{${tx(Cm, 1)}${u('N·m')}}`)],
+          ['4. Charge doublée', '<p>Le couple est proportionnel à l\'effort : il double aussi.</p>']
+        ]
+      };
+    }
+  },
+  {
+    chap: 3,
+    title: 'Solide soumis à trois forces',
+    support: 'Annales : vérin de levage de la grue 2025 (triangle des forces)',
+    gen() {
+      const P = rnd(2, 30, 0.5) * 1000, a = rnd(55, 80, 1), b = rnd(20, 60, 1);
+      const s = Math.sin(deg(a + b)), F1 = P * Math.cos(deg(b)) / s, F2 = P * Math.cos(deg(a)) / s;
+      const k = 140 / P, x0 = 200, y0 = 20, xs = x0, ys = y0 + P * k;
+      const x1 = xs + F1 * k * Math.cos(deg(a)), y1 = ys - F1 * k * Math.sin(deg(a));
+      const svg = `<svg viewBox="0 0 420 180" role="img"><line class="arrowv" x1="${x0}" y1="${y0}" x2="${xs}" y2="${ys}"/><text x="${x0 - 22}" y="${(y0 + ys) / 2}">P</text>
+        <line class="arrow" x1="${xs}" y1="${ys}" x2="${x1}" y2="${y1}"/><text x="${(xs + x1) / 2 + 8}" y="${(ys + y1) / 2 + 14}">F<tspan font-size="9" dy="3">vérin</tspan></text>
+        <line class="c2" x1="${x1}" y1="${y1}" x2="${x0}" y2="${y0}"/><text x="${(x1 + x0) / 2 + 6}" y="${(y1 + y0) / 2 - 4}">F<tspan font-size="9" dy="3">art.</tspan></text></svg>`;
+      return {
+        statement: `<p>Le bras d'une grue, en équilibre, est soumis à trois forces concourantes : la charge P = ${v(P / 1000, 'kN', 1)} (verticale, vers le bas),
+          la poussée du vérin, inclinée de ${v(a, '°')} par rapport à l'horizontale (vers le haut et la droite), et l'action de l'articulation,
+          inclinée de ${v(b, '°')} par rapport à l'horizontale (vers le haut et la gauche).</p>` +
+          ol('Écrire les deux équations de projection du PFS (horizontale et verticale).', 'Résoudre le système pour obtenir l\'effort du vérin.',
+            'Calculer l\'action de l\'articulation.', 'Le triangle des forces est-il fermé ? Le tracer qualitativement.'),
+        steps: [
+          ['1. Projections', M(`\\text{horizontale} : F_v \\cos ${a}^\\circ - F_a \\cos ${b}^\\circ = 0`) + M(`\\text{verticale} : F_v \\sin ${a}^\\circ + F_a \\sin ${b}^\\circ - P = 0`)],
+          ['2. Effort du vérin', M(`F_v = \\frac{P \\cos ${b}^\\circ}{\\sin(${a}^\\circ + ${b}^\\circ)} = \\frac{${tx(P)} \\times \\cos ${b}^\\circ}{\\sin ${a + b}^\\circ} = \\boxed{${tx(F1 / 1000, 2)}${u('kN')}}`)],
+          ['3. Action de l\'articulation', M(`F_a = \\frac{P \\cos ${a}^\\circ}{\\sin(${a}^\\circ + ${b}^\\circ)} = \\boxed{${tx(F2 / 1000, 2)}${u('kN')}}`)],
+          ['4. Triangle des forces', '<p>À l\'équilibre, les trois vecteurs mis bout à bout forment un triangle fermé :</p>' + fig(svg)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 3,
+    title: 'Frottement et cône de frottement',
+    support: 'Annales : relevé des virages du vélodrome 2023',
+    gen() {
+      const f = rnd(0.2, 0.8, 0.05), al = rnd(10, 45, 1), R = rnd(20, 50, 1), th = pick([30, 40, 45]);
+      const phi = Math.atan(f) * 180 / Math.PI, glisse = al > phi, V = Math.sqrt(G * R * Math.tan(deg(th)));
+      return {
+        statement: `<p>Pour un couple de matériaux, le coefficient de frottement vaut f = ${v(f, '', 2)}. Un objet est posé sur une piste inclinée de ${v(al, '°')}.
+          Dans un virage relevé de rayon ${v(R, 'm')}, un cycliste s'incline d'un angle θ = ${v(th, '°')} ; sa vitesse vaut alors ${m('V = \\sqrt{g \\, R \\tan\\theta}')}.</p>` +
+          ol('Calculer l\'angle de frottement φ (tan φ = f).', 'L\'objet posé sur la piste glisse-t-il ? Justifier avec le cône de frottement.',
+            'Calculer la vitesse du cycliste en m/s puis en km/h.'),
+        steps: [
+          ['1. Angle de frottement', M(`\\varphi = \\arctan(${tx(f, 2)}) = \\boxed{${tx(phi, 1)}^\\circ}`)],
+          ['2. Glissement', `<p>L'objet reste immobile tant que la pente est inférieure à l'angle de frottement (l'action du sol reste dans le cône).
+            Ici ${al}° ${glisse ? '>' : '≤'} ${fr(phi, 1)}° : l'objet <b>${glisse ? 'glisse' : 'ne glisse pas'}</b>.</p>`],
+          ['3. Vitesse', M(`V = \\sqrt{9{,}81 \\times ${R} \\times \\tan ${th}^\\circ} = \\boxed{${tx(V, 2)}${u('m/s')}} = \\boxed{${tx(V * 3.6, 1)}${u('km/h')}}`)]
+        ]
+      };
+    }
+  },
+  {
+    chap: 3,
+    title: 'Vérin : pression, section et efforts',
+    support: 'Annales : calage des pales 2025, siège de piscine 2025, grue 2025',
+    gen() {
+      const F = rnd(5, 120, 1) * 1000, p = pick([100, 160, 200, 250]), Ds = [25, 32, 40, 50, 63, 80, 100, 125, 160, 200];
+      const S = F / (p * 1e5), D = Math.sqrt(4 * S / Math.PI) * 1000, Dc = Ds.find(x => x >= D) || 250, dt = Math.round(Dc * 0.5);
+      const S1 = Math.PI * (Dc / 1000) ** 2 / 4, S2 = S1 - Math.PI * (dt / 1000) ** 2 / 4;
+      return {
+        statement: `<p>Un vérin hydraulique doit fournir un effort de poussée de ${v(F / 1000, 'kN')} sous une pression de ${v(p, 'bar')}.
+          Les diamètres de piston disponibles sont (en mm) : ${Ds.join(', ')}. La tige a un diamètre égal à la moitié de celui du piston (arrondi).</p>` +
+          ol('Calculer la section minimale du piston en mm².', 'En déduire le diamètre minimal du piston et choisir le vérin.', 'Calculer l\'effort réel en sortie de tige avec ce vérin.',
+            'Calculer l\'effort lors de la rentrée de la tige.'),
+        steps: [
+          ['1. Section minimale', M(`S = \\frac{F}{p} = \\frac{${tx(F)}}{${p} \\times 10^5} = ${sci(S, 3)}${u('m²')} = \\boxed{${tx(S * 1e6, 0)}${u('mm²')}}`)],
+          ['2. Diamètre', M(`D = \\sqrt{\\frac{4S}{\\pi}} = \\boxed{${tx(D, 1)}${u('mm')}}`) + `<p>On choisit le diamètre normalisé immédiatement supérieur : <b>${Dc} mm</b>.</p>`],
+          ['3. Effort en sortie', M(`F_1 = p \\times \\frac{\\pi D^2}{4} = ${p} \\times 10^5 \\times ${sci(S1, 3)} = \\boxed{${tx(p * 1e5 * S1 / 1000, 1)}${u('kN')}}`)],
+          ['4. Effort en rentrée', M(`F_2 = p \\times \\left(\\frac{\\pi D^2}{4} - \\frac{\\pi d^2}{4}\\right) = ${p} \\times 10^5 \\times ${sci(S2, 3)} = \\boxed{${tx(p * 1e5 * S2 / 1000, 1)}${u('kN')}}`) +
+            `<p>(tige de ${dt} mm : la surface utile est plus petite, l'effort aussi.)</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 3,
+    title: 'Ressort : raideur et effort',
+    support: 'Annales : pantographe 2023, soupape du méthaniseur 2022',
+    gen() {
+      const F0 = rnd(50, 500, 10), x0 = rnd(5, 40, 1), p = rnd(2, 10, 0.5), D = rnd(10, 30, 1), c = rnd(5, 40, 1);
+      const k = F0 / x0, Fp = p * 1e5 * Math.PI * (D / 1000) ** 2 / 4, x = Fp / k;
+      return {
+        statement: `<p>Un ressort se comprime de ${v(x0, 'mm')} sous un effort de ${v(F0, 'N')}. Il maintient fermé un clapet de sécurité dont le piston a un diamètre de ${v(D, 'mm')}.
+          La pression de déclenchement est de ${v(p, 'bar', 1)}. La course disponible est de ${v(c, 'mm')}.</p>` +
+          ol('Calculer la raideur k du ressort en N/mm.', 'Calculer l\'effort exercé par la pression sur le piston.', 'Calculer la compression du ressort sous cet effort.',
+            'Le ressort convient-il compte tenu de la course disponible ?'),
+        steps: [
+          ['1. Raideur', M(`k = \\frac{F}{x} = \\frac{${F0}}{${x0}} = \\boxed{${tx(k, 2)}${u('N/mm')}}`)],
+          ['2. Effort de pression', M(`F = p \\times S = ${tx(p, 1)} \\times 10^5 \\times \\frac{\\pi \\times ${tx(D / 1000, 3)}^2}{4} = \\boxed{${tx(Fp, 1)}${u('N')}}`)],
+          ['3. Compression', M(`x = \\frac{F}{k} = \\frac{${tx(Fp, 1)}}{${tx(k, 2)}} = \\boxed{${tx(x, 1)}${u('mm')}}`)],
+          ['4. Conclusion', `<p>${x <= c ? `${fr(x, 1)} mm ≤ ${c} mm : le ressort convient.` : `${fr(x, 1)} mm > ${c} mm : le ressort est trop souple, il faut une raideur plus grande.`}</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 3,
+    title: 'Pression et effort sur une paroi',
+    support: 'Annales : hublots du caisson hyperbare 2026',
+    gen() {
+      const pr = rnd(1.5, 6, 0.1), D = rnd(100, 400, 10), h = rnd(2, 30, 0.5), rho = 1000;
+      const S = Math.PI * (D / 1000) ** 2 / 4, F = pr * 1e5 * S, ph = rho * G * h;
+      return {
+        statement: `<p>Un caisson est pressurisé à ${v(pr, 'bar', 1)} de plus que la pression extérieure. Il comporte un hublot circulaire de ${v(D, 'mm')} de diamètre visible.
+          Par ailleurs, un plongeur se trouve à ${v(h, 'm', 1)} de profondeur dans l'eau (ρ = 1 000 kg/m³).</p>` +
+          ol('Calculer la surface du hublot.', 'Calculer l\'effort exercé par la pression sur le hublot.', 'À quelle masse suspendue cet effort correspond-il ?',
+            'Calculer la surpression due à l\'eau sur le plongeur (p = ρ g h), en Pa puis en bar.'),
+        steps: [
+          ['1. Surface', M(`S = \\frac{\\pi D^2}{4} = \\frac{\\pi \\times ${tx(D / 1000, 2)}^2}{4} = \\boxed{${tx(S, 4)}${u('m²')}}`)],
+          ['2. Effort', M(`F = p \\times S = ${tx(pr, 1)} \\times 10^5 \\times ${tx(S, 4)} = \\boxed{${tx(F, 0)}${u('N')}}`)],
+          ['3. Masse équivalente', M(`m = \\frac{F}{g} = \\boxed{${tx(F / G, 0)}${u('kg')}}`)],
+          ['4. Pression hydrostatique', M(`p = 1\\,000 \\times 9{,}81 \\times ${tx(h, 1)} = \\boxed{${tx(ph, 0)}${u('Pa')}} = \\boxed{${tx(ph / 1e5, 2)}${u('bar')}}`) +
+            '<p>Environ 1 bar tous les 10 m.</p>']
+        ]
+      };
+    }
+  },
+  // ===================== Chapitre 4 =====================
+  Q(4, 'Sollicitations simples', 'BO 3.2.3', fromPairs([
+    ['le câble d\'un téléphérique', 'Traction'], ['le tirant d\'une structure', 'Traction'], ['un mousqueton chargé dans l\'axe', 'Traction'],
+    ['le pied d\'un silo', 'Compression'], ['un poteau de bâtiment', 'Compression'], ['la tige d\'un vérin qui pousse', 'Compression'],
+    ['une planche de plongeoir avec un plongeur au bout', 'Flexion'], ['un bras télescopique de grue en porte-à-faux', 'Flexion'], ['une poutre de pont sous charge', 'Flexion']],
+    a => `Quelle est la sollicitation principale subie par ${a} ?`).map(q => { q[2] = ['Traction', 'Compression', 'Flexion', 'Torsion']; return q; }).concat([
+    ['La contrainte normale s\'exprime en :', 'MPa (N/mm²)', ['N', 'N·m', 'mm'], ''],
+    ['La condition de résistance s\'écrit :', 'σ<sub>max</sub> ≤ R<sub>e</sub> / s', ['σ<sub>max</sub> ≥ R<sub>e</sub>', 'σ<sub>max</sub> = E × ε', 'σ<sub>max</sub> ≤ F'], 's : coefficient de sécurité.'],
+    ['Le coefficient de sécurité est :', 'le rapport entre la limite élastique et la contrainte réelle', ['la masse de la pièce', 'la contrainte divisée par la force', 'toujours égal à 1'], ''],
+    ['Pour diminuer la contrainte dans une pièce en flexion, on peut :', 'augmenter le moment quadratique de la section', ['diminuer la section', 'augmenter la charge', 'allonger la poutre'], '']
+  ])),
+  {
+    chap: 4,
+    title: 'Contrainte normale et coefficient de sécurité',
+    support: 'Annales : mousqueton 2024, vis Hélilock 2026, biellette 2024',
+    gen() {
+      const shape = pick(['rond', 'tube', 'rect']), F = rnd(2, 60, 1) * 1000, mat = pick([['acier S235', 235], ['acier S355', 355], ['aluminium 6061', 240], ['inox 304', 210]]), s0 = pick([2, 3, 4, 5]);
+      let S, txt, calc;
+      if (shape === 'rond') { const d = rnd(10, 40, 1); S = Math.PI * d * d / 4; txt = `une tige ronde de ⌀ ${d} mm`; calc = `\\frac{\\pi \\times ${d}^2}{4}`; }
+      else if (shape === 'tube') { const D = rnd(30, 80, 2), e = rnd(2, 6, 0.5), d = D - 2 * e; S = Math.PI * (D * D - d * d) / 4; txt = `un tube de ⌀ ${D} mm et d'épaisseur ${fr(e, 1)} mm`; calc = `\\frac{\\pi (${D}^2 - ${tx(d, 1)}^2)}{4}`; }
+      else { const b = rnd(20, 60, 2), h = rnd(5, 20, 1); S = b * h; txt = `une barre rectangulaire de ${b} × ${h} mm`; calc = `${b} \\times ${h}`; }
+      const sig = F / S, cs = mat[1] / sig;
+      return {
+        statement: `<p>${txt[0].toUpperCase() + txt.slice(1)}, en ${v(mat[0])} (R<sub>e</sub> = ${v(mat[1], 'MPa')}), est soumise à un effort de traction de ${v(F / 1000, 'kN')}.
+          Le cahier des charges impose un coefficient de sécurité d'au moins ${v(s0)}.</p>` +
+          ol('Calculer la section en mm².', 'Calculer la contrainte normale σ.', 'Calculer le coefficient de sécurité réel.', 'Conclure sur le dimensionnement.'),
+        steps: [
+          ['1. Section', M(`S = ${calc} = \\boxed{${tx(S, 1)}${u('mm²')}}`)],
+          ['2. Contrainte', M(`\\sigma = \\frac{F}{S} = \\frac{${tx(F)}}{${tx(S, 1)}} = \\boxed{${tx(sig, 1)}${u('MPa')}}`)],
+          ['3. Coefficient de sécurité', M(`s = \\frac{R_e}{\\sigma} = \\frac{${mat[1]}}{${tx(sig, 1)}} = \\boxed{${tx(cs, 2)}}`)],
+          ['4. Conclusion', `<p>${cs >= s0 ? `${fr(cs, 2)} ≥ ${s0} : la pièce est correctement dimensionnée.` : `${fr(cs, 2)} < ${s0} : la pièce est sous-dimensionnée, il faut augmenter la section ou changer de matériau.`}</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 4,
+    title: 'Section minimale d\'un câble',
+    support: 'Annales : câble tracteur du téléphérique 2024',
+    gen() {
+      const F = rnd(20, 150, 5) * 1000, Rm = pick([1570, 1770, 1960]), Cs = 5;
+      const cat = [[16, 0.27, 120], [20, 0.42, 190], [24, 0.6, 270], [28, 0.82, 370], [32, 1.07, 480], [36, 1.35, 610], [40, 1.67, 760], [44, 2.02, 920]];
+      const sad = Rm / Cs, Smin = F / sad, ch = cat.find(c => c[2] >= Smin);
+      return {
+        statement: `<p>Un câble doit supporter un effort de ${v(F / 1000, 'kN')}. Ses fils ont une résistance à la rupture R<sub>m</sub> = ${v(Rm, 'MPa')}.
+          La réglementation impose un coefficient de sécurité de ${v(Cs)}. Catalogue :</p>` +
+          table(['⌀ (mm)', 'Masse (kg/m)', 'Section métallique (mm²)'], cat.map(c => [c[0], fr(c[1], 2), c[2]])) +
+          ol('Calculer la contrainte maximale admissible.', 'Calculer la section minimale du câble.', 'Choisir le câble le plus léger qui convient.'),
+        steps: [
+          ['1. Contrainte admissible', M(`\\sigma_{adm} = \\frac{R_m}{C_s} = \\frac{${Rm}}{${Cs}} = \\boxed{${tx(sad, 0)}${u('MPa')}}`)],
+          ['2. Section minimale', M(`S_{min} = \\frac{F}{\\sigma_{adm}} = \\frac{${tx(F)}}{${tx(sad, 0)}} = \\boxed{${tx(Smin, 1)}${u('mm²')}}`)],
+          ['3. Choix', ch ? `<p>Le premier câble dont la section dépasse ${fr(Smin, 1)} mm² est le <b>⌀ ${ch[0]} mm</b> (${ch[2]} mm², ${fr(ch[1], 2)} kg/m).</p>`
+            : '<p>Aucun câble du catalogue ne convient : il faut un plus gros diamètre ou un matériau plus résistant.</p>']
+        ]
+      };
+    }
+  },
+  {
+    chap: 4,
+    title: 'Loi de Hooke : allongement d\'un câble',
+    support: 'Annales : câble tracteur du téléphérique 2024',
+    gen() {
+      const F = rnd(20, 120, 5) * 1000, S = rnd(150, 800, 10), E = rnd(100, 200, 5), L = rnd(500, 4000, 50), c = rnd(1, 6, 0.5);
+      const sig = F / S, eps = sig / (E * 1000), dL = eps * L;
+      return {
+        statement: `<p>Un câble de section ${v(S, 'mm²')} et de longueur ${v(L, 'm', 0)} est tendu par un effort de ${v(F / 1000, 'kN')}.
+          Son module d'élasticité apparent vaut ${v(E, 'GPa')}. La poulie de tension peut rattraper un allongement de ${v(c, 'm', 1)}.</p>` +
+          ol('Calculer la contrainte dans le câble.', 'Calculer l\'allongement relatif ε (loi de Hooke : σ = E × ε).', 'Calculer l\'allongement total ΔL.', 'La course de la poulie de tension est-elle suffisante ?'),
+        steps: [
+          ['1. Contrainte', M(`\\sigma = \\frac{F}{S} = \\frac{${tx(F)}}{${S}} = \\boxed{${tx(sig, 1)}${u('MPa')}}`)],
+          ['2. Allongement relatif', M(`\\varepsilon = \\frac{\\sigma}{E} = \\frac{${tx(sig, 1)}}{${tx(E * 1000)}} = \\boxed{${sci(eps, 3)}}`)],
+          ['3. Allongement total', M(`\\Delta L = \\varepsilon \\times L = ${sci(eps, 3)} \\times ${tx(L)} = \\boxed{${tx(dL, 3)}${u('m')}}`)],
+          ['4. Conclusion', `<p>${dL <= c ? `${fr(dL, 2)} m ≤ ${fr(c, 1)} m : la course est suffisante.` : `${fr(dL, 2)} m > ${fr(c, 1)} m : la course est insuffisante.`}</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 4,
+    title: 'Flexion : moment quadratique et contrainte',
+    support: 'Annales : bras du siège PMR 2022, châssis 2022',
+    gen() {
+      const L = rnd(0.5, 2, 0.1), F = rnd(500, 5000, 50), b = rnd(10, 30, 2), h = rnd(40, 100, 5), Re = pick([235, 275, 355]);
+      const Mf = F * L * 1000, I1 = b * h ** 3 / 12, I2 = h * b ** 3 / 12, s1 = Mf * (h / 2) / I1, s2 = Mf * (b / 2) / I2;
+      return {
+        statement: `<p>Une poutre en porte-à-faux de longueur ${v(L, 'm', 1)} (encastrée à une extrémité) supporte une charge de ${v(F, 'N')} à son extrémité libre.
+          Sa section est un rectangle de ${v(b, 'mm')} × ${v(h, 'mm')}. On compare deux orientations : cas 1, la grande dimension h est verticale ; cas 2, elle est horizontale.
+          La contrainte maximale vaut ${m('\\sigma_{max} = \\dfrac{M_f \\times v}{I}')} avec v la demi-hauteur. Limite élastique : ${v(Re, 'MPa')}.</p>` +
+          ol('Calculer le moment fléchissant maximal (à l\'encastrement) en N·mm.', 'Calculer le moment quadratique I = b h³ / 12 pour chaque orientation.',
+            'Calculer la contrainte maximale dans chaque cas.', 'Quelle orientation choisir ? Est-elle suffisante ?'),
+        steps: [
+          ['1. Moment fléchissant', M(`M_f = F \\times L = ${F} \\times ${tx(L * 1000)} = \\boxed{${tx(Mf)}${u('N·mm')}}`)],
+          ['2. Moments quadratiques', M(`I_1 = \\frac{${b} \\times ${h}^3}{12} = ${tx(I1, 0)}${u('mm')}^4 \\qquad I_2 = \\frac{${h} \\times ${b}^3}{12} = ${tx(I2, 0)}${u('mm')}^4`)],
+          ['3. Contraintes', M(`\\sigma_1 = \\frac{${tx(Mf)} \\times ${tx(h / 2, 1)}}{${tx(I1, 0)}} = \\boxed{${tx(s1, 1)}${u('MPa')}} \\qquad \\sigma_2 = \\frac{${tx(Mf)} \\times ${tx(b / 2, 1)}}{${tx(I2, 0)}} = \\boxed{${tx(s2, 1)}${u('MPa')}}`)],
+          ['4. Choix', `<p>Avec la grande dimension verticale, la contrainte est ${fr(s2 / s1, 1)} fois plus faible pour la même masse : c'est l'orientation à retenir.
+            ${s1 <= Re ? `${fr(s1, 1)} MPa ≤ ${Re} MPa : la poutre résiste.` : `${fr(s1, 1)} MPa > ${Re} MPa : même ainsi, elle ne résiste pas.`}</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 4,
+    title: 'Flèche d\'une poutre et module d\'Young',
+    support: 'Annales : planche du plongeoir 2021',
+    gen() {
+      const mats = [['bois lamellé', 12], ['composite verre/époxy', 25], ['aluminium', 69], ['composite carbone', 70]];
+      const mt = pick(mats), L = rnd(1.5, 3, 0.1), b = rnd(400, 600, 10), h = rnd(30, 70, 5), mp = rnd(60, 110, 5);
+      const F = mp * G, I = b * h ** 3 / 12, Er = mt[1] * 1000 * rnd(0.95, 1.05, 0.01), f = +(F * (L * 1000) ** 3 / (3 * Er * I)).toFixed(1);
+      const E = F * (L * 1000) ** 3 / (3 * f * I) / 1000, best = mats.reduce((a, c) => Math.abs(c[1] - E) < Math.abs(a[1] - E) ? c : a);
+      return {
+        statement: `<p>Une planche de plongeoir de longueur ${v(L, 'm', 1)}, de section ${v(b, 'mm')} × ${v(h, 'mm')}, est encastrée à une extrémité.
+          Un plongeur de ${v(mp, 'kg')} se tient au bout : on mesure une flèche de ${v(f, 'mm', 1)}. Pour cette poutre : ${m('f = \\dfrac{F L^3}{3 E I}')}, avec ${m('I = \\dfrac{b h^3}{12}')}.</p>` +
+          table(['Matériau', ...mats.map(x => x[0])], [['E (GPa)', ...mats.map(x => x[1])]]) +
+          ol('Calculer le poids du plongeur.', 'Calculer le moment quadratique de la section.', 'Exprimer E en fonction de la flèche puis le calculer.', 'Quel matériau constitue probablement la planche ?'),
+        steps: [
+          ['1. Poids', M(`F = ${mp} \\times 9{,}81 = \\boxed{${tx(F, 1)}${u('N')}}`)],
+          ['2. Moment quadratique', M(`I = \\frac{${b} \\times ${h}^3}{12} = \\boxed{${sci(I, 3)}${u('mm')}^4}`)],
+          ['3. Module d\'Young', M(`E = \\frac{F L^3}{3 f I} = \\frac{${tx(F, 1)} \\times ${tx(L * 1000)}^3}{3 \\times ${tx(f, 1)} \\times ${sci(I, 3)}} = ${tx(E * 1000, 0)}${u('MPa')} = \\boxed{${tx(E, 1)}${u('GPa')}}`)],
+          ['4. Matériau', `<p>La valeur la plus proche est celle du <b>${best[0]}</b> (${best[1]} GPa).</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 4,
+    title: 'Exploiter une simulation : masse maximale',
+    support: 'Annales : bras télescopique de la grue 2025, mât de soutien 2022',
+    gen() {
+      const M0 = rnd(1, 10, 0.5), sim = rnd(80, 300, 1), Re = pick([235, 355, 460, 690]), s = pick([1.5, 2, 2.5, 3]);
+      const sad = Re / s, cs = Re / sim, Mmax = M0 * sad / sim;
+      return {
+        statement: `<p>Une simulation par éléments finis d'un bras de grue chargé de ${v(M0, 't', 1)} donne une contrainte maximale de ${v(sim, 'MPa')}.
+          Le matériau a une limite élastique de ${v(Re, 'MPa')} et le bureau d'études impose un coefficient de sécurité de ${v(s, '', 1)}.
+          On suppose le comportement élastique linéaire (contrainte proportionnelle à la charge).</p>` +
+          ol('Calculer le coefficient de sécurité obtenu avec cette charge.', 'Calculer la contrainte admissible.', 'En déduire la masse maximale que peut soulever le bras.',
+            'Citer trois paramètres sur lesquels on peut agir pour respecter la condition de résistance.'),
+        steps: [
+          ['1. Coefficient de sécurité', M(`s = \\frac{${Re}}{${sim}} = \\boxed{${tx(cs, 2)}}`)],
+          ['2. Contrainte admissible', M(`\\sigma_{adm} = \\frac{${Re}}{${tx(s, 1)}} = \\boxed{${tx(sad, 1)}${u('MPa')}}`)],
+          ['3. Masse maximale', M(`M_{max} = ${tx(M0, 1)} \\times \\frac{${tx(sad, 1)}}{${sim}} = \\boxed{${tx(Mmax, 2)}${u('t')}}`)],
+          ['4. Paramètres', '<p>Le matériau (limite élastique), la forme et les dimensions de la section (moment quadratique), et la charge ou la longueur du bras.</p>']
+        ]
+      };
+    }
+  },
+  // ===================== Chapitre 5 =====================
+  Q(5, 'Familles, propriétés et protection des matériaux', 'BO 4.2.2 · annales : méthaniseur 2022, tracker 2022, hublot 2026', [
+    ...fromPairs([['L\'acier non allié', 'métallique'], ['L\'acier inoxydable 316L', 'métallique'], ['L\'aluminium 6061', 'métallique'],
+      ['Le PEHD', 'polymère'], ['Le PMMA (plexiglas)', 'polymère'], ['Le PVC', 'polymère'], ['Le béton armé', 'composite'],
+      ['La fibre de carbone / époxy', 'composite'], ['Le bois lamellé-collé', 'composite'], ['Le verre', 'céramique']],
+      a => `${a} appartient à la famille des matériaux…`).map(q => { q[2] = ['métallique', 'polymère', 'céramique', 'composite']; return q; }),
+    ['On choisit l\'acier inoxydable pour des tubulures extérieures principalement pour :', 'sa résistance à la corrosion', ['sa faible masse volumique', 'son faible prix', 'sa transparence'], ''],
+    ['La galvanisation d\'un acier consiste à :', 'le recouvrir de zinc pour le protéger de la corrosion', ['le chauffer pour le durcir', 'le peindre en blanc', 'le mélanger à du carbone'], ''],
+    ['La lettre L de l\'inox 316L indique :', 'une faible teneur en carbone, qui facilite le soudage', ['un acier léger', 'une grande longueur', 'un acier liquide'], ''],
+    ['Un matériau à module d\'Young élevé est :', 'rigide (il se déforme peu)', ['souple', 'léger', 'fragile'], ''],
+    ['La limite élastique R<sub>e</sub> est la contrainte :', 'au-delà de laquelle la déformation devient permanente', ['à laquelle la pièce casse toujours', 'nulle', 'mesurée en GPa uniquement'], ''],
+    ['Pour un hublot qui doit être transparent et résister aux chocs, on choisit plutôt :', 'le PMMA ou le polycarbonate', ['l\'acier', 'le béton', 'le bois'], '']
+  ]),
+  {
+    chap: 5,
+    title: 'Indice de performance (méthode d\'Ashby)',
+    support: 'BO 4.2.2 · annales : bras du siège PMR 2022, châssis 2022',
+    gen() {
+      const M = [['Acier S355', 210, 355, 7850], ['Aluminium 6061', 69, 275, 2700], ['Titane TA6V', 114, 880, 4430], ['Carbone / époxy', 70, 600, 1600], ['Bois (pin)', 12, 50, 550]];
+      const crit = pick([{ n: 'un tirant léger et rigide', tex: '\\frac{E}{\\rho}', f: x => x[1] * 1000 / x[3], u: 'MPa·m³/kg' },
+        { n: 'un tirant léger et résistant', tex: '\\frac{R_e}{\\rho}', f: x => x[2] / x[3], u: 'MPa·m³/kg' },
+        { n: 'une poutre légère et rigide en flexion', tex: '\\frac{\\sqrt{E}}{\\rho}', f: x => Math.sqrt(x[1] * 1000) / x[3], u: '' }]);
+      const mats = sample(M, 4), vals = mats.map(crit.f), best = mats[vals.indexOf(Math.max(...vals))];
+      return {
+        statement: `<p>On cherche le meilleur matériau pour ${v(crit.n)}. L'indice de performance à <b>maximiser</b> est ${m('I = ' + crit.tex)} (E en MPa, ρ en kg/m³).</p>` +
+          table(['Matériau', 'E (GPa)', 'R<sub>e</sub> (MPa)', 'ρ (kg/m³)'], mats.map(x => [x[0], x[1], x[2], fr(x[3])])) +
+          ol('Calculer l\'indice de performance de chaque matériau.', 'Quel matériau choisir selon ce seul critère ?', 'Quels autres critères faut-il prendre en compte avant de décider ?'),
+        steps: [
+          ['1. Indices', table(['Matériau', 'Indice'], mats.map((x, i) => [x[0], fn(vals[i], 3)]))],
+          ['2. Choix', `<p>Le meilleur indice est celui du <b>${best[0]}</b>.</p>`],
+          ['3. Autres critères', '<p>Le coût, l\'impact environnemental (énergie et CO₂ à la production, recyclabilité), la résistance à la corrosion, le procédé de fabrication possible… Le choix final est un compromis.</p>']
+        ]
+      };
+    }
+  },
+  {
+    chap: 5,
+    title: 'Matrice de choix multicritère',
+    support: 'BO 4.2.3 : choix d\'une solution, matrice de comparaison',
+    gen() {
+      const crits = sample(['Coût', 'Masse', 'Résistance', 'Impact CO₂', 'Facilité de fabrication', 'Durabilité', 'Esthétique'], 4);
+      const w = crits.map(() => rnd(1, 5, 1)), sols = ['Solution A', 'Solution B', 'Solution C'];
+      const notes = sols.map(() => crits.map(() => rnd(1, 5, 1))), tot = notes.map(n => n.reduce((s, x, i) => s + x * w[i], 0));
+      const mx = Math.max(...tot), win = sols.filter((_, i) => tot[i] === mx);
+      return {
+        statement: `<p>Trois solutions sont notées de 1 (mauvais) à 5 (excellent) sur quatre critères pondérés :</p>` +
+          table(['Critère', 'Poids', ...sols], crits.map((c, j) => [c, w[j], ...notes.map(n => n[j])])) +
+          ol('Calculer la note pondérée de chaque solution.', 'Quelle solution retenir ?', 'Quel critère pèse le plus dans la décision ?'),
+        steps: [
+          // Une formule par solution (et non un bloc unique) : chacune peut se couper sur un écran étroit
+          ['1. Notes pondérées', sols.map((s, i) => M(`\\text{${s.slice(-1)}} : ${notes[i].map((x, j) => `${x} \\times ${w[j]}`).join(' + ')} = ${tot[i]}`)).join('')],
+          ['2. Choix', `<p>${win.length > 1 ? `Égalité entre ${win.join(' et ')} (${mx} points) : il faut un critère supplémentaire pour départager.` : `On retient la <b>${win[0]}</b> avec ${mx} points.`}</p>`],
+          ['3. Critère dominant', `<p>Le critère « ${crits[w.indexOf(Math.max(...w))]} » a le plus fort poids (${Math.max(...w)}).</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 5,
+    title: 'Gain de masse et impact CO₂',
+    support: 'Annales : poche de raclage 2025, transport du châssis 2022',
+    gen() {
+      const mat = pick([['acier', 2.0], ['inox', 6.2], ['aluminium', 8.2], ['PEHD', 2.0]]), m1 = rnd(20, 300, 5), e1 = pick([6, 8, 10, 12]), e2 = e1 - pick([2, 3, 4]);
+      const m2 = m1 * e2 / e1, g = (m1 - m2) / m1 * 100, co2 = (m1 - m2) * mat[1];
+      const d = rnd(500, 12000, 100), mode = pick([['camion', 0.1], ['train', 0.03], ['bateau porte-conteneurs', 0.015]]), tr = m2 / 1000 * d * mode[1];
+      return {
+        statement: `<p>Une pièce en ${v(mat[0])} de ${v(m1, 'kg')} est réalisée en tôle de ${v(e1, 'mm')}. Une étude de résistance montre qu'une épaisseur de ${v(e2, 'mm')} suffit.
+          La production de ce matériau émet environ ${v(mat[1], 'kg CO₂ par kg', 1)}. La pièce est ensuite transportée sur ${v(d, 'km', 0)} par ${v(mode[0])}
+          (${v(mode[1], 'kg CO₂ par tonne et par km', 3)}).</p>` +
+          ol('Calculer la nouvelle masse (la masse est proportionnelle à l\'épaisseur).', 'Calculer le gain de masse en %.', 'Calculer le CO₂ évité à la production.',
+            'Calculer les émissions dues au transport de la nouvelle pièce.'),
+        steps: [
+          ['1. Nouvelle masse', M(`m_2 = ${m1} \\times \\frac{${e2}}{${e1}} = \\boxed{${tx(m2, 1)}${u('kg')}}`)],
+          ['2. Gain de masse', M(`\\frac{${m1} - ${tx(m2, 1)}}{${m1}} \\times 100 = \\boxed{${tx(g, 1)}\\,\\%}`)],
+          ['3. CO₂ évité', M(`(${m1} - ${tx(m2, 1)}) \\times ${tx(mat[1], 1)} = \\boxed{${tx(co2, 1)}${u('kg CO')}_2}`)],
+          ['4. Transport', M(`${tx(m2 / 1000, 4)}${u('t')} \\times ${tx(d)} \\times ${tx(mode[1], 3)} = \\boxed{${tx(tr, 2)}${u('kg CO')}_2}`)]
+        ]
+      };
+    }
+  },
+  Q(5, 'Cycle de vie et éco-conception', 'BO 1.5, 4.2.1 · annales : flotteurs 2024, châssis 2022', [
+    ['Les étapes du cycle de vie d\'un produit sont :', 'extraction des matières, fabrication, transport, utilisation, fin de vie', ['conception, vente, publicité', 'achat, utilisation', 'fabrication et recyclage seulement'], ''],
+    ['Pour un produit qui consomme de l\'énergie en fonctionnement (moteur, chauffage), la phase souvent la plus impactante est :', 'l\'utilisation', ['le transport', 'l\'emballage', 'la fin de vie'], ''],
+    ['Pour une structure passive (châssis, flotteur), la phase souvent la plus impactante est :', 'l\'extraction et la production des matériaux', ['l\'utilisation', 'l\'emballage', 'la publicité'], ''],
+    ['L\'éco-conception consiste à :', 'réduire les impacts environnementaux dès la conception, sur tout le cycle de vie', ['recycler les déchets d\'usine', 'peindre le produit en vert', 'choisir le matériau le moins cher'], ''],
+    ['Alléger une pièce permet de réduire :', 'la matière consommée et les émissions liées au transport', ['uniquement le prix de la peinture', 'la durée de vie', 'la sécurité'], ''],
+    ['Un indicateur couramment utilisé pour mesurer l\'impact climatique est :', 'le kg équivalent CO₂', ['le MPa', 'le kWh/m²', 'le dB'], ''],
+    ['Privilégier un matériau recyclable agit sur la phase :', 'de fin de vie', ['d\'utilisation', 'de transport', 'de conception graphique'], ''],
+    ['Transporter par bateau plutôt que par camion :', 'réduit fortement les émissions par tonne et par km', ['les augmente', 'ne change rien', 'supprime toute émission'], '']
+  ]),
+  Q(5, 'Procédés de fabrication et d\'assemblage', 'BO 4.3.4, 6.2 · annales : mousqueton 2024, électrosoudage 2022', [
+    ['Le forgeage consiste à :', 'déformer un métal chaud par martelage ou pressage', ['enlever de la matière avec un outil coupant', 'couler un métal liquide dans un moule', 'déposer de la matière couche par couche'], ''],
+    ['L\'usinage (tournage, fraisage) consiste à :', 'enlever de la matière avec un outil coupant', ['couler du métal liquide', 'souder deux pièces', 'plier une tôle'], ''],
+    ['Le moulage par injection est adapté :', 'aux pièces en plastique fabriquées en grande série', ['aux pièces uniques en acier', 'aux poutres en bois', 'au béton armé'], ''],
+    ['L\'impression 3D (dépôt de fil fondu) est surtout adaptée :', 'aux prototypes et petites séries', ['à la très grande série d\'acier', 'aux câbles de téléphérique', 'aux vitrages'], ''],
+    ['L\'électrosoudage des tubes en PEHD consiste à :', 'chauffer un manchon par résistance électrique pour fusionner les tubes', ['visser les tubes', 'les coller à froid', 'les souder à l\'arc'], ''],
+    ['Le pliage est un procédé de :', 'déformation d\'une tôle', ['moulage', 'enlèvement de matière', 'assemblage collé'], ''],
+    ['Le soudage réalise une liaison :', 'complète et non démontable', ['complète et démontable', 'pivot', 'glissière'], ''],
+    ['Le traitement thermique d\'une pièce en acier (trempe) sert à :', 'augmenter sa dureté et sa résistance', ['la rendre transparente', 'diminuer sa masse', 'la protéger de la corrosion uniquement'], '']
+  ]),
+  // ===================== Chapitre 6 =====================
+  {
+    chap: 6,
+    title: 'Puissances et rendements en cascade',
+    support: 'Annales : dégrilleur 2025',
+    gen() {
+      const Pa = rnd(0.5, 5, 0.05) * 1000, em = rnd(0.75, 0.92, 0.01), er = rnd(0.6, 0.95, 0.01), et = rnd(0.8, 0.95, 0.01);
+      const Pm = Pa * em, Pr = Pm * er, Pt = Pr * et, eg = em * er * et;
+      return {
+        statement: `<p>La chaîne de puissance d'un treuil comporte un moteur (rendement ${v(em)}), un réducteur (${v(er)}) et le treuil lui-même (${v(et)}).
+          Le moteur absorbe ${v(Pa, 'W', 0)} sur le réseau.</p>` +
+          ol('Calculer la puissance en sortie de chaque élément.', 'Calculer le rendement global.', 'Calculer la puissance totale perdue.', 'Sous quelle forme cette énergie est-elle perdue ?'),
+        steps: [
+          ['1. Puissances', M(`P_m = ${tx(Pa)} \\times ${tx(em)} = ${tx(Pm, 0)}${u('W')} \\quad P_r = ${tx(Pm, 0)} \\times ${tx(er)} = ${tx(Pr, 0)}${u('W')} \\quad P_t = \\boxed{${tx(Pt, 0)}${u('W')}}`)],
+          ['2. Rendement global', M(`\\eta = ${tx(em)} \\times ${tx(er)} \\times ${tx(et)} = \\boxed{${tx(eg, 3)}}`)],
+          ['3. Pertes', M(`P_{pertes} = ${tx(Pa)} - ${tx(Pt, 0)} = \\boxed{${tx(Pa - Pt, 0)}${u('W')}}`)],
+          ['4. Forme', '<p>Principalement en chaleur : effet Joule dans le moteur, frottements dans le réducteur et le treuil.</p>']
+        ]
+      };
+    }
+  },
+  {
+    chap: 6,
+    title: 'Choix d\'un moteur',
+    support: 'Annales : serrure 2021, Hélilock 2026, tracker 2022',
+    gen() {
+      const Cu = rnd(20, 200, 5), Nu = rnd(10, 60, 1), k = pick([20, 30, 40, 50]), eta = rnd(0.7, 0.9, 0.05);
+      const Cm = Cu / (k * eta), Nm = Nu * k, Pm = Cm * 2 * Math.PI * Nm / 60;
+      const cat = [0.4, 0.8, 1.6, 3.2, 6.4, 12].map((C, i) => ({ ref: 'M' + (i + 1), C, N: pick([1400, 1500, 2800, 3000]) }));
+      const ok = cat.find(x => x.C >= Cm && x.N >= Nm);
+      return {
+        statement: `<p>La charge doit être entraînée avec un couple de ${v(Cu, 'N·m')} à ${v(Nu, 'tr/min')}. On dispose d'un réducteur de rapport ${v('1/' + k)}
+          et de rendement ${v(eta)}. Catalogue de moteurs (couple et vitesse nominaux) :</p>` +
+          table(['Référence', ...cat.map(x => x.ref)], [['Couple (N·m)', ...cat.map(x => fr(x.C, 1))], ['Vitesse (tr/min)', ...cat.map(x => x.N)]]) +
+          ol('Calculer la vitesse que doit avoir le moteur.', 'Calculer le couple que doit fournir le moteur.', 'Calculer la puissance mécanique du moteur.', 'Choisir le moteur le plus petit qui convient.'),
+        steps: [
+          ['1. Vitesse moteur', M(`N_m = N_u \\times ${k} = \\boxed{${tx(Nm)}${u('tr/min')}}`)],
+          ['2. Couple moteur', M(`C_m = \\frac{C_u}{${k} \\times \\eta} = \\frac{${Cu}}{${k} \\times ${tx(eta, 2)}} = \\boxed{${tx(Cm, 3)}${u('N·m')}}`)],
+          ['3. Puissance', M(`P_m = C_m \\times \\omega_m = ${tx(Cm, 3)} \\times \\frac{2\\pi \\times ${Nm}}{60} = \\boxed{${tx(Pm, 0)}${u('W')}}`)],
+          ['4. Choix', ok ? `<p>Il faut C ≥ ${fn(Cm, 3)} N·m et N ≥ ${Nm} tr/min : le moteur <b>${ok.ref}</b> convient (${fr(ok.C, 1)} N·m, ${ok.N} tr/min).</p>`
+            : `<p>Aucun moteur ne réunit C ≥ ${fn(Cm, 3)} N·m et N ≥ ${Nm} tr/min : il faut changer de réducteur.</p>`]
+        ]
+      };
+    }
+  },
+  {
+    chap: 6,
+    title: 'Puissance et rendement d\'un vérin électrique',
+    support: 'Annales : siège de levage PMR 2022',
+    gen() {
+      const U = pick([12, 24]), I = rnd(2, 10, 0.1), F = rnd(500, 4000, 50), Vv = rnd(5, 20, 0.5), c = rnd(100, 400, 10), C = rnd(20, 80, 1);
+      const Pa = U * I, Pu = F * Vv / 1000, eta = Pu / Pa, t = c / Vv, Eb = C * U, ncy = Eb / (Pa * 2 * t / 3600);
+      return {
+        statement: `<p>Un vérin électrique alimenté sous ${v(U, 'V')} absorbe ${v(I, 'A', 1)}. Il soulève une charge exerçant ${v(F, 'N', 0)} à ${v(Vv, 'mm/s', 1)}.
+          Sa course est de ${v(c, 'mm')}. Il est alimenté par une batterie de ${v(C, 'Ah')}.</p>` +
+          ol('Calculer la puissance absorbée.', 'Calculer la puissance utile.', 'Calculer le rendement du vérin.', 'Calculer la durée d\'une course complète.',
+            'Combien de cycles (montée + descente, même consommation) la batterie permet-elle ?'),
+        steps: [
+          ['1. Puissance absorbée', M(`P_a = U \\times I = ${U} \\times ${tx(I, 1)} = \\boxed{${tx(Pa, 1)}${u('W')}}`)],
+          ['2. Puissance utile', M(`P_u = F \\times V = ${F} \\times ${tx(Vv / 1000, 4)} = \\boxed{${tx(Pu, 1)}${u('W')}}`)],
+          ['3. Rendement', M(`\\eta = \\frac{${tx(Pu, 1)}}{${tx(Pa, 1)}} = \\boxed{${tx(eta, 3)}}`)],
+          ['4. Durée', M(`t = \\frac{${c}}{${tx(Vv, 1)}} = \\boxed{${tx(t, 1)}${u('s')}}`)],
+          ['5. Autonomie', M(`E = ${C} \\times ${U} = ${tx(Eb)}${u('Wh')} \\qquad E_{cycle} = ${tx(Pa, 1)} \\times \\frac{2 \\times ${tx(t, 1)}}{3\\,600} = ${tx(Pa * 2 * t / 3600, 2)}${u('Wh')} \\qquad n = \\boxed{${Math.floor(ncy)}\\ \\text{cycles}}`)]
+        ]
+      };
+    }
+  },
+  Q(6, 'Stockeurs d\'énergie', 'BO 5.2.2', [
+    ...fromPairs([['un volant d\'inertie', 'mécanique'], ['un barrage hydraulique (STEP)', 'mécanique'], ['une batterie lithium-ion', 'chimique'],
+      ['un réservoir d\'hydrogène', 'chimique'], ['un supercondensateur', 'électrostatique'], ['un ballon d\'eau chaude', 'thermique'], ['un mur Trombe', 'thermique']],
+      a => `Quel type de stockage réalise ${a} ?`).map(q => { q[2] = ['mécanique', 'chimique', 'électrostatique', 'thermique']; return q; }),
+    ['Le diagramme de Ragone compare les stockeurs selon :', 'leur énergie massique et leur puissance massique', ['leur prix et leur masse', 'leur couleur', 'leur rendement et leur durée de vie'], ''],
+    ['Un supercondensateur, comparé à une batterie :', 'fournit une forte puissance mais stocke peu d\'énergie', ['stocke beaucoup plus d\'énergie', 'est plus lent à charger', 'n\'accepte aucun cycle'], ''],
+    ['L\'énergie massique s\'exprime en :', 'Wh/kg', ['W/kg', 'kg/m³', 'N/m²'], 'La puissance massique s\'exprime en W/kg.'],
+    ['L\'état de charge (SOC) d\'une batterie indique :', 'le pourcentage d\'énergie encore disponible', ['sa tension maximale', 'sa masse', 'son nombre de cycles'], '']
+  ]),
+  // ===================== Chapitre 7 =====================
+  {
+    chap: 7,
+    title: 'Échelle d\'un plan',
+    support: 'Annales : siège PMR 2022, convoyeur 2021',
+    gen() {
+      const e = pick([10, 20, 25, 50, 100]), l1 = rnd(20, 180, 1), L2 = rnd(0.5, 8, 0.1);
+      const r1 = l1 * e / 1000, l2 = L2 * 1000 / e;
+      return {
+        statement: `<p>Un plan est dessiné à l'échelle ${v('1:' + e)}.</p>` +
+          ol(`Sur le plan, on mesure ${v(l1, 'mm')}. Quelle est la longueur réelle en mètres ?`, `Quelle longueur faut-il tracer sur le plan pour représenter ${v(L2, 'm', 1)} réels ?`,
+            'Que signifie l\'échelle 2:1 sur un dessin de petite pièce ?'),
+        steps: [
+          ['1. Longueur réelle', M(`L = ${l1} \\times ${e} = ${tx(l1 * e)}${u('mm')} = \\boxed{${tx(r1, 3)}${u('m')}}`)],
+          ['2. Longueur sur le plan', M(`l = \\frac{${tx(L2 * 1000)}}{${e}} = \\boxed{${tx(l2, 1)}${u('mm')}}`)],
+          ['3. Échelle 2:1', '<p>Le dessin est deux fois plus grand que la pièce réelle (agrandissement).</p>']
+        ]
+      };
+    }
+  },
+  {
+    chap: 7,
+    title: 'Trigonométrie appliquée',
+    support: 'Annales : panneaux flottants 2024, calage des pales 2025',
+    gen() {
+      const h = rnd(100, 600, 10), L = rnd(800, 2500, 50), al = rnd(8, 35, 0.5), Lb = rnd(500, 2000, 50);
+      const a = Math.atan(h / L) * 180 / Math.PI, hyp = Math.hypot(h, L), h2 = Lb * Math.sin(deg(al)), x2 = Lb * Math.cos(deg(al));
+      const sc = 280 / L, svg = `<svg viewBox="0 0 360 ${Math.max(80, h * sc + 50)}" role="img"><path class="thin" d="M30 ${h * sc + 30} L${30 + L * sc} ${h * sc + 30} L${30 + L * sc} 30 Z"/>
+        <text x="${30 + L * sc / 2}" y="${h * sc + 46}" text-anchor="middle">L</text><text x="${36 + L * sc}" y="${h * sc / 2 + 34}">h</text><text x="62" y="${h * sc + 24}">α</text></svg>`;
+      return {
+        statement: `<p>Un panneau est fixé sur deux supports : il monte de h = ${v(h, 'mm')} sur une distance horizontale L = ${v(L, 'mm')}.</p>${fig(svg)}` +
+          ol('Calculer l\'angle d\'inclinaison α du panneau.', 'Calculer la longueur réelle du panneau entre les deux supports.',
+            `Un second panneau de ${v(Lb, 'mm')} doit être incliné de ${v(al, '°', 1)}. Calculer la différence de hauteur entre ses deux supports.`, 'Calculer son encombrement horizontal.'),
+        steps: [
+          ['1. Angle', M(`\\tan\\alpha = \\frac{h}{L} = \\frac{${h}}{${L}} \\;\\Rightarrow\\; \\alpha = \\boxed{${tx(a, 2)}^\\circ}`)],
+          ['2. Longueur', M(`\\sqrt{${h}^2 + ${L}^2} = \\boxed{${tx(hyp, 1)}${u('mm')}}`)],
+          ['3. Différence de hauteur', M(`h' = ${Lb} \\times \\sin ${tx(al, 1)}^\\circ = \\boxed{${tx(h2, 1)}${u('mm')}}`)],
+          ['4. Encombrement', M(`x = ${Lb} \\times \\cos ${tx(al, 1)}^\\circ = \\boxed{${tx(x2, 1)}${u('mm')}}`)]
+        ]
+      };
+    }
+  },
+  Q(7, 'Maquette numérique et conception', 'BO 4.1.1, 4.3.4', [
+    ['Un modeleur volumique paramétrique (SolidWorks, Onshape…) permet :', 'de créer des pièces et assemblages modifiables par leurs cotes', ['uniquement de dessiner en 2D', 'de programmer un microcontrôleur', 'de calculer un débit réseau'], ''],
+    ['L\'arbre de construction d\'une pièce :', 'liste les fonctions (esquisses, extrusions…) dans l\'ordre où elles ont été créées', ['montre les liaisons cinématiques', 'donne le prix de la pièce', 'représente le cycle de vie'], ''],
+    ['Un modèle numérique « robuste » :', 'se reconstruit sans erreur quand on modifie une cote', ['ne peut jamais être modifié', 'est très lourd', 'n\'a pas d\'esquisse'], ''],
+    ['Dans un assemblage, les contraintes (coïncidence, coaxialité…) servent à :', 'positionner les pièces les unes par rapport aux autres', ['calculer les contraintes mécaniques', 'colorer les pièces', 'définir le matériau'], ''],
+    ['Une vue éclatée sert à :', 'montrer comment les pièces s\'assemblent', ['calculer la masse', 'simuler les déformations', 'réaliser une coupe'], ''],
+    ['Une simulation par éléments finis permet notamment :', 'de visualiser les contraintes et les déplacements dans une pièce', ['de fabriquer la pièce', 'de choisir le fournisseur', 'de tracer le diagramme de Gantt'], ''],
+    ['Pour une simulation de résistance, il faut définir :', 'le matériau, les déplacements imposés (fixations) et les chargements', ['uniquement la couleur', 'uniquement le maillage', 'le prix de la pièce'], ''],
+    ['Le jeu de fonctionnement entre deux pièces sert à :', 'permettre le mouvement et l\'assemblage', ['augmenter la masse', 'bloquer le mouvement', 'réduire le coût du matériau'], '']
+  ]),
+  {
+    chap: 7,
+    title: 'Jeu de fonctionnement',
+    support: 'BO 4.3.4 · annales : coussinet du propulseur éolien 2022',
+    gen() {
+      const d = pick([12, 16, 20, 25, 30, 40, 50]), ES = rnd(10, 40, 1), EI = 0, type = pick(['jeu', 'jeu', 'serrage', 'incertain']);
+      // écarts de l'arbre en µm : es (supérieur), ei (inférieur)
+      let es, ei;
+      if (type === 'jeu') { es = -rnd(5, 25, 1); ei = es - rnd(8, 20, 1); }
+      else if (type === 'serrage') { ei = ES + rnd(2, 15, 1); es = ei + rnd(8, 20, 1); }
+      else { ei = rnd(1, ES - 2, 1); es = ei + rnd(10, 25, 1); }
+      const Jmax = ES - ei, Jmin = EI - es;
+      const nat = Jmin >= 0 ? 'avec jeu (glissant)' : Jmax <= 0 ? 'avec serrage (serré)' : 'incertain';
+      const fs = x => (x >= 0 ? '+' : '') + fr(x / 1000, 3);
+      return {
+        statement: `<p>Un arbre tourne dans un coussinet (alésage) de diamètre nominal ${v(d, 'mm')}. Cotes tolérancées (en mm) :</p>` +
+          table(['Pièce', 'Écart supérieur', 'Écart inférieur'], [['Alésage (coussinet)', fs(ES), fs(EI)], ['Arbre', fs(es), fs(ei)]]) +
+          ol('Calculer les diamètres maximal et minimal de l\'alésage et de l\'arbre.', 'Calculer le jeu maximal et le jeu minimal.', 'Quelle est la nature de l\'ajustement ? Convient-elle à un arbre qui doit tourner ?'),
+        steps: [
+          ['1. Dimensions limites', M(`\\text{Alésage} : ${tx(d + ES / 1000, 3)} \\text{ à } ${tx(d + EI / 1000, 3)}${u('mm')} \\qquad \\text{Arbre} : ${tx(d + es / 1000, 3)} \\text{ à } ${tx(d + ei / 1000, 3)}${u('mm')}`)],
+          ['2. Jeux', M(`J_{max} = Al_{max} - Ar_{min} = \\boxed{${tx(Jmax / 1000, 3)}${u('mm')}} \\qquad J_{min} = Al_{min} - Ar_{max} = \\boxed{${tx(Jmin / 1000, 3)}${u('mm')}}`) +
+            '<p>Un jeu négatif correspond à un serrage.</p>'],
+          ['3. Nature', `<p>Ajustement <b>${nat}</b>. ${Jmin >= 0 ? 'Le jeu est toujours positif : l\'arbre peut tourner, cela convient.' : 'Il peut y avoir serrage : l\'arbre ne tournera pas librement, cela ne convient pas à un guidage en rotation.'}</p>`]
+        ]
+      };
+    }
+  },
+];
+
+// ---------- Affichage ----------
+const nav = document.getElementById('nav');
+const card = document.getElementById('card');
+let current = 0;
+
+function renderMath(root) {
+  root.querySelectorAll('.m').forEach(el => {
+    const tex = el.dataset.tex;
+    if (window.katex) {
+      katex.render(tex, el, { displayMode: !!el.dataset.d, throwOnError: false, strict: false });
+    } else {
+      el.textContent = tex;
+    }
+  });
+}
+
+// Adapte le contenu visible à la largeur de l'écran :
+// - un tableau de 2 ou 3 lignes trop large est présenté en colonnes (transposé) ;
+// - une formule centrée trop large est rendue « en ligne », que KaTeX peut couper après = ou +.
+function fitToWidth(root) {
+  root.querySelectorAll('.tw').forEach(w => {
+    const t = w.querySelector('table');
+    if (!w.offsetParent || !t || t.dataset.tr || t.rows.length > 3 || w.scrollWidth <= w.clientWidth + 1) return;
+    const cells = [...t.rows].map(r => [...r.cells].map(c => c.innerHTML));
+    t.innerHTML = cells[0].map((_, c) => `<tr>${cells.map((row, k) => {
+      const tag = c === 0 || k === 0 ? 'th' : 'td';
+      return `<${tag}>${row[c] ?? ''}</${tag}>`;
+    }).join('')}</tr>`).join('');
+    t.dataset.tr = '1';
+  });
+  if (!window.katex) return;
+  root.querySelectorAll('.mdisp').forEach(el => {
+    if (!el.offsetParent) return;
+    if (el.classList.contains('mwrap')) {
+      katex.render(el.dataset.tex, el, { displayMode: true, throwOnError: false, strict: false });
+      el.classList.remove('mwrap');
+      el.style.overflow = '';
+    }
+    if (el.scrollWidth > el.clientWidth + 1) {
+      katex.render(el.dataset.tex, el, { displayMode: false, throwOnError: false, strict: false });
+      el.classList.add('mwrap');
+      // Quelques pixels de trop (bord d'un cadre) : on laisse déborder dans la marge plutôt que d'afficher un défilement
+      if (el.scrollWidth - el.clientWidth <= 8) el.style.overflow = 'visible';
+    }
+  });
+}
+let fitTimer;
+window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(() => fitToWidth(card), 150); });
+
+// QCM : colore les réponses et affiche le score (on = correction visible)
+function markQcm(on) {
+  let score = 0, n = 0;
+  card.querySelectorAll('ol.qcm > li').forEach(li => {
+    n++;
+    const ok = +li.dataset.ok;
+    li.querySelectorAll('label').forEach((lab, j) => {
+      const checked = lab.querySelector('input').checked;
+      lab.classList.toggle('good', on && j === ok);
+      lab.classList.toggle('bad', on && checked && j !== ok);
+      if (checked && j === ok) score++;
+    });
+  });
+  const s = card.querySelector('.score');
+  if (s) s.textContent = on ? `Score : ${score} / ${n}` : '';
+}
+
+// Identifiant d'un exercice dans l'adresse : #c<chapitre>-<rang dans le chapitre>
+const idOf = i => {
+  const c = EXOS[i].chap;
+  return `c${c}-${EXOS.slice(0, i + 1).filter(e => e.chap === c).length}`;
+};
+const ARROW = '<svg class="arrow" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function buildNav() {
+  nav.innerHTML = CHAPITRES.map((titre, c) => `
+    <div class="chap">
+      <button class="chap-btn" aria-expanded="false">
+        ${ARROW}
+        <span><span class="seq">Chapitre ${c + 1}</span><span class="ex">${titre}</span></span>
+      </button>
+      <div class="exlist" hidden>
+        ${EXOS.map((e, i) => e.chap === c + 1 ? `<a href="#${idOf(i)}" data-i="${i}">${e.title}</a>` : '').join('')}
+      </div>
+    </div>`).join('');
+  nav.querySelectorAll('.chap-btn').forEach(b => b.onclick = () => toggleChap(b));
+  nav.querySelectorAll('.exlist a').forEach(a => a.onclick = ev => { ev.preventDefault(); go(+a.dataset.i); });
+}
+
+// Affiche l'exercice i et met à jour l'adresse (#c4-1…) sans recharger la page
+function go(i) {
+  show(i);
+  closeMenu();
+  window.scrollTo(0, 0);
+  try { history.pushState(null, '', '#' + idOf(i)); } catch (err) { /* aperçu hors ligne : on ignore */ }
+}
+
+// Ouvre ou ferme un chapitre ; ouvrir un chapitre referme les autres
+function toggleChap(btn, open) {
+  const list = btn.nextElementSibling;
+  list.hidden = open === undefined ? !list.hidden : !open;
+  btn.setAttribute('aria-expanded', String(!list.hidden));
+  if (!list.hidden) {
+    nav.querySelectorAll('.chap-btn').forEach(b => {
+      if (b !== btn) { b.nextElementSibling.hidden = true; b.setAttribute('aria-expanded', 'false'); }
+    });
+  }
+}
+
+function show(i) {
+  current = i;
+  const e = EXOS[i], data = e.gen();
+  card.innerHTML = `
+    <div class="crumb">Chapitre ${e.chap} · ${CHAPITRES[e.chap - 1]}</div>
+    <h2>${e.title}</h2>
+    <p class="support">${e.support}</p>
+    ${data.statement}
+    <div class="btns">
+      <button id="newBtn">↻ Nouvelles valeurs</button>
+      <button id="ansBtn" class="primary" aria-expanded="false">Afficher la réponse</button>
+    </div>
+    <section class="correction" id="corr" hidden>
+      <h3>Correction</h3>
+      ${data.qcm ? '<p class="score"></p>' : ''}
+      ${data.steps.map(([lab, body]) => `<div class="step"><div class="lab">${lab}</div>${body}</div>`).join('')}
+    </section>`;
+  renderMath(card);
+  fitToWidth(card);
+  document.getElementById('newBtn').onclick = () => show(current);
+  const ans = document.getElementById('ansBtn'), corr = document.getElementById('corr');
+  ans.onclick = () => {
+    corr.hidden = !corr.hidden;
+    ans.textContent = corr.hidden ? 'Afficher la réponse' : 'Masquer la réponse';
+    ans.setAttribute('aria-expanded', String(!corr.hidden));
+    if (data.qcm) markQcm(!corr.hidden);
+    if (!corr.hidden) fitToWidth(corr);
+  };
+  nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', +a.dataset.i === i));
+  nav.querySelectorAll('.chap').forEach((ch, c) => {
+    const btn = ch.querySelector('.chap-btn');
+    btn.classList.toggle('on', c === e.chap - 1);
+    if (c === e.chap - 1) toggleChap(btn, true);
+  });
+  document.getElementById('prevBtn').style.visibility = i > 0 ? 'visible' : 'hidden';
+  document.getElementById('nextBtn').style.visibility = i < EXOS.length - 1 ? 'visible' : 'hidden';
+}
+
+function fromHash() {
+  const i = EXOS.findIndex((e, k) => '#' + idOf(k) === location.hash);
+  show(i >= 0 ? i : 0);
+  closeMenu();
+  window.scrollTo(0, 0);
+}
+
+// Menu mobile
+const sidebar = document.getElementById('sidebar'), shade = document.getElementById('shade');
+function closeMenu() { sidebar.classList.remove('open'); shade.hidden = true; }
+document.getElementById('menuBtn').onclick = () => { sidebar.classList.add('open'); shade.hidden = false; };
+shade.onclick = closeMenu;
+
+document.getElementById('prevBtn').onclick = () => go(current - 1);
+document.getElementById('nextBtn').onclick = () => go(current + 1);
+window.addEventListener('popstate', fromHash);
+
+buildNav();
+fromHash();
+</script>
+</body>
+</html>
