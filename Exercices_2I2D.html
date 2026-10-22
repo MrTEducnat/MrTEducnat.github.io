@@ -91,6 +91,11 @@ a.home {
 a.home:hover, a.home:focus-visible { background: var(--accent-bg); outline: none; }
 .sidebar a.home { margin: 0 8px 14px; }
 .topbar a.home { margin-left: auto; }
+button.rand { font-size: 14px; color: var(--accent); border-color: var(--accent); padding: 4px 10px; }
+button.rand:hover { background: var(--accent-bg); }
+.sidebar button.rand { margin: 0 0 14px; }
+.topbar button.rand { margin-left: auto; padding: 1px 8px; font-size: 18px; }
+.topbar button.rand + a.home { margin-left: 0; }
 .sidebar .sub { font-size: 13px; color: var(--muted); margin: 0 8px 16px; }
 .chap { margin-bottom: 2px; }
 .chap-btn {
@@ -239,12 +244,14 @@ svg .ledoff { fill: var(--side); stroke: var(--muted); }
 <div class="topbar">
   <button id="menuBtn" aria-label="Ouvrir le menu">☰</button>
   <span>Exercices 2I2D</span>
+  <button class="rand" id="randTop" aria-label="Exercice au hasard" title="Exercice au hasard">🎲</button>
   <a class="home" href="index.html">← Accueil</a>
 </div>
 <div class="shade" id="shade" hidden></div>
 <div class="layout">
   <nav class="sidebar" id="sidebar">
     <a class="home" href="index.html">← Accueil</a>
+    <button class="rand" id="randSide">🎲 Exercice au hasard</button>
     <h1>Exercices 2I2D</h1>
     <p class="sub">Terminale STI2D · enseignement commun 2I2D</p>
     <div class="nav" id="nav"></div>
@@ -1879,6 +1886,10 @@ shade.onclick = closeMenu;
 
 document.getElementById('prevBtn').onclick = () => go(current - 1);
 document.getElementById('nextBtn').onclick = () => go(current + 1);
+// Exercice au hasard, différent de l'exercice affiché
+const goRandom = () => { let i; do { i = Math.floor(Math.random() * EXOS.length); } while (EXOS.length > 1 && i === current); go(i); };
+document.getElementById('randSide').onclick = goRandom;
+document.getElementById('randTop').onclick = goRandom;
 window.addEventListener('popstate', fromHash);
 
 buildNav();
