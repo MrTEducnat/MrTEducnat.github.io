@@ -562,6 +562,7 @@ const EXOS = [
     title: 'Chaîne d\'information et diagrammes SysML',
     support: 'Programme SIN, chapitres 2.4 et 3.4.2 · présents dans tous les sujets SIN',
     body:
+      P('Un système communicant acquiert des informations, les traite puis les transmet ou les affiche. Cette fiche décrit cette chaîne d\'information et deux diagrammes SysML qui décrivent son comportement : le diagramme de séquence, pour les échanges entre ses éléments, et le diagramme d\'états, pour ses modes de fonctionnement.') +
       H('1. La chaîne d\'information') +
       P('Elle part d\'une grandeur physique (température, présence, position) et aboutit à une information exploitable : un affichage, une commande d\'actionneur ou un message envoyé sur un réseau.') +
       CHAIN([['Acquérir', 'capteur, bouton'], ['Traiter', 'microcontrôleur'], ['Communiquer', 'écran, bus, réseau']]) +
@@ -585,6 +586,7 @@ const EXOS = [
     title: 'Caractéristiques des capteurs',
     support: 'Programme SIN, chapitre 5.3.1 · annales : 2023_Métropole, 2021_Métropole_remplacement, 2025_Métropole_remplacement',
     body:
+      P('Le capteur est le premier maillon de la chaîne d\'information : la qualité de toute la mesure en dépend. Cette fiche présente les types de capteurs, les caractéristiques qui permettent de les choisir et l\'exploitation d\'un capteur à sortie linéaire ou en boucle de courant 4-20 mA.') +
       H('1. Types de capteurs') +
       UL('<b>Détecteur TOR</b> : présence ou absence (fin de course, inductif pour les métaux, capacitif pour tous les matériaux, photoélectrique, ILS avec un aimant).', '<b>Capteur analogique</b> : une tension ou un courant image de la grandeur.',
         '<b>Capteur numérique</b> : il contient son propre CAN et envoie directement une valeur codée (bus I2C, 1-Wire…), ce qui évite les erreurs dues aux câbles.') +
@@ -612,6 +614,7 @@ const EXOS = [
     title: 'Capteurs résistifs, shunt et codeurs',
     support: 'Programme SIN, chapitre 5.3.1 · annales : 2025_Métropole, 2022_Polynésie, 2023_La-Réunion',
     body:
+      P('Beaucoup de grandeurs se mesurent indirectement : une température par une résistance qui varie, un courant par une petite tension, une position par un disque codé, une distance par un temps de vol. Cette fiche présente ces montages de mesure : pont diviseur, shunt, codeurs et ultrasons.') +
       H('1. Pont diviseur') +
       P('Un microcontrôleur mesure des tensions, pas des résistances. On monte donc le capteur résistif (thermistance, photorésistance) en série avec une résistance fixe R : la tension se partage entre les deux, en proportion de leurs résistances.') +
       dSV(340, 175, `<line class="line" x1="110" y1="14" x2="110" y2="28"/><rect class="fillv" x="98" y="28" width="24" height="44"/><line class="line" x1="110" y1="72" x2="110" y2="98"/><rect class="flow" x="98" y="98" width="24" height="44"/>
@@ -668,6 +671,7 @@ const EXOS = [
     title: 'Conversion analogique-numérique',
     support: 'Cours/TD CAN · programme SIN, chapitre 5.3.1',
     body:
+      P('Une fois conditionné, le signal du capteur doit être converti en nombre pour être traité par le microcontrôleur : c\'est le rôle du convertisseur analogique-numérique (CAN). Cette fiche explique comment calculer son quantum et la valeur numérique produite, puis les erreurs de mesure et le choix de la fréquence d\'échantillonnage.') +
       P('Le CAN découpe la plage d\'entrée en 2<sup>n</sup> marches égales. La hauteur d\'une marche est le <b>quantum</b> :') +
       graph({ x0: 0, x1: 8, dx: 1, y0: 0, y1: 7, dy: 1, w: 400, h: 230, xlab: 'U (V)', ylab: 'N', fy: y => y.toString(2).padStart(3, '0'),
         series: [{ pts: [0, 1, 2, 3, 4, 5, 6, 7].flatMap(k => [[k, k], [k + 1, k]]) }], cap: 'CAN 3 bits sur 0 à 8 V : q = 1 V, 8 valeurs de 000 à 111' }) +
@@ -690,6 +694,7 @@ const EXOS = [
     title: 'Coder l\'information',
     support: 'Programme SIN, chapitre 3.4.1 · annales : 2021_Métropole_remplacement, 2022_Mayotte, 2021_Métropole',
     body:
+      P('Toutes les données d\'un système numérique, qu\'il s\'agisse de mesures, de textes ou de couleurs, sont stockées et transmises en binaire. Cette fiche présente les bases de numération, le codage des entiers signés et celui des caractères et des couleurs.') +
       H('1. Bases') +
       P('Un système numérique ne manipule que des 0 et des 1 (bits). L\'hexadécimal sert à écrire ces mots binaires de façon compacte : un chiffre hexadécimal remplace exactement 4 bits.') +
       dSV(340, 110, [1, 0, 1, 0, 0, 1, 1, 0].map((b, k) => `<rect class="${k < 4 ? 'flow' : 'fillv'}" x="${11 + k * 40}" y="20" width="38" height="30" rx="3"/>` + dT(30 + k * 40, 41, b, 'middle', 15)).join('') +
@@ -708,6 +713,7 @@ const EXOS = [
     title: 'Chronogrammes, taille des données et compression',
     support: 'Programme SIN, chapitre 3.4.1',
     body:
+      P('Pour vérifier un échange de données ou dimensionner une mémoire, il faut savoir lire l\'évolution des signaux dans le temps et estimer la taille des données produites. Cette fiche présente la lecture des chronogrammes, le calcul de la taille des données et le principe de la compression.') +
       H('1. Lire un chronogramme') +
       P('Un chronogramme représente l\'évolution d\'un signal dans le temps. On y lit :') +
       UL('la <b>période</b> T : durée d\'un motif complet (entre deux fronts montants) ; la <b>fréquence</b> f = 1 / T ;', 'le <b>rapport cyclique</b> α = durée à l\'état haut / T (signal PWM) ;', 'les <b>niveaux logiques</b> : 1 = état haut (5 V ou 3,3 V), 0 = état bas (0 V) ;', 'l\'<b>amplitude</b> pour un signal analogique.') +
@@ -729,6 +735,7 @@ const EXOS = [
     title: 'Liaison série asynchrone (UART, RS232, RS485)',
     support: 'Cours Liaison série RS232 · programme SIN, chapitre 3.4.3',
     body:
+      P('Pour relier un capteur, un microcontrôleur ou un module radio, on utilise souvent une liaison série : les bits sont envoyés les uns après les autres sur un même fil. Cette fiche décrit le principe de la liaison asynchrone, le calcul de la durée d\'une trame et les supports physiques RS232 et RS485.') +
       H('1. Principe') +
       P('Les bits sont envoyés <b>les uns après les autres</b> sur un seul fil de données (plus la masse). La liaison est <b>asynchrone</b> : il n\'y a pas d\'horloge commune, l\'émetteur et le récepteur doivent donc être réglés sur le même débit (9 600, 19 200, 115 200 bit/s…). Le front descendant du bit de start resynchronise le récepteur à chaque caractère.') +
       wave([{ l: 0, t: 'S' }, { l: 1, t: 'b0' }, { l: 0, t: 'b1' }, { l: 0, t: 'b2' }, { l: 0, t: 'b3' }, { l: 0, t: 'b4' }, { l: 0, t: 'b5' }, { l: 1, t: 'b6' }, { l: 0, t: 'b7' }, { l: 0, t: 'P' }, { l: 1, t: 'St' }],
@@ -752,6 +759,7 @@ const EXOS = [
     title: 'Bus de communication : I2C, Modbus, KNX',
     support: 'Cours Bus I2C · programme SIN, chapitres 3.4.3 et 5.3.4',
     body:
+      P('Quand plusieurs équipements doivent dialoguer sur les mêmes fils, ils utilisent un bus de communication, avec ses propres règles d\'adressage et d\'échange. Cette fiche présente les types de communication, puis les bus I2C et Modbus et les bus de terrain utilisés dans les bâtiments et les véhicules.') +
       H('1. Typologie des communications') +
       table(['Notion', 'Signification'], [['Synchrone', 'une horloge commune cadence les bits (I2C, SPI)'], ['Asynchrone', 'pas d\'horloge commune (UART)'], ['Half duplex', 'les deux sens, mais un seul à la fois (talkie-walkie)'],
         ['Full duplex', 'les deux sens en même temps (téléphone)'], ['Maître / esclave', 'le maître interroge, l\'esclave répond'], ['Client / serveur', 'le client demande un service au serveur']]) +
@@ -776,6 +784,7 @@ const EXOS = [
     title: 'Adressage IP et masques de sous-réseau',
     support: 'Programme SIN, chapitre 3.4.3 · annales : 2024_Polynésie, 2022_Métropole, 2026_Antilles-Guyane',
     body:
+      P('Dans un réseau informatique, chaque équipement doit avoir une adresse unique et savoir quelles machines il peut joindre directement. Cette fiche explique comment l\'adresse IPv4 et le masque de sous-réseau permettent de le déterminer, et comment choisir un masque adapté au nombre de machines.') +
       P('Une adresse IPv4 tient sur 32 bits (4 octets de 0 à 255). Le masque indique la partie réseau (bits à 1) et la partie hôte (bits à 0) ; en notation CIDR, /26 signifie 26 bits à 1. Deux machines peuvent communiquer directement si elles ont la même adresse de réseau ; sinon, il leur faut un routeur.') +
       M('\\text{réseau} = IP \\ \\text{ET}\\ \\text{masque}') +
       dSV(340, 130, [['IP', '1100 1000', 20], ['masque', '1110 0000', 52], ['réseau', '1100 0000', 92]].map(([n, b, y]) => dT(70, y + 18, n, 'end', 13) +
@@ -795,6 +804,7 @@ const EXOS = [
     title: 'Trames, modèle OSI et services réseau',
     support: 'Programme SIN, chapitres 3.4.3 et 5.3.4 · annales : 2022_Mayotte, 2025_Polynésie, 2025_Métropole',
     body:
+      P('Les données échangées sur un réseau voyagent dans des trames qui ajoutent, à chaque niveau, les informations nécessaires à leur acheminement. Cette fiche présente l\'encapsulation, le modèle OSI, les services et les ports utilisés, et le calcul d\'un temps de transfert en Wi-Fi.') +
       H('1. Encapsulation') +
       P('Une requête web voyage emballée dans plusieurs en-têtes successifs, chacun ajouté par une couche du modèle :') +
       CHAIN([['Trame Ethernet', 'MAC dest., MAC source'], ['Paquet IP', 'IP source, IP dest.'], ['Segment TCP / UDP', 'ports'], ['Données', 'HTTP, Modbus TCP…']]) +
@@ -817,6 +827,7 @@ const EXOS = [
     title: 'Algorithmes et programmes : Arduino et Python',
     support: 'Mini-cours Algorigrammes · programme SIN, chapitre 4.3.5',
     body:
+      P('Le traitement de l\'information est réalisé par un programme exécuté sur un microcontrôleur ou un ordinateur. Cette fiche présente les types de variables, la structure d\'un programme Arduino et sa traduction en Python, pour savoir lire et compléter les programmes des sujets.') +
       H('1. Types de variables') +
       table(['Type (C++ Arduino)', 'Contenu', 'Taille'], [['bool', 'vrai ou faux', '1 octet'], ['byte', 'entier de 0 à 255', '1 octet'], ['int', 'entier de −32 768 à 32 767 (Uno)', '2 octets'],
         ['long', 'entier sur 32 bits', '4 octets'], ['float', 'nombre à virgule', '4 octets']]) +
@@ -852,6 +863,7 @@ print(n)`) +
     title: 'Logique, régulation et temps réel',
     support: 'Programme SIN, chapitres 3.4.3 et 3.4.4',
     body:
+      P('Un système automatisé décide de ses actions à partir de ses entrées, parfois en continu et dans un temps limité. Cette fiche présente les équations logiques, la régulation tout ou rien à hystérésis, la différence entre régulation et asservissement et la notion de système temps réel.') +
       H('1. Équations logiques') +
       P('ET (·), OU (+), NON (barre), OU exclusif (⊕). Pour écrire l\'équation d\'une sortie à partir d\'un texte, on repère les conditions reliées par « et » ou « ou ». Lois de De Morgan, utiles pour simplifier :') + M('\\overline{a \\cdot b} = \\overline{a} + \\overline{b} \\qquad \\overline{a + b} = \\overline{a} \\cdot \\overline{b}') +
       EX('Exemple : vérifier une loi de De Morgan', P('Pour a = 1 et b = 0, les deux écritures donnent bien le même résultat :') +
@@ -878,6 +890,7 @@ digitalWrite(RELAIS, chauffe);`) +
     title: 'Objets connectés et transmission sans fil',
     support: 'Programme SIN, chapitres 5.3.3 et 5.3.4',
     body:
+      P('Les objets connectés mesurent, traitent et transmettent leurs données sans fil, souvent en fonctionnant sur batterie. Cette fiche présente leurs unités de traitement, leur architecture, les principales technologies sans fil et le fonctionnement de la RFID.') +
       H('1. Unités de traitement') +
       table(['Type', 'Exemple', 'Usage'], [['Microcontrôleur', 'Arduino', 'piloter des entrées/sorties en temps réel'], ['Nano-ordinateur', 'Raspberry Pi', 'système d\'exploitation, écran, caméra, serveur web'],
         ['Module connecté', 'ESP32', 'objet connecté à Internet (IoT)']]) +

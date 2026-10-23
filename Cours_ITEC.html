@@ -561,6 +561,7 @@ const EXOS = [
     title: 'Liaisons, classes d\'équivalence et graphe des liaisons',
     support: 'Programme ITEC, chapitres 3.2.1 et 3.2.2 · annales : 2021_Métropole, 2026_Métropole, 2023_La-Réunion',
     body:
+      P('Pour étudier un mécanisme, on le simplifie : on regroupe les pièces qui bougent ensemble, puis on modélise leurs contacts par des liaisons normalisées. Cette fiche présente les classes d\'équivalence, les liaisons et leurs symboles, puis le graphe des liaisons et le schéma cinématique qui en découlent.') +
       H('1. Classes d\'équivalence') +
       P('Une <b>classe d\'équivalence</b> regroupe les pièces sans mouvement relatif pendant le fonctionnement (A = {1 ; 4 ; 7}) : vissées, soudées, emmanchées ensemble, elles se comportent comme un seul solide. Les pièces déformables (ressorts, joints) n\'en font pas partie. On commence toujours par le bâti (la partie fixe).') +
       H('2. Liaisons normalisées') +
@@ -582,6 +583,7 @@ const EXOS = [
     title: 'Mouvements et trajectoires',
     support: 'Programme ITEC, chapitre 3.2.1',
     body:
+      P('Une fois le mécanisme modélisé, on décrit le mouvement de ses pièces : la trajectoire de leurs points, leur vitesse et leur accélération. Ces grandeurs servent ensuite à vérifier les performances demandées par le cahier des charges, comme une vitesse maximale ou la durée d\'un déplacement.') +
       UL('<b>Translation rectiligne</b> : tous les points décrivent des droites parallèles et ont la même vitesse (un tiroir, un ascenseur).', '<b>Rotation autour d\'un axe fixe</b> : chaque point décrit un cercle centré sur l\'axe ; sa vitesse est proportionnelle à sa distance à l\'axe (une roue, une porte).',
         '<b>Mouvement plan</b> : combinaison des deux dans un plan (bielle, bras articulé).') +
       dSV(340, 196, `<circle class="c3" cx="100" cy="90" r="60"/><circle class="pt" cx="100" cy="90" r="4"/><line class="line" x1="100" y1="90" x2="160" y2="90"/><circle class="pt" cx="160" cy="90" r="5"/><line class="line" x1="100" y1="90" x2="130" y2="90"/>` +
@@ -607,7 +609,7 @@ const EXOS = [
     title: 'Transformer un mouvement',
     support: 'Programme ITEC, chapitre 5.2.3 · annales : 2023_Métropole, 2025_Métropole_remplacement, 2021_Métropole_remplacement',
     body:
-      P('Un moteur fournit presque toujours une rotation. Pour obtenir une translation (monter une cabine, pousser une tige), on utilise un système de transformation de mouvement.') +
+      P('Un moteur fournit presque toujours une rotation. Pour obtenir une translation (monter une cabine, pousser une tige), on utilise un système de transformation de mouvement. Cette fiche présente le pignon-crémaillère, le système vis-écrou et le vérin qui fait tourner un levier, puis le calcul de la durée d\'un cycle de déplacement.') +
       H('1. Pignon-crémaillère') +
       dSV(340, 130, `<rect class="fillv" x="20" y="90" width="300" height="16"/>` + Array.from({ length: 20 }, (_, i) => `<rect class="fillv" x="${24 + i * 15}" y="84" width="7" height="6"/>`).join('') + dGear(150, 52, 30, 16, 'flow') +
         dRot(150, 52, 44, 60, 150, 'arrowv') + dA(200, 120, 260, 120) + dT(230, 116, 'V', 'middle') + dT(100, 18, 'ω', 'end'),
@@ -653,7 +655,7 @@ const EXOS = [
     title: 'Transmettre la puissance : réducteurs, poulies, treuils',
     support: 'Programme ITEC, chapitres 2.3.6 et 5.2.3 · annales : 2025_Métropole, 2025_Métropole_remplacement, 2024_Métropole',
     body:
-      P('Un moteur électrique tourne vite (1 500 à 3 000 tr/min) avec un faible couple. La plupart des récepteurs demandent l\'inverse : on place entre les deux un <b>réducteur</b>.') +
+      P('Un moteur électrique tourne vite (1 500 à 3 000 tr/min) avec un faible couple. La plupart des récepteurs demandent l\'inverse : on place entre les deux un <b>réducteur</b>. Cette fiche présente le rapport de transmission des engrenages et des poulies, le lien entre couple et puissance, le treuil qui enroule un câble, puis la vitesse en bout de pale d\'une éolienne et son multiplicateur, qui fait l\'inverse d\'un réducteur.') +
       H('1. Rapport de transmission') +
       M('r = \\frac{N_s}{N_e}') + LEG(['r', 'le rapport de transmission (sans unité)'], ['N_s', 'la vitesse de sortie'], ['N_e', 'la vitesse d\'entrée (même unité)']) +
       table(['Transmission', 'Rapport'], [['Engrenage', 'r = Z menante / Z menée'], ['Poulies-courroie', 'r = d menante / d menée'], ['Plusieurs étages', 'r = r₁ × r₂ × …'], ['Réducteur « 1/k »', 'r = 1 / k']]) +
@@ -679,6 +681,7 @@ const EXOS = [
     title: 'Actions mécaniques et principe fondamental de la statique',
     support: 'Programme ITEC, chapitre 3.2.2 · annales : 2022_Métropole_remplacement, 2024_Métropole, 2026_Antilles-Guyane',
     body:
+      P('Pour dimensionner une pièce, un vérin ou un appui, il faut connaître les efforts qu\'il subit. Cette fiche explique comment modéliser les actions mécaniques, appliquer le principe fondamental de la statique pour calculer les efforts inconnus et vérifier la stabilité d\'un système.') +
       H('1. Modéliser les actions') +
       UL('Une <b>force</b> : point d\'application, direction, sens, intensité (en N).', 'Le <b>poids</b> : P = m × g, vertical vers le bas, au centre de gravité.',
         'Un <b>moment</b> : M<sub>A</sub>(F) = ± d × F, avec d la distance de A à la droite d\'action de F (bras de levier), en N·m ; positif dans le sens trigonométrique. Il mesure l\'effet de rotation d\'une force.') +
@@ -701,6 +704,7 @@ const EXOS = [
     title: 'Frottement, plan incliné, pression et ressorts',
     support: 'Programme ITEC, chapitre 3.2.2 · annales : 2023_La-Réunion, 2022_Nouvelle-Calédonie, 2023_Métropole',
     body:
+      P('Certaines actions mécaniques reviennent dans presque tous les systèmes : le poids sur une pente, le frottement entre deux pièces, la poussée d\'un fluide sous pression, l\'effort d\'un ressort. Cette fiche donne leurs modèles et les calculs associés.') +
       H('1. Plan incliné') +
       dSV(340, 170, `<polygon class="flow" points="20,150 300,150 300,50"/><line class="line" x1="20" y1="150" x2="300" y2="50"/><g transform="translate(170 96.4) rotate(-19.65)"><rect class="fillv" x="-25" y="-30" width="50" height="30"/></g>` +
         dA(165, 82, 165, 150, 'arrowv') + dA(165, 82, 143, 90) + dA(165, 82, 186, 142) + dT(160, 152, 'P', 'end') + dT(138, 84, 'Pt', 'end', 13) + dT(194, 140, 'Pn', 'start', 13) +
@@ -729,6 +733,7 @@ const EXOS = [
     title: 'Contraintes, loi de Hooke et coefficient de sécurité',
     support: 'Programme ITEC, chapitre 3.2.3 · annales : 2022_Métropole, 2022_Nouvelle-Calédonie, 2026_Métropole',
     body:
+      P('Connaître les efforts ne suffit pas : il faut vérifier que la pièce qui les supporte ne cassera pas et ne s\'allongera pas trop. Cette fiche présente le modèle poutre, la contrainte normale, le coefficient de sécurité et la loi de Hooke.') +
       H('1. Hypothèses du modèle poutre') +
       P('On étudie des pièces longues (poutres) en matériau homogène et isotrope, avec de petites déformations. Sollicitations simples : <b>traction</b>, <b>compression</b>, <b>flexion</b> (et, plus rarement, torsion et cisaillement).') +
       dSV(340, 120, `<rect class="fillv" x="40" y="30" width="200" height="30"/><rect class="c3" x="40" y="30" width="230" height="30" fill="none"/>` + dMur(40, 20, 70) + dA(240, 45, 310, 45) +
@@ -756,6 +761,7 @@ const EXOS = [
     title: 'Flexion, flèche et simulation',
     support: 'Programme ITEC, chapitre 3.2.3 · annales : 2022_Polynésie, 2021_Métropole, 2026_Antilles-Guyane',
     body:
+      P('Une poutre chargée perpendiculairement à sa longueur fléchit : c\'est le cas d\'une planche de plongeoir, d\'un bras de grue ou d\'une passerelle. Cette fiche présente le calcul de la contrainte et de la flèche en flexion, puis l\'exploitation d\'une simulation par éléments finis.') +
       H('1. Poutre en flexion') +
       P('Une poutre en flexion se courbe : les fibres d\'un côté sont tendues, celles de l\'autre comprimées ; la fibre neutre, au milieu, ne change pas de longueur. La contrainte est nulle sur la fibre neutre et maximale sur les bords.') +
       M('\\sigma_{max} = \\frac{M_f \\times v}{I}') + LEG(['M_f', 'le moment fléchissant maximal en N·mm'], ['v', 'la distance de la fibre neutre au bord (demi-hauteur) en mm'], ['I', 'le moment quadratique de la section en mm⁴']) +
@@ -781,6 +787,7 @@ const EXOS = [
     title: 'Familles, propriétés et protection des matériaux',
     support: 'Programme ITEC, chapitre 4.2.2',
     body:
+      P('Le choix d\'un matériau commence par la connaissance des grandes familles et de leurs propriétés : un matériau idéal pour une pièce peut être inadapté pour une autre. Cette fiche présente ces familles, les propriétés utiles pour les comparer et les moyens de protéger un matériau.') +
       table(['Famille', 'Exemples', 'Atouts'], [['Métaux', 'acier, aluminium, cuivre', 'résistants, ductiles, recyclables'], ['Polymères', 'PA, PE, ABS, PLA', 'légers, faciles à mouler'],
         ['Céramiques et verres', 'verre, alumine, béton', 'durs, résistants à la chaleur, fragiles'], ['Composites', 'fibre de carbone ou de verre et résine', 'très rigides et légers'], ['Naturels', 'bois, liège, chanvre', 'biosourcés, peu de CO₂']]) +
       H('Propriétés utiles') +
@@ -798,6 +805,7 @@ const EXOS = [
     title: 'Choisir un matériau : Ashby et matrice multicritère',
     support: 'Programme ITEC, chapitres 4.2.2 et 4.2.3 · annales : 2024_Polynésie, 2022_Polynésie, 2022_Métropole',
     body:
+      P('Entre plusieurs matériaux possibles, il faut choisir de façon argumentée, en tenant compte de la performance mécanique, de la masse, du coût et de l\'impact environnemental. Cette fiche présente les indices de performance de la méthode d\'Ashby, la matrice de choix multicritère et le calcul du gain de masse et de CO₂.') +
       H('1. Indices de performance (méthode d\'Ashby)') +
       P('Comparer seulement les résistances ne suffit pas : un matériau très résistant mais très lourd peut être moins bon qu\'un matériau moyen mais léger. Pour une pièce qui doit remplir sa fonction avec la plus petite masse, on maximise un <b>indice de performance</b> qui dépend de la sollicitation :') +
       table(['Pièce et objectif', 'Indice à maximiser'], [['Tirant rigide et léger', 'E / ρ'], ['Tirant résistant et léger', 'Re / ρ'], ['Poutre rigide et légère', 'E<sup>1/2</sup> / ρ'], ['Plaque rigide et légère', 'E<sup>1/3</sup> / ρ']]) +
@@ -817,6 +825,7 @@ const EXOS = [
     title: 'Procédés de fabrication et cycle de vie',
     support: 'Programme ITEC, chapitres 1.5 et 4.3.4',
     body:
+      P('Le procédé de fabrication d\'une pièce dépend de sa forme, de son matériau et du nombre de pièces à produire ; il influe aussi sur son coût et sur son impact environnemental. Cette fiche présente les principaux procédés, les modes d\'assemblage et les règles d\'éco-conception d\'une pièce.') +
       table(['Procédé', 'Principe', 'Exemple'], [['Moulage, injection', 'matière fondue coulée dans un moule', 'carter, coque plastique'], ['Usinage', 'enlèvement de matière (tournage, fraisage)', 'arbre, pièce précise'],
         ['Mise en forme', 'déformation (pliage, emboutissage)', 'tôlerie, carrosserie'], ['Fabrication additive', 'dépôt couche par couche', 'prototype, pièce complexe'], ['Découpe', 'laser, jet d\'eau, plasma', 'pièces planes']]) +
       P('Le choix dépend aussi de la <b>série</b> : un moule d\'injection coûte cher mais chaque pièce revient à quelques centimes, rentable pour des milliers de pièces ; l\'impression 3D n\'a pas d\'outillage, idéale pour un prototype ou une petite série.') +
@@ -835,6 +844,7 @@ const EXOS = [
     title: 'Chaîne de puissance, moteur et stockage',
     support: 'Programme ITEC, chapitres 2.3 et 5.2 · annales : 2024_Métropole, 2026_Métropole, 2021_Métropole',
     body:
+      P('Pour qu\'un système fonctionne, il faut choisir les composants de sa chaîne de puissance : moteur, transmission, vérin et stockage d\'énergie. Cette fiche présente le calcul des rendements en cascade, la méthode de choix d\'un moteur, le vérin électrique et les différents stockeurs d\'énergie.') +
       H('1. Rendements en cascade') +
       CHAIN([['Batterie', 'η₁'], ['Variateur', 'η₂'], ['Moteur', 'η₃'], ['Réducteur', 'η₄'], ['Charge', 'P utile']]) +
       M('P_a = \\frac{P_u}{\\eta_1 \\times \\eta_2 \\times \\eta_3 \\times \\eta_4}') + LEG(['P_a', 'la puissance à fournir en entrée en W'], ['P_u', 'la puissance utile en W']) +
@@ -858,6 +868,7 @@ const EXOS = [
     title: 'Plans, géométrie et maquette numérique',
     support: 'Programme ITEC, chapitres 4.1 et 4.3.4 · annales : 2022_Métropole, 2023_La-Réunion, 2021_Métropole',
     body:
+      P('Concevoir une pièce, c\'est d\'abord la représenter et la dimensionner : plans à l\'échelle, calculs géométriques, maquette numérique. Cette fiche présente l\'utilisation d\'une échelle, la trigonométrie utile en conception, la maquette numérique et le jeu de fonctionnement entre deux pièces.') +
       H('1. Échelle') +
       P('À l\'échelle 1:X, une longueur réelle vaut la longueur mesurée sur le plan × X (échelle 2:1 : le dessin est deux fois plus grand que la pièce, pour les petites pièces). On mesure sur le plan, on multiplie, puis on convertit dans l\'unité voulue.') +
       H('2. Trigonométrie') +

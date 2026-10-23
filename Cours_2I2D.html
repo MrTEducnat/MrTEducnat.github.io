@@ -562,6 +562,7 @@ const EXOS = [
     title: 'Transformer une formule et convertir les unités',
     support: 'Programme 2I2D · révisions initiales · erreurs fréquentes relevées dans les annales',
     body:
+      P('Tous les sujets de bac demandent d\'isoler une grandeur dans une formule et de manipuler des unités variées (kW et W, mm² et m², km/h et m/s). Une erreur à cette étape fausse tout le reste du calcul : cette fiche rappelle la méthode pour transformer une formule et les conversions qui posent le plus souvent problème.') +
       H('1. Pourquoi c\'est important') +
       P('À l\'épreuve, une formule est souvent donnée sous une forme, alors qu\'on cherche une autre grandeur. Une bonne partie des points perdus vient d\'une formule mal transformée ou d\'une unité oubliée, pas d\'une incompréhension du sujet.') +
       H('2. Isoler une grandeur') +
@@ -585,6 +586,7 @@ const EXOS = [
     title: 'Puissance, énergie, rendement et rentabilité',
     support: 'Programme 2I2D, chapitre 2.3 · annales : 2025_Métropole, 2026_Métropole, 2024_Métropole_remplacement',
     body:
+      P('Qu\'il s\'agisse d\'un moteur, d\'un panneau solaire ou d\'une pompe, on se pose toujours les mêmes questions : quelle puissance faut-il, quelle part de l\'énergie est perdue, combien coûte le fonctionnement et en combien de temps l\'investissement est-il remboursé ? Cette fiche donne les outils pour y répondre.') +
       H('1. La puissance : effort × flux') +
       P('La puissance mesure la vitesse à laquelle l\'énergie est transférée. Dans tous les domaines, elle s\'écrit comme le produit d\'une grandeur d\'<b>effort</b> (ce qui « pousse ») par une grandeur de <b>flux</b> (ce qui « circule ») :') +
       table(['Domaine', 'Puissance', 'Effort × flux'], [['Électrique (continu)', 'P = U × I', 'tension × courant'], ['Rotation', 'P = C × ω', 'couple × vitesse angulaire'],
@@ -618,6 +620,7 @@ const EXOS = [
     title: 'Périmètres, surfaces et volumes',
     support: 'Révisions initiales · annales : 2023_Nouvelle-Calédonie, 2026_Antilles-Guyane',
     body:
+      P('Calculer une quantité de matière, une surface de paroi à isoler ou le volume d\'un bassin revient souvent à découper une forme complexe en formes simples. Cette fiche rassemble les formules de périmètres, de surfaces et de volumes, et la méthode pour les combiner.') +
       H('1. Formulaire') +
       table(['Forme', 'Périmètre', 'Surface'], [['Rectangle a × b', '2 (a + b)', 'a × b'], ['Disque de rayon r', '2 π r', 'π r²'], ['Demi-disque', 'π r + 2 r', 'π r² / 2'], ['Triangle (base a, hauteur h)', '—', 'a × h / 2']]) +
       table(['Solide', 'Volume'], [['Pavé a × b × c', 'a × b × c'], ['Cylindre (rayon r, hauteur h)', 'π r² × h'], ['Sphère de rayon r', '4/3 × π r³'], ['Cône (base S, hauteur h)', 'S × h / 3']]) +
@@ -639,6 +642,7 @@ const EXOS = [
     title: 'Les diagrammes SysML',
     support: 'Programme 2I2D, chapitres 1.2 et 3.4.2 · présents dans tous les sujets de bac',
     body:
+      P('Un système technique se conçoit à plusieurs, souvent sur plusieurs années : il faut un langage commun pour décrire ce qu\'il doit faire, comment il est construit et comment il se comporte. Cette fiche présente le langage SysML et ses principaux diagrammes, tels qu\'on les rencontre dans les sujets.') +
       H('1. Pourquoi SysML ?') +
       P('Un système réel mélange mécanique, électricité, informatique et contraintes d\'usage. SysML est un langage graphique commun à tous ces métiers : chacun peut lire la description du système, et chaque diagramme montre un point de vue différent.') +
       H('2. Les diagrammes') +
@@ -660,6 +664,7 @@ const EXOS = [
     title: 'Chaînes de puissance, d\'information et nature de l\'énergie',
     support: 'Programme 2I2D, chapitres 2.1, 2.3 et 2.4 · annale : 2026_Polynésie',
     body:
+      P('Analyser un système, c\'est repérer comment circulent l\'énergie et l\'information de l\'entrée à la sortie. Cette fiche reprend les chaînes de puissance et d\'information, les flux de matière, d\'énergie et d\'information (MEI) et les différentes natures et formes de l\'énergie.') +
       H('1. Les deux chaînes') +
       P('Tout système automatisé se décompose en une chaîne d\'information (le « cerveau ») et une chaîne de puissance (les « muscles »).') +
       CHAIN([['Acquérir', 'capteur'], ['Traiter', 'automate'], ['Communiquer', 'écran, réseau']]) +
@@ -680,6 +685,7 @@ const EXOS = [
     title: 'Analyse du cycle de vie et éco-conception',
     support: 'Cours ACV · programme 2I2D, chapitre 1.5',
     body:
+      P('L\'impact environnemental d\'un produit se décide en grande partie dès sa conception, car c\'est là que l\'on choisit ses matériaux, sa consommation et sa fin de vie. Cette fiche présente l\'éco-conception et l\'analyse du cycle de vie (ACV), puis la façon d\'en interpréter les résultats pour améliorer un produit.') +
       H('1. Éco-concevoir') +
       P('L\'<b>éco-conception</b> consiste à prendre en compte, dès la conception d\'un produit ou d\'un service, les impacts environnementaux qu\'il engendrera sur tout son cycle de vie. Agir tôt coûte peu : une fois le produit fabriqué, il est trop tard pour changer son matériau.') +
       dSV(340, 210, [['Extraction', 0], ['Fabrication', 1], ['Transport', 2], ['Utilisation', 3], ['Fin de vie', 4]].map(([n, k]) => {
@@ -705,6 +711,7 @@ const EXOS = [
     title: 'Labels, recyclage et empreinte environnementale',
     support: 'TD Symboles du recyclage · PC Empreinte environnementale',
     body:
+      P('Pour guider les consommateurs et les concepteurs, des symboles, des labels et des indicateurs résument l\'impact environnemental d\'un produit. Cette fiche présente ceux qu\'il faut savoir reconnaître et la notion d\'empreinte environnementale.') +
       H('1. Les symboles à connaître') +
       table(['Symbole', 'Signification'], [['Ruban de Möbius', 'produit recyclable (pas forcément recyclé) ; avec un %, part de matière recyclée'], ['Triman', 'produit à trier ou à rapporter en point de collecte'],
         ['Poubelle barrée', 'collecte séparée obligatoire (piles, électronique)'], ['Info-tri', 'consignes de tri détaillées'], ['Tidy Man', 'ne pas jeter dans la nature'], ['Numéro dans un triangle', 'type de plastique']]) +
@@ -726,6 +733,7 @@ const EXOS = [
     title: 'Comparer des solutions : CO₂ et choix multicritère',
     support: 'Annales : 2023_La-Réunion, 2024_Polynésie, 2024_Métropole_remplacement',
     body:
+      P('Entre deux solutions techniques, la meilleure n\'est pas toujours la moins chère : il faut aussi comparer leurs émissions de CO₂, leur durabilité ou leur facilité d\'entretien. Cette fiche montre comment chiffrer des émissions de CO₂ et comment organiser un choix multicritère.') +
       H('1. Émissions de CO₂') +
       P('On calcule les émissions d\'une activité en multipliant la quantité consommée par un <b>facteur d\'émission</b>, fourni dans le sujet :') +
       M('m_{CO_2} = Q \\times f') + LEG(['m_{CO_2}', 'la masse de CO₂ émise en g'], ['Q', 'la quantité consommée (kWh, km parcourus, t·km transportées…)'], ['f', 'le facteur d\'émission en g par unité de Q']) +
@@ -745,6 +753,7 @@ const EXOS = [
     title: 'Énergie et bâtiment : enjeux et réglementation',
     support: 'Cours Thermique du bâtiment · programme 2I2D, chapitre 4.3.2',
     body:
+      P('Les bâtiments consomment près de la moitié de l\'énergie finale en France, surtout pour le chauffage. Cette fiche présente les enjeux énergétiques du bâtiment, la réglementation et les étiquettes, puis les principes de la conception bioclimatique et la compacité.') +
       H('1. Les enjeux') +
       UL('Le bâtiment représente environ <b>43 %</b> de l\'énergie consommée en France et environ 20 % des émissions de gaz à effet de serre : c\'est le premier secteur consommateur.', 'Environ <b>4,8 millions</b> de logements sont des passoires thermiques (étiquettes F et G) : leurs occupants paient très cher pour avoir froid, c\'est la précarité énergétique.') +
       H('2. Réglementation et étiquettes') +
@@ -770,6 +779,7 @@ const EXOS = [
     title: 'Résistance thermique et déperditions',
     support: 'Cours Thermique du bâtiment · annale : 2023_Polynésie',
     body:
+      P('En hiver, la chaleur d\'un logement s\'échappe par les murs, les fenêtres, la toiture, le plancher et l\'air renouvelé. Cette fiche explique comment chiffrer ces pertes à partir de la résistance thermique des parois, pour dimensionner le chauffage ou justifier des travaux d\'isolation.') +
       H('1. Conductivité et résistance thermique') +
       P('La chaleur traverse une paroi du chaud vers le froid. La <b>conductivité thermique</b> λ caractérise un matériau : plus elle est faible, plus il freine la chaleur. On parle d\'isolant quand λ < 0,07 W/(m·K) (laines minérales 0,035 ; béton 1,75).') +
       M('R = \\frac{e}{\\lambda}') + LEG(['R', 'la résistance thermique en m²·K/W'], ['e', 'l\'épaisseur en m'], ['\\lambda', 'la conductivité thermique en W/(m·K)']) +
@@ -800,6 +810,7 @@ const EXOS = [
     title: 'Chauffage et efficacité énergétique',
     support: 'Cours/TD Efficacité énergétique passive et active · annale : 2025_Nouvelle-Calédonie',
     body:
+      P('Une fois les pertes connues, il faut dimensionner les équipements de chauffage et de production d\'eau chaude. Cette fiche donne une méthode rapide de calcul de la puissance de chauffage, l\'énergie nécessaire pour chauffer de l\'eau et les solutions passives et actives qui améliorent l\'efficacité énergétique.') +
       H('1. Puissance de chauffage par le volume') +
       P('Méthode rapide pour dimensionner les radiateurs d\'une pièce :') +
       M('P = K \\times V \\times (T_{int} - T_{ext})') + LEG(['P', 'la puissance de chauffage en W'], ['K', 'un coefficient global en W/(m³·K) (environ 0,8 pour un logement récent)'], ['V', 'le volume de la pièce en m³'], ['T', 'les températures en °C']) +
@@ -826,6 +837,7 @@ const EXOS = [
     title: 'Production d\'électricité renouvelable',
     support: 'Programme 2I2D, chapitres 2.3 et 4.3.1 · annales : 2025_Métropole, 2024_Métropole_remplacement',
     body:
+      P('La transition énergétique s\'appuie sur des sources d\'électricité renouvelables, principalement le soleil et le vent. Cette fiche présente le calcul de la production d\'une installation photovoltaïque et d\'une éolienne, ainsi que le problème de l\'intermittence de ces sources.') +
       H('1. Photovoltaïque') +
       P('Un module photovoltaïque convertit directement la lumière en courant continu ; un onduleur le transforme en alternatif pour le réseau. Sa <b>puissance crête</b> est la puissance mesurée sous un éclairement de 1 000 W/m² à 25 °C :') +
       M('P_c = S \\times \\eta \\times 1\\,000') + LEG(['P_c', 'la puissance crête en W'], ['S', 'la surface des modules en m²'], ['\\eta', 'le rendement des modules (environ 0,2)']) +
@@ -850,6 +862,7 @@ const EXOS = [
     title: 'Stocker l\'énergie et convertir les unités',
     support: 'Programme 2I2D, chapitres 2.3.2 et 5.2.2 · annales : 2026_Polynésie, 2023_La-Réunion',
     body:
+      P('Le soleil et le vent ne produisent pas forcément au moment où l\'on consomme : il faut stocker l\'énergie. Cette fiche présente deux solutions de stockage, les batteries et les stations de transfert d\'énergie par pompage (STEP), ainsi que les unités d\'énergie à savoir convertir.') +
       H('1. Batteries') +
       M('E = U \\times Q') + LEG(['E', 'l\'énergie stockée en Wh'], ['U', 'la tension nominale en V'], ['Q', 'la capacité en Ah']) +
       P('On ne décharge en général que 80 à 90 % de la batterie (profondeur de décharge) pour préserver sa durée de vie : l\'énergie <b>utile</b> vaut E × profondeur de décharge.') +
@@ -877,6 +890,7 @@ const EXOS = [
     title: 'Gérer l\'eau : débits et récupération',
     support: 'Annales : 2026_Antilles-Guyane, 2025_Nouvelle-Calédonie',
     body:
+      P('L\'eau est une ressource à gérer : remplir ou vider un bassin, filtrer une piscine, récupérer l\'eau de pluie pour les usages qui ne demandent pas d\'eau potable. Cette fiche donne les calculs de débit et de volume récupérable utilisés dans ces situations.') +
       H('1. Débit') +
       P('Le débit est le volume qui passe chaque seconde dans une canalisation. Il dépend de la vitesse de l\'eau et de la section du tuyau :') +
       M('Q = v \\times S') + LEG(['Q', 'le débit volumique en m³/s'], ['v', 'la vitesse du fluide en m/s'], ['S', 'la section de la canalisation en m²']) +
@@ -899,6 +913,7 @@ const EXOS = [
     title: 'Architectures et équipements réseau',
     support: 'Cours/TD Architecture des réseaux · programme 2I2D, chapitres 3.4.3 et 5.3.4',
     body:
+      P('Les équipements communicants d\'un bâtiment ou d\'un système (capteurs, caméras, automates, ordinateurs) échangent leurs données à travers un réseau. Cette fiche présente les types de réseaux, leurs topologies et les équipements qui les relient.') +
       H('1. Types de réseaux') +
       table(['Réseau', 'Étendue', 'Exemple'], [['PAN', 'personnelle', 'Bluetooth montre-téléphone'], ['LAN', 'locale', 'réseau d\'un lycée'], ['WAN', 'étendue', 'Internet']]) +
       UL('<b>Internet</b> est le réseau mondial ; le <b>Web</b> n\'est qu\'un de ses services (pages liées par des liens), comme la messagerie ou la visioconférence.', '<b>Client/serveur</b> : un serveur rend un service à des clients qui l\'interrogent ; <b>pair à pair</b> : chaque machine est à la fois client et serveur.') +
@@ -943,6 +958,7 @@ const EXOS = [
     title: 'Adressage IPv4',
     support: 'Cours Adressage et routage · TD adressage',
     body:
+      P('Sur un réseau, chaque équipement est repéré par une adresse IP, comme une maison par son adresse postale. Cette fiche explique la structure d\'une adresse IPv4 et de son masque, les calculs d\'adresse réseau et de diffusion, et le choix d\'un masque adapté au nombre de machines.') +
       H('1. Adresse et masque') +
       P('Une adresse IPv4 est codée sur <b>32 bits</b>, écrite en 4 octets décimaux (de 0 à 255) : 192.168.1.20. Il existe 2³² ≈ 4,3 milliards d\'adresses, trop peu pour tous les appareils du monde (d\'où IPv6). Le <b>masque</b> sépare la partie réseau (bits à 1, communs à toutes les machines du réseau) de la partie hôte (bits à 0, propres à chaque machine).') +
       dSV(340, 100, `<rect class="flow" x="10" y="30" width="240" height="30"/><rect class="fillv" x="250" y="30" width="80" height="30"/>` + dT(130, 50, 'partie réseau (24 bits)', 'middle', 13) + dT(290, 50, 'hôte (8)', 'middle', 13) +
@@ -963,6 +979,7 @@ const EXOS = [
     title: 'Transmettre l\'information : débit, trames et logique',
     support: 'Programme 2I2D, chapitres 2.4 et 3.4 · annales : 2024_Métropole, 2026_Antilles-Guyane',
     body:
+      P('Transmettre une information, c\'est envoyer une suite de bits à un certain débit, organisée en trames que le récepteur sait décoder. Cette fiche présente le calcul du débit et de la durée de transmission, la lecture d\'une trame série, la logique combinatoire et le cas des flux vidéo.') +
       H('1. Débit') +
       M('D = \\frac{N}{\\Delta t}') + LEG(['D', 'le débit en bit/s'], ['N', 'le nombre de bits transmis'], ['\\Delta t', 'la durée en s']) +
       P('Sur une liaison synchrone, un bit passe à chaque période d\'horloge : D = f = 1 / T. On lit donc le débit sur un oscillogramme en mesurant la période de l\'horloge. Une taille en octets se multiplie par 8 pour obtenir des bits.') +
@@ -987,6 +1004,7 @@ const EXOS = [
     title: 'Plans, échelles et accessibilité',
     support: 'Programme 2I2D, chapitre 4.1 · cours Accessibilité',
     body:
+      P('Les plans d\'un bâtiment sont dessinés à l\'échelle et le projet doit respecter des règles d\'accessibilité, notamment pour les personnes à mobilité réduite. Cette fiche explique comment utiliser une échelle et comment vérifier la pente d\'une rampe d\'accès.') +
       H('1. Échelle') +
       P('À l\'échelle 1:X, une longueur réelle est X fois plus grande que sur le plan (1:100 : 1 cm sur le plan = 1 m en réalité). Les surfaces sont multipliées par X² et les volumes par X³ : c\'est ce qui rend les maquettes si légères.') +
       M('L_{réelle} = L_{plan} \\times X') +
@@ -1005,6 +1023,7 @@ const EXOS = [
     title: 'Descente de charges, contraintes et fondations',
     support: 'Programme 2I2D, chapitres 3.2.2 et 5.1.2 · annale : 2026_Antilles-Guyane',
     body:
+      P('Le poids d\'un bâtiment, de ses occupants et de la neige doit être transmis jusqu\'au sol sans que la structure ni le terrain ne cèdent. Cette fiche suit ce cheminement des charges, des planchers aux fondations, et donne les calculs de contrainte et de pression sur le sol.') +
       H('1. Le cheminement des charges') +
       P('Les charges descendent de haut en bas : la toiture et les planchers reposent sur les poutres, qui reposent sur les poteaux et les murs, qui reposent sur les fondations, qui les transmettent au sol. On calcule donc les charges en partant du haut.') +
       dSV(340, 200, `<rect class="fillv" x="40" y="30" width="260" height="14"/><rect class="fillv" x="70" y="44" width="16" height="110"/><rect class="fillv" x="254" y="44" width="16" height="110"/>
@@ -1029,6 +1048,7 @@ const EXOS = [
     title: 'Sollicitations, sécurité, rigidité et flottaison',
     support: 'Programme 2I2D, chapitre 3.2.3 · annales : 2026_Antilles-Guyane, 2024_Métropole_remplacement',
     body:
+      P('Une structure durable doit résister sans casser, sans trop se déformer et, pour un ouvrage posé sur l\'eau, sans couler. Cette fiche présente les sollicitations simples, le coefficient de sécurité, l\'indice de rigidité et le calcul de flottaison.') +
       H('1. Sollicitations simples') +
       table(['Sollicitation', 'Exemple'], [['Traction', 'câble, tirant'], ['Compression', 'poteau, fondation'], ['Flexion', 'poutre, plancher, étagère'], ['Torsion', 'arbre de transmission'], ['Cisaillement', 'rivet, ciseaux']]) +
       dSV(340, 130, dAppui(50, 66) + dAppui(290, 66) + `<path class="fillv" d="M40 50 Q170 66 300 50 L300 62 Q170 78 40 62 Z"/>` + dA(170, 10, 170, 50, 'arrowv') + dT(178, 26, 'F', 'start') +
@@ -1057,6 +1077,7 @@ const EXOS = [
     title: 'Grandeurs photométriques et confort visuel',
     support: 'Cours Éclairage',
     body:
+      P('Un bon éclairage permet de travailler sans fatigue visuelle tout en consommant peu d\'énergie. Pour le concevoir, il faut d\'abord connaître les grandeurs qui décrivent la lumière et les critères du confort visuel, présentés dans cette fiche.') +
       P('Une lampe émet de la lumière (le flux), qui se répartit dans l\'espace (l\'intensité) et arrive sur une surface (l\'éclairement) :') +
       dSV(340, 170, `<circle class="fillv" cx="170" cy="30" r="12"/><path class="flow" d="M170 42 L80 140 H260 Z" opacity="0.6"/><line class="line" x1="40" y1="140" x2="300" y2="140"/>` +
         dT(190, 34, 'flux Φ (lm)', 'start', 12) + dT(98, 92, 'intensité I (cd)', 'end', 12) + dT(170, 160, 'éclairement E (lx) sur la surface', 'middle', 12),
@@ -1077,6 +1098,7 @@ const EXOS = [
     title: 'Dimensionner et rentabiliser un éclairage',
     support: 'Cours Éclairage · exercice salle d\'expédition',
     body:
+      P('Pour éclairer une salle, il faut choisir les luminaires, calculer combien en installer et vérifier que l\'investissement est rentable. Cette fiche donne la méthode de dimensionnement, le calcul de rentabilité d\'un passage aux LED (relighting) et celui d\'un balisage lumineux.') +
       H('1. Flux nécessaire et nombre de luminaires') +
       M('\\Phi = \\frac{E \\times d^2}{\\cos(\\alpha / 2)}') + LEG(['\\Phi', 'le flux d\'un luminaire en lm'], ['E', 'l\'éclairement voulu en lx'], ['d', 'la hauteur du luminaire au-dessus du plan de travail en m'], ['\\alpha', 'l\'angle d\'ouverture du luminaire']) +
       dSV(340, 170, `<line class="thin" x1="20" y1="20" x2="320" y2="20"/><line class="line" x1="20" y1="150" x2="320" y2="150"/><path class="fillv" d="M158 20 H182 L176 32 H164 Z"/><path class="flow" d="M170 32 L96 150 H244 Z" opacity="0.7"/>` +

@@ -592,6 +592,7 @@ const EXOS = [
     title: 'Unités et grandeurs',
     support: 'Cours/TD Unités et grandeurs · fiche ressource « Les unités »',
     body:
+      P('Un résultat de calcul n\'a de sens qu\'avec son unité : « 12 » ne veut rien dire, alors que 12 V, 12 A ou 12 kWh décrivent des choses très différentes. Cette fiche rassemble les unités du Système international, les conversions, l\'écriture scientifique et une méthode pour mener un calcul sans erreur : ces outils servent dans toutes les séquences.') +
       H('1. Le Système international (SI)') +
       P('Les lois de la physique s\'écrivent dans un système d\'unités commun à presque tous les pays : le <b>Système international</b> (SI). Toutes les grandeurs se déduisent de 7 grandeurs de base ; en STI2D on en utilise surtout 5 :') +
       table(['Grandeur', 'Symbole', 'Unité'], [['Longueur', 'L', 'mètre (m)'], ['Masse', 'm', 'kilogramme (kg)'], ['Temps', 't', 'seconde (s)'],
@@ -635,6 +636,7 @@ const EXOS = [
     title: 'Grandeurs mécaniques de base et rendement',
     support: 'Fiche ressource « Les unités » · cours Statique et Matériaux',
     body:
+      P('Pour décrire un système technique, on commence par quelques grandeurs simples : à quelle vitesse il se déplace, combien il pèse, quelle pression il exerce et quelle part de l\'énergie reçue il restitue. Cette fiche définit ces grandeurs (vitesse, masse volumique, poids, pression, rendement) avec leurs formules et leurs unités.') +
       H('1. Vitesse') +
       P('La vitesse moyenne est la distance parcourue divisée par la durée du parcours :') + M('v = \\frac{d}{\\Delta t}') + P(`avec ${m('v')} en m/s, ${m('d')} en m et ${m('\\Delta t')} en s.`) +
       EX('Exemple', P('Un tapis roulant déplace un colis de 12 m en 8 s : v = 12 / 8 = 1,5 m/s, soit 1,5 × 3,6 = 5,4 km/h (en une heure, 1,5 × 3 600 = 5 400 m = 5,4 km).')) +
@@ -671,6 +673,7 @@ const EXOS = [
     title: 'Chaînes de puissance et d\'information',
     support: 'Cours Chaînes de puissance et d\'information · TP Chaînes d\'énergie et d\'information',
     body:
+      P('Tout système automatisé, d\'un portail à un robot, fait deux choses à la fois : il traite des informations (détecter, décider, communiquer) et il agit sur la matière grâce à de l\'énergie. On le décrit donc par deux chaînes, la chaîne d\'information et la chaîne de puissance, dont cette fiche présente les fonctions et les composants.') +
       H('1. Système technique') +
       P('Un <b>système technique</b> est un assemblage de constituants qui réalisent chacun une fonction élémentaire (alimenter, convertir…). C\'est l\'assemblage de ces fonctions qui permet de réaliser une fonction plus complexe.') +
       P('Un système est défini par :') + UL('la nature des éléments qui le composent ;', 'les interactions entre ces éléments ;', 'sa frontière (ce qui fait partie du système et ce qui appartient à son environnement) ;', 'ses interactions avec l\'environnement.') +
@@ -704,6 +707,7 @@ const EXOS = [
     title: 'Sources et formes d\'énergie',
     support: 'Cours Sources d\'énergie · PC Conversion d\'énergie dans les systèmes',
     body:
+      P('Se chauffer, se déplacer, s\'éclairer : chaque usage demande de l\'énergie, prélevée dans la nature puis transformée plusieurs fois avant d\'être utilisée. Cette fiche présente les formes d\'énergie, la différence entre sources renouvelables et non renouvelables, la conservation de l\'énergie et les unités employées.') +
       H('1. Qu\'est-ce que l\'énergie ?') +
       P('L\'énergie mesure la capacité d\'un système à modifier un état : produire un mouvement, de la chaleur ou un rayonnement (lumière). Elle se présente sous plusieurs <b>formes</b> :') +
       table(['Forme', 'Exemples'], [['Mécanique', 'cinétique (objet en mouvement), potentielle (eau d\'un barrage en hauteur)'], ['Thermique', 'chaleur d\'un radiateur, d\'un moteur'],
@@ -739,6 +743,7 @@ const EXOS = [
     title: 'Énergie, puissance et coût',
     support: 'Cours Grandeurs électriques (rappels sur l\'énergie) · TD Calculs et conversions de base',
     body:
+      P('Une facture d\'électricité compte des kWh alors qu\'un appareil affiche une puissance en watts : les deux grandeurs sont liées par la durée d\'utilisation. Cette fiche montre comment passer de la puissance à l\'énergie, convertir les durées et calculer le coût d\'un usage pour comparer des solutions.') +
       H('1. Énergie et puissance') +
       P('La puissance est la quantité d\'énergie transférée par unité de temps. Avec une même quantité d\'énergie, on peut utiliser beaucoup de puissance pendant peu de temps, ou peu de puissance pendant longtemps :') +
       M(`E = P \\times \\Delta t`) + P(`avec ${m('E')} l'énergie, ${m('P')} la puissance et ${m('\\Delta t')} la durée. Les unités vont ensemble :`) + table(['Si P est en…', 'et Δt en…', 'alors E est en…'], [['W', 's', 'J'], ['W', 'h', 'Wh'], ['kW', 'h', 'kWh']]) +
@@ -763,6 +768,7 @@ const EXOS = [
     title: 'Ressources énergétiques, mix et réseaux',
     support: 'Cours Ressources énergétiques · PC Types de centrales · TD Ressources énergétiques',
     body:
+      P('L\'énergie consommée en France vient de ressources variées (pétrole, gaz, uranium, vent, soleil…) qu\'il faut extraire, transformer puis acheminer jusqu\'aux utilisateurs. Cette fiche présente les enjeux liés à ces ressources, le mix énergétique, le diagramme de Sankey qui fait apparaître les pertes et les réseaux de transport.') +
       H('1. Les enjeux') +
       P('La consommation d\'énergie mondiale augmente, les ressources s\'épuisent et les impacts sur l\'environnement s\'aggravent. Il faut donc :') +
       UL('limiter la consommation (sobriété : « chaque geste compte ») ;', 'réduire le recours aux énergies non renouvelables (transition énergétique) ;', 'éduquer au développement durable ;', 'pratiquer l\'éco-conception.') +
@@ -792,6 +798,7 @@ const EXOS = [
     title: 'Développement durable et cycle de vie',
     support: 'Cours Développement durable · TD ACV et transport de bouteilles en verre',
     body:
+      P('Un objet a un impact sur l\'environnement bien avant et bien après son utilisation : extraction des matières, fabrication, transport, fin de vie. Cette fiche définit le développement durable et ses indicateurs, puis l\'analyse du cycle de vie (ACV), qui chiffre ces impacts pour mieux concevoir.') +
       H('1. Définition') +
       P('Selon le rapport Brundtland (1987), le développement durable est <i>« un développement qui répond aux besoins des générations du présent sans compromettre la capacité des générations futures à répondre aux leurs »</i>.') +
       P('Il repose sur <b>trois piliers</b> à concilier :') +
@@ -824,6 +831,7 @@ const EXOS = [
     title: 'Contacts, mouvements et degrés de liberté',
     support: 'Cours Modélisation cinématique · TD et PC Modélisation cinématique',
     body:
+      P('Pour comprendre comment bouge un mécanisme (une trottinette, un bras de robot), on ne regarde pas chaque pièce une à une : on regroupe celles qui bougent ensemble et on étudie les contacts entre ces groupes. Cette fiche introduit les classes d\'équivalence, les types de contact, les six mouvements élémentaires et les degrés de liberté.') +
       H('1. Solides et mécanismes') +
       UL('Un <b>solide</b> est une pièce ou un ensemble de pièces liées entre elles.', 'On le suppose <b>indéformable</b> : sa forme ne change pas, quelles que soient les actions qu\'il subit (les déformations réelles sont de l\'ordre du µm).',
         'Un <b>mécanisme</b> est un ensemble de pièces mobiles les unes par rapport aux autres.') +
@@ -871,6 +879,7 @@ const EXOS = [
     title: 'Liaisons et schéma cinématique',
     support: 'Cours Modélisation cinématique · PC Assemblage, graphe et schéma cinématique',
     body:
+      P('Les contacts entre les classes d\'équivalence d\'un mécanisme se modélisent par des liaisons normalisées, qui autorisent chacune certains mouvements. Cette fiche présente ces liaisons et leurs symboles, puis montre comment les assembler dans un graphe des liaisons et un schéma cinématique, représentation simplifiée du mécanisme.') +
       H('1. Liaisons parfaites') +
       P('Deux pièces sont en <b>liaison</b> si elles restent en contact pendant le fonctionnement. La liaison est caractérisée par ses degrés de liberté, la forme du contact et les mouvements possibles.') +
       P('On suppose les liaisons <b>parfaites</b> : surfaces géométriquement parfaites et indéformables, contact permanent, sans jeu ni frottement.') +
@@ -900,6 +909,7 @@ const EXOS = [
     title: 'Relations cinématiques : translation et rotation',
     support: 'Fiche « Relations cinématiques importantes » · TP Cinématique du bras robotisé',
     body:
+      P('Une fois les mouvements identifiés, on veut les chiffrer : à quelle vitesse avance un véhicule dont les roues tournent à 1 000 tr/min ? À quelle vitesse se déplace le bout d\'une pale d\'éolienne ? Cette fiche donne les relations entre vitesse de translation, vitesse de rotation et rayon, ainsi que les conversions d\'unités associées.') +
       H('1. Translation rectiligne') +
       M('v = \\frac{d}{\\Delta t}') + P(`avec ${m('v')} en m/s, ${m('d')} en m et ${m('\\Delta t')} en s.`) +
       P('Pour passer des km/h aux m/s on divise par 3,6 ; pour passer des m/s aux km/h on multiplie par 3,6. Pourquoi 3,6 ? Parce que 1 km = 1 000 m et 1 h = 3 600 s : 1 km/h = 1 000 m / 3 600 s = 1 / 3,6 m/s. Exemple : 36 km/h = 36 000 m en 3 600 s = 10 m/s, et 5 m/s = 5 × 3 600 = 18 000 m par heure = 18 km/h.') +
@@ -932,6 +942,7 @@ const EXOS = [
     title: 'Grandeurs électriques',
     support: 'Cours Grandeurs électriques',
     body:
+      P('L\'électricité alimente la plupart des systèmes étudiés en STI2D, du réseau domestique aux batteries des véhicules. Cette fiche rappelle les grandeurs de base (tension, courant, puissance), distingue le continu de l\'alternatif et le monophasé du triphasé, puis présente le transport de l\'électricité et les règles de sécurité.') +
       H('1. Tension et courant') +
       P('Analogie avec une chute d\'eau : la hauteur de chute correspond à la <b>tension</b> U (en volts, c\'est l\'effort) et le débit d\'eau au <b>courant</b> I (en ampères, c\'est le flux). Sans tension, aucun courant ne circule.') +
       P('On mesure un courant avec un <b>ampèremètre branché en série</b> et une tension avec un <b>voltmètre branché en parallèle</b> (en dérivation).') +
@@ -970,6 +981,7 @@ const EXOS = [
     title: 'Énergie solaire photovoltaïque',
     support: 'Cours Panneaux photovoltaïques · TD Panneaux PV',
     body:
+      P('Un panneau photovoltaïque transforme directement la lumière du soleil en électricité, sans pièce en mouvement : c\'est l\'une des sources de la transition énergétique. Cette fiche explique son principe, sa caractéristique courant-tension, ses performances, l\'association de panneaux et le calcul de l\'énergie produite.') +
       H('1. L\'effet photovoltaïque') +
       P('Quand une cellule photovoltaïque est éclairée, un photon d\'énergie suffisante peut arracher un électron au matériau : ces électrons forment un courant <b>continu</b>.') +
       P('Ne pas confondre avec les panneaux solaires <b>thermiques</b>, qui chauffent de l\'eau. Les cellules sont le plus souvent en silicium, abondant sur Terre. Le temps de retour énergétique est d\'environ 3 ans, la durée de vie de 20 à 30 ans et environ 95 % d\'un panneau est recyclable.') +
@@ -1000,6 +1012,7 @@ const EXOS = [
     title: 'Piles, accumulateurs et batteries',
     support: 'Cours Batteries · TD Batteries',
     body:
+      P('Téléphones, vélos électriques, voitures : l\'énergie électrique doit souvent être stockée pour être utilisée loin du réseau. Cette fiche présente les piles et les accumulateurs, leurs caractéristiques (tension, capacité, énergie), leur association en série ou en parallèle et leur impact environnemental.') +
       H('1. Définitions') +
       UL('Une <b>pile</b> est un générateur électrochimique à usage unique : sa décharge est irréversible.', 'Un <b>accumulateur</b> est un générateur électrochimique réversible : il se décharge et se recharge. La « pile rechargeable » est en fait un accumulateur.',
         'Une <b>batterie</b> est un assemblage d\'accumulateurs en série et/ou en parallèle.') +
@@ -1037,6 +1050,7 @@ const EXOS = [
     title: 'Convertir l\'énergie électrique',
     support: 'PC Adaptation AC/DC',
     body:
+      P('L\'électricité n\'arrive pas toujours sous la forme dont un appareil a besoin : le réseau fournit du 230 V alternatif alors qu\'un téléphone se charge en 5 V continu. Cette fiche présente les convertisseurs qui adaptent l\'énergie électrique, en particulier le redresseur, le transformateur et le hacheur.') +
       H('1. Pourquoi convertir ?') +
       P('Les sources et les récepteurs n\'utilisent pas tous la même forme d\'électricité : le réseau fournit de l\'alternatif, une batterie du continu, un moteur peut demander une tension réglable. Les <b>convertisseurs statiques</b> (sans pièce en mouvement) adaptent l\'énergie électrique.') +
       UL('<b>Redresseur</b> (alternatif → continu) : chargeur de téléphone, alimentation d\'un appareil électronique.',
@@ -1067,6 +1081,7 @@ const EXOS = [
     title: 'Schémas fluidiques',
     support: 'PC Schémas fluidiques',
     body:
+      P('L\'énergie ne circule pas seulement dans des câbles électriques : dans une pelleteuse, une porte de bus ou une installation de chauffage, c\'est un fluide (huile, air, eau) qui la transporte. Cette fiche présente les différents réseaux fluidiques, leurs composants et la façon de lire leurs schémas normalisés.') +
       H('1. Les réseaux fluidiques') +
       P('Un réseau fluidique transporte de l\'énergie (ou de la chaleur) grâce à un fluide qui circule dans des canalisations. On les classe selon le fluide utilisé :') +
       table(['Système', 'Fluide', 'Exemples'], [['Pneumatique', 'air comprimé', 'portes de bus, préhenseurs, outils à air'], ['Hydraulique', 'eau ou huile sous pression', 'pelleteuse, presse, circuit de chauffage'],
@@ -1093,6 +1108,7 @@ const EXOS = [
     title: 'Information et signaux',
     support: 'Cours Chaîne d\'information · PC Génération et filtrage',
     body:
+      P('Un système automatisé reçoit des informations de ses capteurs sous forme de signaux électriques, qu\'il faut savoir reconnaître et mesurer. Cette fiche distingue les informations logiques, analogiques et numériques, puis explique comment lire un oscillogramme et caractériser un signal périodique, un signal PWM ou un signal riche en harmoniques.') +
       H('1. Nature de l\'information') +
       table(['Information', 'Valeurs possibles', 'Exemple'], [['Analogique', 'une infinité de valeurs continues', 'tension d\'un capteur de température'],
         ['Logique (tout ou rien)', 'deux états : 0 ou 1', 'bouton appuyé ou non, porte ouverte ou fermée'], ['Numérique', 'des nombres codés en binaire', 'valeur envoyée par un microcontrôleur']]) +
@@ -1139,6 +1155,7 @@ const EXOS = [
     title: 'Capteurs et détecteurs',
     support: 'Cours Acquisition de l\'information · TD Capteurs · PC Hemo-mixer',
     body:
+      P('Un système ne peut réagir qu\'à ce qu\'il perçoit : la température d\'une pièce, la présence d\'une personne, la position d\'une porte. Cette fiche présente les capteurs, qui mesurent une grandeur, et les détecteurs, qui signalent un état, ainsi que les caractéristiques qui permettent de les choisir.') +
       H('1. Définition') +
       P('Un <b>capteur</b> transforme une grandeur physique (température, position, effort…) en une grandeur utilisable, le plus souvent une tension ou un courant, souvent très faible (mV, mA). Il réalise la fonction <b>Acquérir</b> de la chaîne d\'information.') +
       H('2. Capteurs actifs et passifs') +
@@ -1170,6 +1187,7 @@ const EXOS = [
     title: 'Codage de l\'information',
     support: 'Cours Codage · TD Codage',
     body:
+      P('Un microcontrôleur ou un ordinateur ne manipule que des 0 et des 1 : nombres, textes et mesures doivent donc être codés en binaire. Cette fiche présente le bit et l\'octet, les bases binaire, décimale et hexadécimale, le codage des nombres et des caractères, et le calcul d\'une durée de transmission.') +
       H('1. Bit, octet et mot') +
       UL('Le <b>bit</b> (b, binary digit) vaut 0 ou 1 : c\'est l\'unité élémentaire de l\'information.', 'L\'<b>octet</b> (en anglais <i>byte</i>, noté B ou o) est un groupe de 8 bits, la plus petite unité adressable d\'un ordinateur.',
         'Un <b>mot</b> de 16 bits contient 2 octets.', 'Dans un mot binaire, le bit de gauche est le bit de poids fort (MSB), celui de droite le bit de poids faible (LSB).') +
@@ -1208,6 +1226,7 @@ const EXOS = [
     title: 'Conversion analogique-numérique',
     support: 'Cours/TD Convertisseur analogique-numérique',
     body:
+      P('Un capteur délivre une tension qui varie de façon continue, alors qu\'un microcontrôleur ne traite que des nombres. Le convertisseur analogique-numérique (CAN) fait le lien entre les deux : cette fiche explique son fonctionnement (échantillonnage, quantification), sa résolution et la taille des données qu\'il produit.') +
       H('1. La chaîne d\'acquisition') +
       CHAIN([['Capteur', 'grandeur → tension'], ['Conditionnement', 'amplifier, filtrer'], ['CAN', 'tension → binaire'], ['Traitement', 'microcontrôleur']]) +
       P('Le <b>convertisseur analogique-numérique</b> (CAN) réalise la <b>numérisation</b> : il transforme une tension en nombre binaire compréhensible par le microcontrôleur.') +
@@ -1238,6 +1257,7 @@ const EXOS = [
     title: 'Actions mécaniques et équilibre',
     support: 'Cours Actions mécaniques et équilibre · TD Actions mécaniques · PC Résolution statique',
     body:
+      P('Une barrière levante, un pont ou un vérin restent en place parce que les efforts qui s\'exercent sur eux se compensent. Cette fiche explique comment modéliser ces actions mécaniques (forces et moments) et comment le principe fondamental de la statique permet de calculer les efforts inconnus.') +
       H('1. Les actions mécaniques') +
       P('Une action mécanique peut créer ou modifier un mouvement, maintenir un corps en équilibre ou le déformer. Il en existe deux types : les <b>forces</b> (F) et les <b>moments</b> (M).') +
       UL('<b>Actions de contact</b> : dues à un contact entre deux corps. Elles sont concentrées (ponctuelles) ou réparties sur une ligne ou une surface.', '<b>Actions à distance</b> : sans contact, réparties dans tout le corps (pesanteur, magnétisme).') +
@@ -1276,6 +1296,7 @@ const EXOS = [
     title: 'Engrenages et réducteurs de vitesse',
     support: 'Cours Réducteurs de vitesse · PC et TP Réducteurs de vitesse',
     body:
+      P('Un moteur électrique tourne en général trop vite et avec trop peu de couple pour entraîner directement une roue ou un tapis. On intercale alors un réducteur, souvent à engrenages : cette fiche présente leur vocabulaire, le module, le rapport de transmission et l\'effet du réducteur sur le couple et la puissance.') +
       H('1. Vocabulaire') +
       UL('Deux <b>roues dentées</b> en contact forment un <b>engrenage</b>. La plus petite s\'appelle le <b>pignon</b>, la plus grande la <b>roue</b>.', 'La <b>roue menante</b> entraîne l\'autre (entrée) ; la <b>roue menée</b> est entraînée (sortie).',
         'Deux roues en contact extérieur tournent en sens inverses.') +
@@ -1320,6 +1341,7 @@ const EXOS = [
     title: 'Puissance d\'un véhicule en déplacement',
     support: 'Cours/TD Puissances lors d\'un déplacement · TP Portail',
     body:
+      P('Pour choisir le moteur et la batterie d\'un véhicule, il faut savoir quelle puissance il demande pour rouler, monter une pente ou accélérer. Cette fiche décrit le cycle de déplacement, les forces qui s\'opposent au mouvement et le calcul de la puissance nécessaire, à la roue puis au moteur.') +
       H('1. Le cycle de déplacement') +
       P('Un trajet se décompose en phases : accélération, vitesse constante, décélération, sur le plat ou en pente. Les besoins en puissance changent à chaque phase.') +
       H('2. Les forces qui s\'opposent au mouvement') +
@@ -1353,6 +1375,7 @@ const EXOS = [
     title: 'Algorithmique et algorigrammes',
     support: 'Cours Algorithmique · TD Algorithmique · PC Algorithmique',
     body:
+      P('Avant d\'écrire un programme, on décrit ce que le système doit faire, étape par étape et dans un ordre précis : c\'est l\'algorithme. Cette fiche présente les algorigrammes, les structures de base (séquence, condition, boucle) et la méthode de la trace, qui permet de vérifier qu\'un algorithme fait bien ce qu\'on attend.') +
       H('1. Algorithme et algorigramme') +
       P('Un <b>algorithme</b> est une suite finie et ordonnée d\'instructions qui permet de résoudre un problème. On le représente graphiquement par un <b>algorigramme</b>, compréhensible par tous, avant de le traduire dans un langage de programmation.') +
       table(['Symbole', 'Rôle'], [['Ovale', 'début ou fin'], ['Rectangle', 'traitement, action (calcul, affectation)'], ['Losange', 'test : la condition est vraie (oui) ou fausse (non)'],
@@ -1402,6 +1425,7 @@ SINON
     title: 'Logique combinatoire',
     support: 'PC Fonctions logiques · cours Codage (algèbre de Boole)',
     body:
+      P('Beaucoup de décisions d\'un système automatisé se résument à des conditions vraies ou fausses : la porte s\'ouvre si le badge est valide ET si l\'alarme n\'est pas déclenchée. Cette fiche présente les variables logiques, les fonctions ET, OU et NON, les tables de vérité et les règles de calcul pour écrire et simplifier ces conditions.') +
       H('1. Signaux et variables logiques') +
       P('Un signal logique n\'a que deux états : état haut (1, vrai, HIGH) et état bas (0, faux, LOW). Exemples : bouton appuyé ou non, porte ouverte ou fermée, jour ou nuit. Une variable logique s\'appelle aussi un <b>booléen</b>.') +
       P('En <b>logique combinatoire</b>, l\'état des sorties ne dépend que de l\'état actuel des entrées. En logique <b>séquentielle</b> (algorithmes), il dépend aussi de ce qui s\'est passé avant.') +
@@ -1439,6 +1463,7 @@ SINON
     title: 'Bases de la programmation en Python',
     support: 'PC Initiation à la programmation · TP Bras robotisé',
     body:
+      P('Python est le langage utilisé en STI2D pour programmer des cartes à microcontrôleur et traiter des données. Cette fiche présente les bases nécessaires pour lire et écrire un programme simple : variables, entrées et sorties, conditions et boucles.') +
       H('1. Variables et types') +
       P('Une <b>variable</b> est une case mémoire qui stocke une valeur. Le signe = signifie « prend la valeur » (affectation).') +
       table(['Type', 'Contenu', 'Exemple'], [['int', 'nombre entier', 'n = 12'], ['float', 'nombre décimal (avec un point)', 'u = 3.3'], ['str', 'chaîne de caractères', 'nom = "Robot"'], ['bool', 'vrai ou faux', 'ok = True']]) +
@@ -1489,6 +1514,7 @@ print(niveau)`) +
     title: 'Familles et propriétés physiques des matériaux',
     support: 'Cours Matériaux · TP Caractérisation des matériaux',
     body:
+      P('Choisir le matériau d\'un objet, c\'est trouver celui dont les propriétés correspondent à l\'usage : léger pour un vélo, isolant pour un mur, résistant à la chaleur pour une casserole. Cette fiche présente les familles de matériaux et leurs propriétés physiques : masse volumique, comportement face à la chaleur, homogénéité et isotropie.') +
       H('1. Les familles de matériaux') +
       P('Un matériau est une matière choisie pour ses propriétés en vue d\'un usage précis. On en compte environ 80 000, regroupés en quatre familles :') +
       table(['Famille', 'Exemples'], [['Métaux et alliages', 'acier, fonte (ferreux) ; aluminium, cuivre, zinc, laiton (non ferreux)'],
@@ -1519,6 +1545,7 @@ print(niveau)`) +
     title: 'Comportement mécanique et choix des matériaux',
     support: 'Cours Matériaux · PC Comportement des matériaux · PC Choix matériaux et procédés',
     body:
+      P('Un matériau doit aussi résister aux efforts qu\'il subit sans casser ni trop se déformer. Cette fiche présente les sollicitations, l\'essai de traction qui mesure la résistance et la rigidité d\'un matériau, puis une méthode pour choisir un matériau en tenant compte aussi de son impact environnemental.') +
       H('1. Les sollicitations') +
       table(['Sollicitation', 'Effet', 'Exemple'], [['Traction', 'on tire dans l\'axe de la pièce', 'câble d\'une grue'], ['Compression', 'on écrase la pièce', 'pilier d\'un pont'],
         ['Flexion', 'la pièce se courbe sous un effort perpendiculaire', 'tablier d\'un pont, étagère'], ['Cisaillement', 'on tranche la pièce', 'ciseaux, rivet'], ['Torsion', 'on tord la pièce autour de son axe', 'tournevis']]) +
