@@ -791,13 +791,13 @@ const EXOS = [
       M('R_{totale} = R_{se} + R_1 + R_2 + \\dots + R_{si}') + P('Valeurs courantes pour un mur : R<sub>se</sub> = 0,04 et R<sub>si</sub> = 0,13 m²·K/W.') +
       EX('Exemple : mur en brique isolé', P('Brique de 20 cm (λ = 0,5), polystyrène de 10 cm (λ = 0,038) et plaque de plâtre de 13 mm (λ = 0,25) :') +
         M('R_{brique} = \\frac{0{,}20}{0{,}5} = 0{,}4 \\qquad R_{PSE} = \\frac{0{,}10}{0{,}038} \\approx 2{,}63 \\qquad R_{plâtre} = \\frac{0{,}013}{0{,}25} = 0{,}052') +
-        M('R_{totale} = 0{,}04 + 0{,}4 + 2{,}63 + 0{,}052 + 0{,}13 \\approx 3{,}25\\,\\text{m}^2\\text{·K/W}')) +
+        M('R_{totale} = 0{,}04 + 0{,}4 + 2{,}63 + 0{,}052 + 0{,}13 \\approx 3{,}25\\,\\text{m}^2\\cdot\\text{K/W}')) +
       H('2. Coefficient U et flux') +
       M('U = \\frac{1}{R_{totale}}') + M('\\Phi = U \\times S \\times (T_{int} - T_{ext})') +
       LEG(['U', 'le coefficient de transmission en W/(m²·K)'], ['\\Phi', 'le flux thermique (puissance perdue) en W'], ['S', 'la surface de la paroi en m²'], ['T', 'les températures en °C']) +
       P('U indique combien de watts traversent 1 m² de paroi pour 1 °C d\'écart. Une paroi bien isolée a un U faible (moins de 0,2 W/(m²·K) pour un mur neuf).') +
       EX('Exemple : suite du mur en brique', P('Avec R<sub>totale</sub> = 3,25 m²·K/W, pour 40 m² de mur, 19 °C dedans et −5 °C dehors :') +
-        M('U = \\frac{1}{3{,}25} \\approx 0{,}308\\,\\text{W/(m}^2\\text{·K)}') + M('\\Phi = 0{,}308 \\times 40 \\times (19 - (-5)) \\approx 296\\,\\text{W}')) +
+        M('U = \\frac{1}{3{,}25} \\approx 0{,}308\\,\\text{W/(m}^2\\cdot\\text{K)}') + M('\\Phi = 0{,}308 \\times 40 \\times (19 - (-5)) \\approx 296\\,\\text{W}')) +
       H('3. Déperditions d\'un logement') +
       P('On additionne les déperditions de chaque paroi (D = U × S, en W/K) et celles du renouvellement d\'air :') + M('D_v = 0{,}34 \\times Q_v') +
       LEG(['D_v', 'les déperditions par ventilation en W/K'], ['Q_v', 'le débit d\'air en m³/h']) + M('P = D_{totale} \\times (T_{int} - T_{ext})') +

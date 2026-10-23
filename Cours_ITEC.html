@@ -664,16 +664,32 @@ const EXOS = [
         'Poulies-courroie : la courroie a la même vitesse sur les deux poulies') +
       P('Une poulie et une courroie tournent sans glisser : la vitesse linéaire de la courroie vaut V = ω × d / 2, la même sur les deux poulies, d\'où ω₁ × d₁ = ω₂ × d₂.') +
       EX('Exemple : poulies', P('Une poulie motrice de 60 mm tourne à 1 500 tr/min et entraîne une poulie de 180 mm :') + M('r = \\frac{60}{180} = \\frac{1}{3} \\qquad N_s = 1\\,500 \\times \\frac{1}{3} = 500\\,\\text{tr/min}')) +
-      H('2. Couple et puissance') +
+      H('2. Engrenages') +
+      P('Un engrenage est formé de deux roues dentées qui engrènent : la plus petite s\'appelle le <b>pignon</b>, la plus grande la <b>roue</b>. La roue <b>menante</b> entraîne la roue <b>menée</b>. Contrairement à une courroie, il ne peut pas glisser : la transmission est précise et supporte de grands couples.') +
+      dSV(340, 190, dGear(90, 90, 30, 12, 'flow') + dGear(180, 90, 60, 24) + `<circle class="pt" cx="90" cy="90" r="3"/><circle class="pt" cx="180" cy="90" r="3"/>` +
+        dRot(90, 90, 40, 120, 220, 'arrowv') + dRot(180, 90, 72, 40, -40, 'arrowv') + dCote(90, 22, 180, 22, 'entraxe a') +
+        dT(56, 140, 'pignon menant', 'middle', 13) + dT(56, 156, 'Z₁ = 12', 'middle', 13) + dT(180, 168, 'roue menée', 'middle', 13) + dT(180, 184, 'Z₂ = 24', 'middle', 13),
+        'Engrenage extérieur : les deux roues tournent en sens inverse ; la roue de 24 dents tourne deux fois moins vite') +
+      P('Les dimensions d\'une roue dépendent de son <b>module</b> m (en mm) et de son nombre de dents Z. Deux roues ne peuvent engrener que si elles ont le même module :') +
+      M('d = m \\times Z \\qquad a = \\frac{d_1 + d_2}{2}') + LEG(['d', 'le diamètre primitif en mm'], ['m', 'le module en mm'], ['Z', 'le nombre de dents'], ['a', 'l\'entraxe (distance entre les deux axes) en mm']) +
+      P('Le rapport de transmission ne dépend que des nombres de dents. Pour un <b>train</b> de plusieurs engrenages :') +
+      M('r = \\frac{N_s}{N_e} = \\frac{\\text{produit des } Z \\text{ des roues menantes}}{\\text{produit des } Z \\text{ des roues menées}}') +
+      UL('Chaque contact <b>extérieur</b> inverse le sens de rotation ; un contact intérieur (couronne dentée) le conserve.',
+        '<b>Engrenages droits</b> : axes parallèles. <b>Engrenages coniques</b> : axes qui se coupent, pour renvoyer le mouvement à 90°.',
+        '<b>Roue et vis sans fin</b> : axes perpendiculaires ; r = nombre de filets de la vis / Z de la roue, donc un très grand rapport en un seul étage (1/40 avec une vis à un filet et une roue de 40 dents). Elle est souvent irréversible : la charge ne peut pas faire tourner le moteur.') +
+      EX('Exemple : réducteur à deux étages', P('Un moteur tourne à 1 500 tr/min. Un pignon de 15 dents entraîne une roue de 60 dents ; sur le même arbre, un pignon de 12 dents entraîne une roue de 48 dents :') +
+        M('r = \\frac{15 \\times 12}{60 \\times 48} = \\frac{180}{2\\,880} = \\frac{1}{16}') + M('N_s = 1\\,500 \\times \\frac{1}{16} \\approx 93{,}8\\,\\text{tr/min}') +
+        P('Avec deux contacts extérieurs, la sortie tourne dans le même sens que le moteur. Pour le premier étage, de module 2 mm : d₁ = 2 × 15 = 30 mm, d₂ = 2 × 60 = 120 mm et a = (30 + 120) / 2 = 75 mm.')) +
+      H('3. Couple et puissance') +
       M('P = C \\times \\omega') + LEG(['P', 'la puissance en W'], ['C', 'le couple en N·m'], ['\\omega', 'la vitesse angulaire en rad/s']) +
       M('C_s = \\frac{\\eta \\times C_e}{r}') + LEG(['C_s', 'et Ce les couples de sortie et d\'entrée en N·m'], ['\\eta', 'le rendement de la transmission']) +
       P('Un réducteur divise la vitesse et multiplie le couple, à la perte près : la puissance se conserve (P<sub>s</sub> = η × P<sub>e</sub>). Avec r = 1/40 et η = 0,9, un couple de 10 N·m devient 10 × 40 × 0,9 = 360 N·m.') +
       EX('Exemple', P('Un moteur fournit un couple de 2 N·m à 1 500 tr/min, soit ω = 2π × 1 500 / 60 ≈ 157 rad/s :') + M('P = 2 \\times 157 = 314\\,\\text{W}')) +
-      H('3. Treuil et câble') +
+      H('4. Treuil et câble') +
       P('Le câble s\'enroule sur un tambour de diamètre D ; son rayon d\'enroulement vaut (D + d) / 2 avec d le diamètre du câble (le câble s\'enroule par son centre). Vitesse du câble : V = ω<sub>tambour</sub> × R ; force disponible : F = P / V ; masse levable : m = F / g.') +
-      H('4. Éolienne : vitesse en bout de pale') +
+      H('5. Éolienne : vitesse en bout de pale') +
       P('Le TSR (tip speed ratio) compare la vitesse du bout de pale à celle du vent : λ = ω × R / V<sub>vent</sub>. Il vaut 6 à 8 pour une éolienne tripale. Le rotor tourne lentement (une quinzaine de tr/min) : un multiplicateur (r > 1) entraîne la génératrice.') +
-      BOX(P('r = Ns / Ne ; P = C × ω.', 'Réducteur : vitesse ÷, couple ×.'))
+      BOX(P('r = Ns / Ne ; P = C × ω.', 'Engrenage : d = m × Z ; r = produit des Z menantes / produit des Z menées ; chaque contact extérieur inverse le sens.', 'Réducteur : vitesse ÷, couple ×.'))
   },
   // ===================== Chapitre 3 =====================
   {
