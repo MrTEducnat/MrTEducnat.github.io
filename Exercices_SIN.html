@@ -514,49 +514,91 @@ const EXOS = [
     title: 'Parcours d\'un diagramme d\'états',
     support: 'BO 3.4.2 · annales : 2021_Métropole, 2025_Polynésie',
     gen() {
-      const tempo = rnd(3, 8, 1), maxE = pick([2, 3]);
-      const T = {
-        'Verrouillé': { 'badge valide': 'Déverrouillé', 'badge invalide': 'Refus' },
-        'Refus': { [`retour après 2 s`]: 'Verrouillé', 'badge invalide (essai max atteint)': 'Alarme' },
-        'Déverrouillé': { 'porte ouverte': 'Porte ouverte', [`${tempo} s écoulées`]: 'Verrouillé' },
-        'Porte ouverte': { 'porte fermée': 'Verrouillé' },
-        'Alarme': { 'code gardien saisi': 'Verrouillé' }
-      };
-      let s = 'Verrouillé', inv = 0; const trace = [];
-      for (let k = 0; k < rnd(5, 7, 1); k++) {
-        let evs = Object.keys(T[s]);
-        if (s === 'Verrouillé') evs = ['badge valide', 'badge invalide'];
-        if (s === 'Refus') evs = [inv >= maxE ? 'badge invalide (essai max atteint)' : 'retour après 2 s'];
-        const e = pick(evs);
-        if (e === 'badge invalide') inv++;
-        if (e === 'badge valide' || e === 'code gardien saisi') inv = 0;
-        const n = T[s][e]; trace.push([s, e, n]); s = n;
-      }
-      const evList = trace.map(t => t[1].replace(' (essai max atteint)', ''));
+      // Systèmes possibles : centre de chaque état (cadre de 340 de large), position du point initial,
+      // transitions [départ, événement, arrivée, groupe facultatif] ; un groupe est gardé ou retiré en bloc
+      const t1 = rnd(2, 5, 1), t2 = rnd(5, 10, 1), t3 = rnd(20, 60, 10);
+      const SYS = [
+        { nom: 'd\'une serrure à badge RFID', court: 'la serrure', H: 290, init: 'Verrouillé', dot: [0, -1], alarme: ['Alarme'],
+          pos: { 'Verrouillé': [170, 150], 'Refus': [65, 40], 'Déverrouillé': [275, 40], 'Alarme': [65, 260], 'Porte ouverte': [275, 260] },
+          T: [['Verrouillé', 'badge valide', 'Déverrouillé'], ['Verrouillé', 'badge invalide', 'Refus'], ['Refus', `${t1} s écoulées`, 'Verrouillé'],
+            ['Refus', 'nouveau badge invalide', 'Alarme'], ['Déverrouillé', 'porte ouverte', 'Porte ouverte'], ['Déverrouillé', `${t2} s écoulées`, 'Verrouillé'],
+            ['Porte ouverte', 'porte fermée', 'Verrouillé'], ['Alarme', 'code gardien saisi', 'Verrouillé'], ['Porte ouverte', `porte ouverte depuis ${t3} s`, 'Alarme', 'a']] },
+        { nom: 'd\'un portail automatique', court: 'le portail', H: 310, init: 'Fermé', dot: [0, -1], alarme: [],
+          pos: { 'Fermé': [65, 62], 'Ouverture': [275, 62], 'Ouvert': [275, 190], 'Fermeture': [65, 190], 'Arrêt': [170, 280] },
+          T: [['Fermé', 'appui sur la télécommande', 'Ouverture'], ['Ouverture', 'fin de course ouvert', 'Ouvert'], ['Ouvert', `${t2 * 3} s écoulées`, 'Fermeture'],
+            ['Fermeture', 'fin de course fermé', 'Fermé'], ['Fermeture', 'obstacle détecté', 'Ouverture', 'a'],
+            ['Ouverture', 'appui sur la télécommande', 'Arrêt', 'b'], ['Arrêt', 'nouvel appui sur la télécommande', 'Fermeture', 'b']] },
+        { nom: 'd\'un feu de passage piéton', court: 'le feu', H: 230, init: 'Feu vert', dot: [0, -1], alarme: ['Orange clignotant'],
+          pos: { 'Feu vert': [80, 62], 'Feu orange': [260, 62], 'Feu rouge': [260, 195], 'Orange clignotant': [80, 195] },
+          T: [['Feu vert', 'appui sur le bouton piéton', 'Feu orange'], ['Feu orange', `${t1} s écoulées`, 'Feu rouge'], ['Feu rouge', `${t2 * 2} s écoulées`, 'Feu vert'],
+            ['Feu vert', 'passage en mode nuit', 'Orange clignotant'], ['Orange clignotant', 'passage en mode jour', 'Feu vert'], ['Feu rouge', 'panne détectée', 'Orange clignotant', 'a']] },
+        { nom: 'd\'un lave-linge', court: 'le lave-linge', H: 300, init: 'Attente', dot: [0, -1], alarme: [],
+          pos: { 'Attente': [70, 62], 'Remplissage': [262, 62], 'Lavage': [262, 165], 'Vidange': [262, 268], 'Essorage': [70, 268] },
+          T: [['Attente', 'appui sur départ', 'Remplissage'], ['Remplissage', 'niveau d\'eau atteint', 'Lavage'], ['Lavage', `${t2 * 4} min écoulées`, 'Vidange'],
+            ['Vidange', 'cuve vide', 'Essorage'], ['Essorage', `${t1 * 2} min écoulées`, 'Attente'], ['Remplissage', 'hublot ouvert', 'Attente', 'a'],
+            ['Essorage', 'option rinçage choisie', 'Remplissage', 'b']] },
+        { nom: 'd\'un distributeur de boissons', court: 'le distributeur', H: 230, init: 'Attente', dot: [0, -1], alarme: [],
+          pos: { 'Attente': [75, 62], 'Crédit en cours': [258, 62], 'Préparation': [258, 195], 'Rendu monnaie': [75, 195] },
+          T: [['Attente', 'pièce insérée', 'Crédit en cours'], ['Crédit en cours', 'boisson choisie, crédit suffisant', 'Préparation'], ['Crédit en cours', 'appui sur annuler', 'Rendu monnaie'],
+            ['Préparation', 'boisson servie', 'Rendu monnaie'], ['Rendu monnaie', 'monnaie rendue', 'Attente'], ['Crédit en cours', `${t3} s sans action`, 'Attente', 'a']] },
+        { nom: 'd\'une alarme de maison', court: 'l\'alarme', H: 300, init: 'Désarmée', dot: [0, 1], alarme: ['Sirène'],
+          pos: { 'Désarmée': [170, 160], 'Armement': [65, 50], 'Armée': [275, 50], 'Pré-alarme': [275, 270], 'Sirène': [65, 270] },
+          T: [['Désarmée', 'code saisi', 'Armement'], ['Armement', `${t2 * 3} s écoulées`, 'Armée'], ['Armée', 'mouvement détecté', 'Pré-alarme'],
+            ['Pré-alarme', 'code saisi', 'Désarmée'], ['Pré-alarme', `${t2 * 2} s sans code`, 'Sirène'], ['Sirène', 'code saisi', 'Désarmée'],
+            ['Armement', 'code saisi', 'Désarmée', 'a'], ['Armée', 'code saisi', 'Désarmée', 'b']] }
+      ];
+      const S = pick(SYS), keep = {};
+      S.T.forEach(t => { if (t[3] && !(t[3] in keep)) keep[t[3]] = Math.random() < 0.6; });
+      const TR = S.T.filter(t => !t[3] || keep[t[3]]), num = t => TR.indexOf(t) + 1;
+      const states = Object.keys(S.pos).filter(x => x === S.init || TR.some(t => t[0] === x || t[2] === x));
+      // Parcours aléatoire depuis l'état initial
+      let s = S.init; const trace = [], used = [];
+      for (let k = rnd(5, 7, 1); k > 0; k--) { const t = pick(TR.filter(x => x[0] === s)); trace.push([s, t[1], t[2]]); used.push(t); s = t[2]; }
+      // Dessin : états, flèches coupées au bord des cadres (décalées si deux sens), numéro de transition au milieu
+      const W = x => Math.max(84, x.length * 7 + 18);
+      const clip = (p, d, x) => { const k = Math.min(d[0] ? W(x) / 2 / Math.abs(d[0]) : 1e9, d[1] ? 15 / Math.abs(d[1]) : 1e9) + 3; return [p[0] + d[0] * k, p[1] + d[1] * k]; };
+      let g = states.map(x => { const [cx, cy] = S.pos[x];
+        return `<rect class="${S.alarme.includes(x) ? 'loss' : 'flow'}" x="${cx - W(x) / 2}" y="${cy - 15}" width="${W(x)}" height="30" rx="8"/>` + dT(cx, cy + 5, x, 'middle', 13); }).join('');
+      let badges = '';
+      TR.forEach((t, i) => {
+        const A = S.pos[t[0]], B = S.pos[t[2]], L = Math.hypot(B[0] - A[0], B[1] - A[1]), d = [(B[0] - A[0]) / L, (B[1] - A[1]) / L], n = [-d[1], d[0]];
+        const o = TR.some(u => u[0] === t[2] && u[2] === t[0]) ? 7 : 0, a = clip(A, d, t[0]), b = clip(B, [-d[0], -d[1]], t[2]);
+        g += dA(a[0] + n[0] * o, a[1] + n[1] * o, b[0] + n[0] * o, b[1] + n[1] * o, 'thin');
+        const mx = (a[0] + b[0]) / 2 + n[0] * (o + 11), my = (a[1] + b[1]) / 2 + n[1] * (o + 11);
+        badges += `<circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="9" class="thin" style="fill:var(--surface)"/>` + dT(mx, my + 4, String(i + 1), 'middle', 12);
+      });
+      const [ix, iy] = S.pos[S.init], [dx, dy] = S.dot, gap = dy ? 15 : W(S.init) / 2;
+      g += `<circle cx="${ix + dx * (gap + 26)}" cy="${iy + dy * (gap + 26)}" r="5" style="fill:var(--text)"/>` + dA(ix + dx * (gap + 21), iy + dy * (gap + 21), ix + dx * (gap + 3), iy + dy * (gap + 3), 'thin');
+      // Questions 3 et 4 : deux parmi trois, adaptées au système tiré
+      const multi = states.filter(x => TR.filter(t => t[0] === x).length >= 2), X = pick(multi.length ? multi : states);
+      const Y = pick([...new Set(trace.map(t => t[2]))]), nY = trace.filter(t => t[2] === Y).length;
+      const from = s !== S.init ? s : pick(states.filter(x => x !== S.init));
+      const path = (() => {
+        const prev = { [from]: null }, q = [from];
+        while (q.length) { const c = q.shift(); if (c === S.init) break; TR.filter(t => t[0] === c).forEach(t => { if (!(t[2] in prev)) { prev[t[2]] = t; q.push(t[2]); } }); }
+        const r = []; let c = S.init; while (prev[c]) { r.unshift(prev[c]); c = prev[c][0]; } return r;
+      })();
+      const EXTRA = [
+        [`Depuis l'état « ${X} », quels événements font changer ${S.court} d'état, et vers quels états ?`, 'Événements possibles',
+          `<p>Depuis « ${X} » : ${TR.filter(t => t[0] === X).map(t => `« ${t[1]} » mène à « ${t[2]} » (transition ${num(t)})`).join(' ; ')}. Tout autre événement est sans effet dans cet état.</p>`],
+        [`Combien de fois l'état « ${Y} » est-il atteint pendant cette séquence ?`, `Passages par « ${Y} »`,
+          `<p>Dans le tableau du 1, la colonne « Nouvel état » contient « ${Y} » <b>${nY} fois</b>.</p>`],
+        [`${s !== S.init ? 'À partir de l\'état final' : `À partir de l'état « ${from} »`}, quelle est la suite d'événements la plus courte qui ramène ${S.court} à l'état initial ?`, 'Retour à l\'état initial',
+          `<p>${path.map(t => `« ${t[1]} » (${t[0]} → ${t[2]})`).join(', puis ')} : ${path.length} transition${path.length > 1 ? 's' : ''}.</p>`]
+      ];
+      const ex = sample(EXTRA, 2), Court = S.court[0].toUpperCase() + S.court.slice(1);
       return {
-        statement: `<p>Le fonctionnement d'une serrure à badge RFID est décrit par les transitions suivantes (état initial : Verrouillé).
-          Au bout de ${v(maxE)} badges invalides consécutifs, un nouveau badge invalide déclenche l'alarme.</p>` +
-          table(['État de départ', 'Événement', 'État d\'arrivée'], [['Verrouillé', 'badge valide', 'Déverrouillé'], ['Verrouillé', 'badge invalide', 'Refus'],
-            ['Refus', 'retour après 2 s', 'Verrouillé'], ['Refus', `badge invalide (${maxE + 1}e essai)`, 'Alarme'], ['Déverrouillé', 'porte ouverte', 'Porte ouverte'],
-            ['Déverrouillé', `${tempo} s écoulées`, 'Verrouillé'], ['Porte ouverte', 'porte fermée', 'Verrouillé'], ['Alarme', 'code gardien saisi', 'Verrouillé']]) +
-          (() => {
-            const st = (x, y, t, cl = 'flow') => `<rect class="${cl}" x="${x - 50}" y="${y - 15}" width="100" height="30" rx="8"/>` + dT(x, y + 5, t, 'middle', 13);
-            const e = (x, y, t, a = 'start') => dT(x, y, t, a, 11);
-            return dSV(340, 290, st(170, 150, 'Verrouillé') + st(60, 40, 'Refus') + st(280, 40, 'Déverrouillé') + st(60, 260, 'Alarme', 'loss') + st(280, 260, 'Porte ouverte') +
-              `<circle cx="170" cy="100" r="5" style="fill:var(--text)"/>` + dA(170, 105, 170, 135, 'thin') +
-              dA(130, 135, 80, 55, 'thin') + e(97, 92, 'badge', 'end') + e(97, 105, 'invalide', 'end') + dA(100, 55, 150, 135, 'thin') + e(133, 98, '2 s') +
-              dA(210, 135, 260, 55, 'thin') + e(243, 92, 'badge') + e(243, 105, 'valide') + dA(240, 55, 190, 135, 'thin') + e(207, 98, `${tempo} s`, 'end') +
-              dA(30, 55, 30, 245, 'thin') + e(36, 186, `${maxE + 1}e badge`) + e(36, 199, 'invalide') +
-              dA(310, 55, 310, 245, 'thin') + e(304, 186, 'porte', 'end') + e(304, 199, 'ouverte', 'end') +
-              dA(90, 245, 140, 165, 'thin') + e(104, 236, 'code gardien') + dA(250, 245, 200, 165, 'thin') + e(208, 190, 'porte fermée', 'end'),
-              'Diagramme d\'états de la serrure (● : état initial)');
-          })() +
-          `<p>On observe la suite d'événements : ${v(evList.join(' → '))}.</p>` +
-          ol('Donner la succession des états parcourus.', 'Dans quel état se trouve la serrure à la fin ?', 'Quel diagramme SysML est utilisé pour décrire ce comportement ?'),
+        statement: `<p>Le fonctionnement ${S.nom} est décrit par le diagramme d'états ci-dessous. L'état initial est « ${S.init} » ; chaque flèche porte le numéro d'une transition du tableau.</p>` +
+          dSV(340, S.H, g + badges, `Diagramme d'états ${S.nom} (● : état initial)`) +
+          table(['Transition', 'Événement'], TR.map((t, i) => [`${i + 1} : ${t[0]} → ${t[2]}`, t[1]])) +
+          `<p>Partant de l'état initial, on observe la suite d'événements : ${v(trace.map(t => t[1]).join(' → '))}.</p>` +
+          ol('Donner la succession des états parcourus.', `Dans quel état se trouve ${S.court} à la fin ?`, ex[0][0], ex[1][0], 'Quel diagramme SysML est utilisé pour décrire ce comportement ?'),
         steps: [
-          ['1. États parcourus', table(['État', 'Événement', 'Nouvel état'], trace)],
-          ['2. État final', `<p>La serrure est dans l'état <b>${s}</b>.</p>`],
-          ['3. Diagramme', '<p>Le diagramme d\'états (stm).</p>']
+          ['1. États parcourus', table(['État', 'Événement', 'Nouvel état'], trace.map((t, k) => [t[0], `${t[1]} (n° ${num(used[k])})`, t[2]]))],
+          ['2. État final', `<p>${Court} est dans l'état <b>${s}</b>.</p>`],
+          [`3. ${ex[0][1]}`, ex[0][2]],
+          [`4. ${ex[1][1]}`, ex[1][2]],
+          ['5. Diagramme', '<p>C\'est un diagramme d\'états (stm, <i>state machine diagram</i>) : il décrit les états d\'un système et les événements qui le font passer de l\'un à l\'autre.</p>']
         ]
       };
     }
