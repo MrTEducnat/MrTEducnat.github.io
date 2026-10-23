@@ -257,6 +257,16 @@ a.go:hover, a.go:focus-visible { background: var(--accent-bg); outline: none; }
   .card { padding: 18px 16px; }
   .card h2 { font-size: 19px; }
 }
+/* Symboles des liaisons : pièce 1 en bleu, pièce 2 en orange */
+svg .l1 { stroke: var(--accent); stroke-width: 2.6; fill: none; stroke-linecap: round; }
+svg .l2 { stroke: var(--val); stroke-width: 2.6; fill: none; stroke-linecap: round; }
+svg .f1 { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2.6; }
+svg .f2 { fill: var(--val-bg); stroke: var(--val); stroke-width: 2.6; }
+.lias { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.lia { border: 1px solid var(--border); border-radius: 8px; padding: 6px 6px 8px; text-align: center; background: var(--surface); }
+.lia b { display: block; font-size: 14px; }
+.lia span { display: block; font-size: 12px; color: var(--muted); }
+svg.liasym { display: block; width: 100%; max-width: 150px; height: auto; margin: 0 auto 4px; }
 </style>
 </head>
 <body>
@@ -464,6 +474,37 @@ const CHAPITRES = [
   'Énergie et chaîne de puissance',
   'Représentation et conception'
 ];
+// ---------- Symboles des liaisons (schémas plans simplifiés, axe principal x horizontal) ----------
+// Pièce 1 en bleu (classe l1), pièce 2 en orange (classe l2)
+const LIA_SVG = {
+  encastrement: `<line class="l2" x1="60" y1="18" x2="60" y2="72"/><line class="l2" x1="20" y1="72" x2="60" y2="72"/><line class="l1" x1="60" y1="45" x2="132" y2="45"/>
+    <path class="pt" d="M60 45 L76 45 L60 31 Z"/>`,
+  pivot: `<rect class="f2" x="55" y="31" width="40" height="28"/><line class="l2" x1="75" y1="59" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>
+    <line class="l1" x1="48" y1="35" x2="48" y2="55"/><line class="l1" x1="102" y1="35" x2="102" y2="55"/>`,
+  glissiere: `<rect class="f2" x="50" y="27" width="50" height="36"/><line class="l2" x1="75" y1="63" x2="75" y2="84"/><rect class="f1" x="14" y="39" width="122" height="12"/>`,
+  helicoidale: `<rect class="f2" x="50" y="29" width="50" height="32"/><line class="l2" x1="75" y1="61" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>
+    <line class="l2" x1="56" y1="58" x2="66" y2="32"/><line class="l2" x1="70" y1="58" x2="80" y2="32"/><line class="l2" x1="84" y1="58" x2="94" y2="32"/>`,
+  pivotglissant: `<rect class="f2" x="55" y="31" width="40" height="28"/><line class="l2" x1="75" y1="59" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>`,
+  rotuledoigt: `<path class="l2" d="M75 26 A20 20 0 1 0 75 64"/><line class="l2" x1="55" y1="45" x2="18" y2="45"/><circle class="f1" cx="75" cy="45" r="13"/><line class="l1" x1="88" y1="45" x2="134" y2="45"/>
+    <line class="l1" x1="75" y1="32" x2="75" y2="14"/><line class="l2" x1="68" y1="10" x2="68" y2="24"/><line class="l2" x1="82" y1="10" x2="82" y2="24"/>`,
+  rotule: `<path class="l2" d="M75 26 A20 20 0 1 0 75 64"/><line class="l2" x1="55" y1="45" x2="18" y2="45"/><circle class="f1" cx="75" cy="45" r="13"/><line class="l1" x1="88" y1="45" x2="134" y2="45"/>`,
+  appuiplan: `<line class="l1" x1="38" y1="39" x2="112" y2="39"/><line class="l1" x1="75" y1="39" x2="75" y2="12"/><line class="l2" x1="38" y1="51" x2="112" y2="51"/><line class="l2" x1="75" y1="51" x2="75" y2="80"/>`,
+  annulaire: `<line class="l2" x1="36" y1="27" x2="114" y2="27"/><line class="l2" x1="36" y1="63" x2="114" y2="63"/><line class="l2" x1="75" y1="63" x2="75" y2="84"/>
+    <circle class="f1" cx="75" cy="45" r="17"/><line class="l1" x1="92" y1="45" x2="136" y2="45"/>`,
+  rectiligne: `<line class="l2" x1="22" y1="62" x2="128" y2="62"/><line class="l2" x1="75" y1="62" x2="75" y2="84"/><rect class="f1" x="46" y="38" width="58" height="24"/>
+    <ellipse class="f1" cx="46" cy="50" rx="6" ry="12"/><line class="l1" x1="75" y1="38" x2="75" y2="12"/>`,
+  ponctuelle: `<line class="l2" x1="22" y1="62" x2="128" y2="62"/><line class="l2" x1="75" y1="62" x2="75" y2="84"/><circle class="f1" cx="75" cy="52" r="10"/><line class="l1" x1="75" y1="42" x2="75" y2="12"/>`
+};
+// Les 11 liaisons : [clé du symbole, nom, degrés de liberté et mouvements]
+const LIAISONS = [['encastrement', 'Encastrement', '0 ddl : aucun mouvement'], ['pivot', 'Pivot', '1 ddl : Rx'], ['glissiere', 'Glissière', '1 ddl : Tx'],
+  ['helicoidale', 'Hélicoïdale', '1 ddl : Rx et Tx liés'], ['pivotglissant', 'Pivot glissant', '2 ddl : Rx, Tx'], ['rotuledoigt', 'Rotule à doigt', '2 ddl : Rx, Ry'],
+  ['rotule', 'Rotule', '3 ddl : Rx, Ry, Rz'], ['appuiplan', 'Appui plan', '3 ddl : Tx, Ty, Rz'], ['annulaire', 'Linéaire annulaire', '4 ddl : Tx, Rx, Ry, Rz'],
+  ['rectiligne', 'Linéaire rectiligne', '4 ddl : Tx, Ty, Rx, Rz'], ['ponctuelle', 'Ponctuelle', '5 ddl : Tx, Ty, Rx, Ry, Rz']];
+// Symbole seul (pour un exercice) et grille de cartes (pour un cours)
+const liaSym = k => `<svg class="liasym" viewBox="0 0 150 92" role="img">${LIA_SVG[k]}</svg>`;
+const LIA_GRID = (cles = LIAISONS.map(l => l[0])) => `<div class="lias">${LIAISONS.filter(l => cles.includes(l[0])).map(([k, n, d]) =>
+  `<div class="lia">${liaSym(k)}<b>${n}</b><span>${d}</span></div>`).join('')}</div>`;
+
 
 // ---------- Mise en forme des fiches ----------
 const H = t => `<h3>${t}</h3>`;
@@ -510,11 +551,11 @@ const EXOS = [
       P('Une <b>classe d\'équivalence</b> regroupe les pièces sans mouvement relatif pendant le fonctionnement (A = {1 ; 4 ; 7}) : vissées, soudées, emmanchées ensemble, elles se comportent comme un seul solide. Les pièces déformables (ressorts, joints) n\'en font pas partie. On commence toujours par le bâti (la partie fixe).') +
       H('2. Liaisons normalisées') +
       P('Une liaison se reconnaît à la forme du contact et aux mouvements qu\'elle autorise. Le nombre de <b>degrés de liberté</b> (ddl) est le nombre de mouvements indépendants possibles : au plus 6 (3 translations T et 3 rotations R).') +
-      table(['Liaison', 'ddl', 'Mouvements'], [['Encastrement (complète)', '0', 'aucun'], ['Pivot', '1', 'Rx'], ['Glissière', '1', 'Tx'], ['Hélicoïdale', '1', 'Rx et Tx liés (vis-écrou)'],
-        ['Pivot glissant', '2', 'Rx, Tx'], ['Rotule', '3', 'Rx, Ry, Rz'], ['Appui plan', '3', 'Tx, Ty, Rz'], ['Linéaire annulaire', '4', 'Tx, Rx, Ry, Rz'], ['Linéaire rectiligne', '4', 'Tx, Ty, Rx, Rz'], ['Ponctuelle', '5', 'Tx, Ty, Rx, Ry, Rz']]) +
-      dSV(340, 130, `<rect class="fillv" x="30" y="40" width="60" height="50"/><line class="line" x1="10" y1="65" x2="110" y2="65"/><line class="line" x1="30" y1="40" x2="30" y2="90"/><line class="line" x1="90" y1="40" x2="90" y2="90"/>
-        <rect class="fillv" x="200" y="45" width="80" height="40"/><line class="line" x1="180" y1="65" x2="300" y2="65"/>` + dT(60, 118, 'pivot (vue de côté)', 'middle', 12) + dT(240, 118, 'glissière', 'middle', 12) + dRot(60, 65, 22, 60, 120, 'arrowv') + dA(250, 30, 300, 30, 'arrowv'),
-        'Symboles simplifiés : la pivot autorise une rotation autour de l\'axe, la glissière une translation le long de l\'axe') +
+      P('Chaque liaison a un symbole normalisé. Sur les schémas ci-dessous, l\'axe principal x est horizontal ; la pièce 1 est en bleu, la pièce 2 en orange.') +
+      LIA_GRID() +
+      UL('<b>Pivot</b> et <b>pivot glissant</b> se ressemblent : les petits traits de part et d\'autre du rectangle (arrêts axiaux) empêchent la translation de la pivot.',
+        '<b>Glissière</b> : l\'arbre est dessiné comme une barre (section non ronde), ce qui interdit la rotation.', '<b>Hélicoïdale</b> : les traits inclinés évoquent le filet d\'une vis ; rotation et translation sont liées par le pas.',
+        '<b>Rotule</b> : une sphère dans une calotte ; un doigt qui coulisse dans une rainure bloque une rotation (rotule à doigt).', '<b>Ponctuelle</b>, <b>linéaire rectiligne</b>, <b>appui plan</b> : un point, une ligne ou une surface de la pièce 1 posé sur le plan de la pièce 2.') +
       table(['Surface de contact', 'Liaison'], [['Cylindre long dans un alésage', 'pivot glissant (pivot si arrêts axiaux)'], ['Plan sur plan', 'appui plan'], ['Sphère dans une sphère', 'rotule'], ['Sphère sur un plan', 'ponctuelle'], ['Cylindre sur un plan', 'linéaire rectiligne']]) +
       H('3. Graphe des liaisons et schéma cinématique') +
       P('Le graphe des liaisons relie les classes d\'équivalence (cercles) par les liaisons (traits nommés). Il n\'y a liaison entre deux classes que si une pièce de l\'une touche une pièce de l\'autre. Le schéma cinématique représente ensuite chaque liaison par son symbole normalisé, dans la bonne orientation, sans respecter l\'échelle.') +
@@ -873,6 +914,8 @@ function toggleChap(btn, open) {
       if (b !== btn) { b.nextElementSibling.hidden = true; b.setAttribute('aria-expanded', 'false'); }
     });
   }
+  // Le chapitre ouvert est mis en couleur, les autres non
+  nav.querySelectorAll('.chap-btn').forEach(b => b.classList.toggle('on', !b.nextElementSibling.hidden));
 }
 
 function show(i) {

@@ -236,6 +236,16 @@ svg .ledoff { fill: var(--side); stroke: var(--muted); }
   .card { padding: 18px 16px; }
   .card h2 { font-size: 19px; }
 }
+/* Symboles des liaisons : pièce 1 en bleu, pièce 2 en orange */
+svg .l1 { stroke: var(--accent); stroke-width: 2.6; fill: none; stroke-linecap: round; }
+svg .l2 { stroke: var(--val); stroke-width: 2.6; fill: none; stroke-linecap: round; }
+svg .f1 { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2.6; }
+svg .f2 { fill: var(--val-bg); stroke: var(--val); stroke-width: 2.6; }
+.lias { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.lia { border: 1px solid var(--border); border-radius: 8px; padding: 6px 6px 8px; text-align: center; background: var(--surface); }
+.lia b { display: block; font-size: 14px; }
+.lia span { display: block; font-size: 12px; color: var(--muted); }
+svg.liasym { display: block; width: 100%; max-width: 150px; height: auto; margin: 0 auto 4px; }
 </style>
 </head>
 <body>
@@ -450,6 +460,37 @@ function dGrid(s, b, lab, cap) {
   return dSV(340, H, g + dT(170, H - 8, `${b} branche${b > 1 ? 's' : ''} en parallèle × ${s} élément${s > 1 ? 's' : ''} en série`, 'middle', 13), cap);
 }
 
+// ---------- Symboles des liaisons (schémas plans simplifiés, axe principal x horizontal) ----------
+// Pièce 1 en bleu (classe l1), pièce 2 en orange (classe l2)
+const LIA_SVG = {
+  encastrement: `<line class="l2" x1="60" y1="18" x2="60" y2="72"/><line class="l2" x1="20" y1="72" x2="60" y2="72"/><line class="l1" x1="60" y1="45" x2="132" y2="45"/>
+    <path class="pt" d="M60 45 L76 45 L60 31 Z"/>`,
+  pivot: `<rect class="f2" x="55" y="31" width="40" height="28"/><line class="l2" x1="75" y1="59" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>
+    <line class="l1" x1="48" y1="35" x2="48" y2="55"/><line class="l1" x1="102" y1="35" x2="102" y2="55"/>`,
+  glissiere: `<rect class="f2" x="50" y="27" width="50" height="36"/><line class="l2" x1="75" y1="63" x2="75" y2="84"/><rect class="f1" x="14" y="39" width="122" height="12"/>`,
+  helicoidale: `<rect class="f2" x="50" y="29" width="50" height="32"/><line class="l2" x1="75" y1="61" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>
+    <line class="l2" x1="56" y1="58" x2="66" y2="32"/><line class="l2" x1="70" y1="58" x2="80" y2="32"/><line class="l2" x1="84" y1="58" x2="94" y2="32"/>`,
+  pivotglissant: `<rect class="f2" x="55" y="31" width="40" height="28"/><line class="l2" x1="75" y1="59" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>`,
+  rotuledoigt: `<path class="l2" d="M75 26 A20 20 0 1 0 75 64"/><line class="l2" x1="55" y1="45" x2="18" y2="45"/><circle class="f1" cx="75" cy="45" r="13"/><line class="l1" x1="88" y1="45" x2="134" y2="45"/>
+    <line class="l1" x1="75" y1="32" x2="75" y2="14"/><line class="l2" x1="68" y1="10" x2="68" y2="24"/><line class="l2" x1="82" y1="10" x2="82" y2="24"/>`,
+  rotule: `<path class="l2" d="M75 26 A20 20 0 1 0 75 64"/><line class="l2" x1="55" y1="45" x2="18" y2="45"/><circle class="f1" cx="75" cy="45" r="13"/><line class="l1" x1="88" y1="45" x2="134" y2="45"/>`,
+  appuiplan: `<line class="l1" x1="38" y1="39" x2="112" y2="39"/><line class="l1" x1="75" y1="39" x2="75" y2="12"/><line class="l2" x1="38" y1="51" x2="112" y2="51"/><line class="l2" x1="75" y1="51" x2="75" y2="80"/>`,
+  annulaire: `<line class="l2" x1="36" y1="27" x2="114" y2="27"/><line class="l2" x1="36" y1="63" x2="114" y2="63"/><line class="l2" x1="75" y1="63" x2="75" y2="84"/>
+    <circle class="f1" cx="75" cy="45" r="17"/><line class="l1" x1="92" y1="45" x2="136" y2="45"/>`,
+  rectiligne: `<line class="l2" x1="22" y1="62" x2="128" y2="62"/><line class="l2" x1="75" y1="62" x2="75" y2="84"/><rect class="f1" x="46" y="38" width="58" height="24"/>
+    <ellipse class="f1" cx="46" cy="50" rx="6" ry="12"/><line class="l1" x1="75" y1="38" x2="75" y2="12"/>`,
+  ponctuelle: `<line class="l2" x1="22" y1="62" x2="128" y2="62"/><line class="l2" x1="75" y1="62" x2="75" y2="84"/><circle class="f1" cx="75" cy="52" r="10"/><line class="l1" x1="75" y1="42" x2="75" y2="12"/>`
+};
+// Les 11 liaisons : [clé du symbole, nom, degrés de liberté et mouvements]
+const LIAISONS = [['encastrement', 'Encastrement', '0 ddl : aucun mouvement'], ['pivot', 'Pivot', '1 ddl : Rx'], ['glissiere', 'Glissière', '1 ddl : Tx'],
+  ['helicoidale', 'Hélicoïdale', '1 ddl : Rx et Tx liés'], ['pivotglissant', 'Pivot glissant', '2 ddl : Rx, Tx'], ['rotuledoigt', 'Rotule à doigt', '2 ddl : Rx, Ry'],
+  ['rotule', 'Rotule', '3 ddl : Rx, Ry, Rz'], ['appuiplan', 'Appui plan', '3 ddl : Tx, Ty, Rz'], ['annulaire', 'Linéaire annulaire', '4 ddl : Tx, Rx, Ry, Rz'],
+  ['rectiligne', 'Linéaire rectiligne', '4 ddl : Tx, Ty, Rx, Rz'], ['ponctuelle', 'Ponctuelle', '5 ddl : Tx, Ty, Rx, Ry, Rz']];
+// Symbole seul (pour un exercice) et grille de cartes (pour un cours)
+const liaSym = k => `<svg class="liasym" viewBox="0 0 150 92" role="img">${LIA_SVG[k]}</svg>`;
+const LIA_GRID = (cles = LIAISONS.map(l => l[0])) => `<div class="lias">${LIAISONS.filter(l => cles.includes(l[0])).map(([k, n, d]) =>
+  `<div class="lia">${liaSym(k)}<b>${n}</b><span>${d}</span></div>`).join('')}</div>`;
+
 // ---------- Chapitres ----------
 const CHAPITRES = [
   'Du besoin à la solution technique',
@@ -505,6 +546,9 @@ const EXOS = [
         statement: `<p>Un petit ballon d'eau chaude a une masse de ${v(mv, 'kg', 1)} lorsqu'il est vide.
           Le volume d'eau qu'il contient est un cylindre de ${v(D, 'mm')} de diamètre et de ${v(H, 'mm')} de hauteur.
           L'eau est chauffée jusqu'à ${v(T, '°C')}. On rappelle que la masse volumique de l'eau est de 1 kg/L.</p>` +
+          dSV(340, 210, `<path class="flow" d="M70 40 V160 A70 14 0 0 0 210 160 V40 Z"/><ellipse class="flow" cx="140" cy="40" rx="70" ry="14"/>` +
+            dCote(70, 198, 210, 198, `d = ${D} mm`) + dCote(232, 40, 232, 160, `h = ${H} mm`) + dT(140, 105, 'eau') + dT(140, 124, `${T} °C`, 'middle', 13),
+            'Le volume d\'eau du ballon est un cylindre') +
           ol('Calculer le volume d\'eau dans le ballon, en litres.',
             'Calculer la masse totale du ballon lorsqu\'il est plein.',
             'Exprimer la température de l\'eau en kelvins.'),
@@ -1028,19 +1072,8 @@ const EXOS = [
     ];
   }),
   Q(3, 'Symboles des liaisons', 'Cours Modélisation cinématique', () => {
-    const S = {
-      'Pivot': '<rect class="line" x="40" y="28" width="40" height="24"/><line class="arrowv" x1="8" y1="40" x2="112" y2="40"/><line class="arrowv" x1="33" y1="31" x2="33" y2="49"/><line class="arrowv" x1="87" y1="31" x2="87" y2="49"/>',
-      'Pivot glissant': '<rect class="line" x="40" y="28" width="40" height="24"/><line class="arrowv" x1="8" y1="40" x2="112" y2="40"/>',
-      'Glissière': '<rect class="line" x="40" y="22" width="40" height="36"/><rect class="arrowv" x="8" y="33" width="104" height="14"/>',
-      'Hélicoïdale': '<rect class="line" x="40" y="26" width="40" height="28"/><line class="arrowv" x1="8" y1="40" x2="112" y2="40"/><path class="line" d="M46 52 L54 28 M58 52 L66 28 M70 52 L78 28"/>',
-      'Rotule': '<path class="line" d="M74 26 A20 20 0 1 0 74 54"/><line class="line" x1="80" y1="40" x2="112" y2="40"/><circle class="arrowv" cx="60" cy="40" r="12"/><line class="arrowv" x1="8" y1="40" x2="48" y2="40"/>',
-      'Appui plan': '<line class="line" x1="25" y1="46" x2="95" y2="46"/><line class="line" x1="60" y1="46" x2="60" y2="72"/><line class="arrowv" x1="35" y1="36" x2="85" y2="36"/><line class="arrowv" x1="60" y1="36" x2="60" y2="8"/>',
-      'Ponctuelle': '<line class="line" x1="25" y1="52" x2="95" y2="52"/><line class="line" x1="60" y1="52" x2="60" y2="74"/><circle class="arrowv" cx="60" cy="42" r="10"/><line class="arrowv" x1="60" y1="32" x2="60" y2="6"/>',
-      'Linéaire annulaire': '<line class="line" x1="30" y1="26" x2="90" y2="26"/><line class="line" x1="30" y1="54" x2="90" y2="54"/><line class="line" x1="60" y1="54" x2="60" y2="74"/><circle class="arrowv" cx="60" cy="40" r="12"/><line class="arrowv" x1="72" y1="40" x2="112" y2="40"/>',
-      'Encastrement': '<line class="line" x1="10" y1="40" x2="60" y2="40"/><line class="arrowv" x1="60" y1="40" x2="60" y2="8"/><path class="pt" d="M60 40 L70 40 L60 30 Z"/><path class="pt" d="M60 40 L50 40 L60 30 Z"/>'
-    };
-    const names = Object.keys(S);
-    return names.map(n => [`Quelle liaison ce symbole représente-t-il ?<svg viewBox="0 0 120 80" class="sym">${S[n]}</svg>`, n, names, '']);
+    // Symboles identiques à ceux du cours (pièce 1 en bleu, pièce 2 en orange)
+    return LIAISONS.map(([k, n]) => [`Quelle liaison ce symbole représente-t-il ?${liaSym(k)}`, n, LIAISONS.map(l => l[1]), '']);
   }),
   Q(3, 'Liaisons de la vie courante', 'TD Modélisation cinématique', fromPairs([
     ['la roue et le cadre d\'un vélo', 'Pivot'], ['l\'écran et le clavier d\'un ordinateur portable', 'Pivot'],
@@ -1294,6 +1327,16 @@ const EXOS = [
       return {
         statement: `<p>Un panneau de ${v(S, 'm²')} et de rendement ${v(eta, '%', 1)} reçoit une irradiance de ${v(IR, 'W/m²')}.
           La chaîne de puissance entre le panneau et les prises a un rendement global ${m('\\eta_G')} = ${v(eG)}.</p>` +
+          dSV(340, 160, `<circle class="fillv" cx="28" cy="30" r="13"/>` + [0, 60, 120, 180, 240, 300].map(a => {
+              const c = Math.cos(a * Math.PI / 180), s = Math.sin(a * Math.PI / 180), f = n => n.toFixed(1);
+              return `<line class="thin" x1="${f(28 + 17 * c)}" y1="${f(30 + 17 * s)}" x2="${f(28 + 23 * c)}" y2="${f(30 + 23 * s)}"/>`;
+            }).join('') + dA(46, 46, 110, 78, 'arrowv') + dT(56, 30, `${IR} W/m²`, 'start', 13) +
+            `<path class="flow" d="M95 112 L125 62 H180 L150 112 Z"/>` + dT(137, 132, `S = ${fr(S, 2)} m²`, 'middle', 13) + dT(137, 150, `η = ${fr(eta, 1)} %`, 'middle', 13) +
+            dA(168, 87, 222, 87) + dT(195, 75, 'P<tspan baseline-shift="sub" font-size="10">p</tspan>', 'middle', 13) +
+            `<rect class="fillv" x="222" y="64" width="68" height="46" rx="6"/>` + dT(256, 83, 'chaîne', 'middle', 13) +
+            dT(256, 101, `η<tspan baseline-shift="sub" font-size="9">G</tspan> = ${fr(eG, 2)}`, 'middle', 12) +
+            dA(290, 87, 334, 87) + dT(312, 75, 'P<tspan baseline-shift="sub" font-size="10">u</tspan>', 'middle', 13),
+            'Chaîne de puissance : du rayonnement solaire jusqu\'aux prises') +
           ol('Calculer la puissance P<sub>p</sub> délivrée par le panneau.', 'En déduire la puissance utile P<sub>u</sub> disponible sur les prises.',
             `On souhaite disposer de ${v(Pu2, 'W')} utiles. Quelle puissance le panneau doit-il délivrer ?`, 'Quelle surface de panneau faut-il alors ?'),
         steps: [
@@ -1572,6 +1615,13 @@ const EXOS = [
       return {
         statement: `<p>Un capteur délivre une tension ${v(Uin, 'V')} vers un CAN de ${v(n, 'bits')}, dont la plage d'entrée va de
           ${v(plage[0], 'V')} à ${v(plage[1], 'V', 1)}. La valeur numérique est N = (U − U<sub>min</sub>) / q, arrondie à l'entier inférieur.</p>` +
+          (xu => dSV(340, 160, dA(8, 45, 92, 45) + dT(50, 36, `U = ${fr(Uin, 2)} V`, 'middle', 13) +
+            `<rect class="flow" x="92" y="20" width="100" height="50" rx="6"/>` + dT(142, 42, 'CAN') + dT(142, 60, `${n} bits`, 'middle', 13) +
+            dA(192, 45, 262, 45) + dT(270, 50, 'N = ?', 'start') +
+            `<line class="ax" x1="30" y1="118" x2="310" y2="118"/><line class="ax" x1="30" y1="110" x2="30" y2="126"/><line class="ax" x1="310" y1="110" x2="310" y2="126"/>` +
+            dT(30, 144, `${fr(plage[0])} V`, 'middle', 13) + dT(310, 144, `${fr(plage[1], 1)} V`, 'middle', 13) + dT(170, 144, 'plage d\'entrée', 'middle', 12) +
+            `<circle class="pt" cx="${xu.toFixed(1)}" cy="118" r="5"/>` + dT(xu, 104, 'U', 'middle', 13),
+            'Le CAN convertit la tension U en un nombre entier N'))(30 + (Uin - plage[0]) / (plage[1] - plage[0]) * 280) +
           ol('Combien de valeurs différentes le CAN peut-il produire ?', 'Calculer la tension pleine échelle puis le quantum q en mV.',
             'Calculer la valeur numérique N en sortie du CAN.', `Écrire N en binaire sur ${n} bits puis en hexadécimal.`),
         steps: [
@@ -1656,6 +1706,15 @@ const EXOS = [
       return {
         statement: `<p>Un thermocouple de type ${tc[0]} délivre une tension proportionnelle à l'écart de température ΔT = T<sub>c</sub> − T<sub>ref</sub>,
           avec une sensibilité de ${v(tc[1], 'µV/°C')}. La référence est à ${v(Tref, '°C')}.</p>` +
+          dSV(340, 172, `<polyline class="c1" points="50,90 120,58 200,58"/><polyline class="c2" points="50,90 120,122 200,122"/><circle class="pt" cx="50" cy="90" r="6"/>` +
+            `<text x="50" y="72" text-anchor="middle" style="font-size:13px">T<tspan baseline-shift="sub" font-size="10">c</tspan> = ?</text>` +
+            `<text x="50" y="118" text-anchor="middle" style="font-size:12px">soudure</text>` +
+            `<text x="130" y="38" text-anchor="middle" style="font-size:13px">thermocouple type ${tc[0]}</text>` +
+            `<rect class="fillv" x="200" y="42" width="34" height="96" rx="4"/>` +
+            `<text x="217" y="160" text-anchor="middle" style="font-size:13px">T<tspan baseline-shift="sub" font-size="10">ref</tspan> = ${Tref} °C</text>` +
+            `<polyline class="line" points="234,58 290,58 290,68"/><polyline class="line" points="234,122 290,122 290,112"/><circle class="thin" cx="290" cy="90" r="22"/>` +
+            `<text x="290" y="95" text-anchor="middle" style="font-size:14px">mV</text>`,
+            'Thermocouple : deux métaux soudés ; la tension dépend de l\'écart T<sub>c</sub> − T<sub>ref</sub>') +
           ol(`Un voltmètre indique ${v(U, 'mV', 1)}. Calculer ΔT.`, 'En déduire la température mesurée T<sub>c</sub>.',
             `Quelle tension obtiendrait-on pour T<sub>c</sub> = ${v(Tc2, '°C')} ?`),
         steps: [
@@ -2065,6 +2124,14 @@ const EXOS = [
         statement: `<p>Le motoréducteur d'une roue du robot mBot est alimenté sous ${v(U, 'V')} et absorbe ${v(I, 'A')}. Le moteur a un rendement de
           ${v(em)}. Le réducteur a un rapport ${v('1/' + k)}. En sortie, la roue tourne à ${v(Ns, 'tr/min')} avec un couple de ${v(Cs, 'N·m', 4)}.
           Le rayon de la roue est de ${v(R * 1000, 'mm', 0)}.</p>` +
+          dSV(340, 145, dA(2, 80, 30, 80) + dT(16, 66, 'P<tspan baseline-shift="sub" font-size="10">a</tspan>', 'middle', 13) +
+            `<rect class="flow" x="30" y="58" width="78" height="44" rx="6"/>` + dT(69, 77, 'moteur', 'middle', 13) + dT(69, 94, `η = ${fr(em, 2)}`, 'middle', 12) +
+            dA(108, 80, 134, 80) + dT(121, 66, 'P<tspan baseline-shift="sub" font-size="10">m</tspan>', 'middle', 13) +
+            `<rect class="flow" x="134" y="58" width="84" height="44" rx="6"/>` + dT(176, 77, 'réducteur', 'middle', 13) + dT(176, 94, `r = 1/${k}`, 'middle', 12) +
+            dA(218, 80, 248, 80) + dT(233, 66, 'P<tspan baseline-shift="sub" font-size="10">s</tspan>', 'middle', 13) +
+            `<circle class="fillv" cx="288" cy="80" r="32"/><line class="thin" x1="288" y1="80" x2="288" y2="48"/><line class="line" x1="250" y1="112" x2="336" y2="112"/>` +
+            dT(294, 70, 'R', 'start', 13) + dRot(288, 80, 42, 150, 30, 'arrowv') + dT(288, 134, `${Ns} tr/min`, 'middle', 13),
+            'Chaîne de puissance d\'une roue du robot mBot') +
           ol('Calculer la puissance absorbée P<sub>a</sub> puis la puissance mécanique P<sub>m</sub> du moteur.', 'Calculer la vitesse de rotation du moteur.',
             'Calculer ω<sub>m</sub> et ω<sub>s</sub>, puis le couple moteur C<sub>m</sub>.', 'Calculer la puissance de sortie et le rendement du réducteur.',
             'Calculer le rendement global du motoréducteur.', 'Calculer la vitesse de déplacement du robot.'),
@@ -2383,6 +2450,11 @@ print(n, x)</pre>` +
           initiale de ${v(L0, 'mm')}. On lui applique un effort de traction de ${v(F, 'N', 0)}.</p>
           <p>Caractéristiques du matériau : module d'Young ${m('E')} = ${v(mat.E, 'GPa', 1)},
           limite élastique ${m('R_e')} = ${v(mat.Re, 'MPa')}.</p>` +
+          dSV(340, 135, `<rect class="fillv" x="48" y="45" width="34" height="50" rx="3"/><rect class="fillv" x="258" y="45" width="34" height="50" rx="3"/>` +
+            `<rect class="flow" x="82" y="56" width="176" height="28"/>` + dA(48, 70, 8, 70, 'arrowv') + dA(292, 70, 332, 70, 'arrowv') +
+            dT(170, 34, `F = ${fr(F)} N`, 'middle', 13) + dA(230, 70, 230, 57, 'thin') + dA(230, 70, 230, 83, 'thin') + dT(222, 75, `d = ${d} mm`, 'end', 13) +
+            dCote(82, 118, 258, 118, `L<tspan baseline-shift="sub" font-size="10">0</tspan> = ${L0} mm`),
+            'Éprouvette de traction, tirée par les mors à ses deux extrémités') +
           ol(`Calculer la section ${m('S')} de l'éprouvette en mm².`, `Calculer la contrainte normale ${m('\\sigma')} en MPa.`,
             'L\'éprouvette reste-t-elle dans le domaine élastique ?', `Si oui, calculer l'allongement ${m('\\Delta L')} de l'éprouvette.`),
         steps: [
@@ -2550,6 +2622,8 @@ function toggleChap(btn, open) {
       if (b !== btn) { b.nextElementSibling.hidden = true; b.setAttribute('aria-expanded', 'false'); }
     });
   }
+  // Le chapitre ouvert est mis en couleur, les autres non
+  nav.querySelectorAll('.chap-btn').forEach(b => b.classList.toggle('on', !b.nextElementSibling.hidden));
 }
 
 function show(i) {

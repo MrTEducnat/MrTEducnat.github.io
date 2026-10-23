@@ -1085,6 +1085,8 @@ function toggleChap(btn, open) {
       if (b !== btn) { b.nextElementSibling.hidden = true; b.setAttribute('aria-expanded', 'false'); }
     });
   }
+  // Le chapitre ouvert est mis en couleur, les autres non
+  nav.querySelectorAll('.chap-btn').forEach(b => b.classList.toggle('on', !b.nextElementSibling.hidden));
 }
 
 function show(i) {

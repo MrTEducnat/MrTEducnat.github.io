@@ -238,6 +238,16 @@ svg .ledoff { fill: var(--side); stroke: var(--muted); }
   .card { padding: 18px 16px; }
   .card h2 { font-size: 19px; }
 }
+/* Symboles des liaisons : pièce 1 en bleu, pièce 2 en orange */
+svg .l1 { stroke: var(--accent); stroke-width: 2.6; fill: none; stroke-linecap: round; }
+svg .l2 { stroke: var(--val); stroke-width: 2.6; fill: none; stroke-linecap: round; }
+svg .f1 { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2.6; }
+svg .f2 { fill: var(--val-bg); stroke: var(--val); stroke-width: 2.6; }
+.lias { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.lia { border: 1px solid var(--border); border-radius: 8px; padding: 6px 6px 8px; text-align: center; background: var(--surface); }
+.lia b { display: block; font-size: 14px; }
+.lia span { display: block; font-size: 12px; color: var(--muted); }
+svg.liasym { display: block; width: 100%; max-width: 150px; height: auto; margin: 0 auto 4px; }
 </style>
 </head>
 <body>
@@ -459,6 +469,37 @@ function dRot(cx, cy, r, a1, a2, cls = 'arrow') {
   return `<path class="${cls}" d="M${x1.toFixed(1)} ${y1.toFixed(1)} A${r} ${r} 0 ${big} ${sweep} ${x2.toFixed(1)} ${y2.toFixed(1)}"/>` + dA(xp, yp, x2, y2, cls).replace(/<line[^>]*\/>/, '');
 }
 
+// ---------- Symboles des liaisons (schémas plans simplifiés, axe principal x horizontal) ----------
+// Pièce 1 en bleu (classe l1), pièce 2 en orange (classe l2)
+const LIA_SVG = {
+  encastrement: `<line class="l2" x1="60" y1="18" x2="60" y2="72"/><line class="l2" x1="20" y1="72" x2="60" y2="72"/><line class="l1" x1="60" y1="45" x2="132" y2="45"/>
+    <path class="pt" d="M60 45 L76 45 L60 31 Z"/>`,
+  pivot: `<rect class="f2" x="55" y="31" width="40" height="28"/><line class="l2" x1="75" y1="59" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>
+    <line class="l1" x1="48" y1="35" x2="48" y2="55"/><line class="l1" x1="102" y1="35" x2="102" y2="55"/>`,
+  glissiere: `<rect class="f2" x="50" y="27" width="50" height="36"/><line class="l2" x1="75" y1="63" x2="75" y2="84"/><rect class="f1" x="14" y="39" width="122" height="12"/>`,
+  helicoidale: `<rect class="f2" x="50" y="29" width="50" height="32"/><line class="l2" x1="75" y1="61" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>
+    <line class="l2" x1="56" y1="58" x2="66" y2="32"/><line class="l2" x1="70" y1="58" x2="80" y2="32"/><line class="l2" x1="84" y1="58" x2="94" y2="32"/>`,
+  pivotglissant: `<rect class="f2" x="55" y="31" width="40" height="28"/><line class="l2" x1="75" y1="59" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>`,
+  rotuledoigt: `<path class="l2" d="M75 26 A20 20 0 1 0 75 64"/><line class="l2" x1="55" y1="45" x2="18" y2="45"/><circle class="f1" cx="75" cy="45" r="13"/><line class="l1" x1="88" y1="45" x2="134" y2="45"/>
+    <line class="l1" x1="75" y1="32" x2="75" y2="14"/><line class="l2" x1="68" y1="10" x2="68" y2="24"/><line class="l2" x1="82" y1="10" x2="82" y2="24"/>`,
+  rotule: `<path class="l2" d="M75 26 A20 20 0 1 0 75 64"/><line class="l2" x1="55" y1="45" x2="18" y2="45"/><circle class="f1" cx="75" cy="45" r="13"/><line class="l1" x1="88" y1="45" x2="134" y2="45"/>`,
+  appuiplan: `<line class="l1" x1="38" y1="39" x2="112" y2="39"/><line class="l1" x1="75" y1="39" x2="75" y2="12"/><line class="l2" x1="38" y1="51" x2="112" y2="51"/><line class="l2" x1="75" y1="51" x2="75" y2="80"/>`,
+  annulaire: `<line class="l2" x1="36" y1="27" x2="114" y2="27"/><line class="l2" x1="36" y1="63" x2="114" y2="63"/><line class="l2" x1="75" y1="63" x2="75" y2="84"/>
+    <circle class="f1" cx="75" cy="45" r="17"/><line class="l1" x1="92" y1="45" x2="136" y2="45"/>`,
+  rectiligne: `<line class="l2" x1="22" y1="62" x2="128" y2="62"/><line class="l2" x1="75" y1="62" x2="75" y2="84"/><rect class="f1" x="46" y="38" width="58" height="24"/>
+    <ellipse class="f1" cx="46" cy="50" rx="6" ry="12"/><line class="l1" x1="75" y1="38" x2="75" y2="12"/>`,
+  ponctuelle: `<line class="l2" x1="22" y1="62" x2="128" y2="62"/><line class="l2" x1="75" y1="62" x2="75" y2="84"/><circle class="f1" cx="75" cy="52" r="10"/><line class="l1" x1="75" y1="42" x2="75" y2="12"/>`
+};
+// Les 11 liaisons : [clé du symbole, nom, degrés de liberté et mouvements]
+const LIAISONS = [['encastrement', 'Encastrement', '0 ddl : aucun mouvement'], ['pivot', 'Pivot', '1 ddl : Rx'], ['glissiere', 'Glissière', '1 ddl : Tx'],
+  ['helicoidale', 'Hélicoïdale', '1 ddl : Rx et Tx liés'], ['pivotglissant', 'Pivot glissant', '2 ddl : Rx, Tx'], ['rotuledoigt', 'Rotule à doigt', '2 ddl : Rx, Ry'],
+  ['rotule', 'Rotule', '3 ddl : Rx, Ry, Rz'], ['appuiplan', 'Appui plan', '3 ddl : Tx, Ty, Rz'], ['annulaire', 'Linéaire annulaire', '4 ddl : Tx, Rx, Ry, Rz'],
+  ['rectiligne', 'Linéaire rectiligne', '4 ddl : Tx, Ty, Rx, Rz'], ['ponctuelle', 'Ponctuelle', '5 ddl : Tx, Ty, Rx, Ry, Rz']];
+// Symbole seul (pour un exercice) et grille de cartes (pour un cours)
+const liaSym = k => `<svg class="liasym" viewBox="0 0 150 92" role="img">${LIA_SVG[k]}</svg>`;
+const LIA_GRID = (cles = LIAISONS.map(l => l[0])) => `<div class="lias">${LIAISONS.filter(l => cles.includes(l[0])).map(([k, n, d]) =>
+  `<div class="lia">${liaSym(k)}<b>${n}</b><span>${d}</span></div>`).join('')}</div>`;
+
 // ---------- Chapitres ----------
 const CHAPITRES = [
   'Modélisation cinématique',
@@ -488,19 +529,8 @@ const EXOS = [
     ];
   }),
   Q(1, 'Symboles normalisés des liaisons', 'BO 3.2.2 · annales : schémas cinématiques (serrure 2021, Hélilock 2026)', () => {
-    const S = {
-      'Pivot': '<rect class="line" x="40" y="28" width="40" height="24"/><line class="arrowv" x1="8" y1="40" x2="112" y2="40"/><line class="arrowv" x1="33" y1="31" x2="33" y2="49"/><line class="arrowv" x1="87" y1="31" x2="87" y2="49"/>',
-      'Pivot glissant': '<rect class="line" x="40" y="28" width="40" height="24"/><line class="arrowv" x1="8" y1="40" x2="112" y2="40"/>',
-      'Glissière': '<rect class="line" x="40" y="22" width="40" height="36"/><rect class="arrowv" x="8" y="33" width="104" height="14"/>',
-      'Hélicoïdale': '<rect class="line" x="40" y="26" width="40" height="28"/><line class="arrowv" x1="8" y1="40" x2="112" y2="40"/><path class="line" d="M46 52 L54 28 M58 52 L66 28 M70 52 L78 28"/>',
-      'Rotule': '<path class="line" d="M74 26 A20 20 0 1 0 74 54"/><line class="line" x1="80" y1="40" x2="112" y2="40"/><circle class="arrowv" cx="60" cy="40" r="12"/><line class="arrowv" x1="8" y1="40" x2="48" y2="40"/>',
-      'Appui plan': '<line class="line" x1="25" y1="46" x2="95" y2="46"/><line class="line" x1="60" y1="46" x2="60" y2="72"/><line class="arrowv" x1="35" y1="36" x2="85" y2="36"/><line class="arrowv" x1="60" y1="36" x2="60" y2="8"/>',
-      'Ponctuelle': '<line class="line" x1="25" y1="52" x2="95" y2="52"/><line class="line" x1="60" y1="52" x2="60" y2="74"/><circle class="arrowv" cx="60" cy="42" r="10"/><line class="arrowv" x1="60" y1="32" x2="60" y2="6"/>',
-      'Linéaire annulaire': '<line class="line" x1="30" y1="26" x2="90" y2="26"/><line class="line" x1="30" y1="54" x2="90" y2="54"/><line class="line" x1="60" y1="54" x2="60" y2="74"/><circle class="arrowv" cx="60" cy="40" r="12"/><line class="arrowv" x1="72" y1="40" x2="112" y2="40"/>',
-      'Encastrement': '<line class="line" x1="10" y1="40" x2="60" y2="40"/><line class="arrowv" x1="60" y1="40" x2="60" y2="8"/><path class="pt" d="M60 40 L70 40 L60 30 Z"/><path class="pt" d="M60 40 L50 40 L60 30 Z"/>'
-    };
-    const names = Object.keys(S);
-    return names.map(n => [`Quelle liaison ce symbole représente-t-il ?<svg viewBox="0 0 120 80" class="sym">${S[n]}</svg>`, n, names, '']);
+    // Symboles identiques à ceux du cours (pièce 1 en bleu, pièce 2 en orange)
+    return LIAISONS.map(([k, n]) => [`Quelle liaison ce symbole représente-t-il ?${liaSym(k)}`, n, LIAISONS.map(l => l[1]), '']);
   }),
   {
     chap: 1,
@@ -562,6 +592,15 @@ const EXOS = [
       return {
         statement: `<p>Le rotor d'une éolienne a un diamètre de ${v(D, 'm')} et tourne à ${v(N, 'tr/min', 1)} pour un vent de ${v(Vv, 'm/s', 1)}.
           Le TSR (Tip Speed Ratio) est le rapport entre la vitesse en bout de pale et la vitesse du vent.</p>` +
+          dSV(340, 240, `<circle class="c3" cx="150" cy="105" r="85"/><line class="line" x1="150" y1="115" x2="150" y2="232"/><line class="line" x1="128" y1="232" x2="172" y2="232"/>` +
+            [90, 210, 330].map(a => {
+              const c = Math.cos(a * Math.PI / 180), s = Math.sin(a * Math.PI / 180), f = n => n.toFixed(1);
+              return `<path class="fillv" d="M${f(150 + 7 * s)} ${f(105 + 7 * c)} L${f(150 + 85 * c)} ${f(105 - 85 * s)} L${f(150 - 7 * s)} ${f(105 - 7 * c)} Z"/>`;
+            }).join('') + `<circle class="flow" cx="150" cy="105" r="10"/>` +
+            `<circle class="pt" cx="223.6" cy="147.5" r="5"/>` + dT(232, 150, 'M', 'start', 13) + dA(223.6, 147.5, 201.1, 186.5) +
+            dT(196, 202, 'v<tspan baseline-shift="sub" font-size="10">M</tspan>', 'end', 13) +
+            dRot(150, 105, 100, 140, 100, 'arrowv') + dT(98, 30, 'ω', 'middle', 15) + dCote(262, 20, 262, 190, `D = ${D} m`),
+            'Rotor vu de face : le point M en bout de pale décrit un cercle') +
           ol('Quel est le mouvement du rotor par rapport à la nacelle ? Quelle est la trajectoire d\'un point M en bout de pale ?', 'Calculer la vitesse angulaire du rotor.',
             'Calculer la vitesse tangentielle du point M en m/s puis en km/h.', 'Calculer le TSR.'),
         steps: [
@@ -644,6 +683,13 @@ const EXOS = [
         statement: `<p>Une ligne de ${v(n, 'panneaux')} solaires doit être orientée. Chaque panneau oppose un couple résistant de ${v(Cp, 'N·m')} (vent fort).
           La structure doit tourner de ${v(ang, '°')} en ${v(dur, 'min')}. Le motoréducteur a un rapport de réduction ${v('1/' + R)}, un rendement de ${v(eta)}
           et le moteur a une puissance nominale de ${v(PN, 'W')}.</p>` +
+          dSV(340, 150, `<rect class="flow" x="6" y="40" width="72" height="44" rx="6"/>` + dT(42, 67, 'moteur', 'middle', 13) + dA(78, 62, 104, 62) +
+            `<rect class="flow" x="104" y="40" width="86" height="44" rx="6"/>` + dT(147, 59, 'réducteur', 'middle', 13) + dT(147, 76, `1/${R}`, 'middle', 12) +
+            `<line class="thin" x1="190" y1="62" x2="334" y2="62"/>` +
+            Array.from({ length: 4 }, (_, i) => `<path class="fillv" d="M${220 + i * 28} 84 L${230 + i * 28} 40 H${246 + i * 28} L${236 + i * 28} 84 Z"/>`).join('') +
+            dT(42, 104, `${PN} W`, 'middle', 12) + dT(147, 104, `η = ${fr(eta, 2)}`, 'middle', 12) +
+            dT(278, 106, `${n} panneaux`, 'middle', 12) + dT(278, 122, `${Cp} N·m chacun`, 'middle', 12) + dT(278, 138, `${ang}° en ${dur} min`, 'middle', 12),
+            'Le motoréducteur fait tourner toute la ligne de panneaux') +
           ol('Calculer le couple utile nécessaire pour une ligne.', 'Calculer la vitesse de rotation imposée N<sub>u</sub> en tr/min, puis ω<sub>u</sub> en rad/s.',
             'Calculer la puissance utile P<sub>u</sub>.', 'Calculer la puissance que doit fournir le moteur.', 'Calculer la vitesse du moteur.', 'Combien de lignes un moteur peut-il manœuvrer ?'),
         steps: [
@@ -667,6 +713,15 @@ const EXOS = [
       return {
         statement: `<p>Un moteur tournant à ${v(N, 'tr/min', 0)} entraîne une vis trapézoïdale de pas ${v(p, 'mm')}. L'écrou, guidé en translation, déplace un mors
           qui doit exercer un effort de ${v(F, 'N', 0)}. Le rendement du système vis-écrou est de ${v(eta)}. La course du mors est de ${v(c, 'mm')}.</p>` +
+          dSV(340, 178, `<rect class="flow" x="6" y="68" width="56" height="40" rx="5"/>` + dT(34, 93, 'M', 'middle', 15) + dT(34, 128, `${N} tr/min`, 'middle', 12) +
+            `<rect class="thin" x="62" y="80" width="268" height="16"/>` +
+            Array.from({ length: 22 }, (_, i) => `<line class="thin" x1="${66 + i * 12}" y1="96" x2="${72 + i * 12}" y2="80"/>`).join('') +
+            `<line class="line" x1="100" y1="114" x2="300" y2="114"/>` +
+            `<rect class="fillv" x="130" y="66" width="52" height="44" rx="3"/><rect class="fillv" x="182" y="24" width="10" height="42"/>` +
+            dT(156, 130, 'écrou', 'middle', 12) + dT(198, 22, 'mors', 'start', 12) +
+            dA(244, 42, 194, 42, 'arrowv') + dT(250, 46, `F = ${fr(F)} N`, 'start', 13) +
+            dT(262, 130, `pas p = ${p} mm`, 'middle', 12) + dA(156, 152, 236, 152, 'thin') + dT(196, 170, `course ${c} mm`, 'middle', 12),
+            'La vis tourne ; l\'écrou, guidé en translation, avance et pousse le mors') +
           ol('Quelle liaison y a-t-il entre la vis et l\'écrou ?', 'Calculer la vitesse de translation de l\'écrou en mm/s.', 'Calculer la puissance utile nécessaire.',
             'Calculer la puissance et le couple que doit fournir le moteur.', 'Combien de temps dure la course complète ?'),
         steps: [
@@ -716,6 +771,12 @@ const EXOS = [
       return {
         statement: `<p>Une vis sans fin de diamètre extérieur ${v(D, 'mm')}, de diamètre d'âme ${v(dA, 'mm')} et de pas ${v(p, 'mm')} transporte des intrants.
           Son coefficient de remplissage est de ${v(kr)}. Elle tourne à ${v(N, 'tr/min')}. On doit doser ${v(Q, 'm³/h', 1)}.</p>` +
+          dSV(340, 205, `<circle class="flow" cx="100" cy="100" r="80"/><circle class="fillv" cx="100" cy="100" r="${(80 * dA / D).toFixed(1)}"/>` +
+            dCote(20, 196, 180, 196, `D = ${D} mm`) + `<line class="thin" x1="100" y1="100" x2="196" y2="60"/>` + dT(200, 62, `âme : d = ${dA} mm`, 'start', 12) +
+            `<rect class="fillv" x="200" y="138" width="136" height="14"/>` +
+            [214, 254, 294].map(x => `<line class="line" x1="${x}" y1="118" x2="${x + 12}" y2="172"/>`).join('') +
+            dCote(220, 196, 260, 196, `p = ${p} mm`),
+            'Vis de dosage : section (à gauche) et vue de côté (à droite)') +
           ol('Calculer le volume transporté par tour, en m³.', 'Calculer le débit horaire de la vis.', 'La vis peut-elle doser le volume attendu ?',
             'Quelle vitesse de rotation minimale faudrait-il ?'),
         steps: [
@@ -940,6 +1001,12 @@ const EXOS = [
       return {
         statement: `<p>Un vérin hydraulique doit fournir un effort de poussée de ${v(F / 1000, 'kN')} sous une pression de ${v(p, 'bar')}.
           Les diamètres de piston disponibles sont (en mm) : ${Ds.join(', ')}. La tige a un diamètre égal à la moitié de celui du piston (arrondi).</p>` +
+          dSV(340, 150, `<rect class="flow" x="40" y="50" width="100" height="80"/><rect class="thin" x="40" y="50" width="180" height="80"/>` +
+            `<rect class="fillv" x="140" y="50" width="16" height="80"/><rect class="fillv" x="156" y="80" width="144" height="20"/>` +
+            dA(60, 20, 60, 50) + dT(70, 28, 'huile sous pression', 'start', 12) + dT(82, 95, `p = ${p} bar`, 'middle', 13) +
+            dCote(130, 52, 130, 128, '') + dT(124, 122, 'D', 'end', 13) + dT(262, 124, 'tige : d = D/2', 'middle', 12) +
+            dA(300, 90, 334, 90, 'arrowv') + dT(318, 80, 'F', 'middle', 13),
+            'Vérin hydraulique : la pression agit sur la section du piston') +
           ol('Calculer la section minimale du piston en mm².', 'En déduire le diamètre minimal du piston et choisir le vérin.', 'Calculer l\'effort réel en sortie de tige avec ce vérin.',
             'Calculer l\'effort lors de la rentrée de la tige.'),
         steps: [
@@ -1268,6 +1335,14 @@ const EXOS = [
       return {
         statement: `<p>La chaîne de puissance d'un treuil comporte un moteur (rendement ${v(em)}), un réducteur (${v(er)}) et le treuil lui-même (${v(et)}).
           Le moteur absorbe ${v(Pa, 'W', 0)} sur le réseau.</p>` +
+          (() => {
+            const box = (x, w, t, eta) => `<rect class="flow" x="${x}" y="38" width="${w}" height="44" rx="6"/>` + dT(x + w / 2, 57, t, 'middle', 13) +
+              dT(x + w / 2, 74, `η = ${fr(eta, 2)}`, 'middle', 12) + dA(x + w / 2, 82, x + w / 2, 110, 'arrowv') + dT(x + w / 2, 126, 'pertes', 'middle', 12);
+            const sub = (x, s) => dT(x, 33, `P<tspan baseline-shift="sub" font-size="10">${s}</tspan>`, 'middle', 13);
+            return dSV(340, 135, dA(2, 60, 24, 60) + sub(12, 'a') + box(24, 72, 'moteur', em) + dA(96, 60, 120, 60) + sub(108, 'm') +
+              box(120, 80, 'réducteur', er) + dA(200, 60, 224, 60) + sub(212, 'r') + box(224, 66, 'treuil', et) + dA(290, 60, 334, 60) + sub(312, 't'),
+              'Chaîne de puissance du treuil : à chaque étape, une partie de la puissance est perdue');
+          })() +
           ol('Calculer la puissance en sortie de chaque élément.', 'Calculer le rendement global.', 'Calculer la puissance totale perdue.', 'Sous quelle forme cette énergie est-elle perdue ?'),
         steps: [
           ['1. Puissances', M(`P_m = ${tx(Pa)} \\times ${tx(em)} = ${tx(Pm, 0)}${u('W')} \\quad P_r = ${tx(Pm, 0)} \\times ${tx(er)} = ${tx(Pr, 0)}${u('W')} \\quad P_t = \\boxed{${tx(Pt, 0)}${u('W')}}`)],
@@ -1520,6 +1595,8 @@ function toggleChap(btn, open) {
       if (b !== btn) { b.nextElementSibling.hidden = true; b.setAttribute('aria-expanded', 'false'); }
     });
   }
+  // Le chapitre ouvert est mis en couleur, les autres non
+  nav.querySelectorAll('.chap-btn').forEach(b => b.classList.toggle('on', !b.nextElementSibling.hidden));
 }
 
 function show(i) {

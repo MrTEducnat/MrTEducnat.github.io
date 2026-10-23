@@ -588,6 +588,11 @@ const EXOS = [
       return {
         statement: `<p>Une chaîne de puissance comporte, en série :</p>` + table(B.map(b => b[0]), [B.map(b => frf(b[1], 2))]) +
           `<p>Elle absorbe ${v(Pa, 'kW')} en entrée.</p>` +
+          dSV(340, 240, dA(170, 6, 170, 30) + dT(180, 22, `P<tspan baseline-shift="sub" font-size="10">a</tspan> = ${fr(Pa)} kW`, 'start', 13) +
+            B.map((b, i) => `<rect class="flow" x="70" y="${30 + i * 48}" width="200" height="28" rx="6"/>` + dT(170, 49 + i * 48, `${b[0]} (η = ${frf(b[1], 2)})`, 'middle', 13) +
+              (i < B.length - 1 ? dA(170, 58 + i * 48, 170, 78 + i * 48) : '')).join('') +
+            dA(170, 202, 170, 228) + dT(180, 222, 'P<tspan baseline-shift="sub" font-size="10">u</tspan> = ?', 'start', 13),
+            'La puissance traverse les éléments l\'un après l\'autre') +
           ol('Calculer le rendement global de la chaîne.', 'Calculer la puissance utile en sortie.', 'Calculer les pertes totales.',
             `Quelle puissance faut-il fournir en entrée pour obtenir ${v(Pu2, 'kW')} en sortie ?`),
         steps: [
@@ -846,6 +851,15 @@ const EXOS = [
         statement: `<p>Un mur non isolé de ${v(S, 'm²')} a une résistance thermique totale ${m(`R_0 = ${tx(R0, 2)}${u('m²·K/W')}`)}.
           On veut atteindre ${m(`U = ${tx(Uc, 2)}${u('W/(m²·K)')}`)} en ajoutant de la ${iso[0]} (${m(`\\lambda = ${tx(iso[1], 3)}${u('W/(m·K)')}`)}).
           L'écart de température moyen est de ${v(dT, '°C')}.</p>` +
+          dSV(340, 190, `<rect class="fillv" x="112" y="20" width="56" height="130"/><rect class="flow" x="168" y="20" width="64" height="130"/>` +
+            `<text x="140" y="80" text-anchor="middle" style="font-size:13px">mur</text>` +
+            `<text x="140" y="98" text-anchor="middle" style="font-size:13px">R<tspan baseline-shift="sub" font-size="10">0</tspan></text>` +
+            `<text x="200" y="80" text-anchor="middle" style="font-size:13px">isolant</text><text x="200" y="98" text-anchor="middle" style="font-size:13px">λ</text>` +
+            `<text x="56" y="50" text-anchor="middle" style="font-size:14px">intérieur</text><text x="286" y="50" text-anchor="middle" style="font-size:14px">extérieur</text>` +
+            dA(20, 112, 104, 112, 'arrowv') + dA(240, 112, 324, 112, 'arrowv') +
+            `<text x="62" y="102" text-anchor="middle" style="font-size:13px">flux φ</text><text x="282" y="102" text-anchor="middle" style="font-size:13px">flux φ</text>` +
+            dCote(168, 172, 232, 172, 'e = ?'),
+            `Mur existant et couche de ${iso[0]} à ajouter`) +
           ol('Calculer la résistance totale à atteindre.', 'En déduire la résistance que doit apporter l\'isolant.', 'Calculer l\'épaisseur d\'isolant, puis choisir l\'épaisseur commerciale (multiple de 20 mm à partir de 60 mm).',
             'Comparer le flux traversant le mur avant et après travaux, avec l\'épaisseur calculée.'),
         steps: [
@@ -870,6 +884,16 @@ const EXOS = [
         statement: `<p>On étudie les déperditions d'une maison :</p>` + table(['Paroi', 'S (m²)', 'U (W/(m²·K))'], P.map(p => [p[0], fr(p[1], 1), fr(p[2], 2)])) +
           `<p>Le débit de ventilation est ${v(Qv, 'm³/h')}. Les déperditions par renouvellement d'air valent ${m(`D_v = 0{,}34 \\times Q_v`)} (en W/K, ${m('Q_v')} en m³/h).
           Température intérieure : ${v(Ti, '°C')} ; température extérieure de base : ${v(Te, '°C')}.</p>` +
+          dSV(340, 235, `<rect class="thin" x="90" y="100" width="160" height="90"/><path class="line" d="M78 100 L170 40 L262 100"/><rect class="flow" x="112" y="124" width="36" height="34"/>` +
+            `<line class="line" x1="10" y1="190" x2="330" y2="190"/>` +
+            dT(205, 152, `T<tspan baseline-shift="sub" font-size="10">i</tspan> = ${Ti} °C`, 'middle', 13) +
+            dT(296, 50, `T<tspan baseline-shift="sub" font-size="10">e</tspan> = ${String(Te).replace('-', '−')} °C`, 'middle', 13) +
+            dA(128, 76, 104, 44, 'arrowv') + dT(80, 34, 'toiture', 'middle', 13) +
+            dA(128, 141, 50, 141, 'arrowv') + dT(46, 132, 'fenêtres', 'middle', 13) +
+            dA(238, 172, 292, 172, 'arrowv') + dT(296, 176, 'murs', 'start', 13) +
+            dA(226, 118, 296, 118, 'arrowv') + dT(334, 108, 'ventilation', 'end', 13) +
+            dA(170, 182, 170, 222, 'arrowv') + dT(180, 216, 'plancher bas', 'start', 13),
+            'La chaleur s\'échappe par toutes les parois et par le renouvellement d\'air') +
           ol('Calculer les déperditions par chaque paroi (D = U × S).', 'Calculer les déperditions par ventilation.', 'Calculer les déperditions totales en W/K.',
             'En déduire la puissance de chauffage nécessaire.', 'Quel poste faut-il traiter en priorité ?'),
         steps: [
@@ -1139,6 +1163,10 @@ const EXOS = [
       return {
         statement: `<p>Un bassin rectangulaire mesure ${v(L, 'm')} × ${v(l, 'm', 1)}, avec une profondeur moyenne de ${v(p, 'm', 1)}.
           La pompe de filtration débite ${v(Q, 'm³/h')}. Pour la vidange, l'eau s'écoule dans une canalisation de ${v(d, 'mm')} de diamètre intérieur à la vitesse de ${v(vit, 'm/s', 1)}.</p>` +
+          dSV(340, 180, `<path class="flow" d="M80 86 L130 50 H286 L236 86 Z"/><path class="flow" d="M236 86 L286 50 V110 L236 146 Z"/><rect class="flow" x="80" y="86" width="156" height="60"/>` +
+            dCote(80, 172, 236, 172, `L = ${L} m`) + dCote(64, 86, 64, 146, '') + dT(58, 121, `p = ${fr(p, 1)} m`, 'end', 13) +
+            dA(270, 134.5, 246, 152, 'thin') + dA(270, 134.5, 294, 117, 'thin') + dT(272, 166, `l = ${fr(l, 1)} m`, 'start', 13),
+            'Bassin rectangulaire (dimensions intérieures)') +
           ol('Calculer le volume d\'eau du bassin.', 'Calculer la durée d\'un cycle de filtration (tout le volume filtré une fois).',
             'La réglementation impose de filtrer tout le volume en 4 h au plus pour un bassin public. Quel débit faudrait-il ?',
             'Calculer la section de la canalisation de vidange puis le débit de vidange en m³/h.', 'Calculer la durée de la vidange.'),
@@ -1482,6 +1510,12 @@ const EXOS = [
       return {
         statement: `<p>Un bassin d'essai de ${v(L, 'm', 1)} × ${v(l, 'm', 1)} est rempli d'eau sur ${v(h, 'm', 1)} de hauteur. Il repose sur un radier en béton armé de
           ${v(e * 100, 'cm', 0)} d'épaisseur (poids volumique 25 kN/m³) de même surface. Le sol supporte au maximum ${v(qa, 'kPa')}. On prend g = 9,81 N/kg.</p>` +
+          dSV(340, 192, `<rect class="flow" x="106" y="50" width="198" height="80"/><polyline class="line" points="104,40 104,130 306,130 306,40"/>` +
+            `<rect class="fillv" x="96" y="130" width="218" height="20"/>` + dT(205, 95, 'eau') + dT(205, 145, 'radier', 'middle', 12) +
+            `<line class="line" x1="80" y1="150" x2="330" y2="150"/>` + Array.from({ length: 13 }, (_, i) => `<line class="thin" x1="${86 + i * 19}" y1="150" x2="${78 + i * 19}" y2="158"/>`).join('') +
+            dCote(90, 50, 90, 130, '') + dT(84, 94, `h = ${fr(h, 1)} m`, 'end', 13) + dT(84, 145, `e = ${fr(e * 100, 0)} cm`, 'end', 13) +
+            dCote(96, 182, 314, 182, `L = ${fr(L, 1)} m`) + dT(330, 170, 'sol', 'end', 12),
+            'Coupe du bassin posé sur son radier') +
           ol('Calculer le volume puis le poids de l\'eau, en kN.', 'Calculer le poids du radier.', 'Calculer la pression exercée sur le sol, en kPa.', 'Le sol convient-il ?'),
         steps: [
           ['1. Eau', M(`V = ${tx(L, 1)} \\times ${tx(l, 1)} \\times ${tx(h, 1)} = ${tx(Ve, 2)}${u('m³')}`) + M(`P_e = m \\times g = ${tx(Ve * 1000, 0)} \\times 9{,}81 = \\boxed{${tx(Pe, 1)}${u('kN')}}`)],
@@ -1505,6 +1539,13 @@ const EXOS = [
           Le cahier des charges impose un coefficient de sécurité d'au moins ${v(sMin, '', 1)}. La simulation donne aussi les flèches maximales des trois portées :</p>` +
           table(['Portée', 'Longueur', 'Flèche maximale'], spans.map(p => [p.n, `${fr(p.Lm, 1)} m`, `${fr(p.f, 1)} mm`])) +
           `<p>L'indice de rigidité vaut ${m('I_s = \\frac{L}{f}')} ; la norme préconise ${m(`I_s \\geq ${lim}`)}.</p>` +
+          dSV(340, 122, `<line class="line" x1="20" y1="50" x2="320" y2="50"/>` + [20, 120, 220, 320].map(x => dAppui(x, 50)).join('') +
+            spans.map((p, i) => {
+              const x0 = 20 + i * 100;
+              return `<path class="c3" d="M${x0} 50 Q${x0 + 50} 78 ${x0 + 50 + 50} 50"/>` +
+                dT(x0 + 50, 82, `f<tspan baseline-shift="sub" font-size="9">${p.n}</tspan>`, 'middle', 12) + dCote(x0, 110, x0 + 100, 110, `${fr(p.Lm, 1)} m`);
+            }).join(''),
+            'Passerelle sur 4 appuis : déformée exagérée en pointillés, flèche f au milieu de chaque portée') +
           ol('Calculer le coefficient de sécurité et conclure.', 'Calculer l\'indice de rigidité de chaque portée.', 'Quelles portées respectent la norme ?'),
         steps: [
           ['1. Coefficient de sécurité', M(`s = \\frac{R_e}{\\sigma_{max}} = \\frac{${mat[1]}}{${tx(sig, 1)}} = \\boxed{${tx(s, 2)}}`) + `<p>${s >= sMin ? `${fr(s, 2)} ≥ ${fr(sMin, 1)} : la poutre résiste avec la marge demandée.` : `${fr(s, 2)} < ${fr(sMin, 1)} : la marge de sécurité est insuffisante.`}</p>`],
@@ -1831,6 +1872,8 @@ function toggleChap(btn, open) {
       if (b !== btn) { b.nextElementSibling.hidden = true; b.setAttribute('aria-expanded', 'false'); }
     });
   }
+  // Le chapitre ouvert est mis en couleur, les autres non
+  nav.querySelectorAll('.chap-btn').forEach(b => b.classList.toggle('on', !b.nextElementSibling.hidden));
 }
 
 function show(i) {

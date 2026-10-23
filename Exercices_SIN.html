@@ -537,6 +537,18 @@ const EXOS = [
           table(['État de départ', 'Événement', 'État d\'arrivée'], [['Verrouillé', 'badge valide', 'Déverrouillé'], ['Verrouillé', 'badge invalide', 'Refus'],
             ['Refus', 'retour après 2 s', 'Verrouillé'], ['Refus', `badge invalide (${maxE + 1}e essai)`, 'Alarme'], ['Déverrouillé', 'porte ouverte', 'Porte ouverte'],
             ['Déverrouillé', `${tempo} s écoulées`, 'Verrouillé'], ['Porte ouverte', 'porte fermée', 'Verrouillé'], ['Alarme', 'code gardien saisi', 'Verrouillé']]) +
+          (() => {
+            const st = (x, y, t, cl = 'flow') => `<rect class="${cl}" x="${x - 50}" y="${y - 15}" width="100" height="30" rx="8"/>` + dT(x, y + 5, t, 'middle', 13);
+            const e = (x, y, t, a = 'start') => dT(x, y, t, a, 11);
+            return dSV(340, 290, st(170, 150, 'Verrouillé') + st(60, 40, 'Refus') + st(280, 40, 'Déverrouillé') + st(60, 260, 'Alarme', 'loss') + st(280, 260, 'Porte ouverte') +
+              `<circle cx="170" cy="100" r="5" style="fill:var(--text)"/>` + dA(170, 105, 170, 135, 'thin') +
+              dA(130, 135, 80, 55, 'thin') + e(97, 92, 'badge', 'end') + e(97, 105, 'invalide', 'end') + dA(100, 55, 150, 135, 'thin') + e(133, 98, '2 s') +
+              dA(210, 135, 260, 55, 'thin') + e(243, 92, 'badge') + e(243, 105, 'valide') + dA(240, 55, 190, 135, 'thin') + e(207, 98, `${tempo} s`, 'end') +
+              dA(30, 55, 30, 245, 'thin') + e(36, 186, `${maxE + 1}e badge`) + e(36, 199, 'invalide') +
+              dA(310, 55, 310, 245, 'thin') + e(304, 186, 'porte', 'end') + e(304, 199, 'ouverte', 'end') +
+              dA(90, 245, 140, 165, 'thin') + e(104, 236, 'code gardien') + dA(250, 245, 200, 165, 'thin') + e(208, 190, 'porte fermée', 'end'),
+              'Diagramme d\'états de la serrure (● : état initial)');
+          })() +
           `<p>On observe la suite d'événements : ${v(evList.join(' → '))}.</p>` +
           ol('Donner la succession des états parcourus.', 'Dans quel état se trouve la serrure à la fin ?', 'Quel diagramme SysML est utilisé pour décrire ce comportement ?'),
         steps: [
@@ -574,6 +586,12 @@ const EXOS = [
       return {
         statement: `<p>Un ${c.n} a une étendue de mesure de ${v(c.e[0], c.u)} à ${v(c.e[1], c.u)}. Sa sortie varie linéairement de
           ${v(c.s[0], c.su, 1)} à ${v(c.s[1], c.su, 1)}.</p>` +
+          graph({
+            x0: c.e[0], x1: c.e[1], dx: (c.e[1] - c.e[0]) / 5, y0: 0, y1: Math.ceil(c.s[1]), dy: Math.ceil(c.s[1]) > 5 ? 2 : 1, w: 420, h: 240,
+            xlab: `${c.g} (${c.u})`, ylab: 'S (V)', series: [{ pts: [[c.e[0], c.s[0]], [c.e[1], c.s[1]]] }],
+            extra: (X, Y) => `<circle class="pt" cx="${X(c.e[0])}" cy="${Y(c.s[0])}" r="4"/><circle class="pt" cx="${X(c.e[1])}" cy="${Y(c.s[1])}" r="4"/>`,
+            cap: 'Caractéristique du capteur : la sortie S varie linéairement avec la grandeur mesurée'
+          }) +
           ol('Calculer la sensibilité a du capteur.', 'Écrire la fonction de transfert S = a × ' + c.g + ' + b.',
             `Quelle tension délivre le capteur pour ${v(E1, c.u)} ?`, `Quelle grandeur mesure-t-on pour une tension de ${v(S2, c.su)} ?`),
         steps: [
@@ -728,6 +746,13 @@ const EXOS = [
         statement: `<p>Un anémomètre à ultrasons mesure le temps de vol d'une impulsion entre deux transducteurs distants de d = 0,2 m, dans un sens puis dans l'autre.
           La vitesse du vent sur un axe vaut :</p>` + M('v = \\frac{d}{2}\\left(\\frac{1}{t_1} - \\frac{1}{t_2}\\right)') +
           `<p>Mesures (en µs) : axe Nord-Sud t<sub>1</sub> = ${v(n1, 'µs')}, t<sub>2</sub> = ${v(n2, 'µs')} ; axe Est-Ouest t<sub>1</sub> = ${v(e1, 'µs')}, t<sub>2</sub> = ${v(e2, 'µs')}.</p>` +
+          dSV(340, 220, `<line class="thin" x1="170" y1="30" x2="170" y2="190"/><line class="thin" x1="90" y1="110" x2="250" y2="110"/>` +
+            [[170, 40], [170, 180], [100, 110], [240, 110]].map(([x, y]) => `<circle class="fillv" cx="${x}" cy="${y}" r="9"/>`).join('') +
+            dT(170, 22, 'N', 'middle', 13) + dT(170, 210, 'S', 'middle', 13) + dT(76, 115, 'O', 'middle', 13) + dT(264, 115, 'E', 'middle', 13) +
+            dCote(150, 40, 150, 180, '') + dT(144, 80, 'd = 0,2 m', 'end', 13) +
+            dA(170, 110, 215.9, 44.5, 'arrowv') + dT(222, 46, 'vent', 'start', 13) +
+            `<path class="thin" d="M170 76 A34 34 0 0 1 189.5 82.1"/>` + dT(184, 66, 'θ', 'middle', 13),
+            'Vue de dessus : deux paires de transducteurs, sur les axes N-S et E-O') +
           ol('Calculer la composante du vent sur l\'axe Nord-Sud.', 'Calculer la composante sur l\'axe Est-Ouest.',
             'En déduire la vitesse du vent en m/s puis en km/h.', 'Calculer l\'angle θ de la direction du vent par rapport à l\'axe Nord-Sud (tan θ = v<sub>EO</sub> / v<sub>NS</sub>).'),
         steps: [
@@ -751,6 +776,12 @@ const EXOS = [
       return {
         statement: `<p>Un capteur de pesage de capacité nominale ${v(Cn, 'kg')} a une sensibilité de ${v(S, 'mV/V', 1)} et est alimenté sous ${v(Ua, 'V')}.
           Son signal doit être amplifié pour être converti par un CAN ${n} bits de pleine échelle ${v(Upe, 'V', 1)}.</p>` +
+          dSV(340, 120, `<rect class="flow" x="6" y="40" width="88" height="46" rx="6"/>` + dT(50, 60, 'capteur', 'middle', 13) + dT(50, 77, `${fr(S, 1)} mV/V`, 'middle', 12) +
+            dA(94, 63, 124, 63) + `<path class="fillv" d="M124 33 L124 93 L184 63 Z"/>` + dT(144, 68, 'A', 'middle', 15) + dA(184, 63, 216, 63) +
+            `<rect class="flow" x="216" y="40" width="88" height="46" rx="6"/>` + dT(260, 60, 'CAN', 'middle', 13) + dT(260, 77, `${n} bits`, 'middle', 12) +
+            dA(304, 63, 334, 63) + dT(320, 55, 'N', 'middle', 13) +
+            dT(50, 110, `alimenté en ${Ua} V`, 'middle', 12) + dT(155, 110, 'amplificateur', 'middle', 12) + dT(260, 110, `0 à ${fr(Upe, 1)} V`, 'middle', 12),
+            'Chaîne d\'acquisition du pesage') +
           ol('Calculer la tension délivrée par le capteur à la charge nominale.', 'Justifier la présence d\'un amplificateur.',
             'Calculer le gain A pour que la charge nominale corresponde à la pleine échelle du CAN.', `Pour une masse de ${v(mx, 'kg')}, calculer la tension en sortie de l'amplificateur et la valeur N.`),
         steps: [
@@ -1121,6 +1152,19 @@ const EXOS = [
         statement: `<p>Un superviseur (maître) interroge un capteur de température (esclave) en Modbus RTU. Format : adresse esclave (1 octet), code fonction (1 octet),
           données, CRC (2 octets). Le code 03 signifie « lecture de registres ». La température est stockée en dixièmes de °C sur 16 bits signés.</p>
           <p>Requête : ${v(R.map(H2).join(' '))}<br>Réponse : ${v(A.map(H2).join(' '))}</p>` +
+          (() => {
+            const row = (y, bytes, G, title) => {
+              let s = dT(10, y - 26, title, 'start', 13), i = 0;
+              G.forEach(([lab, n, cl]) => {
+                s += dT(10 + (i + n / 2) * 40, y - 7, lab, 'middle', 12);
+                for (let k = 0; k < n; k++, i++) s += `<rect class="${cl}" x="${10 + i * 40}" y="${y}" width="40" height="28"/>` + dT(30 + i * 40, y + 19, H2(bytes[i]), 'middle', 13);
+              });
+              return s;
+            };
+            return dSV(340, 165, row(44, R, [['adr.', 1, 'fillv'], ['fct', 1, 'fillv'], ['données', 4, 'flow'], ['CRC', 2, 'thin']], 'Requête (maître → esclave)') +
+              row(128, A, [['adr.', 1, 'fillv'], ['fct', 1, 'fillv'], ['données', 3, 'flow'], ['CRC', 2, 'thin']], 'Réponse (esclave → maître)'),
+              'Découpage des trames (adr. : adresse de l\'esclave, fct : code fonction)');
+          })() +
           ol('Quelle est l\'adresse de l\'esclave en décimal ?', 'Quel registre est lu et combien de registres sont demandés ?',
             'Combien d\'octets de données la réponse contient-elle ?', 'Décoder la température renvoyée.', 'À quoi sert le CRC ?'),
         steps: [
@@ -1191,6 +1235,11 @@ const EXOS = [
       return {
         statement: `<p>Une adresse physique KNX s'écrit Zone.Ligne.Participant. Elle est codée sur 2 octets : la zone sur 4 bits, la ligne sur 4 bits,
           puis le participant sur 8 bits.</p>` +
+          dSV(340, 110, Array.from({ length: 16 }, (_, i) => `<rect class="${i < 4 ? 'fillv' : i < 8 ? 'flow' : 'thin'}" x="${10 + i * 20}" y="34" width="20" height="26"/>` +
+              dT(20 + i * 20, 74, String(15 - i), 'middle', 10)).join('') +
+            dT(50, 26, 'zone (4 bits)', 'middle', 12) + dT(130, 26, 'ligne (4 bits)', 'middle', 12) + dT(250, 26, 'participant (8 bits)', 'middle', 12) +
+            `<path class="thin" d="M10 82 V88 H169 V82 M171 82 V88 H330 V82"/>` + dT(90, 104, 'octet 1', 'middle', 12) + dT(250, 104, 'octet 2', 'middle', 12),
+            'Adresse physique KNX sur 16 bits (numéro des bits en dessous)') +
           ol(`Coder l'adresse ${v(`${A}.${L}.${D}`)} en binaire puis en hexadécimal.`, `Une trame contient l'adresse source ${v(H2(p1) + ' ' + H2(p2))}. Retrouver l'adresse physique.`,
             'Combien de participants peut-on adresser sur une ligne ? Et au total sur 16 bits ?'),
         steps: [
@@ -1651,6 +1700,8 @@ function toggleChap(btn, open) {
       if (b !== btn) { b.nextElementSibling.hidden = true; b.setAttribute('aria-expanded', 'false'); }
     });
   }
+  // Le chapitre ouvert est mis en couleur, les autres non
+  nav.querySelectorAll('.chap-btn').forEach(b => b.classList.toggle('on', !b.nextElementSibling.hidden));
 }
 
 function show(i) {
