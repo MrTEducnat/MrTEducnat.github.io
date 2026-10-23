@@ -538,7 +538,7 @@ const EXOS = [
   {
     chap: 1,
     title: 'Périmètres, surfaces et volumes',
-    support: 'Révisions initiales · annales : collecte des déchets 2023, bassins 2026',
+    support: 'Révisions initiales · annales : 2023_Nouvelle-Calédonie, 2026_Antilles-Guyane',
     gen() {
       const R = rnd(2, 6, 0.05), e = rnd(8, 20, 1), D = rnd(30, 70, 5), d = rnd(3, 12, 0.5), h = rnd(0.8, 2.5, 0.1);
       const P = Math.PI * R + 2 * R, S = Math.PI * R * R / 2, V = S * e / 100, Vs = 4 / 3 * Math.PI * (D / 200) ** 3, Vb = Math.PI * d * d / 4 * h;
@@ -561,7 +561,7 @@ const EXOS = [
   {
     chap: 1,
     title: 'Puissance électrique, mécanique et de translation',
-    support: 'Révisions : grandeurs d\'effort et de flux · annale : Hélilock 2026',
+    support: 'Révisions : grandeurs d\'effort et de flux · annale : 2026_Métropole',
     gen() {
       const U = pick([12, 24, 48, 230, 400]), I = rnd(0.5, 40, 0.1), C = rnd(2, 300, 1), N = rnd(100, 3000, 10), F = rnd(200, 20000, 50), Vk = rnd(5, 90, 1);
       const Pe = U * I, w = 2 * Math.PI * N / 60, Pm = C * w, Pt = F * Vk / 3.6;
@@ -583,7 +583,7 @@ const EXOS = [
   {
     chap: 1,
     title: 'Rendement global d\'une chaîne',
-    support: 'Annales : éolien 2025, Hélilock 2026',
+    support: 'Annales : 2025_Métropole, 2026_Métropole',
     gen() {
       const B = sample([['Batterie', 0.9, 0.98], ['Variateur', 0.92, 0.98], ['Moteur', 0.75, 0.93], ['Réducteur', 0.8, 0.95], ['Poulie / câble', 0.85, 0.97], ['Onduleur', 0.94, 0.98]], 4).map(([n, a, b]) => [n, rnd(a, b, 0.01)]);
       const Pa = rnd(2, 900, 1), eta = B.reduce((p, b) => p * b[1], 1), Pu = Pa * eta, Pu2 = rnd(1, 600, 1);
@@ -609,7 +609,7 @@ const EXOS = [
   {
     chap: 1,
     title: 'Énergie, coût et temps de retour sur investissement',
-    support: 'Annales : PV flottant 2024, éolien 2025',
+    support: 'Annales : 2024_Métropole_remplacement, 2025_Métropole',
     gen() {
       const inst = pick([['une installation photovoltaïque', 20, 300, 900, 1300], ['une petite éolienne', 10, 100, 1500, 2500], ['un module de cogénération', 30, 150, 4000, 6000]]);
       const P = rnd(inst[1], inst[2], 1), h = rnd(inst[3], inst[4], 10), prix = rnd(0.08, 0.2, 0.001), inv = Math.round(P * rnd(900, 2000, 10) / 100) * 100, maint = Math.round(inv * rnd(0.01, 0.04, 0.005) / 10) * 10, vie = pick([20, 25, 30]);
@@ -654,7 +654,7 @@ const EXOS = [
     ['Quelle grandeur de flux est associée à la pression en hydraulique ?', 'le débit', ['la force', 'la tension', 'le couple'], ''],
     ['Quelle grandeur d\'effort est associée à la vitesse angulaire ?', 'le couple', ['le débit', 'le courant', 'la vitesse'], '']
   ]),
-  Q(2, 'Nature et forme de l\'énergie', 'Annales : éolien 2025, station hydro-éolienne 2026', () => [
+  Q(2, 'Nature et forme de l\'énergie', 'Annales : 2025_Métropole, 2026_Polynésie', () => [
     ...fromPairs([['Le vent', 'primaire'], ['Le rayonnement solaire', 'primaire'], ['Le gaz naturel extrait', 'primaire'], ['L\'électricité produite par une éolienne', 'secondaire'],
       ['L\'électricité au compteur d\'un bâtiment', 'finale'], ['La chaleur fournie par un radiateur à la pièce', 'utile'], ['La lumière fournie par une lampe', 'utile']],
       a => `${a} est une énergie…`).map(q => { q[2] = ['primaire', 'secondaire', 'finale', 'utile']; return q; }),
@@ -748,7 +748,7 @@ const EXOS = [
   {
     chap: 3,
     title: 'Émissions de CO₂ : comparer deux solutions',
-    support: 'Annales : Trambus 2023, PV flottant 2024',
+    support: 'Annales : 2023_La-Réunion, 2024_Métropole_remplacement',
     gen() {
       const km = rnd(150, 300, 5), j = pick([300, 330, 365]), ans = pick([10, 12, 15]), gD = rnd(900, 1400, 10), gE = rnd(150, 450, 10);
       const d = km * j * ans, mD = gD * d / 1e6, mE = gE * d / 1e6, Epv = rnd(20, 400, 1) * 1000, f = pick([60, 80, 100]);
@@ -770,7 +770,7 @@ const EXOS = [
   {
     chap: 3,
     title: 'Choix multicritère du matériau d\'un poteau',
-    support: 'Annales : complexe sportif CIME 2024',
+    support: 'Annale : 2024_Polynésie',
     gen() {
       const L = rnd(3, 12, 0.5), F = rnd(50, 400, 5), s = 2;
       const mats = [{ n: 'Bois lamellé-collé', S: pick([0.04, 0.0625, 0.09]), rho: 480, R: 24, co2: -0.7 },
@@ -809,7 +809,7 @@ const EXOS = [
   {
     chap: 4,
     title: 'Résistance thermique d\'une paroi multicouche',
-    support: 'Cours Thermique · annale : ITE d\'une école 2023',
+    support: 'Cours Thermique · annale : 2023_Polynésie',
     gen() {
       const C = [['Enduit extérieur', rnd(10, 20, 5), 1.15], [pick(['Béton plein', 'Bloc béton creux', 'Brique terre cuite']), pick([150, 180, 200]), 0],
         [pick(['Laine de verre', 'Laine de roche', 'Polystyrène expansé', 'Fibre de bois']), rnd(60, 200, 20), 0], ['Plaque de plâtre', 13, 0.25]];
@@ -966,7 +966,7 @@ const EXOS = [
   {
     chap: 4,
     title: 'Chauffer de l\'eau',
-    support: 'Cours Thermique · annale : centre aquatique 2025',
+    support: 'Cours Thermique · annale : 2025_Nouvelle-Calédonie',
     gen() {
       const V = pick([100, 150, 200, 250, 300]), T1 = rnd(10, 15, 1), T2 = rnd(55, 65, 5), P = pick([1.2, 1.5, 2.2, 3]), eta = rnd(0.9, 0.98, 0.01), c = 4185, prix = rnd(0.18, 0.27, 0.01);
       const Qj = V * c * (T2 - T1), QkWh = Qj / 3.6e6, t = QkWh / (P * eta);
@@ -987,7 +987,7 @@ const EXOS = [
   {
     chap: 4,
     title: 'Apports solaires et renouvellement d\'air',
-    support: 'Cours Thermique · annale : complexe sportif CIME 2024',
+    support: 'Cours Thermique · annale : 2024_Polynésie',
     gen() {
       const Sv = rnd(4, 20, 0.5), g = rnd(0.4, 0.65, 0.05), I = rnd(200, 600, 10), V = rnd(200, 450, 10), n = rnd(0.3, 0.8, 0.1), Ti = 20, Te = rnd(-5, 8, 1), eta = rnd(0.7, 0.92, 0.01);
       const Ps = Sv * g * I, Qv = n * V, Pv = 0.34 * Qv * (Ti - Te), Pdf = Pv * (1 - eta);
@@ -1007,7 +1007,7 @@ const EXOS = [
       };
     }
   },
-  Q(4, 'Thermographie : caméra thermique', 'Cours Thermique · annale : caméra 2026', [
+  Q(4, 'Thermographie : caméra thermique', 'Cours Thermique · annale : 2026_Antilles-Guyane', [
     ['Une caméra thermique mesure :', 'le rayonnement infrarouge émis par les surfaces', ['la température de l\'air', 'la lumière visible réfléchie', 'l\'humidité des murs'], ''],
     ['Sur une thermographie de façade prise en hiver, une zone claire (jaune, blanche) indique :', 'une surface plus chaude, donc une fuite de chaleur', ['une zone bien isolée', 'une zone humide', 'une zone à l\'ombre'], ''],
     ['Pour repérer les défauts d\'isolation d\'une façade, il faut faire la mesure :', 'quand l\'écart de température intérieur/extérieur est grand (hiver, matin)', ['en plein soleil d\'été', 'sous la pluie', 'à n\'importe quel moment'], 'Un écart d\'au moins 10 °C est conseillé.'],
@@ -1034,7 +1034,7 @@ const EXOS = [
   {
     chap: 5,
     title: 'Installation photovoltaïque',
-    support: 'Cours Énergies renouvelables · annale : PV flottant 2024',
+    support: 'Cours Énergies renouvelables · annale : 2024_Métropole_remplacement',
     gen() {
       const n = rnd(8, 40, 1), Sm = rnd(1.7, 2.1, 0.05), eta = rnd(0.18, 0.22, 0.005), prod = rnd(950, 1350, 10), deg = pick([0.4, 0.5, 0.6, 0.7]);
       const S = n * Sm, Pc = S * eta, E1 = Pc * prod, E25 = E1 * (1 - deg / 100) ** 24, Etot = E1 * (1 - (1 - deg / 100) ** 25) / (deg / 100);
@@ -1063,7 +1063,7 @@ const EXOS = [
   {
     chap: 5,
     title: 'Éolienne : facteur de charge et production',
-    support: 'Annales : éolien 2025, station hydro-éolienne 2026',
+    support: 'Annales : 2025_Métropole, 2026_Polynésie',
     gen() {
       const N = rnd(3, 12, 1), Pn = pick([2, 2.3, 3, 3.6, 4.2]), fc = rnd(0.2, 0.35, 0.01), conso = rnd(4, 5.5, 0.1), Eo = rnd(5, 40, 1);
       const E = N * Pn * 8760 * fc, heq = 8760 * fc, foy = E / conso;
@@ -1085,7 +1085,7 @@ const EXOS = [
   {
     chap: 5,
     title: 'Batteries embarquées : nombre et recharge',
-    support: 'Annales : Trambus 2023, Hélilock 2026',
+    support: 'Annales : 2023_La-Réunion, 2026_Métropole',
     gen() {
       const veh = pick([['un bus électrique', 1.1, 1.6, 150, 280], ['une navette fluviale', 5, 12, 30, 80], ['une benne à ordures électrique', 1.8, 2.6, 80, 150]]);
       const cons = rnd(veh[1], veh[2], 0.1), d = rnd(veh[3], veh[4], 5), Um = pick([48, 96, 400]), Cm = pick([50, 100, 150, 200]), dod = pick([0.8, 0.85, 0.9]), Pch = pick([22, 50, 100, 150]), eta = rnd(0.88, 0.95, 0.01);
@@ -1108,7 +1108,7 @@ const EXOS = [
   {
     chap: 5,
     title: 'Station de transfert d\'énergie par pompage (STEP)',
-    support: 'Annale : station hydro-éolienne 2026',
+    support: 'Annale : 2026_Polynésie',
     gen() {
       const V = rnd(0.5, 20, 0.5), h = rnd(50, 800, 10), eta = rnd(0.75, 0.9, 0.01), Pt = rnd(50, 1200, 10), etaP = rnd(0.8, 0.9, 0.01), rho = 1000;
       const Ep = V * 1e6 * rho * G * h, Eu = Ep * eta, EMWh = Eu / 3.6e9, t = EMWh / Pt;
@@ -1136,7 +1136,7 @@ const EXOS = [
   {
     chap: 5,
     title: 'Unités d\'énergie : tep, MJ et énergie primaire',
-    support: 'Cours Énergie · annale : chauffage au bois 2021',
+    support: 'Cours Énergie · annale : 2021_Métropole_remplacement',
     gen() {
       const tep = 11630, Ef = rnd(3000, 25000, 100), S = rnd(70, 180, 5), cp = 2.3, fioul = rnd(800, 3000, 50), pci = 10;
       const Ep = Ef * cp, Efi = fioul * pci;
@@ -1158,7 +1158,7 @@ const EXOS = [
   {
     chap: 5,
     title: 'Bassins et débits : filtration et vidange',
-    support: 'Annales : centre aquatique 2025, bassins 2026',
+    support: 'Annales : 2025_Nouvelle-Calédonie, 2026_Antilles-Guyane',
     gen() {
       const L = rnd(8, 25, 1), l = rnd(4, 12, 0.5), p = rnd(1.2, 2, 0.1), Q = pick([6, 8, 10, 12, 14, 18, 22]), d = pick([50, 63, 75, 90]), vit = rnd(1, 2.5, 0.1);
       const V = L * l * p, tf = V / Q, S = Math.PI * (d / 1000) ** 2 / 4, Qv = vit * S, tv = V / Qv / 3600;
@@ -1398,7 +1398,7 @@ const EXOS = [
   {
     chap: 6,
     title: 'Vidéosurveillance : débit, stockage et résolution',
-    support: 'Annales : identification à distance 2024, caméra 2026',
+    support: 'Annales : 2024_Métropole, 2026_Antilles-Guyane',
     gen() {
       const R = pick([[1280, 720], [1920, 1080], [2560, 1440], [3840, 2160]]), fps = pick([10, 15, 25, 30]), bpp = 24, k = pick([50, 100, 150, 200]), nb = rnd(2, 16, 1), j = pick([7, 15, 30]), L = rnd(4, 20, 0.5);
       const Draw = R[0] * R[1] * bpp * fps, Dc = Draw / k, St = Dc * nb * 86400 * j / 8 / 1e12, ppm = R[0] / L;
@@ -1505,7 +1505,7 @@ const EXOS = [
   {
     chap: 7,
     title: 'Pression exercée sur un radier',
-    support: 'Annale : bassins 2026',
+    support: 'Annale : 2026_Antilles-Guyane',
     gen() {
       const L = rnd(3, 12, 0.5), l = rnd(2, 6, 0.5), h = rnd(0.8, 2, 0.1), e = pick([0.2, 0.25, 0.3]), qa = pick([100, 150, 200, 300]);
       const Ve = L * l * h, Pe = Ve * 1000 * G / 1000, Vb = L * l * e, Pb = Vb * 25, S = L * l, p = (Pe + Pb) / S;
@@ -1531,7 +1531,7 @@ const EXOS = [
   {
     chap: 7,
     title: 'Coefficient de sécurité et indice de rigidité',
-    support: 'Annale : bassins 2026',
+    support: 'Annale : 2026_Antilles-Guyane',
     gen() {
       const mat = pick([['acier S235', 235], ['acier S355', 355], ['aluminium', 160], ['bois C24', 24]]), sig = +(mat[1] * rnd(0.25, 0.75, 0.01)).toFixed(1), sMin = pick([1.5, 2]);
       const spans = Array.from({ length: 3 }, (_, i) => { const Lm = rnd(3, 12, 0.5), f = +(Lm * 1000 / rnd(180, 700, 5)).toFixed(1); return { n: i + 1, Lm, f, Is: Lm * 1000 / f }; });
@@ -1560,7 +1560,7 @@ const EXOS = [
   {
     chap: 7,
     title: 'Flottaison : hauteur d\'immersion',
-    support: 'Annale : PV flottant 2024',
+    support: 'Annale : 2024_Métropole_remplacement',
     gen() {
       const L = rnd(4, 15, 0.5), l = rnd(2, 6, 0.5), H = rnd(0.6, 1.5, 0.1), m0 = Math.round(L * l * rnd(120, 350, 10) / 100) * 100, ch = rnd(500, 4000, 100), rho = pick([1000, 1025]);
       const S = L * l, h0 = m0 / (rho * S), h1 = (m0 + ch) / (rho * S), Fb = H - h1, chMax = rho * S * (H - 0.2) - m0;

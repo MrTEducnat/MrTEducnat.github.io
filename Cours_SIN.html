@@ -583,7 +583,7 @@ const EXOS = [
   {
     chap: 2,
     title: 'Caractéristiques des capteurs',
-    support: 'Programme SIN, chapitre 5.3.1 · annales SIN 2021 à 2026',
+    support: 'Programme SIN, chapitre 5.3.1 · annales : 2023_Métropole, 2021_Métropole_remplacement, 2025_Métropole_remplacement',
     body:
       H('1. Types de capteurs') +
       UL('<b>Détecteur TOR</b> : présence ou absence (fin de course, inductif pour les métaux, capacitif pour tous les matériaux, photoélectrique, ILS avec un aimant).', '<b>Capteur analogique</b> : une tension ou un courant image de la grandeur.',
@@ -610,7 +610,7 @@ const EXOS = [
   {
     chap: 2,
     title: 'Capteurs résistifs, shunt et codeurs',
-    support: 'Programme SIN, chapitre 5.3.1 · annales SIN',
+    support: 'Programme SIN, chapitre 5.3.1 · annales : 2025_Métropole, 2022_Polynésie, 2023_La-Réunion',
     body:
       H('1. Pont diviseur') +
       P('Un microcontrôleur mesure des tensions, pas des résistances. On monte donc le capteur résistif (thermistance, photorésistance) en série avec une résistance fixe R : la tension se partage entre les deux, en proportion de leurs résistances.') +
@@ -640,7 +640,7 @@ const EXOS = [
   {
     chap: 3,
     title: 'Amplifier, adapter et filtrer',
-    support: 'Programme SIN, chapitre 5.3.1 · annales SIN',
+    support: 'Programme SIN, chapitre 5.3.1 · annales : 2025_Métropole_remplacement, 2024_Polynésie, 2021_Métropole_remplacement',
     body:
       P('Le signal d\'un capteur est souvent faible (quelques mV) et bruité. Avant le CAN, on le <b>conditionne</b> : on l\'amplifie, on l\'adapte à la plage du convertisseur et on le filtre.') +
       CHAIN([['Capteur', 'mV'], ['Amplificateur', 'gain A'], ['Filtre', 'anti-bruit'], ['CAN', '0 à 3,3 V']]) +
@@ -688,7 +688,7 @@ const EXOS = [
   {
     chap: 4,
     title: 'Coder l\'information',
-    support: 'Programme SIN, chapitre 3.4.1 · annales SIN',
+    support: 'Programme SIN, chapitre 3.4.1 · annales : 2021_Métropole_remplacement, 2022_Mayotte, 2021_Métropole',
     body:
       H('1. Bases') +
       P('Un système numérique ne manipule que des 0 et des 1 (bits). L\'hexadécimal sert à écrire ces mots binaires de façon compacte : un chiffre hexadécimal remplace exactement 4 bits.') +
@@ -774,7 +774,7 @@ const EXOS = [
   {
     chap: 6,
     title: 'Adressage IP et masques de sous-réseau',
-    support: 'Programme SIN, chapitre 3.4.3 · annales SIN',
+    support: 'Programme SIN, chapitre 3.4.3 · annales : 2024_Polynésie, 2022_Métropole, 2026_Antilles-Guyane',
     body:
       P('Une adresse IPv4 tient sur 32 bits (4 octets de 0 à 255). Le masque indique la partie réseau (bits à 1) et la partie hôte (bits à 0) ; en notation CIDR, /26 signifie 26 bits à 1. Deux machines peuvent communiquer directement si elles ont la même adresse de réseau ; sinon, il leur faut un routeur.') +
       M('\\text{réseau} = IP \\ \\text{ET}\\ \\text{masque}') +
@@ -793,7 +793,7 @@ const EXOS = [
   {
     chap: 6,
     title: 'Trames, modèle OSI et services réseau',
-    support: 'Programme SIN, chapitres 3.4.3 et 5.3.4 · annales SIN',
+    support: 'Programme SIN, chapitres 3.4.3 et 5.3.4 · annales : 2022_Mayotte, 2025_Polynésie, 2025_Métropole',
     body:
       H('1. Encapsulation') +
       P('Une requête web voyage emballée dans plusieurs en-têtes successifs, chacun ajouté par une couche du modèle :') +

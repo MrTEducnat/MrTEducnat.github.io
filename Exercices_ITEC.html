@@ -526,7 +526,7 @@ const CHAPITRES = [
 // ---------- Exercices (chap = numéro du chapitre) ----------
 const EXOS = [
   // ===================== Chapitre 1 =====================
-  Q(1, 'Degrés de liberté et nom des liaisons', 'BO 3.2.2 · annales : Hélilock 2026, siège de piscine 2025', () => {
+  Q(1, 'Degrés de liberté et nom des liaisons', 'BO 3.2.2 · annales : 2026_Métropole, 2025_Nouvelle-Calédonie', () => {
     const L = [['aucune translation et aucune rotation', 'Encastrement (liaison complète)'], ['aucune translation et 1 rotation', 'Pivot'],
       ['1 translation et aucune rotation', 'Glissière'], ['1 translation et 1 rotation indépendantes', 'Pivot glissant'],
       ['aucune translation et 3 rotations', 'Rotule'], ['2 translations et 1 rotation', 'Appui plan'],
@@ -540,14 +540,14 @@ const EXOS = [
       ['Le guidage en rotation d\'un arbre par deux roulements réalise une liaison :', 'Pivot', ['Glissière', 'Rotule', 'Appui plan'], '']
     ];
   }),
-  Q(1, 'Symboles normalisés des liaisons', 'BO 3.2.2 · annales : schémas cinématiques (serrure 2021, Hélilock 2026)', () => {
+  Q(1, 'Symboles normalisés des liaisons', 'BO 3.2.2 · annales : 2021_Métropole, 2026_Métropole', () => {
     // Symboles identiques à ceux du cours (pièce 1 en bleu, pièce 2 en orange)
     return LIAISONS.map(([k, n]) => [`Quelle liaison ce symbole représente-t-il ?${liaSym(k)}`, n, LIAISONS.map(l => l[1]), '']);
   }),
   {
     chap: 1,
     title: 'Classes d\'équivalence et graphe des liaisons',
-    support: 'Annales : serrure 2021, Hélilock 2026',
+    support: 'Annales : 2021_Métropole, 2026_Métropole',
     gen() {
       const N = rnd(8, 11, 1), spring = rnd(1, N, 1), k = rnd(3, 4, 1);
       const others = shuffle(Array.from({ length: N }, (_, i) => i + 1).filter(p => p !== spring));
@@ -572,7 +572,7 @@ const EXOS = [
       };
     }
   },
-  Q(1, 'Surfaces de contact et liaison associée', 'BO 3.2.2 · annales : serrure 2021, propulseur éolien 2022', fromPairs([
+  Q(1, 'Surfaces de contact et liaison associée', 'BO 3.2.2 · annales : 2021_Métropole, 2022_Métropole_remplacement', fromPairs([
     ['un cylindre long dans un alésage de même diamètre', 'Pivot glissant'], ['un cylindre long avec un épaulement en appui sur une face', 'Pivot'],
     ['deux plans en contact', 'Appui plan'], ['une sphère dans une sphère creuse de même diamètre', 'Rotule'],
     ['une sphère posée sur un plan', 'Ponctuelle'], ['une sphère dans un cylindre de même diamètre', 'Linéaire annulaire'],
@@ -582,7 +582,7 @@ const EXOS = [
       ['les pièces sont soudées', 'le contact est surfacique', 'il n\'y a aucun mouvement'], ''],
     ['Une surface fonctionnelle est :', 'une surface d\'une pièce en contact avec une autre pièce et qui participe à une fonction', ['une surface peinte', 'la surface la plus grande', 'une surface invisible'], '']
   ])),
-  Q(1, 'Mouvements et trajectoires', 'BO 3.2.1 · annales : siège PMR 2022, pantographe 2023, éolienne 2025', [
+  Q(1, 'Mouvements et trajectoires', 'BO 3.2.1 · annales : 2022_Métropole, 2023_La-Réunion, 2025_Métropole', [
     ['Lors d\'une rotation autour d\'un axe fixe, la trajectoire d\'un point du solide est :', 'un cercle centré sur l\'axe', ['une droite', 'une parabole', 'une hélice'], ''],
     ['Lors d\'une translation rectiligne, la trajectoire d\'un point est :', 'une droite', ['un cercle', 'une spirale', 'un arc de cercle'], ''],
     ['Le bras d\'un parallélogramme déformable (comme celui d\'un siège de levage) est animé d\'un mouvement :', 'de translation circulaire', ['de rotation autour d\'un axe fixe', 'de translation rectiligne', 'hélicoïdal'], 'Tous ses points décrivent des cercles de même rayon.'],
@@ -597,7 +597,7 @@ const EXOS = [
   {
     chap: 2,
     title: 'Vitesse en bout de pale et TSR',
-    support: 'Annales : éolienne 2025',
+    support: 'Annale : 2025_Métropole',
     gen() {
       const D = rnd(80, 160, 2), N = rnd(8, 18, 0.5), Vv = rnd(8, 15, 0.5);
       const w = 2 * Math.PI * N / 60, Vt = w * D / 2, tsr = Vt / Vv;
@@ -627,7 +627,7 @@ const EXOS = [
   {
     chap: 2,
     title: 'Pignon-crémaillère',
-    support: 'Annales : monte-personne du vélodrome 2023',
+    support: 'Annale : 2023_Métropole',
     gen() {
       const Nm = pick([1400, 1450, 2800, 2900]), k = pick([20, 25, 30, 40, 50]), mod = pick([2, 3, 4, 5]), Z = rnd(14, 24, 1), H = rnd(3, 12, 0.5);
       const ws = 2 * Math.PI * Nm / k / 60, r = mod * Z / 2 / 1000, V = ws * r, t = H / V;
@@ -653,7 +653,7 @@ const EXOS = [
   {
     chap: 2,
     title: 'Transmission par poulies et courroie',
-    support: 'Annales : lanceurs du téléphérique 2024, alimentation en granulés 2021',
+    support: 'Annales : 2024_Métropole, 2021_Métropole_remplacement',
     gen() {
       const N1 = pick([960, 1450, 2900]), d1 = rnd(60, 150, 10), d2 = rnd(200, 500, 10), d3 = rnd(80, 160, 10), d4 = rnd(200, 400, 10), Rp = rnd(0.2, 0.4, 0.01);
       const r1 = d1 / d2, r2 = d3 / d4, r = r1 * r2, N4 = N1 * r, Vc = Math.PI * d1 / 1000 * N1 / 60, w4 = 2 * Math.PI * N4 / 60, V = w4 * Rp;
@@ -687,7 +687,7 @@ const EXOS = [
   {
     chap: 2,
     title: 'Réducteur : couple, vitesse et puissance',
-    support: 'Annales : tracker solaire 2022',
+    support: 'Annale : 2022_Mayotte',
     gen() {
       const Cp = rnd(80, 200, 5), n = rnd(9, 15, 1), ang = pick([90, 100, 110, 120]), dur = rnd(5, 20, 1), R = pick([1000, 1500, 2000, 3000]), eta = rnd(0.4, 0.8, 0.05), PN = pick([370, 550, 750, 1100]);
       const Cu = Cp * n, Nu = ang / 360 / dur, wu = 2 * Math.PI * Nu / 60, Pu = Cu * wu, Pm = Pu / eta, Nm = Nu * R, nl = Math.floor(PN / Pm);
@@ -718,7 +718,7 @@ const EXOS = [
   {
     chap: 2,
     title: 'Système vis-écrou',
-    support: 'Annales : Hélilock 2026 (vis trapézoïdale)',
+    support: 'Annale : 2026_Métropole',
     gen() {
       const p = pick([2, 3, 4, 5, 6]), N = pick([300, 600, 900, 1200, 1500]), F = rnd(500, 3000, 100), eta = rnd(0.3, 0.6, 0.05), c = rnd(20, 120, 5);
       const V = p * N / 60, Pu = F * V / 1000, Pm = Pu / eta, w = 2 * Math.PI * N / 60, C = Pm / w, t = c / V;
@@ -749,7 +749,7 @@ const EXOS = [
   {
     chap: 2,
     title: 'Treuil : vitesse et force du câble',
-    support: 'Annales : dégrilleur 2025',
+    support: 'Annale : 2025_Métropole_remplacement',
     gen() {
       const D = rnd(150, 400, 10), d = rnd(8, 16, 1), Nm = pick([1400, 1450, 2800]), k = pick([50, 80, 100, 120]), Pt = rnd(300, 1500, 50), mp = rnd(30, 120, 5);
       const R = (D + d) / 2 / 1000, wt = 2 * Math.PI * Nm / k / 60, V = wt * R, F = Pt / V, mmax = F / G - mp;
@@ -776,7 +776,7 @@ const EXOS = [
   {
     chap: 2,
     title: 'Vis de dosage : débit volumique',
-    support: 'Annales : méthaniseur 2022, convoyeur à vis 2023',
+    support: 'Annales : 2022_Nouvelle-Calédonie, 2023_Nouvelle-Calédonie',
     gen() {
       const D = rnd(200, 500, 10), dA = rnd(60, 120, 10), p = rnd(150, 400, 10), kr = rnd(0.3, 0.6, 0.05), N = rnd(5, 40, 1), Q = rnd(2, 15, 0.5);
       const Vt = kr * Math.PI * ((D / 1000) ** 2 - (dA / 1000) ** 2) / 4 * (p / 1000), Qh = Vt * N * 60, Nmin = Q / (Vt * 60);
@@ -803,7 +803,7 @@ const EXOS = [
   {
     chap: 2,
     title: 'Loi entrée-sortie : course d\'un vérin',
-    support: 'Annales : calage des pales d\'éolienne 2025 et 2026',
+    support: 'Annales : 2025_Métropole, 2026_Polynésie',
     gen() {
       const a = rnd(400, 900, 10), b = rnd(200, 500, 10), t1 = rnd(20, 50, 5), t2 = t1 + rnd(40, 90, 5);
       const L = t => Math.sqrt(a * a + b * b - 2 * a * b * Math.cos(deg(t))), L1 = L(t1), L2 = L(t2);
@@ -833,7 +833,7 @@ const EXOS = [
   {
     chap: 2,
     title: 'Durée d\'un cycle de déplacement',
-    support: 'Annales : dégrilleur 2025, pantographe 2023',
+    support: 'Annales : 2025_Métropole_remplacement, 2023_La-Réunion',
     gen() {
       const steps = [['descente de la poche', rnd(2, 6, 0.5), rnd(0.1, 0.3, 0.01)], ['raclage de la grille (remontée)', rnd(2, 6, 0.5), rnd(0.05, 0.15, 0.01)],
         ['basculement et vidage', 0, 0], ['retour en position haute', rnd(0.5, 2, 0.1), rnd(0.1, 0.3, 0.01)]];
@@ -868,7 +868,7 @@ const EXOS = [
   {
     chap: 3,
     title: 'Poids et répartition de la charge sur des appuis',
-    support: 'Annales : silo à granulés 2021, chariot brancard 2026',
+    support: 'Annales : 2021_Métropole_remplacement, 2026_Antilles-Guyane',
     gen() {
       const ms = rnd(150, 400, 5), mg = rnd(500, 2500, 50), np = pick([3, 4, 6]), Cn = pick([300, 500, 1000, 2000]);
       const P = (ms + mg) * G, Pp = P / np, mc = Pp / G;
@@ -896,7 +896,7 @@ const EXOS = [
   {
     chap: 3,
     title: 'Plan incliné : composantes du poids',
-    support: 'Annales : téléphérique 2024, auge inclinée 2023',
+    support: 'Annales : 2024_Métropole, 2023_Nouvelle-Calédonie',
     gen() {
       const mm = rnd(200, 8000, 50), al = rnd(10, 40, 1), f = rnd(0.05, 0.4, 0.05);
       const P = mm * G, Pt = P * Math.sin(deg(al)), Pn = P * Math.cos(deg(al)), F2 = Pt + f * Pn;
@@ -923,7 +923,7 @@ const EXOS = [
   {
     chap: 3,
     title: 'Moment d\'une force et couple moteur',
-    support: 'Annales : téléphérique 2024, serrure 2021',
+    support: 'Annales : 2024_Métropole, 2021_Métropole',
     gen() {
       const T = rnd(5, 40, 1) * 1000, D = rnd(1.5, 5, 0.1), k = pick([20, 30, 40, 50, 60]), eta = rnd(0.85, 0.97, 0.01);
       const Cp = T * D / 2, Cm = Cp / (k * eta);
@@ -948,7 +948,7 @@ const EXOS = [
   {
     chap: 3,
     title: 'Solide soumis à trois forces',
-    support: 'Annales : vérin de levage de la grue 2025 (triangle des forces)',
+    support: 'Annale : 2025_Polynésie',
     gen() {
       const P = rnd(2, 30, 0.5) * 1000, a = rnd(55, 80, 1), b = rnd(20, 60, 1);
       const s = Math.sin(deg(a + b)), F1 = P * Math.cos(deg(b)) / s, F2 = P * Math.cos(deg(a)) / s;
@@ -975,7 +975,7 @@ const EXOS = [
   {
     chap: 3,
     title: 'Frottement et cône de frottement',
-    support: 'Annales : relevé des virages du vélodrome 2023',
+    support: 'Annale : 2023_Métropole',
     gen() {
       const f = rnd(0.2, 0.8, 0.05), al = rnd(10, 45, 1), R = rnd(20, 50, 1), th = pick([30, 40, 45]);
       const phi = Math.atan(f) * 180 / Math.PI, glisse = al > phi, V = Math.sqrt(G * R * Math.tan(deg(th)));
@@ -1005,7 +1005,7 @@ const EXOS = [
   {
     chap: 3,
     title: 'Vérin : pression, section et efforts',
-    support: 'Annales : calage des pales 2025, siège de piscine 2025, grue 2025',
+    support: 'Annales : 2025_Métropole, 2025_Nouvelle-Calédonie, 2025_Polynésie',
     gen() {
       const F = rnd(5, 120, 1) * 1000, p = pick([100, 160, 200, 250]), Ds = [25, 32, 40, 50, 63, 80, 100, 125, 160, 200];
       const S = F / (p * 1e5), D = Math.sqrt(4 * S / Math.PI) * 1000, Dc = Ds.find(x => x >= D) || 250, dt = Math.round(Dc * 0.5);
@@ -1034,7 +1034,7 @@ const EXOS = [
   {
     chap: 3,
     title: 'Ressort : raideur et effort',
-    support: 'Annales : pantographe 2023, soupape du méthaniseur 2022',
+    support: 'Annales : 2023_La-Réunion, 2022_Nouvelle-Calédonie',
     gen() {
       const F0 = rnd(50, 500, 10), x0 = rnd(5, 40, 1), p = rnd(2, 10, 0.5), D = rnd(10, 30, 1), c = rnd(5, 40, 1);
       const k = F0 / x0, Fp = p * 1e5 * Math.PI * (D / 1000) ** 2 / 4, x = Fp / k;
@@ -1060,7 +1060,7 @@ const EXOS = [
   {
     chap: 3,
     title: 'Pression et effort sur une paroi',
-    support: 'Annales : hublots du caisson hyperbare 2026',
+    support: 'Annale : 2026_Antilles-Guyane',
     gen() {
       const pr = rnd(1.5, 6, 0.1), D = rnd(100, 400, 10), h = rnd(2, 30, 0.5), rho = 1000;
       const S = Math.PI * (D / 1000) ** 2 / 4, F = pr * 1e5 * S, ph = rho * G * h;
@@ -1093,7 +1093,7 @@ const EXOS = [
   {
     chap: 4,
     title: 'Contrainte normale et coefficient de sécurité',
-    support: 'Annales : mousqueton 2024, vis Hélilock 2026, biellette 2024',
+    support: 'Annales : 2024_Polynésie, 2026_Métropole, 2024_Métropole_remplacement',
     gen() {
       const shape = pick(['rond', 'tube', 'rect']), F = rnd(2, 60, 1) * 1000, mat = pick([['acier S235', 235], ['acier S355', 355], ['aluminium 6061', 240], ['inox 304', 210]]), s0 = pick([2, 3, 4, 5]);
       let S, txt, calc;
@@ -1117,7 +1117,7 @@ const EXOS = [
   {
     chap: 4,
     title: 'Section minimale d\'un câble',
-    support: 'Annales : câble tracteur du téléphérique 2024',
+    support: 'Annale : 2024_Métropole',
     gen() {
       const F = rnd(20, 150, 5) * 1000, Rm = pick([1570, 1770, 1960]), Cs = 5;
       const cat = [[16, 0.27, 120], [20, 0.42, 190], [24, 0.6, 270], [28, 0.82, 370], [32, 1.07, 480], [36, 1.35, 610], [40, 1.67, 760], [44, 2.02, 920]];
@@ -1139,7 +1139,7 @@ const EXOS = [
   {
     chap: 4,
     title: 'Loi de Hooke : allongement d\'un câble',
-    support: 'Annales : câble tracteur du téléphérique 2024',
+    support: 'Annale : 2024_Métropole',
     gen() {
       const F = rnd(20, 120, 5) * 1000, S = rnd(150, 800, 10), E = rnd(100, 200, 5), L = rnd(500, 4000, 50), c = rnd(1, 6, 0.5);
       const sig = F / S, eps = sig / (E * 1000), dL = eps * L;
@@ -1159,7 +1159,7 @@ const EXOS = [
   {
     chap: 4,
     title: 'Flexion : moment quadratique et contrainte',
-    support: 'Annales : bras du siège PMR 2022, châssis 2022',
+    support: 'Annales : 2022_Métropole, 2022_Polynésie',
     gen() {
       const L = rnd(0.5, 2, 0.1), F = rnd(500, 5000, 50), b = rnd(10, 30, 2), h = rnd(40, 100, 5), Re = pick([235, 275, 355]);
       const Mf = F * L * 1000, I1 = b * h ** 3 / 12, I2 = h * b ** 3 / 12, s1 = Mf * (h / 2) / I1, s2 = Mf * (b / 2) / I2;
@@ -1191,7 +1191,7 @@ const EXOS = [
   {
     chap: 4,
     title: 'Flèche d\'une poutre et module d\'Young',
-    support: 'Annales : planche du plongeoir 2021',
+    support: 'Annale : 2021_Métropole',
     gen() {
       const mats = [['bois lamellé', 12], ['composite verre/époxy', 25], ['aluminium', 69], ['composite carbone', 70]];
       const mt = pick(mats), L = rnd(1.5, 3, 0.1), b = rnd(400, 600, 10), h = rnd(30, 70, 5), mp = rnd(60, 110, 5);
@@ -1217,7 +1217,7 @@ const EXOS = [
   {
     chap: 4,
     title: 'Exploiter une simulation : masse maximale',
-    support: 'Annales : bras télescopique de la grue 2025, mât de soutien 2022',
+    support: 'Annales : 2025_Polynésie, 2022_Mayotte',
     gen() {
       const M0 = rnd(1, 10, 0.5), sim = rnd(80, 300, 1), Re = pick([235, 355, 460, 690]), s = pick([1.5, 2, 2.5, 3]);
       const sad = Re / s, cs = Re / sim, Mmax = M0 * sad / sim;
@@ -1237,7 +1237,7 @@ const EXOS = [
     }
   },
   // ===================== Chapitre 5 =====================
-  Q(5, 'Familles, propriétés et protection des matériaux', 'BO 4.2.2 · annales : méthaniseur 2022, tracker 2022, hublot 2026', [
+  Q(5, 'Familles, propriétés et protection des matériaux', 'BO 4.2.2 · annales : 2022_Nouvelle-Calédonie, 2022_Mayotte, 2026_Antilles-Guyane', [
     ...fromPairs([['L\'acier non allié', 'métallique'], ['L\'acier inoxydable 316L', 'métallique'], ['L\'aluminium 6061', 'métallique'],
       ['Le PEHD', 'polymère'], ['Le PMMA (plexiglas)', 'polymère'], ['Le PVC', 'polymère'], ['Le béton armé', 'composite'],
       ['La fibre de carbone / époxy', 'composite'], ['Le bois lamellé-collé', 'composite'], ['Le verre', 'céramique']],
@@ -1252,7 +1252,7 @@ const EXOS = [
   {
     chap: 5,
     title: 'Indice de performance (méthode d\'Ashby)',
-    support: 'BO 4.2.2 · annales : bras du siège PMR 2022, châssis 2022',
+    support: 'BO 4.2.2 · annales : 2022_Métropole, 2022_Polynésie',
     gen() {
       const M = [['Acier S355', 210, 355, 7850], ['Aluminium 6061', 69, 275, 2700], ['Titane TA6V', 114, 880, 4430], ['Carbone / époxy', 70, 600, 1600], ['Bois (pin)', 12, 50, 550]];
       const crit = pick([{ n: 'un tirant léger et rigide', tex: '\\frac{E}{\\rho}', f: x => x[1] * 1000 / x[3], u: 'MPa·m³/kg' },
@@ -1296,7 +1296,7 @@ const EXOS = [
   {
     chap: 5,
     title: 'Gain de masse et impact CO₂',
-    support: 'Annales : poche de raclage 2025, transport du châssis 2022',
+    support: 'Annales : 2025_Métropole_remplacement, 2022_Polynésie',
     gen() {
       const mat = pick([['acier', 2.0], ['inox', 6.2], ['aluminium', 8.2], ['PEHD', 2.0]]), m1 = rnd(20, 300, 5), e1 = pick([6, 8, 10, 12]), e2 = e1 - pick([2, 3, 4]);
       const m2 = m1 * e2 / e1, g = (m1 - m2) / m1 * 100, co2 = (m1 - m2) * mat[1];
@@ -1316,7 +1316,7 @@ const EXOS = [
       };
     }
   },
-  Q(5, 'Cycle de vie et éco-conception', 'BO 1.5, 4.2.1 · annales : flotteurs 2024, châssis 2022', [
+  Q(5, 'Cycle de vie et éco-conception', 'BO 1.5, 4.2.1 · annales : 2024_Métropole_remplacement, 2022_Polynésie', [
     ['Les étapes du cycle de vie d\'un produit sont :', 'extraction des matières, fabrication, transport, utilisation, fin de vie', ['conception, vente, publicité', 'achat, utilisation', 'fabrication et recyclage seulement'], ''],
     ['Pour un produit qui consomme de l\'énergie en fonctionnement (moteur, chauffage), la phase souvent la plus impactante est :', 'l\'utilisation', ['le transport', 'l\'emballage', 'la fin de vie'], ''],
     ['Pour une structure passive (châssis, flotteur), la phase souvent la plus impactante est :', 'l\'extraction et la production des matériaux', ['l\'utilisation', 'l\'emballage', 'la publicité'], ''],
@@ -1326,7 +1326,7 @@ const EXOS = [
     ['Privilégier un matériau recyclable agit sur la phase :', 'de fin de vie', ['d\'utilisation', 'de transport', 'de conception graphique'], ''],
     ['Transporter par bateau plutôt que par camion :', 'réduit fortement les émissions par tonne et par km', ['les augmente', 'ne change rien', 'supprime toute émission'], '']
   ]),
-  Q(5, 'Procédés de fabrication et d\'assemblage', 'BO 4.3.4, 6.2 · annales : mousqueton 2024, électrosoudage 2022', [
+  Q(5, 'Procédés de fabrication et d\'assemblage', 'BO 4.3.4, 6.2 · annales : 2024_Polynésie, 2022_Nouvelle-Calédonie', [
     ['Le forgeage consiste à :', 'déformer un métal chaud par martelage ou pressage', ['enlever de la matière avec un outil coupant', 'couler un métal liquide dans un moule', 'déposer de la matière couche par couche'], ''],
     ['L\'usinage (tournage, fraisage) consiste à :', 'enlever de la matière avec un outil coupant', ['couler du métal liquide', 'souder deux pièces', 'plier une tôle'], ''],
     ['Le moulage par injection est adapté :', 'aux pièces en plastique fabriquées en grande série', ['aux pièces uniques en acier', 'aux poutres en bois', 'au béton armé'], ''],
@@ -1340,7 +1340,7 @@ const EXOS = [
   {
     chap: 6,
     title: 'Puissances et rendements en cascade',
-    support: 'Annales : dégrilleur 2025',
+    support: 'Annale : 2025_Métropole_remplacement',
     gen() {
       const Pa = rnd(0.5, 5, 0.05) * 1000, em = rnd(0.75, 0.92, 0.01), er = rnd(0.6, 0.95, 0.01), et = rnd(0.8, 0.95, 0.01);
       const Pm = Pa * em, Pr = Pm * er, Pt = Pr * et, eg = em * er * et;
@@ -1368,7 +1368,7 @@ const EXOS = [
   {
     chap: 6,
     title: 'Choix d\'un moteur',
-    support: 'Annales : serrure 2021, Hélilock 2026, tracker 2022',
+    support: 'Annales : 2021_Métropole, 2026_Métropole, 2022_Mayotte',
     gen() {
       const Cu = rnd(20, 200, 5), Nu = rnd(10, 60, 1), k = pick([20, 30, 40, 50]), eta = rnd(0.7, 0.9, 0.05);
       const Cm = Cu / (k * eta), Nm = Nu * k, Pm = Cm * 2 * Math.PI * Nm / 60;
@@ -1392,7 +1392,7 @@ const EXOS = [
   {
     chap: 6,
     title: 'Puissance et rendement d\'un vérin électrique',
-    support: 'Annales : siège de levage PMR 2022',
+    support: 'Annale : 2022_Métropole',
     gen() {
       const U = pick([12, 24]), I = rnd(2, 10, 0.1), F = rnd(500, 4000, 50), Vv = rnd(5, 20, 0.5), c = rnd(100, 400, 10), C = rnd(20, 80, 1);
       const Pa = U * I, Pu = F * Vv / 1000, eta = Pu / Pa, t = c / Vv, Eb = C * U, ncy = Eb / (Pa * 2 * t / 3600);
@@ -1424,7 +1424,7 @@ const EXOS = [
   {
     chap: 7,
     title: 'Échelle d\'un plan',
-    support: 'Annales : siège PMR 2022, convoyeur 2021',
+    support: 'Annales : 2022_Métropole, 2021_Métropole_remplacement',
     gen() {
       const e = pick([10, 20, 25, 50, 100]), l1 = rnd(20, 180, 1), L2 = rnd(0.5, 8, 0.1);
       const r1 = l1 * e / 1000, l2 = L2 * 1000 / e;
@@ -1443,7 +1443,7 @@ const EXOS = [
   {
     chap: 7,
     title: 'Trigonométrie appliquée',
-    support: 'Annales : panneaux flottants 2024, calage des pales 2025',
+    support: 'Annales : 2024_Métropole_remplacement, 2025_Métropole',
     gen() {
       const h = rnd(100, 600, 10), L = rnd(800, 2500, 50), al = rnd(8, 35, 0.5), Lb = rnd(500, 2000, 50);
       const a = Math.atan(h / L) * 180 / Math.PI, hyp = Math.hypot(h, L), h2 = Lb * Math.sin(deg(al)), x2 = Lb * Math.cos(deg(al));
@@ -1475,7 +1475,7 @@ const EXOS = [
   {
     chap: 7,
     title: 'Jeu de fonctionnement',
-    support: 'BO 4.3.4 · annales : coussinet du propulseur éolien 2022',
+    support: 'BO 4.3.4 · annale : 2022_Métropole_remplacement',
     gen() {
       const d = pick([12, 16, 20, 25, 30, 40, 50]), ES = rnd(10, 40, 1), EI = 0, type = pick(['jeu', 'jeu', 'serrage', 'incertain']);
       // écarts de l'arbre en µm : es (supérieur), ei (inférieur)
