@@ -1713,6 +1713,16 @@ shade.onclick = closeMenu;
 
 document.getElementById('prevBtn').onclick = () => go(current - 1);
 document.getElementById('nextBtn').onclick = () => go(current + 1);
+// Flèches bas et haut du clavier : fiche suivante ou précédente (sauf dans un champ de saisie)
+document.getElementById('prevBtn').title = 'Fiche précédente (flèche haut)';
+document.getElementById('nextBtn').title = 'Fiche suivante (flèche bas)';
+document.addEventListener('keydown', ev => {
+  if (ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey || /^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName)) return;
+  const d = ev.key === 'ArrowDown' ? 1 : ev.key === 'ArrowUp' ? -1 : 0;
+  if (!d || current + d < 0 || current + d >= EXOS.length) return;
+  ev.preventDefault();
+  go(current + d);
+});
 window.addEventListener('popstate', fromHash);
 
 buildNav();

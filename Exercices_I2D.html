@@ -2790,6 +2790,16 @@ shade.onclick = closeMenu;
 
 document.getElementById('prevBtn').onclick = () => go(current - 1);
 document.getElementById('nextBtn').onclick = () => go(current + 1);
+// Flèches bas et haut du clavier : exercice suivant ou précédent (sauf dans un champ ou un choix de QCM)
+document.getElementById('prevBtn').title = 'Exercice précédent (flèche haut)';
+document.getElementById('nextBtn').title = 'Exercice suivant (flèche bas)';
+document.addEventListener('keydown', ev => {
+  if (ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey || /^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName)) return;
+  const d = ev.key === 'ArrowDown' ? 1 : ev.key === 'ArrowUp' ? -1 : 0;
+  if (!d || current + d < 0 || current + d >= EXOS.length) return;
+  ev.preventDefault();
+  go(current + d);
+});
 // Exercice au hasard, différent de l'exercice affiché
 const goRandom = () => { let i; do { i = Math.floor(Math.random() * EXOS.length); } while (EXOS.length > 1 && i === current); go(i); };
 document.getElementById('randSide').onclick = goRandom;
