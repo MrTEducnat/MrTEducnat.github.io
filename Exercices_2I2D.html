@@ -461,6 +461,41 @@ function dRot(cx, cy, r, a1, a2, cls = 'arrow') {
   return `<path class="${cls}" d="M${x1.toFixed(1)} ${y1.toFixed(1)} A${r} ${r} 0 ${big} ${sweep} ${x2.toFixed(1)} ${y2.toFixed(1)}"/>` + dA(xp, yp, x2, y2, cls).replace(/<line[^>]*\/>/, '');
 }
 
+// Logigramme (portes normalisées &, ≥1, 1) dessiné à partir d'une équation écrite en LaTeX :
+// « + » = OU, « \cdot » = ET, « \overline{…} » = NON, parenthèses, variables d'une lettre. Ex. : logi('S = a \\cdot (b + c)')
+function logi(tex, cap = 'Logigramme de l\'équation') {
+  const out = (tex.match(/^\s*([A-Za-z])\s*=/) || [, 'S'])[1];
+  const tk = tex.replace(/^\s*[A-Za-z]\s*=\s*/, '').match(/\\overline|\\cdot|[{}()+]|[A-Za-z]/g);
+  let p = 0;
+  const expr = () => { const t = [term()]; while (tk[p] === '+') { p++; t.push(term()); } return t.length > 1 ? { op: 'or', c: t } : t[0]; };
+  const term = () => { const f = [fac()]; while (tk[p] === '\\cdot') { p++; f.push(fac()); } return f.length > 1 ? { op: 'and', c: f } : f[0]; };
+  const fac = () => {
+    const t = tk[p++];
+    if (t === '\\overline') { p++; const e = expr(); p++; return { op: 'not', c: [e] }; }
+    if (t === '(') { const e = expr(); p++; return e; }
+    return { v: t };
+  };
+  const root = expr();
+  // Placement : une ligne par entrée (feuille), une colonne par niveau de porte
+  const ht = n => n.v ? 0 : 1 + Math.max(...n.c.map(ht)), H0 = ht(root), X = d => 30 + d * 66, GW = 34;
+  let leaf = 0, s = '';
+  const draw = n => {
+    if (n.v) { const y = 24 + leaf++ * 36; s += dT(12, y + 5, n.v, 'middle', 15); return { x: 22, y }; }
+    const outs = n.c.map(draw), gx = X(ht(n)), k = n.c.length, gh = Math.max(30, k * 18 + 8);
+    const cy = (outs[0].y + outs[k - 1].y) / 2, gy = cy - gh / 2;
+    outs.forEach((o, j) => {
+      const iy = k === 1 ? cy : gy + (j + 1) * gh / (k + 1), mx = gx - 10 - j * 6;
+      s += `<polyline class="line" style="stroke-width:1.6" points="${o.x},${o.y.toFixed(1)} ${mx},${o.y.toFixed(1)} ${mx},${iy.toFixed(1)} ${gx},${iy.toFixed(1)}"/>`;
+    });
+    s += `<rect class="thin" style="fill:var(--surface)" x="${gx}" y="${gy.toFixed(1)}" width="${GW}" height="${gh}"/>` + dT(gx + GW / 2, gy + 17, { and: '&amp;', or: '≥1', not: '1' }[n.op], 'middle', 13);
+    if (n.op === 'not') { s += `<circle class="thin" style="fill:var(--surface)" cx="${gx + GW + 4}" cy="${cy.toFixed(1)}" r="4"/>`; return { x: gx + GW + 8, y: cy }; }
+    return { x: gx + GW, y: cy };
+  };
+  const o = draw(root), xe = X(H0) + GW + 40;
+  s += `<line class="line" style="stroke-width:1.6" x1="${o.x}" y1="${o.y.toFixed(1)}" x2="${xe}" y2="${o.y.toFixed(1)}"/>` + dT(xe + 6, o.y + 5, out, 'start', 15);
+  return dSV(xe + 24, leaf * 36 + 12, s, cap, 360);
+}
+
 // ---------- Chapitres ----------
 const CHAPITRES = [
   'Outils de base : formules, unités, géométrie',
@@ -585,15 +620,15 @@ const EXOS = [
     title: 'Rendement global d\'une chaîne',
     support: 'Annales : 2025_Métropole, 2026_Métropole',
     gen() {
-      const B = sample([['Batterie', 0.9, 0.98], ['Variateur', 0.92, 0.98], ['Moteur', 0.75, 0.93], ['Réducteur', 0.8, 0.95], ['Poulie / câble', 0.85, 0.97], ['Onduleur', 0.94, 0.98]], 4).map(([n, a, b]) => [n, rnd(a, b, 0.01)]);
+      const B = sample([['Batterie', 0.9, 0.98], ['Variateur', 0.92, 0.98], ['Moteur', 0.75, 0.93], ['Réducteur', 0.8, 0.95], ['Poulie / câble', 0.85, 0.97], ['Onduleur', 0.94, 0.98]], rnd(3, 5, 1)).map(([n, a, b]) => [n, rnd(a, b, 0.01)]);
       const Pa = rnd(2, 900, 1), eta = B.reduce((p, b) => p * b[1], 1), Pu = Pa * eta, Pu2 = rnd(1, 600, 1);
       return {
         statement: `<p>Une chaîne de puissance comporte, en série :</p>` + table(B.map(b => b[0]), [B.map(b => frf(b[1], 2))]) +
           `<p>Elle absorbe ${v(Pa, 'kW')} en entrée.</p>` +
-          dSV(340, 240, dA(170, 6, 170, 30) + dT(180, 22, `P<tspan baseline-shift="sub" font-size="10">a</tspan> = ${fr(Pa)} kW`, 'start', 13) +
+          dSV(340, 50 + B.length * 48, dA(170, 6, 170, 30) + dT(180, 22, `P<tspan baseline-shift="sub" font-size="10">a</tspan> = ${fr(Pa)} kW`, 'start', 13) +
             B.map((b, i) => `<rect class="flow" x="70" y="${30 + i * 48}" width="200" height="28" rx="6"/>` + dT(170, 49 + i * 48, `${b[0]} (η = ${frf(b[1], 2)})`, 'middle', 13) +
               (i < B.length - 1 ? dA(170, 58 + i * 48, 170, 78 + i * 48) : '')).join('') +
-            dA(170, 202, 170, 228) + dT(180, 222, 'P<tspan baseline-shift="sub" font-size="10">u</tspan> = ?', 'start', 13),
+            dA(170, 10 + B.length * 48, 170, 36 + B.length * 48) + dT(180, 30 + B.length * 48, 'P<tspan baseline-shift="sub" font-size="10">u</tspan> = ?', 'start', 13),
             'La puissance traverse les éléments l\'un après l\'autre') +
           ol('Calculer le rendement global de la chaîne.', 'Calculer la puissance utile en sortie.', 'Calculer les pertes totales.',
             `Quelle puissance faut-il fournir en entrée pour obtenir ${v(Pu2, 'kW')} en sortie ?`),
@@ -811,10 +846,13 @@ const EXOS = [
     title: 'Résistance thermique d\'une paroi multicouche',
     support: 'Cours Thermique · annale : 2023_Polynésie',
     gen() {
-      const C = [['Enduit extérieur', rnd(10, 20, 5), 1.15], [pick(['Béton plein', 'Bloc béton creux', 'Brique terre cuite']), pick([150, 180, 200]), 0],
-        [pick(['Laine de verre', 'Laine de roche', 'Polystyrène expansé', 'Fibre de bois']), rnd(60, 200, 20), 0], ['Plaque de plâtre', 13, 0.25]];
-      C[1][2] = { 'Béton plein': 1.75, 'Bloc béton creux': 1.1, 'Brique terre cuite': 0.45 }[C[1][0]];
-      C[2][2] = { 'Laine de verre': 0.035, 'Laine de roche': 0.038, 'Polystyrène expansé': 0.032, 'Fibre de bois': 0.042 }[C[2][0]];
+      // Isolation par l'intérieur (ITI) ou par l'extérieur (ITE), avec ou sans enduit : 3 ou 4 couches, de l'extérieur vers l'intérieur
+      const ite = Math.random() < 0.5, wall = pick([['Béton plein', 1.75], ['Bloc béton creux', 1.1], ['Brique terre cuite', 0.45]]);
+      const iso = pick([['Laine de verre', 0.035], ['Laine de roche', 0.038], ['Polystyrène expansé', 0.032], ['Fibre de bois', 0.042]]);
+      const W0 = [wall[0], pick([150, 180, 200]), wall[1]], I0 = [iso[0], rnd(60, 200, 20), iso[1]];
+      const C = ite ? [['Enduit sur isolant', 6, 0.9], I0, W0, ...(Math.random() < 0.6 ? [['Enduit plâtre intérieur', 10, 0.57]] : [])]
+        : [...(Math.random() < 0.7 ? [['Enduit extérieur', rnd(10, 20, 5), 1.15]] : []), W0, I0, ['Plaque de plâtre', 13, 0.25]];
+      const ins = C.indexOf(I0);
       const Rsi = 0.13, Rse = 0.04, Rs = C.map(c => c[1] / 1000 / c[2]), R = Rs.reduce((a, b) => a + b, 0) + Rsi + Rse, U = 1 / R;
       const S = rnd(15, 60, 1), Ti = pick([19, 20]), Te = rnd(-7, 5, 1), phi = U * S * (Ti - Te);
       return {
@@ -823,16 +861,17 @@ const EXOS = [
           `<p>Résistances superficielles : ${m(`R_{se} = 0{,}04`)} et ${m(`R_{si} = 0{,}13${u('m²·K/W')}`)}.
           Il fait ${v(Ti, '°C')} à l'intérieur et ${v(Te, '°C')} à l'extérieur.</p>` +
           (() => {
-            const k = 170 / C.reduce((s, c) => s + c[1], 0), ws = C.map(c => Math.max(18, c[1] * k)), xs = ws.map((w, i) => 80 + ws.slice(0, i).reduce((a, b) => a + b, 0)), xe = xs[3] + ws[3];
-            return dSV(340, 195, C.map((c, i) => `<rect class="${i === 2 ? 'flow' : 'fillv'}" x="${xs[i].toFixed(1)}" y="30" width="${ws[i].toFixed(1)}" height="120"/>` + dT(xs[i] + ws[i] / 2, 95, i + 1)).join('') +
+            const k = 170 / C.reduce((s, c) => s + c[1], 0), ws = C.map(c => Math.max(18, c[1] * k)), xs = ws.map((w, i) => 80 + ws.slice(0, i).reduce((a, b) => a + b, 0)), xe = xs[C.length - 1] + ws[C.length - 1];
+            return dSV(340, 195, C.map((c, i) => `<rect class="${i === ins ? 'flow' : 'fillv'}" x="${xs[i].toFixed(1)}" y="30" width="${ws[i].toFixed(1)}" height="120"/>` + dT(xs[i] + ws[i] / 2, 95, i + 1)).join('') +
               dT(72, 80, 'extérieur', 'end', 13) + dT(72, 98, `${Te} °C`, 'end', 13) + dT(xe + 8, 80, 'intérieur', 'start', 13) + dT(xe + 8, 98, `${Ti} °C`, 'start', 13) +
               dA(xe, 168, 80, 168, 'arrowv') + dT((80 + xe) / 2, 188, 'flux de chaleur Φ', 'middle', 13),
               `Coupe de la paroi : ${C.map((c, i) => `${i + 1} ${c[0].toLowerCase()}`).join(', ')}`);
           })() +
-          ol('Quelle couche est un isolant ? Justifier.', 'Calculer la résistance thermique de chaque couche.', 'Calculer la résistance totale de la paroi.',
+          ol('Quelle couche est un isolant ? Justifier. Le mur est-il isolé par l\'intérieur ou par l\'extérieur ?', 'Calculer la résistance thermique de chaque couche.', 'Calculer la résistance totale de la paroi.',
             'En déduire son coefficient de transmission U.', 'Calculer le flux thermique qui traverse le mur.'),
         steps: [
-          ['1. Isolant', `<p>${C[2][0]} : ${m(`\\lambda = ${tx(C[2][2], 3)} < 0{,}07${u('W/(m·K)')}`)}, c'est l'isolant.</p>`],
+          ['1. Isolant', `<p>${C[ins][0]} : ${m(`\\lambda = ${tx(C[ins][2], 3)} < 0{,}07${u('W/(m·K)')}`)}, c'est l'isolant.
+            Il est placé ${ite ? 'du côté extérieur du mur' : 'du côté intérieur du mur'} : c'est une isolation par ${ite ? 'l\'extérieur (ITE), qui supprime la plupart des ponts thermiques' : 'l\'intérieur (ITI), qui réduit un peu la surface habitable'}.</p>`],
           ['2. Couches', '<p>Pour chaque couche, ' + m('R = \\frac{e}{\\lambda}') + ' avec e en mètres :</p>' + table(['Couche', 'R (m²·K/W)'], C.map((c, i) => [c[0], fr(Rs[i], 3)]))],
           ['3. Résistance totale', M(`R = R_{se} + \\sum \\frac{e}{\\lambda} + R_{si}`) + M(`R = 0{,}04 + ${Rs.map(r => tx(r, 3)).join(' + ')} + 0{,}13`) + M(`R = \\boxed{${tx(R, 2)}${u('m²·K/W')}}`)],
           ['4. Coefficient U', M(`U = \\frac{1}{R} = \\frac{1}{${tx(R, 2)}} = \\boxed{${tx(U, 3)}${u('W/(m²·K)')}}`)],
@@ -1363,7 +1402,8 @@ const EXOS = [
         statement: `<p>${e[0]}</p>` + ol('Écrire l\'équation logique de la sortie.', 'Compléter la table de vérité.', 'Combien de combinaisons activent la sortie ?',
           'Écrire la sortie sous forme de somme des combinaisons qui la mettent à 1.'),
         steps: [
-          ['1. Équation', M(e[1]) + '<p>ET se note « · », OU se note « + », NON se note par une barre.</p>'],
+          ['1. Équation', M(e[1]) + '<p>ET se note « · », OU se note « + », NON se note par une barre. Le logigramme correspondant :</p>' +
+            logi(e[1], `Logigramme de ${e[4]} (& : ET, ≥1 : OU, 1 avec un rond : NON)`)],
           ['2. Table de vérité', table([...e[3], e[4]], rows)],
           ['3. Combinaisons', `<p><b>${ones.length}</b> combinaisons sur 8.</p>`],
           ['4. Somme de produits', ones.map((o, i) => M(`${i ? '+\\ ' : e[4] + ' = '}${o}`)).join('') + '<p>Cette forme est équivalente à l\'équation de la question 1, mais non simplifiée.</p>']

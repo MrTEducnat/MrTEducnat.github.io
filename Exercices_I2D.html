@@ -393,18 +393,19 @@ function graph(o) {
 // Échantillonne une fonction pour un graphique
 const curve = (f, x0, x1, n = 400) => Array.from({ length: n + 1 }, (_, i) => { const x = x0 + (x1 - x0) * i / n; return [x, f(x)]; });
 // Diagramme de Sankey en ligne : étapes [{name, val}] (val peut être '?') ; les pertes partent vers le bas
+// Cadre de 340 de large pour rester lisible sur téléphone : noms et pertes sur deux lignes (coupés au premier espace)
 function sankey(stages, vals, unit) {
-  const W = 560, H = 220, top = 40, x0 = 20, x1 = W - 20, seg = (x1 - x0) / stages.length;
-  const k = 90 / vals[0];
-  let s = `<svg viewBox="0 0 ${W} ${H}" class="sankey" role="img">`;
+  const W = 340, H = 236, top = 52, x0 = 8, seg = (W - 16) / stages.length, k = 84 / vals[0];
+  const two = t => { const j = t.indexOf(' : ') >= 0 ? t.indexOf(' : ') : t.indexOf(' '); return j < 0 ? [t, ''] : [t.slice(0, j), t.slice(j).replace(/^ : | /, '')]; };
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="sankey" role="img" style="max-width:460px">`;
   stages.forEach((st, i) => {
-    const h = vals[i] * k, xa = x0 + i * seg;
-    s += `<rect class="flow" x="${xa}" y="${top}" width="${seg}" height="${h}"/>`;
-    s += `<text x="${xa + 6}" y="${top - 18}" class="lab">${st.name}</text><text x="${xa + 6}" y="${top - 4}">${st.label}</text>`;
+    const h = vals[i] * k, xa = x0 + i * seg, [n1, n2] = two(st.name);
+    s += `<rect class="flow" x="${xa}" y="${top}" width="${seg}" height="${h}"/>` +
+      dT(xa + 4, top - 34, n1, 'start', 12) + dT(xa + 4, top - 20, n2, 'start', 12) + dT(xa + 4, top - 5, st.label, 'start', 12);
     if (i < stages.length - 1) {
-      const lw = Math.max(4, (vals[i] - vals[i + 1]) * k), xb = xa + seg;
-      s += `<rect class="loss" x="${xb - lw}" y="${top + vals[i + 1] * k}" width="${lw}" height="${H - 30 - top - vals[i + 1] * k}"/>`;
-      s += `<text x="${xb - lw / 2}" y="${H - 12}" text-anchor="middle">${stages[i].loss}</text>`;
+      const lw = Math.max(4, (vals[i] - vals[i + 1]) * k), xb = xa + seg, [l1, l2] = two(st.loss);
+      s += `<rect class="loss" x="${xb - lw}" y="${top + vals[i + 1] * k}" width="${lw}" height="${H - 36 - top - vals[i + 1] * k}"/>` +
+        dT(xb - lw / 2, H - 19, l1, 'middle', 11) + dT(xb - lw / 2, H - 6, l2, 'middle', 11);
     }
   });
   return fig(s + '</svg>', unit);
@@ -555,6 +556,41 @@ const FLU_CIRCUIT = (cap = FLU_NUM.map((c, i) => `${i + 1} : ${c[0].toLowerCase(
   <path class="thin" d="M143 192 L146 187 L149 192"/><line class="line" x1="140" y1="206" x2="140" y2="236"/>
   ${[60, 140, 200].map(x => `<polyline class="line" points="${x - 16},228 ${x - 16},246 ${x + 16},246 ${x + 16},228"/>`).join('')}
   ${FLU_NUM.map(([, x, y], i) => `<circle class="thin" cx="${x}" cy="${y}" r="9"/>` + dT(x, y + 4, String(i + 1), 'middle', 12)).join('')}</svg>`, cap);
+
+// Logigramme (portes normalisées &, ≥1, 1) dessiné à partir d'une équation écrite en LaTeX :
+// « + » = OU, « \cdot » = ET, « \overline{…} » = NON, parenthèses, variables d'une lettre. Ex. : logi('S = a \\cdot (b + c)')
+function logi(tex, cap = 'Logigramme de l\'équation') {
+  const out = (tex.match(/^\s*([A-Za-z])\s*=/) || [, 'S'])[1];
+  const tk = tex.replace(/^\s*[A-Za-z]\s*=\s*/, '').match(/\\overline|\\cdot|[{}()+]|[A-Za-z]/g);
+  let p = 0;
+  const expr = () => { const t = [term()]; while (tk[p] === '+') { p++; t.push(term()); } return t.length > 1 ? { op: 'or', c: t } : t[0]; };
+  const term = () => { const f = [fac()]; while (tk[p] === '\\cdot') { p++; f.push(fac()); } return f.length > 1 ? { op: 'and', c: f } : f[0]; };
+  const fac = () => {
+    const t = tk[p++];
+    if (t === '\\overline') { p++; const e = expr(); p++; return { op: 'not', c: [e] }; }
+    if (t === '(') { const e = expr(); p++; return e; }
+    return { v: t };
+  };
+  const root = expr();
+  // Placement : une ligne par entrée (feuille), une colonne par niveau de porte
+  const ht = n => n.v ? 0 : 1 + Math.max(...n.c.map(ht)), H0 = ht(root), X = d => 30 + d * 66, GW = 34;
+  let leaf = 0, s = '';
+  const draw = n => {
+    if (n.v) { const y = 24 + leaf++ * 36; s += dT(12, y + 5, n.v, 'middle', 15); return { x: 22, y }; }
+    const outs = n.c.map(draw), gx = X(ht(n)), k = n.c.length, gh = Math.max(30, k * 18 + 8);
+    const cy = (outs[0].y + outs[k - 1].y) / 2, gy = cy - gh / 2;
+    outs.forEach((o, j) => {
+      const iy = k === 1 ? cy : gy + (j + 1) * gh / (k + 1), mx = gx - 10 - j * 6;
+      s += `<polyline class="line" style="stroke-width:1.6" points="${o.x},${o.y.toFixed(1)} ${mx},${o.y.toFixed(1)} ${mx},${iy.toFixed(1)} ${gx},${iy.toFixed(1)}"/>`;
+    });
+    s += `<rect class="thin" style="fill:var(--surface)" x="${gx}" y="${gy.toFixed(1)}" width="${GW}" height="${gh}"/>` + dT(gx + GW / 2, gy + 17, { and: '&amp;', or: '≥1', not: '1' }[n.op], 'middle', 13);
+    if (n.op === 'not') { s += `<circle class="thin" style="fill:var(--surface)" cx="${gx + GW + 4}" cy="${cy.toFixed(1)}" r="4"/>`; return { x: gx + GW + 8, y: cy }; }
+    return { x: gx + GW, y: cy };
+  };
+  const o = draw(root), xe = X(H0) + GW + 40;
+  s += `<line class="line" style="stroke-width:1.6" x1="${o.x}" y1="${o.y.toFixed(1)}" x2="${xe}" y2="${o.y.toFixed(1)}"/>` + dT(xe + 6, o.y + 5, out, 'start', 15);
+  return dSV(xe + 24, leaf * 36 + 12, s, cap, 360);
+}
 
 // ---------- Chapitres ----------
 const CHAPITRES = [
@@ -1004,20 +1040,23 @@ const EXOS = [
     title: 'Diagramme de Sankey',
     support: 'Cours Ressources énergétiques',
     gen() {
-      const P0 = rnd(220, 280, 1), p1 = rnd(25, 35, 1), p2 = rnd(30, 50, 1);
-      const P1 = P0 * (1 - p1 / 100), P2 = P1 * (1 - p2 / 100), eta = P2 / P0;
-      const svg = sankey([{ name: 'Énergie primaire', label: `${P0} Mtep`, loss: `Pertes : ${p1} %` },
-        { name: 'Énergie finale', label: '? Mtep', loss: `Pertes : ${p2} %` }, { name: 'Énergie utile', label: '? Mtep' }], [P0, P1, P2], 'Largeur des flèches proportionnelle aux flux');
+      // Deux ou trois transformations : primaire → (secondaire →) finale → utile
+      const three = Math.random() < 0.5, P0 = rnd(220, 280, 1);
+      const ST = three ? [['Énergie primaire', 'E_p'], ['Énergie secondaire', 'E_s'], ['Énergie finale', 'E_f'], ['Énergie utile', 'E_u']] : [['Énergie primaire', 'E_p'], ['Énergie finale', 'E_f'], ['Énergie utile', 'E_u']];
+      const ps = three ? [rnd(15, 25, 1), rnd(8, 15, 1), rnd(30, 50, 1)] : [rnd(25, 35, 1), rnd(30, 50, 1)], vals = [P0];
+      ps.forEach(p => vals.push(vals[vals.length - 1] * (1 - p / 100)));
+      const n = ps.length, eta = vals[n] / P0;
+      const svg = sankey(ST.map(([nm], i) => ({ name: nm, label: i ? '? Mtep' : `${P0} Mtep`, loss: i < n ? `Pertes : ${ps[i]} %` : '' })), vals, 'Largeur des flèches proportionnelle aux flux');
       return {
-        statement: `<p>Le diagramme de Sankey ci-dessous représente le bilan énergétique d'un pays. Les pertes sont données
+        statement: `<p>Le diagramme de Sankey ci-dessous représente le bilan énergétique d'un pays, en ${n} transformations. Les pertes sont données
           en pourcentage de l'énergie qui entre dans chaque étape.</p>${svg}` +
-          ol('Calculer l\'énergie finale.', 'Calculer l\'énergie utile.', 'Calculer le rendement global entre énergie primaire et énergie utile.',
+          ol(...ST.slice(1).map(([nm]) => `Calculer l'${nm.toLowerCase()}.`), 'Calculer le rendement global entre énergie primaire et énergie utile.',
             'Quelle part de l\'énergie primaire est perdue au total ?'),
         steps: [
-          ['1. Énergie finale', M(`E_f = ${P0} \\times (1 - ${tx(p1 / 100, 2)}) = \\boxed{${tx(P1, 1)}${u('Mtep')}}`)],
-          ['2. Énergie utile', M(`E_u = ${tx(P1, 1)} \\times (1 - ${tx(p2 / 100, 2)}) = \\boxed{${tx(P2, 1)}${u('Mtep')}}`)],
-          ['3. Rendement global', M(`\\eta = \\frac{E_u}{E_p} = \\frac{${tx(P2, 1)}}{${P0}} = \\boxed{${tx(eta, 3)}}`)],
-          ['4. Pertes totales', M(`(1 - ${tx(eta, 3)}) \\times 100 = \\boxed{${tx((1 - eta) * 100, 1)}\\,\\%}`)]
+          ...ST.slice(1).map(([nm, s], i) => [`${i + 1}. ${nm}`, M(`${s} = ${tx(vals[i], 1)} \\times (1 - ${tx(ps[i] / 100, 2)}) = \\boxed{${tx(vals[i + 1], 1)}${u('Mtep')}}`)]),
+          [`${n + 1}. Rendement global`, M(`\\eta = \\frac{E_u}{E_p} = \\frac{${tx(vals[n], 1)}}{${P0}} = \\boxed{${tx(eta, 3)}}`) +
+            (three ? `<p>On retrouve le produit des rendements : ${ps.map(p => fr(1 - p / 100, 2)).join(' × ')} ≈ ${fr(eta, 3)}.</p>` : '')],
+          [`${n + 2}. Pertes totales`, M(`(1 - ${tx(eta, 3)}) \\times 100 = \\boxed{${tx((1 - eta) * 100, 1)}\\,\\%}`)]
         ]
       };
     }
@@ -2386,7 +2425,7 @@ print(n, x)</pre>` +
       const gt = pick(GATES);
       const ones = rows.filter(r => r[3]).map(r => `(${r[0]}, ${r[1]}, ${r[2]})`);
       return {
-        statement: `<p>On considère l'équation logique ${m('S = ' + tex)}.</p>` +
+        statement: `<p>On considère l'équation logique ${m('S = ' + tex)}, réalisée par le logigramme ci-dessous.</p>` + logi('S = ' + tex, 'Logigramme de S (& : ET, ≥1 : OU, 1 avec un rond : NON)') +
           table(['a', 'b', 'c', 'S'], rows.map(r => [r[0], r[1], r[2], '?'])) +
           `<p>On donne aussi la table d'une porte à deux entrées x et y :</p>` +
           table(['x', 'y', 'Z'], [[0, 0, gt[1][0]], [0, 1, gt[1][1]], [1, 0, gt[1][2]], [1, 1, gt[1][3]]]) +

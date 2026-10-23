@@ -461,6 +461,41 @@ function dRot(cx, cy, r, a1, a2, cls = 'arrow') {
   return `<path class="${cls}" d="M${x1.toFixed(1)} ${y1.toFixed(1)} A${r} ${r} 0 ${big} ${sweep} ${x2.toFixed(1)} ${y2.toFixed(1)}"/>` + dA(xp, yp, x2, y2, cls).replace(/<line[^>]*\/>/, '');
 }
 
+// Logigramme (portes normalisées &, ≥1, 1) dessiné à partir d'une équation écrite en LaTeX :
+// « + » = OU, « \cdot » = ET, « \overline{…} » = NON, parenthèses, variables d'une lettre. Ex. : logi('S = a \\cdot (b + c)')
+function logi(tex, cap = 'Logigramme de l\'équation') {
+  const out = (tex.match(/^\s*([A-Za-z])\s*=/) || [, 'S'])[1];
+  const tk = tex.replace(/^\s*[A-Za-z]\s*=\s*/, '').match(/\\overline|\\cdot|[{}()+]|[A-Za-z]/g);
+  let p = 0;
+  const expr = () => { const t = [term()]; while (tk[p] === '+') { p++; t.push(term()); } return t.length > 1 ? { op: 'or', c: t } : t[0]; };
+  const term = () => { const f = [fac()]; while (tk[p] === '\\cdot') { p++; f.push(fac()); } return f.length > 1 ? { op: 'and', c: f } : f[0]; };
+  const fac = () => {
+    const t = tk[p++];
+    if (t === '\\overline') { p++; const e = expr(); p++; return { op: 'not', c: [e] }; }
+    if (t === '(') { const e = expr(); p++; return e; }
+    return { v: t };
+  };
+  const root = expr();
+  // Placement : une ligne par entrée (feuille), une colonne par niveau de porte
+  const ht = n => n.v ? 0 : 1 + Math.max(...n.c.map(ht)), H0 = ht(root), X = d => 30 + d * 66, GW = 34;
+  let leaf = 0, s = '';
+  const draw = n => {
+    if (n.v) { const y = 24 + leaf++ * 36; s += dT(12, y + 5, n.v, 'middle', 15); return { x: 22, y }; }
+    const outs = n.c.map(draw), gx = X(ht(n)), k = n.c.length, gh = Math.max(30, k * 18 + 8);
+    const cy = (outs[0].y + outs[k - 1].y) / 2, gy = cy - gh / 2;
+    outs.forEach((o, j) => {
+      const iy = k === 1 ? cy : gy + (j + 1) * gh / (k + 1), mx = gx - 10 - j * 6;
+      s += `<polyline class="line" style="stroke-width:1.6" points="${o.x},${o.y.toFixed(1)} ${mx},${o.y.toFixed(1)} ${mx},${iy.toFixed(1)} ${gx},${iy.toFixed(1)}"/>`;
+    });
+    s += `<rect class="thin" style="fill:var(--surface)" x="${gx}" y="${gy.toFixed(1)}" width="${GW}" height="${gh}"/>` + dT(gx + GW / 2, gy + 17, { and: '&amp;', or: '≥1', not: '1' }[n.op], 'middle', 13);
+    if (n.op === 'not') { s += `<circle class="thin" style="fill:var(--surface)" cx="${gx + GW + 4}" cy="${cy.toFixed(1)}" r="4"/>`; return { x: gx + GW + 8, y: cy }; }
+    return { x: gx + GW, y: cy };
+  };
+  const o = draw(root), xe = X(H0) + GW + 40;
+  s += `<line class="line" style="stroke-width:1.6" x1="${o.x}" y1="${o.y.toFixed(1)}" x2="${xe}" y2="${o.y.toFixed(1)}"/>` + dT(xe + 6, o.y + 5, out, 'start', 15);
+  return dSV(xe + 24, leaf * 36 + 12, s, cap, 360);
+}
+
 // ---------- Chapitres ----------
 const CHAPITRES = [
   'Chaîne d\'information et SysML',
@@ -1585,7 +1620,8 @@ print("Alarmes :", nb)</pre>` +
         statement: `<p>${C.txt}</p>` +
           ol(`Écrire l'équation logique de ${C.s}.`, 'Établir la table de vérité.', `Que vaut ${C.s} lorsque ${C.vars.map((x, i) => `${x} = ${cas[i]}`).join(', ')} ?`),
         steps: [
-          ['1. Équation', M(`\\boxed{${C.tex}}`) + '<p>« ET » se note « · », « OU » se note « + » et la négation par une barre.</p>'],
+          ['1. Équation', M(`\\boxed{${C.tex}}`) + '<p>« ET » se note « · », « OU » se note « + » et la négation par une barre. Le logigramme correspondant :</p>' +
+            logi(C.tex, `Logigramme de ${C.s} (& : ET, ≥1 : OU, 1 avec un rond : NON)`)],
           ['2. Table de vérité', table([...C.vars, C.s], rows)],
           ['3. Cas particulier', `<p>${C.s} = <b>${cas[3]}</b>.</p>`]
         ]
