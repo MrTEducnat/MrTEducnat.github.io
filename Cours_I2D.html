@@ -605,6 +605,7 @@ const EXOS = [
       H('3. Unités usuelles hors SI') +
       table(['Unité', 'Correspondance'], [['degré Celsius (°C)', 'T (K) = θ (°C) + 273,15'], ['litre (L)', '1 L = 1 dm³ = 10⁻³ m³'], ['bar', '1 bar = 10⁵ Pa'],
         ['calorie (cal)', '1 cal ≈ 4,18 J'], ['kilowattheure (kWh)', '1 kWh = 3,6 × 10⁶ J'], ['kilomètre par heure', '1 m/s = 3,6 km/h'], ['heure (h)', '1 h = 60 min = 3 600 s']]) +
+      P('Pourquoi 3,6 ? Un objet qui avance de 1 m chaque seconde parcourt en une heure 1 × 3 600 = 3 600 m, soit 3,6 km : 1 m/s = 3,6 km/h. Inversement, 1 km/h = 1 000 m en 3 600 s = 1 000 / 3 600 = 1 / 3,6 m/s.') +
       H('4. Multiples et sous-multiples') +
       table(['Préfixe', 'Symbole', 'Facteur'], [['téra', 'T', '10¹²'], ['giga', 'G', '10⁹'], ['méga', 'M', '10⁶'], ['kilo', 'k', '10³'], ['hecto', 'h', '10²'], ['déca', 'da', '10¹'],
         ['déci', 'd', '10⁻¹'], ['centi', 'c', '10⁻²'], ['milli', 'm', '10⁻³'], ['micro', 'µ', '10⁻⁶'], ['nano', 'n', '10⁻⁹'], ['pico', 'p', '10⁻¹²']]) +
@@ -636,7 +637,7 @@ const EXOS = [
     body:
       H('1. Vitesse') +
       P('La vitesse moyenne est la distance parcourue divisée par la durée du parcours :') + M('v = \\frac{d}{\\Delta t}') + P(`avec ${m('v')} en m/s, ${m('d')} en m et ${m('\\Delta t')} en s.`) +
-      EX('Exemple', P('Un tapis roulant déplace un colis de 12 m en 8 s : v = 12 / 8 = 1,5 m/s, soit 1,5 × 3,6 = 5,4 km/h.')) +
+      EX('Exemple', P('Un tapis roulant déplace un colis de 12 m en 8 s : v = 12 / 8 = 1,5 m/s, soit 1,5 × 3,6 = 5,4 km/h (en une heure, 1,5 × 3 600 = 5 400 m = 5,4 km).')) +
       H('2. Masse volumique') +
       P('C\'est la masse d\'un matériau par unité de volume. Elle permet d\'identifier un matériau.') + M('\\rho = \\frac{m}{V}') + P(`avec ${m('\\rho')} en kg/m³, ${m('m')} en kg et ${m('V')} en m³.`) +
       P('Repères : eau 1 000 kg/m³, air 1,2 kg/m³, aluminium 2 700 kg/m³, acier 7 850 kg/m³, béton 2 400 kg/m³.') +
@@ -901,7 +902,7 @@ const EXOS = [
     body:
       H('1. Translation rectiligne') +
       M('v = \\frac{d}{\\Delta t}') + P(`avec ${m('v')} en m/s, ${m('d')} en m et ${m('\\Delta t')} en s.`) +
-      P('Pour passer des km/h aux m/s on divise par 3,6 ; pour passer des m/s aux km/h on multiplie par 3,6. Exemple : 36 km/h = 10 m/s et 5 m/s = 18 km/h.') +
+      P('Pour passer des km/h aux m/s on divise par 3,6 ; pour passer des m/s aux km/h on multiplie par 3,6. Pourquoi 3,6 ? Parce que 1 km = 1 000 m et 1 h = 3 600 s : 1 km/h = 1 000 m / 3 600 s = 1 / 3,6 m/s. Exemple : 36 km/h = 36 000 m en 3 600 s = 10 m/s, et 5 m/s = 5 × 3 600 = 18 000 m par heure = 18 km/h.') +
       H('2. Rotation') +
       P('Un angle se mesure en tours, en degrés ou en radians : 1 tour = 360° = 2π rad. La vitesse de rotation s\'exprime :') +
       UL('en <b>tours par minute</b> (tr/min), notée N ;', 'en <b>radians par seconde</b> (rad/s), notée ω et appelée vitesse angulaire.') +
@@ -917,12 +918,13 @@ const EXOS = [
       UL(`distance parcourue en un tour : ${m('d = 2 \\pi R = \\pi D')}, avec D le diamètre en m ;`, `distance parcourue pour un angle θ en radians : ${m('d = R \\times \\theta')} ;`, 'vitesse linéaire d\'un point situé à la distance R de l\'axe :') +
       M('V = R \\times \\omega') + P(`avec ${m('V')} en m/s, ${m('R')} en m et ${m('\\omega')} en rad/s.`) +
       EX('Exemple : pale d\'éolienne', P('Une pale de 40 m tourne à 14 tr/min :') + M('\\omega = \\frac{2 \\pi \\times 14}{60} = 1{,}47\\,\\text{rad/s}') +
-        M('V = 40 \\times 1{,}47 = 58{,}8\\,\\text{m/s} \\approx 212\\,\\text{km/h}')) +
-      EX('Exemple : roue de véhicule', P('Un véhicule roule à 209 km/h avec des roues de 88,9 cm de diamètre :') + M('V = \\frac{209}{3{,}6} = 58{,}1\\,\\text{m/s} \\qquad \\omega = \\frac{V}{R} = \\frac{58{,}1}{0{,}4445} = 131\\,\\text{rad/s}') +
+        M('V = 40 \\times 1{,}47 = 58{,}8\\,\\text{m/s} \\approx 212\\,\\text{km/h}') +
+        P('En km/h, on multiplie par 3,6 : en une heure (3 600 s), le bout de pale parcourt 58,8 × 3 600 ≈ 212 000 m, soit 212 km.')) +
+      EX('Exemple : roue de véhicule', P('Un véhicule roule à 209 km/h avec des roues de 88,9 cm de diamètre. On divise par 3,6 pour avoir des m/s (209 km/h = 209 000 m en 3 600 s) :') + M('V = \\frac{209}{3{,}6} = 58{,}1\\,\\text{m/s} \\qquad \\omega = \\frac{V}{R} = \\frac{58{,}1}{0{,}4445} = 131\\,\\text{rad/s}') +
         M('N = \\frac{60 \\times 131}{2 \\pi} \\approx 1\\,250\\,\\text{tr/min}')) +
       H('4. Le vecteur vitesse') +
       P('La vitesse d\'un point est un vecteur : sa <b>direction</b> est tangente à la trajectoire, son <b>sens</b> est celui du mouvement, sa <b>norme</b> est la valeur de la vitesse et son <b>point d\'application</b> est le point étudié.') +
-      BOX(P('ω = 2πN / 60 et V = R × ω, avec ω en rad/s et R en m.', '÷ 3,6 pour passer des km/h aux m/s.'))
+      BOX(P('ω = 2πN / 60 et V = R × ω, avec ω en rad/s et R en m.', '÷ 3,6 pour passer des km/h aux m/s, car 1 km/h = 1 000 m / 3 600 s.'))
   },
   // ===================== Séquence 4 =====================
   {
@@ -1033,7 +1035,7 @@ const EXOS = [
   {
     chap: 4,
     title: 'Convertir l\'énergie électrique',
-    support: 'PC Adaptation AC/DC · PC Schémas fluidiques',
+    support: 'PC Adaptation AC/DC',
     body:
       H('1. Pourquoi convertir ?') +
       P('Les sources et les récepteurs n\'utilisent pas tous la même forme d\'électricité : le réseau fournit de l\'alternatif, une batterie du continu, un moteur peut demander une tension réglable. Les <b>convertisseurs statiques</b> (sans pièce en mouvement) adaptent l\'énergie électrique.') +
@@ -1058,12 +1060,32 @@ const EXOS = [
         M('N_2 = N_1 \\times \\frac{U_2}{U_1} = 1\\,150 \\times \\frac{12}{230} = 60\\ \\text{spires}')) +
       H('4. Le hacheur et la commande PWM') +
       P('Le hacheur découpe une tension continue en créneaux : la tension moyenne en sortie vaut α × U, où U est la tension continue d\'entrée et α le rapport cyclique du signal PWM (sans unité, entre 0 et 1). C\'est ainsi qu\'on règle la vitesse d\'un moteur ou la luminosité d\'une LED.') +
-      H('5. Les schémas fluidiques') +
-      P('En hydraulique et en pneumatique, on représente aussi les circuits par des symboles normalisés : pompe ou compresseur (Alimenter), distributeur (Distribuer), vérin ou moteur hydraulique (Convertir), canalisations et appareils de mesure. On y retrouve la même logique que pour la chaîne de puissance électrique.') +
-      P('Symboles des principaux composants (traits simplifiés ; en hydraulique le triangle de la pompe est plein, en pneumatique il est vide) :') + FLU_GRID() +
-      P('Exemple de circuit : la pompe aspire l\'huile dans le réservoir et l\'envoie vers le distributeur ; le limiteur protège le circuit contre les surpressions ; selon la position du distributeur, l\'huile fait sortir ou rentrer la tige du vérin, et l\'huile qui revient du vérin retourne au réservoir.') +
-      FLU_CIRCUIT() +
       BOX(P('Redresseur : AC → DC ; onduleur : DC → AC ; hacheur : DC → DC réglable ; transformateur : AC → AC.', 'U2 / U1 = N2 / N1 pour un transformateur.'))
+  },
+  {
+    chap: 4,
+    title: 'Schémas fluidiques',
+    support: 'PC Schémas fluidiques',
+    body:
+      H('1. Les réseaux fluidiques') +
+      P('Un réseau fluidique transporte de l\'énergie (ou de la chaleur) grâce à un fluide qui circule dans des canalisations. On les classe selon le fluide utilisé :') +
+      table(['Système', 'Fluide', 'Exemples'], [['Pneumatique', 'air comprimé', 'portes de bus, préhenseurs, outils à air'], ['Hydraulique', 'eau ou huile sous pression', 'pelleteuse, presse, circuit de chauffage'],
+        ['Aéraulique', 'air (ventilation)', 'VMC, centrale de traitement d\'air'], ['Frigorifique', 'fluide caloporteur', 'réfrigérateur, climatiseur, pompe à chaleur']]) +
+      H('2. Un circuit fluidique est une chaîne de puissance') +
+      CHAIN([['Alimenter', 'pompe, compresseur'], ['Distribuer', 'distributeur'], ['Convertir', 'vérin, moteur hydraulique'], ['Agir', 'tige, outil']]) +
+      P('Les canalisations transmettent le fluide d\'un composant à l\'autre ; des appareils protègent le circuit (limiteur de pression, filtre) ou permettent de le surveiller (manomètre). On y retrouve la même logique que pour la chaîne de puissance électrique.') +
+      H('3. Les symboles normalisés') +
+      P('Chaque composant a un symbole (traits simplifiés). En hydraulique, le triangle de la pompe est plein ; en pneumatique, celui du compresseur est vide.') + FLU_GRID() +
+      UL('<b>Distributeur 4/2</b> : le premier chiffre est le nombre d\'orifices, le second le nombre de positions (une case par position). <b>Monostable</b> : un ressort le ramène dans sa position de repos.',
+        '<b>Vérin simple effet</b> : le fluide fait sortir la tige, un ressort la fait rentrer. <b>Vérin double effet</b> : le fluide fait sortir et rentrer la tige.',
+        '<b>Réducteur de débit unidirectionnel</b> : il freine le fluide dans un seul sens, ce qui règle la vitesse de la tige ; le clapet placé à côté laisse passer librement l\'autre sens.') +
+      H('4. Lire un circuit') +
+      P('La pompe aspire l\'huile dans le réservoir et l\'envoie vers le distributeur ; le limiteur protège le circuit contre les surpressions ; selon la position du distributeur, l\'huile fait sortir ou rentrer la tige du vérin, et l\'huile qui revient du vérin retourne au réservoir.') +
+      FLU_CIRCUIT() +
+      H('5. Circulation naturelle et ventilation') +
+      UL('<b>Thermosiphon</b> : circulation naturelle, sans pompe. L\'eau chaude, moins dense, monte et aspire l\'eau froide (chauffe-eau solaire, anciens circuits de chauffage).',
+        '<b>Centrale de traitement d\'air (CTA) double flux</b> : un échangeur récupère une partie de la chaleur de l\'air extrait du bâtiment pour réchauffer l\'air neuf.') +
+      BOX(P('Pneumatique : air comprimé ; hydraulique : eau ou huile ; aéraulique : air ; frigorifique : fluide caloporteur.', 'Distributeur n/m : n orifices et m positions ; monostable : rappel par ressort.'))
   },
   // ===================== Séquence 5 =====================
   {
@@ -1092,8 +1114,24 @@ const EXOS = [
       EX('Exemple : vitesse d\'un moteur', P('Un moteur 12 V est commandé par un signal PWM de période T = 2 ms, à l\'état haut pendant 1,5 ms :') +
         M('\\alpha = \\frac{1{,}5}{2} = 0{,}75 = 75\\,\\%') + P('La tension moyenne vaut 0,75 × 12 = 9 V.')) +
       H('5. Harmoniques et filtres') +
-      P('Un signal périodique non sinusoïdal est la somme d\'une sinusoïde de même fréquence (le <b>fondamental</b>) et de sinusoïdes de fréquences multiples 2f, 3f… (les <b>harmoniques</b>). Un filtre laisse passer certaines fréquences et en atténue d\'autres :') +
+      P('Un signal périodique non sinusoïdal est la somme d\'une sinusoïde de même fréquence (le <b>fondamental</b>) et de sinusoïdes de fréquences multiples 2f, 3f… (les <b>harmoniques</b>). Plus on ajoute d\'harmoniques, plus la somme se rapproche du signal réel, ici un signal carré de 100 Hz :') +
+      graph({ x0: 0, x1: 20, dx: 2.5, y0: -6, y1: 6, dy: 2, w: 420, h: 250, xlab: 't (ms)', ylab: 'u (V)',
+        series: [{ pts: curve(t => 4 * Math.sin(2 * Math.PI * t / 10), 0, 20), cls: 'c3' }, { pts: curve(t => 4 / 3 * Math.sin(6 * Math.PI * t / 10), 0, 20), cls: 'c2' },
+          { pts: curve(t => 4 * Math.sin(2 * Math.PI * t / 10) + 4 / 3 * Math.sin(6 * Math.PI * t / 10) + 0.8 * Math.sin(10 * Math.PI * t / 10), 0, 20) }],
+        cap: 'Pointillés : fondamental (100 Hz) ; orange : harmonique 3 (300 Hz) ; bleu : fondamental + harmoniques 3 et 5, déjà proche d\'un créneau' }) +
+      P('Le <b>spectre</b> représente chaque sinusoïde par une raie : sa position donne la fréquence, sa hauteur l\'amplitude. Pour un signal carré, il n\'y a que des harmoniques impairs, de plus en plus petits.') +
+      graph({ x0: 0, x1: 800, dx: 100, y0: 0, y1: 5, dy: 1, w: 420, h: 220, xlab: 'f (Hz)', ylab: 'amplitude (V)', series: [],
+        extra: (X, Y) => [[100, 4], [300, 4 / 3], [500, 0.8], [700, 4 / 7]].map(([f, a]) => `<rect class="flow" x="${X(f) - 6}" y="${Y(a)}" width="12" height="${Y(0) - Y(a)}"/>`).join('') +
+          dT(X(100) + 12, Y(4) + 12, 'fondamental', 'start', 13) + dT(X(300) + 10, Y(4 / 3) - 6, 'harmoniques 3, 5, 7', 'start', 13),
+        cap: 'Spectre du signal carré de 100 Hz : raies à 100, 300, 500 et 700 Hz' }) +
+      P('Un filtre laisse passer certaines fréquences et en atténue d\'autres :') +
       UL('<b>passe-bas</b> : garde les basses fréquences (supprime le bruit rapide) ;', '<b>passe-haut</b> : garde les hautes fréquences ;', '<b>passe-bande</b> : garde une bande de fréquences.') +
+      dSV(340, 140, [['passe-bas', [[0, 40], [42, 40], [56, 48], [94, 92]], [0, 49]], ['passe-haut', [[0, 92], [38, 48], [52, 40], [94, 40]], [45, 94]], ['passe-bande', [[0, 92], [30, 48], [40, 40], [58, 40], [68, 48], [94, 92]], [34, 64]]]
+        .map(([n, pts, [a, b]], k) => { const x0 = 14 + k * 112;
+          return `<rect class="flow" x="${x0 + a}" y="40" width="${b - a}" height="60" style="opacity:.6"/><line class="ax" x1="${x0}" y1="16" x2="${x0}" y2="100"/><line class="ax" x1="${x0}" y1="100" x2="${x0 + 98}" y2="100"/>` +
+            `<polyline class="c1" points="${pts.map(([x, y]) => `${x0 + x},${y}`).join(' ')}"/>` + dT(x0 + 4, 24, 'G', 'start', 12) + dT(x0 + 96, 114, 'f', 'end', 12) + dT(x0 + 48, 132, n, 'middle', 13); }).join(''),
+        'Gain des trois filtres selon la fréquence ; zone colorée : les fréquences qui passent') +
+      P('Exemple : un filtre passe-bas qui coupe au-dessus de 200 Hz, appliqué au signal carré de 100 Hz, garde le fondamental et atténue les harmoniques : on récupère une sinusoïde de 100 Hz.') +
       BOX(P('f = 1 / T ; valeur lue = divisions × calibre.', 'Rapport cyclique α = durée à l\'état haut / période.'))
   },
   {
@@ -1516,7 +1554,7 @@ print(niveau)`) +
 ];
 
 // ---------- Liens vers les exercices (fiche → [route, titre], généré par liens.js) ----------
-const EXO_LIENS = { "Unités et grandeurs": [ [ "1-1", "Conversions d'unités" ], [ "1-2", "Ballon d'eau chaude" ] ], "Grandeurs mécaniques de base et rendement": [ [ "1-3", "Masse volumique" ], [ "1-4", "Poids et pression d'un mur" ], [ "1-5", "Vitesse linéaire" ], [ "1-6", "Dérouleur de fibre optique" ], [ "1-9", "Rendement d'une chaîne de puissance" ] ], "Chaînes de puissance et d'information": [ [ "1-7", "Fonctions des chaînes d'information et d'énergie" ], [ "1-8", "Composants électroniques" ] ], "Sources et formes d'énergie": [ [ "2-1", "Sources et formes d'énergie" ], [ "2-2", "Énergie primaire, secondaire, finale et utile" ], [ "2-3", "Conversions d'énergie" ] ], "Énergie, puissance et coût": [ [ "2-6", "Énergie, puissance et coût" ], [ "2-4", "Unités d'énergie" ], [ "2-5", "Conversions de durées" ], [ "2-7", "Box internet et mise en veille" ], [ "2-8", "Consommation du Bitcoin et parc éolien" ], [ "2-9", "Comparaison de modes de chauffage" ] ], "Ressources énergétiques, mix et réseaux": [ [ "2-11", "Mix énergétique et réseaux électriques" ], [ "2-10", "Diagramme de Sankey" ] ], "Développement durable et cycle de vie": [ [ "2-12", "Développement durable et cycle de vie" ], [ "2-13", "ACV d'une bouteille en verre" ], [ "2-14", "Émissions du transport des bouteilles" ] ], "Contacts, mouvements et degrés de liberté": [ [ "3-1", "Contacts et mouvements" ], [ "3-2", "Degrés de liberté et liaisons" ] ], "Liaisons et schéma cinématique": [ [ "3-3", "Symboles des liaisons" ], [ "3-4", "Liaisons de la vie courante" ], [ "3-5", "Classes d'équivalence" ] ], "Relations cinématiques : translation et rotation": [ [ "3-7", "Vitesse de l'extrémité d'un bras robotisé" ], [ "3-6", "Bras robotisé : coordonnées articulaires" ] ], "Grandeurs électriques": [ [ "4-1", "Courant continu, alternatif et réseau électrique" ], [ "4-2", "Lire un signal électrique" ], [ "4-3", "Courant absorbé par un moteur" ] ], "Énergie solaire photovoltaïque": [ [ "4-4", "Photovoltaïque" ], [ "4-5", "Caractéristique d'un panneau photovoltaïque" ], [ "4-6", "Associations de panneaux" ], [ "4-7", "Production d'un panneau" ], [ "4-8", "Dimensionnement d'une installation photovoltaïque" ] ], "Piles, accumulateurs et batteries": [ [ "4-9", "Piles, accumulateurs et batteries" ], [ "4-10", "Batterie : énergie, autonomie et recharge" ], [ "4-11", "Associations de batteries" ], [ "4-12", "Énergie massique et volumique" ], [ "4-13", "Choix d'une batterie de vélo électrique" ] ], "Convertir l'énergie électrique": [ [ "4-14", "Redresseur, onduleur, hacheur, transformateur" ], [ "4-15", "Schémas fluidiques" ], [ "4-16", "Éoliennes" ] ], "Information et signaux": [ [ "5-1", "Nature de l'information" ], [ "5-2", "Lire un oscillogramme" ], [ "5-3", "Signal PWM et rapport cyclique" ], [ "5-15", "Harmoniques et filtres" ] ], "Capteurs et détecteurs": [ [ "5-6", "Types et choix de capteurs" ], [ "5-7", "Capteur à sortie en tension" ], [ "5-8", "Sonde de température PT100" ], [ "5-9", "Thermocouple" ], [ "5-16", "Pesage de l'Hemo-mixer" ] ], "Codage de l'information": [ [ "5-10", "Conversions binaire, décimal et hexadécimal" ], [ "5-11", "Nombre de valeurs codables" ], [ "5-12", "Débit et durée de téléchargement" ], [ "5-13", "Opérations logiques sur des mots binaires" ], [ "5-14", "Code ASCII" ] ], "Conversion analogique-numérique": [ [ "5-5", "Convertisseur analogique-numérique (CAN)" ], [ "5-4", "Échantillonnage et taille des fichiers" ] ], "Actions mécaniques et équilibre": [ [ "6-1", "Actions mécaniques et PFS" ], [ "6-2", "Moment d'une force : la barrière" ], [ "6-3", "Poutre sur deux appuis" ], [ "6-4", "Balcon : charge répartie et coefficient de sécurité" ], [ "6-5", "Vérin double effet" ] ], "Engrenages et réducteurs de vitesse": [ [ "6-7", "Engrenages" ], [ "6-8", "Engrenage simple et module" ], [ "6-9", "Train d'engrenages" ], [ "6-10", "Motoréducteur du robot mBot" ] ], "Puissance d'un véhicule en déplacement": [ [ "6-6", "Puissance d'un véhicule en déplacement" ], [ "6-11", "Ouvre-portail : puissances et rendements" ] ], "Algorithmique et algorigrammes": [ [ "7-1", "Algorithmique et algorigrammes" ], [ "7-2", "Parcours d'un algorithme de régulation" ], [ "7-4", "Trace d'une boucle Tant que" ] ], "Logique combinatoire": [ [ "7-6", "Fonctions logiques" ], [ "7-7", "Table de vérité" ], [ "7-8", "Barre de LED et binaire" ] ], "Bases de la programmation en Python": [ [ "7-5", "Bases de Python" ], [ "7-3", "Trace d'une boucle for en Python" ], [ "7-9", "Bras robotisé : déplacer des objets avec une boucle" ] ], "Familles et propriétés physiques des matériaux": [ [ "8-1", "Familles de matériaux" ], [ "8-3", "Chaleur et température" ] ], "Comportement mécanique et choix des matériaux": [ [ "8-4", "Essai de traction sur une éprouvette" ], [ "8-2", "Propriétés et sollicitations des matériaux" ], [ "8-5", "Module d'Young à partir d'une flèche" ], [ "8-6", "Choix de matériaux et éco-conception" ] ] };
+const EXO_LIENS = { "Unités et grandeurs": [ [ "1-1", "Conversions d'unités" ], [ "1-2", "Ballon d'eau chaude" ] ], "Grandeurs mécaniques de base et rendement": [ [ "1-3", "Masse volumique" ], [ "1-4", "Poids et pression d'un mur" ], [ "1-5", "Vitesse linéaire" ], [ "1-6", "Dérouleur de fibre optique" ], [ "1-9", "Rendement d'une chaîne de puissance" ] ], "Chaînes de puissance et d'information": [ [ "1-7", "Fonctions des chaînes d'information et d'énergie" ], [ "1-8", "Composants électroniques" ] ], "Sources et formes d'énergie": [ [ "2-1", "Sources et formes d'énergie" ], [ "2-2", "Énergie primaire, secondaire, finale et utile" ], [ "2-3", "Conversions d'énergie" ] ], "Énergie, puissance et coût": [ [ "2-6", "Énergie, puissance et coût" ], [ "2-4", "Unités d'énergie" ], [ "2-5", "Conversions de durées" ], [ "2-7", "Box internet et mise en veille" ], [ "2-8", "Consommation du Bitcoin et parc éolien" ], [ "2-9", "Comparaison de modes de chauffage" ] ], "Ressources énergétiques, mix et réseaux": [ [ "2-11", "Mix énergétique et réseaux électriques" ], [ "2-10", "Diagramme de Sankey" ] ], "Développement durable et cycle de vie": [ [ "2-12", "Développement durable et cycle de vie" ], [ "2-13", "ACV d'une bouteille en verre" ], [ "2-14", "Émissions du transport des bouteilles" ] ], "Contacts, mouvements et degrés de liberté": [ [ "3-1", "Contacts et mouvements" ], [ "3-2", "Degrés de liberté et liaisons" ] ], "Liaisons et schéma cinématique": [ [ "3-3", "Symboles des liaisons" ], [ "3-4", "Liaisons de la vie courante" ], [ "3-5", "Classes d'équivalence" ] ], "Relations cinématiques : translation et rotation": [ [ "3-7", "Vitesse de l'extrémité d'un bras robotisé" ], [ "3-6", "Bras robotisé : coordonnées articulaires" ] ], "Grandeurs électriques": [ [ "4-1", "Courant continu, alternatif et réseau électrique" ], [ "4-2", "Lire un signal électrique" ], [ "4-3", "Courant absorbé par un moteur" ] ], "Énergie solaire photovoltaïque": [ [ "4-4", "Photovoltaïque" ], [ "4-5", "Caractéristique d'un panneau photovoltaïque" ], [ "4-6", "Associations de panneaux" ], [ "4-7", "Production d'un panneau" ], [ "4-8", "Dimensionnement d'une installation photovoltaïque" ] ], "Piles, accumulateurs et batteries": [ [ "4-9", "Piles, accumulateurs et batteries" ], [ "4-10", "Batterie : énergie, autonomie et recharge" ], [ "4-11", "Associations de batteries" ], [ "4-12", "Énergie massique et volumique" ], [ "4-13", "Choix d'une batterie de vélo électrique" ] ], "Convertir l'énergie électrique": [ [ "4-14", "Redresseur, onduleur, hacheur, transformateur" ], [ "4-16", "Éoliennes" ] ], "Schémas fluidiques": [ [ "4-15", "Schémas fluidiques" ] ], "Information et signaux": [ [ "5-1", "Nature de l'information" ], [ "5-2", "Lire un oscillogramme" ], [ "5-3", "Signal PWM et rapport cyclique" ], [ "5-15", "Harmoniques et filtres" ] ], "Capteurs et détecteurs": [ [ "5-6", "Types et choix de capteurs" ], [ "5-7", "Capteur à sortie en tension" ], [ "5-8", "Sonde de température PT100" ], [ "5-9", "Thermocouple" ], [ "5-16", "Pesage de l'Hemo-mixer" ] ], "Codage de l'information": [ [ "5-10", "Conversions binaire, décimal et hexadécimal" ], [ "5-11", "Nombre de valeurs codables" ], [ "5-12", "Débit et durée de téléchargement" ], [ "5-13", "Opérations logiques sur des mots binaires" ], [ "5-14", "Code ASCII" ] ], "Conversion analogique-numérique": [ [ "5-5", "Convertisseur analogique-numérique (CAN)" ], [ "5-4", "Échantillonnage et taille des fichiers" ] ], "Actions mécaniques et équilibre": [ [ "6-1", "Actions mécaniques et PFS" ], [ "6-2", "Moment d'une force : la barrière" ], [ "6-3", "Poutre sur deux appuis" ], [ "6-4", "Balcon : charge répartie et coefficient de sécurité" ], [ "6-5", "Vérin double effet" ] ], "Engrenages et réducteurs de vitesse": [ [ "6-7", "Engrenages" ], [ "6-8", "Engrenage simple et module" ], [ "6-9", "Train d'engrenages" ], [ "6-10", "Motoréducteur du robot mBot" ] ], "Puissance d'un véhicule en déplacement": [ [ "6-6", "Puissance d'un véhicule en déplacement" ], [ "6-11", "Ouvre-portail : puissances et rendements" ] ], "Algorithmique et algorigrammes": [ [ "7-1", "Algorithmique et algorigrammes" ], [ "7-2", "Parcours d'un algorithme de régulation" ], [ "7-4", "Trace d'une boucle Tant que" ] ], "Logique combinatoire": [ [ "7-6", "Fonctions logiques" ], [ "7-7", "Table de vérité" ], [ "7-8", "Barre de LED et binaire" ] ], "Bases de la programmation en Python": [ [ "7-5", "Bases de Python" ], [ "7-3", "Trace d'une boucle for en Python" ], [ "7-9", "Bras robotisé : déplacer des objets avec une boucle" ] ], "Familles et propriétés physiques des matériaux": [ [ "8-1", "Familles de matériaux" ], [ "8-3", "Chaleur et température" ] ], "Comportement mécanique et choix des matériaux": [ [ "8-4", "Essai de traction sur une éprouvette" ], [ "8-2", "Propriétés et sollicitations des matériaux" ], [ "8-5", "Module d'Young à partir d'une flèche" ], [ "8-6", "Choix de matériaux et éco-conception" ] ] };
 
 // ---------- Affichage ----------
 const nav = document.getElementById('nav');

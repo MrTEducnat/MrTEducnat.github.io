@@ -595,7 +595,8 @@ const EXOS = [
       M('V = R \\times \\omega') + LEG(['V', 'la vitesse linéaire en m/s'], ['R', 'la distance à l\'axe en m'], ['\\omega', 'la vitesse angulaire en rad/s']) +
       M('\\omega = \\frac{2 \\pi N}{60}') + LEG(['N', 'la vitesse de rotation en tr/min']) +
       EX('Exemple : disque de meuleuse', P('Un disque de 125 mm de diamètre (R = 0,0625 m) tourne à 11 000 tr/min :') +
-        M('\\omega = \\frac{2 \\pi \\times 11\\,000}{60} \\approx 1\\,152\\,\\text{rad/s}') + M('V = 0{,}0625 \\times 1\\,152 \\approx 72\\,\\text{m/s} \\approx 259\\,\\text{km/h}')) +
+        M('\\omega = \\frac{2 \\pi \\times 11\\,000}{60} \\approx 1\\,152\\,\\text{rad/s}') + M('V = 0{,}0625 \\times 1\\,152 \\approx 72\\,\\text{m/s} \\approx 259\\,\\text{km/h}') +
+        P('Pour passer en km/h, on multiplie par 3,6 : en une heure (3 600 s), un point du bord parcourt 72 × 3 600 = 259 200 m ≈ 259 km.')) +
       H('Accélération') +
       P('a = Δv / Δt (en m/s²). Un mouvement uniformément accéléré part de 0 et atteint v au bout de t = v / a, en parcourant d = v² / (2a). Un cycle de déplacement typique comporte une phase d\'accélération, une phase à vitesse constante et une phase de freinage.') +
       BOX(P('V = R × ω ; ω = 2πN / 60.', 'Vitesse tangente à la trajectoire.'))
