@@ -262,8 +262,9 @@ svg .l1 { stroke: var(--accent); stroke-width: 2.6; fill: none; stroke-linecap: 
 svg .l2 { stroke: var(--val); stroke-width: 2.6; fill: none; stroke-linecap: round; }
 svg .f1 { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2.6; }
 svg .f2 { fill: var(--val-bg); stroke: var(--val); stroke-width: 2.6; }
-.lias { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.lias { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); grid-auto-flow: dense; gap: 10px; margin: 14px 0; }
 .lia { border: 1px solid var(--border); border-radius: 8px; padding: 6px 6px 8px; text-align: center; background: var(--surface); }
+.lia.w2 { grid-column: span 2; }
 .lia b { display: block; font-size: 14px; }
 .lia span { display: block; font-size: 12px; color: var(--muted); }
 svg.liasym { display: block; width: 100%; max-width: 150px; height: auto; margin: 0 auto 4px; }
@@ -479,36 +480,45 @@ const CHAPITRES = [
   'Traitement et programmation',
   'Objets connectés et transmission sans fil'
 ];
-// ---------- Symboles des liaisons (schémas plans simplifiés, axe principal x horizontal) ----------
-// Pièce 1 en bleu (classe l1), pièce 2 en orange (classe l2)
+// ---------- Symboles des liaisons (schémas plans d'après le cours, une ou deux vues) ----------
+// Pièce 1 en bleu (classes l1, f1), pièce 2 en orange (classe l2) ; chaque vue tient dans un cadre de 120 × 100
+const LIA_AX = a => `<path class="thin" d="M12 30 V10 M9 15 L12 9 L15 15 M12 30 H32 M27 27 L33 30 L27 33"/><text x="2" y="16" style="font-size:11px">y</text><text x="29" y="44" style="font-size:11px">${a}</text>`;
+// Morceaux communs : bras de la pièce 1, « L » de la pièce 2, bras incliné de la pièce 2 sous un cercle
+const LIA_P = {
+  arm: (x, y) => `<line class="l1" x1="${x}" y1="${y}" x2="${x + 14}" y2="${y - 24}"/>`,
+  L: (xe) => `<polyline class="l2" points="${xe},60 34,60 34,92"/>`,
+  rond: (extra = '') => `<line class="l2" x1="70" y1="60" x2="54" y2="84"/><circle class="f1" cx="70" cy="60" r="10"/>${extra}<line class="l1" x1="70" y1="50" x2="70" y2="28"/>`
+};
 const LIA_SVG = {
-  encastrement: `<line class="l2" x1="60" y1="18" x2="60" y2="72"/><line class="l2" x1="20" y1="72" x2="60" y2="72"/><line class="l1" x1="60" y1="45" x2="132" y2="45"/>
-    <path class="pt" d="M60 45 L76 45 L60 31 Z"/>`,
-  pivot: `<rect class="f2" x="55" y="31" width="40" height="28"/><line class="l2" x1="75" y1="59" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>
-    <line class="l1" x1="48" y1="35" x2="48" y2="55"/><line class="l1" x1="102" y1="35" x2="102" y2="55"/>`,
-  glissiere: `<rect class="f2" x="50" y="27" width="50" height="36"/><line class="l2" x1="75" y1="63" x2="75" y2="84"/><rect class="f1" x="14" y="39" width="122" height="12"/>`,
-  helicoidale: `<rect class="f2" x="50" y="29" width="50" height="32"/><line class="l2" x1="75" y1="61" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>
-    <line class="l2" x1="56" y1="58" x2="66" y2="32"/><line class="l2" x1="70" y1="58" x2="80" y2="32"/><line class="l2" x1="84" y1="58" x2="94" y2="32"/>`,
-  pivotglissant: `<rect class="f2" x="55" y="31" width="40" height="28"/><line class="l2" x1="75" y1="59" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>`,
-  rotuledoigt: `<path class="l2" d="M75 26 A20 20 0 1 0 75 64"/><line class="l2" x1="55" y1="45" x2="18" y2="45"/><circle class="f1" cx="75" cy="45" r="13"/><line class="l1" x1="88" y1="45" x2="134" y2="45"/>
-    <line class="l1" x1="75" y1="32" x2="75" y2="14"/><line class="l2" x1="68" y1="10" x2="68" y2="24"/><line class="l2" x1="82" y1="10" x2="82" y2="24"/>`,
-  rotule: `<path class="l2" d="M75 26 A20 20 0 1 0 75 64"/><line class="l2" x1="55" y1="45" x2="18" y2="45"/><circle class="f1" cx="75" cy="45" r="13"/><line class="l1" x1="88" y1="45" x2="134" y2="45"/>`,
-  appuiplan: `<line class="l1" x1="38" y1="39" x2="112" y2="39"/><line class="l1" x1="75" y1="39" x2="75" y2="12"/><line class="l2" x1="38" y1="51" x2="112" y2="51"/><line class="l2" x1="75" y1="51" x2="75" y2="80"/>`,
-  annulaire: `<line class="l2" x1="36" y1="27" x2="114" y2="27"/><line class="l2" x1="36" y1="63" x2="114" y2="63"/><line class="l2" x1="75" y1="63" x2="75" y2="84"/>
-    <circle class="f1" cx="75" cy="45" r="17"/><line class="l1" x1="92" y1="45" x2="136" y2="45"/>`,
-  rectiligne: `<line class="l2" x1="22" y1="62" x2="128" y2="62"/><line class="l2" x1="75" y1="62" x2="75" y2="84"/><rect class="f1" x="46" y="38" width="58" height="24"/>
-    <ellipse class="f1" cx="46" cy="50" rx="6" ry="12"/><line class="l1" x1="75" y1="38" x2="75" y2="12"/>`,
-  ponctuelle: `<line class="l2" x1="22" y1="62" x2="128" y2="62"/><line class="l2" x1="75" y1="62" x2="75" y2="84"/><circle class="f1" cx="75" cy="52" r="10"/><line class="l1" x1="75" y1="42" x2="75" y2="12"/>`
+  encastrement: [['x', `<line class="l2" x1="40" y1="74" x2="106" y2="74"/><line class="l1" x1="70" y1="74" x2="88" y2="36"/><path style="fill:var(--accent)" d="M62 74 H76 L69 64 Z"/>`]],
+  pivot: [['x', LIA_P.L(104) + `<line class="l2" x1="46" y1="52" x2="46" y2="68"/><line class="l2" x1="94" y1="52" x2="94" y2="68"/><rect class="f1" x="52" y="53" width="36" height="14"/>` + LIA_P.arm(70, 53)],
+    ['z', LIA_P.rond()]],
+  glissiere: [['x', LIA_P.L(52) + `<line class="l2" x1="88" y1="60" x2="104" y2="60"/><rect class="f1" x="52" y="52" width="36" height="16"/>` + LIA_P.arm(70, 52)],
+    ['z', `<line class="l2" x1="70" y1="70" x2="70" y2="92"/><rect class="f1" x="60" y="50" width="20" height="20"/><path class="l2" d="M60 50 L80 70 M80 50 L60 70"/><line class="l1" x1="70" y1="50" x2="70" y2="28"/>`]],
+  helicoidale: [['x', LIA_P.L(104) + `<rect class="f1" x="50" y="52" width="40" height="16"/><path class="l2" d="M54 60 q4 -7 8 0 t8 0 t8 0 t8 0"/>` + LIA_P.arm(70, 52)],
+    ['z', LIA_P.rond('<path class="l2" d="M74 56 A5 5 0 1 0 75 62"/>')]],
+  pivotglissant: [['x', LIA_P.L(104) + `<rect class="f1" x="52" y="53" width="36" height="14"/><line class="l2" x1="52" y1="60" x2="88" y2="60"/>` + LIA_P.arm(70, 53)],
+    ['z', LIA_P.rond()]],
+  rotuledoigt: [['x', `<line class="l2" x1="18" y1="60" x2="55" y2="60"/><path class="l2" d="M70 45 A15 15 0 0 0 70 75"/><circle class="f1" cx="70" cy="60" r="10"/>` +
+    `<line class="l1" x1="80" y1="60" x2="110" y2="60"/><line class="l1" x1="70" y1="50" x2="70" y2="36"/><line class="l2" x1="64" y1="40" x2="64" y2="47"/><line class="l2" x1="76" y1="40" x2="76" y2="47"/>`]],
+  rotule: [['x', `<line class="l2" x1="18" y1="60" x2="55" y2="60"/><path class="l2" d="M70 45 A15 15 0 0 0 70 75"/><circle class="f1" cx="70" cy="60" r="10"/><line class="l1" x1="80" y1="60" x2="110" y2="60"/>`]],
+  appuiplan: [['x', `<line class="l1" x1="40" y1="56" x2="102" y2="56"/>` + LIA_P.arm(72, 56) + `<line class="l2" x1="36" y1="64" x2="106" y2="64"/><line class="l2" x1="70" y1="64" x2="58" y2="90"/>`]],
+  annulaire: [['x', `<path class="l2" d="M57 56 A13 13 0 0 0 83 56"/><line class="l2" x1="44" y1="69" x2="96" y2="69"/><line class="l2" x1="70" y1="69" x2="70" y2="92"/><circle class="f1" cx="70" cy="56" r="10"/>` + LIA_P.arm(74, 48)],
+    ['z', `<rect class="l2" x="52" y="56" width="36" height="14"/><line class="l2" x1="70" y1="70" x2="70" y2="92"/><circle class="f1" cx="70" cy="56" r="10"/>` + LIA_P.arm(74, 48)]],
+  rectiligne: [['x', `<line class="l2" x1="44" y1="68" x2="96" y2="68"/><line class="l2" x1="70" y1="68" x2="70" y2="92"/><path class="f1" d="M60 50 H80 L70 68 Z"/><line class="l1" x1="70" y1="50" x2="70" y2="28" style="stroke-width:4"/>`],
+    ['z', `<line class="l2" x1="36" y1="68" x2="104" y2="68"/><line class="l2" x1="70" y1="68" x2="58" y2="92"/><path class="f1" d="M48 50 H92 L84 68 H56 Z"/>` + LIA_P.arm(72, 50)]],
+  ponctuelle: [['x', `<line class="l2" x1="44" y1="68" x2="96" y2="68"/><line class="l2" x1="70" y1="68" x2="70" y2="92"/><circle class="f1" cx="70" cy="58" r="10"/>` + LIA_P.arm(74, 50)]]
 };
 // Les 11 liaisons : [clé du symbole, nom, degrés de liberté et mouvements]
 const LIAISONS = [['encastrement', 'Encastrement', '0 ddl : aucun mouvement'], ['pivot', 'Pivot', '1 ddl : Rx'], ['glissiere', 'Glissière', '1 ddl : Tx'],
-  ['helicoidale', 'Hélicoïdale', '1 ddl : Rx et Tx liés'], ['pivotglissant', 'Pivot glissant', '2 ddl : Rx, Tx'], ['rotuledoigt', 'Rotule à doigt', '2 ddl : Rx, Ry'],
-  ['rotule', 'Rotule', '3 ddl : Rx, Ry, Rz'], ['appuiplan', 'Appui plan', '3 ddl : Tx, Ty, Rz'], ['annulaire', 'Linéaire annulaire', '4 ddl : Tx, Rx, Ry, Rz'],
-  ['rectiligne', 'Linéaire rectiligne', '4 ddl : Tx, Ty, Rx, Rz'], ['ponctuelle', 'Ponctuelle', '5 ddl : Tx, Ty, Rx, Ry, Rz']];
-// Symbole seul (pour un exercice) et grille de cartes (pour un cours)
-const liaSym = k => `<svg class="liasym" viewBox="0 0 150 92" role="img">${LIA_SVG[k]}</svg>`;
+  ['helicoidale', 'Hélicoïdale', '1 ddl : Rx et Tx liés'], ['pivotglissant', 'Pivot glissant', '2 ddl : Rx, Tx'], ['rotuledoigt', 'Rotule à doigt', '2 ddl : Ry, Rz'],
+  ['rotule', 'Rotule', '3 ddl : Rx, Ry, Rz'], ['appuiplan', 'Appui plan', '3 ddl : Tx, Tz, Ry'], ['annulaire', 'Linéaire annulaire', '4 ddl : Tx, Rx, Ry, Rz'],
+  ['rectiligne', 'Linéaire rectiligne', '4 ddl : Tx, Tz, Ry, Rz'], ['ponctuelle', 'Ponctuelle', '5 ddl : Tx, Tz, Rx, Ry, Rz']];
+// Symbole (toutes ses vues côte à côte, chacune avec son repère) et grille de cartes (pour un cours)
+const liaSym = k => { const v = LIA_SVG[k];
+  return `<svg class="liasym" viewBox="0 0 ${120 * v.length} 100" style="max-width:${150 * v.length}px" role="img">${v.map(([a, g], i) => `<g transform="translate(${120 * i} 0)">${LIA_AX(a)}${g}</g>`).join('')}</svg>`; };
 const LIA_GRID = (cles = LIAISONS.map(l => l[0])) => `<div class="lias">${LIAISONS.filter(l => cles.includes(l[0])).map(([k, n, d]) =>
-  `<div class="lia">${liaSym(k)}<b>${n}</b><span>${d}</span></div>`).join('')}</div>`;
+  `<div class="lia${LIA_SVG[k].length > 1 ? ' w2' : ''}">${liaSym(k)}<b>${n}</b><span>${d}</span></div>`).join('')}</div>`;
 
 
 // ---------- Mise en forme des fiches ----------
