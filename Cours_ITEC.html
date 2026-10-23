@@ -628,8 +628,20 @@ const EXOS = [
         P('À θ = 60° (cos 60° = 0,5) :') + M('L = \\sqrt{160\\,000 + 90\\,000 - 2 \\times 400 \\times 300 \\times 0{,}5} = \\sqrt{130\\,000} \\approx 361\\,\\text{mm}') +
         P('Course du vérin entre ces deux positions : 500 − 361 = 139 mm.')) +
       H('4. Durée d\'un cycle') +
-      P('Pour chaque phase : t = d / v. La durée du cycle est la somme des durées des phases, y compris les temps morts (basculement, attente). On la compare à la durée imposée par le cahier des charges.') +
-      BOX(P('Crémaillère : V = ω × r ; vis-écrou : V = p × N / 60.', 'Al-Kashi : L² = a² + b² − 2ab cos θ.'))
+      P('Un système automatique répète un <b>cycle</b> : une suite de phases qui ramène le mécanisme à sa position de départ. On y trouve des mouvements (souvent à vitesse constante) et des <b>temps morts</b>, sans déplacement (basculement, serrage, attente). Pour chaque mouvement à vitesse constante :') +
+      M('t = \\frac{d}{v}') + LEG(['t', 'la durée de la phase en s'], ['d', 'la distance parcourue en m'], ['v', 'la vitesse en m/s']) +
+      P('Si le mouvement est produit par un moteur, on calcule d\'abord la vitesse avec les relations des parties précédentes (V = p × N / 60 pour une vis, V = ω × m × Z / 2 pour une crémaillère). La durée du cycle est la somme des durées de toutes les phases, temps morts compris ; on la compare ensuite à la durée imposée par le cahier des charges.') +
+      EX('Exemple : cycle d\'un dégrilleur (cahier des charges : moins de 60 s)', P('Une poche descend devant la grille, remonte en raclant les déchets, bascule pour se vider, puis revient en position haute :') +
+        table(['Phase', 'Distance et vitesse', 'Durée'], [['1. Descente de la poche', '3 m à 0,15 m/s', '20 s'], ['2. Raclage (remontée)', '2,5 m à 0,1 m/s', '25 s'],
+          ['3. Basculement et vidage', 'temps mort', '8 s'], ['4. Retour en position haute', '0,5 m à 0,25 m/s', '2 s']]) +
+        M('t_1 = \\frac{3}{0{,}15} = 20\\,\\text{s}') + M('t_2 = \\frac{2{,}5}{0{,}1} = 25\\,\\text{s}') + M('t_4 = \\frac{0{,}5}{0{,}25} = 2\\,\\text{s}') +
+        M('t_{cycle} = 20 + 25 + 8 + 2 = 55\\,\\text{s}') + P('55 s < 60 s : le cahier des charges est respecté.')) +
+      graph({ x0: 0, x1: 60, dx: 10, y0: 0, y1: 4, dy: 1, w: 420, h: 240, xlab: 't (s)', ylab: 'hauteur (m)', series: [{ pts: [[0, 3], [20, 0], [45, 2.5], [53, 2.5], [55, 3], [60, 3]] }],
+        extra: (X, Y) => [20, 45, 53, 55].map(t => `<line class="c3" x1="${X(t)}" y1="${Y(4)}" x2="${X(t)}" y2="${Y(0)}"/>`).join('') +
+          [[8, '1'], [32.5, '2'], [49, '3'], [57.5, '4']].map(([t, n]) => dT(X(t), Y(0.3), n, 'middle', 14)) + `<circle class="pt" cx="${X(55)}" cy="${Y(3)}" r="4"/>`,
+        cap: 'Chronogramme du cycle : hauteur de la poche au cours du temps (1 descente, 2 raclage, 3 basculement, 4 retour) ; le cycle se termine à 55 s' }) +
+      P('Sur le chronogramme, une phase à vitesse constante est un segment de droite : plus la pente est forte, plus la vitesse est grande. Un temps mort est un palier horizontal.') +
+      BOX(P('Crémaillère : V = ω × r ; vis-écrou : V = p × N / 60.', 'Al-Kashi : L² = a² + b² − 2ab cos θ.', 'Durée d\'une phase : t = d / v ; durée du cycle = somme des phases, temps morts compris.'))
   },
   {
     chap: 2,
