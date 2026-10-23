@@ -823,6 +823,24 @@ const EXOS = [
       P('Pour reconnaître un contact, on imagine qu\'on trempe une pièce dans la peinture et on regarde la trace laissée sur l\'autre :') +
       table(['Trace laissée', 'Type de contact', 'Exemple'], [['un point', 'ponctuel', 'bille sur un plan'], ['une ligne droite', 'linéique rectiligne', 'cylindre posé sur un plan'],
         ['un cercle', 'linéique annulaire', 'bille dans un tube'], ['une surface', 'surfacique (plan, cylindre, sphère)', 'livre posé sur une table']]) +
+      P('Sur les schémas ci-dessous, la trace laissée par le contact est en orange :') +
+      (() => {
+        const plan = '<polygon class="flow" points="8,74 112,74 142,50 38,50"/>', obj = 'class="thin" style="fill:var(--surface)"', trace = 'style="fill:var(--val);opacity:.55"';
+        const C = [
+          [plan + `<circle ${obj} cx="75" cy="40" r="22"/><circle class="pt" cx="75" cy="62" r="4"/>`, 'Ponctuel', 'trace : un point (bille sur un plan)'],
+          [plan + `<path ${obj} d="M42 26 H106 A8 18 0 0 1 106 62 H42 Z"/><ellipse ${obj} cx="42" cy="44" rx="8" ry="18"/><line class="c2" style="stroke-width:4" x1="42" y1="62" x2="106" y2="62"/>`,
+            'Linéique rectiligne', 'trace : une ligne droite (cylindre couché sur un plan)'],
+          [`<path class="thin" style="fill:var(--accent-bg)" d="M20 24 H128 A7 20 0 0 1 128 64 H20 Z"/><ellipse ${obj} cx="20" cy="44" rx="7" ry="20"/><circle ${obj} cx="75" cy="44" r="20"/>` +
+            '<ellipse class="c2" style="stroke-width:4" cx="75" cy="44" rx="6" ry="20"/>', 'Linéique annulaire', 'trace : un cercle (bille dans un tube)'],
+          [plan + `<polygon ${trace} points="42,66 96,66 112,56 58,56"/><line class="c3" x1="77" y1="35" x2="77" y2="56"/>` +
+            `<rect ${obj} x="42" y="14" width="54" height="18"/><polygon ${obj} points="42,14 58,6 112,6 96,14"/><polygon ${obj} points="96,14 112,6 112,24 96,32"/>`,
+            'Surfacique plan', 'trace : une surface plane (livre soulevé de la table)'],
+          [`<rect ${obj} x="8" y="36" width="134" height="18" rx="3"/><rect ${trace} x="52" y="36" width="46" height="18"/><rect class="thin" x="52" y="18" width="46" height="54" rx="3"/>`,
+            'Surfacique cylindrique', 'trace : un cylindre (arbre dans un alésage)'],
+          [`<line class="line" x1="75" y1="4" x2="75" y2="22"/><path class="thin" style="fill:var(--accent-bg)" d="M47 40 A28 28 0 0 0 103 40 H93 A18 18 0 0 1 57 40 Z"/>` +
+            `<circle ${obj} cx="75" cy="40" r="18"/><path class="c2" style="stroke-width:4" d="M57 40 A18 18 0 0 0 93 40"/>`, 'Surfacique sphérique', 'trace : une calotte de sphère (rotule)']];
+        return `<div class="lias">${C.map(([s, n, d]) => `<div class="lia"><svg class="liasym" viewBox="0 0 150 92" role="img">${s}</svg><b>${n}</b><span>${d}</span></div>`).join('')}</div>`;
+      })() +
       H('4. Les mouvements élémentaires') +
       P('Dans l\'espace, on se repère avec un repère d\'origine O et trois axes x, y, z. Il existe <b>6 mouvements élémentaires</b> : 3 translations (Tx, Ty, Tz) et 3 rotations (Rx, Ry, Rz). Tout mouvement est une combinaison de ces six.') +
       UL('<b>Translation rectiligne</b> : tous les points du solide se déplacent sur des droites parallèles.', '<b>Rotation autour d\'un axe fixe</b> : tous les points décrivent des cercles centrés sur l\'axe.') +
