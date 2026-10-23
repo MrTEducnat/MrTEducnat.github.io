@@ -257,6 +257,20 @@ a.go:hover, a.go:focus-visible { background: var(--accent-bg); outline: none; }
   .card { padding: 18px 16px; }
   .card h2 { font-size: 19px; }
 }
+/* Symboles des liaisons : pièce 1 en bleu, pièce 2 en orange */
+svg .l1 { stroke: var(--accent); stroke-width: 2.6; fill: none; stroke-linecap: round; }
+svg .l2 { stroke: var(--val); stroke-width: 2.6; fill: none; stroke-linecap: round; }
+svg .f1 { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2.6; }
+svg .f2 { fill: var(--val-bg); stroke: var(--val); stroke-width: 2.6; }
+.lias { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.lia { border: 1px solid var(--border); border-radius: 8px; padding: 6px 6px 8px; text-align: center; background: var(--surface); }
+.lia b { display: block; font-size: 14px; }
+.lia span { display: block; font-size: 12px; color: var(--muted); }
+svg.liasym { display: block; width: 100%; max-width: 150px; height: auto; margin: 0 auto 4px; }
+svg .fk { fill: var(--text); stroke: var(--text); stroke-width: 1; }
+.train { margin-top: 22px; }
+.train b { display: block; font-size: 14px; color: var(--muted); }
+.train .btns { margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -465,6 +479,37 @@ const CHAPITRES = [
   'Traitement et programmation',
   'Objets connectés et transmission sans fil'
 ];
+// ---------- Symboles des liaisons (schémas plans simplifiés, axe principal x horizontal) ----------
+// Pièce 1 en bleu (classe l1), pièce 2 en orange (classe l2)
+const LIA_SVG = {
+  encastrement: `<line class="l2" x1="60" y1="18" x2="60" y2="72"/><line class="l2" x1="20" y1="72" x2="60" y2="72"/><line class="l1" x1="60" y1="45" x2="132" y2="45"/>
+    <path class="pt" d="M60 45 L76 45 L60 31 Z"/>`,
+  pivot: `<rect class="f2" x="55" y="31" width="40" height="28"/><line class="l2" x1="75" y1="59" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>
+    <line class="l1" x1="48" y1="35" x2="48" y2="55"/><line class="l1" x1="102" y1="35" x2="102" y2="55"/>`,
+  glissiere: `<rect class="f2" x="50" y="27" width="50" height="36"/><line class="l2" x1="75" y1="63" x2="75" y2="84"/><rect class="f1" x="14" y="39" width="122" height="12"/>`,
+  helicoidale: `<rect class="f2" x="50" y="29" width="50" height="32"/><line class="l2" x1="75" y1="61" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>
+    <line class="l2" x1="56" y1="58" x2="66" y2="32"/><line class="l2" x1="70" y1="58" x2="80" y2="32"/><line class="l2" x1="84" y1="58" x2="94" y2="32"/>`,
+  pivotglissant: `<rect class="f2" x="55" y="31" width="40" height="28"/><line class="l2" x1="75" y1="59" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>`,
+  rotuledoigt: `<path class="l2" d="M75 26 A20 20 0 1 0 75 64"/><line class="l2" x1="55" y1="45" x2="18" y2="45"/><circle class="f1" cx="75" cy="45" r="13"/><line class="l1" x1="88" y1="45" x2="134" y2="45"/>
+    <line class="l1" x1="75" y1="32" x2="75" y2="14"/><line class="l2" x1="68" y1="10" x2="68" y2="24"/><line class="l2" x1="82" y1="10" x2="82" y2="24"/>`,
+  rotule: `<path class="l2" d="M75 26 A20 20 0 1 0 75 64"/><line class="l2" x1="55" y1="45" x2="18" y2="45"/><circle class="f1" cx="75" cy="45" r="13"/><line class="l1" x1="88" y1="45" x2="134" y2="45"/>`,
+  appuiplan: `<line class="l1" x1="38" y1="39" x2="112" y2="39"/><line class="l1" x1="75" y1="39" x2="75" y2="12"/><line class="l2" x1="38" y1="51" x2="112" y2="51"/><line class="l2" x1="75" y1="51" x2="75" y2="80"/>`,
+  annulaire: `<line class="l2" x1="36" y1="27" x2="114" y2="27"/><line class="l2" x1="36" y1="63" x2="114" y2="63"/><line class="l2" x1="75" y1="63" x2="75" y2="84"/>
+    <circle class="f1" cx="75" cy="45" r="17"/><line class="l1" x1="92" y1="45" x2="136" y2="45"/>`,
+  rectiligne: `<line class="l2" x1="22" y1="62" x2="128" y2="62"/><line class="l2" x1="75" y1="62" x2="75" y2="84"/><rect class="f1" x="46" y="38" width="58" height="24"/>
+    <ellipse class="f1" cx="46" cy="50" rx="6" ry="12"/><line class="l1" x1="75" y1="38" x2="75" y2="12"/>`,
+  ponctuelle: `<line class="l2" x1="22" y1="62" x2="128" y2="62"/><line class="l2" x1="75" y1="62" x2="75" y2="84"/><circle class="f1" cx="75" cy="52" r="10"/><line class="l1" x1="75" y1="42" x2="75" y2="12"/>`
+};
+// Les 11 liaisons : [clé du symbole, nom, degrés de liberté et mouvements]
+const LIAISONS = [['encastrement', 'Encastrement', '0 ddl : aucun mouvement'], ['pivot', 'Pivot', '1 ddl : Rx'], ['glissiere', 'Glissière', '1 ddl : Tx'],
+  ['helicoidale', 'Hélicoïdale', '1 ddl : Rx et Tx liés'], ['pivotglissant', 'Pivot glissant', '2 ddl : Rx, Tx'], ['rotuledoigt', 'Rotule à doigt', '2 ddl : Rx, Ry'],
+  ['rotule', 'Rotule', '3 ddl : Rx, Ry, Rz'], ['appuiplan', 'Appui plan', '3 ddl : Tx, Ty, Rz'], ['annulaire', 'Linéaire annulaire', '4 ddl : Tx, Rx, Ry, Rz'],
+  ['rectiligne', 'Linéaire rectiligne', '4 ddl : Tx, Ty, Rx, Rz'], ['ponctuelle', 'Ponctuelle', '5 ddl : Tx, Ty, Rx, Ry, Rz']];
+// Symbole seul (pour un exercice) et grille de cartes (pour un cours)
+const liaSym = k => `<svg class="liasym" viewBox="0 0 150 92" role="img">${LIA_SVG[k]}</svg>`;
+const LIA_GRID = (cles = LIAISONS.map(l => l[0])) => `<div class="lias">${LIAISONS.filter(l => cles.includes(l[0])).map(([k, n, d]) =>
+  `<div class="lia">${liaSym(k)}<b>${n}</b><span>${d}</span></div>`).join('')}</div>`;
+
 
 // ---------- Mise en forme des fiches ----------
 const H = t => `<h3>${t}</h3>`;
@@ -540,11 +585,16 @@ const EXOS = [
       H('3. Capteur à sortie linéaire') +
       M('S = a \\times X + b') + LEG(['S', 'la sortie (tension en V ou courant en mA)'], ['X', 'la grandeur mesurée'], ['a', 'la sensibilité (pente)'], ['b', 'la valeur de la sortie quand X = 0']) +
       P('On trouve a et b avec deux points connus de la caractéristique : a = (S₂ − S₁) / (X₂ − X₁), puis b = S₁ − a × X₁. Pour retrouver la grandeur à partir d\'une mesure, on isole X : X = (S − b) / a.') +
+      EX('Exemple : capteur de pression', P('Le capteur délivre 0,5 V à 0 bar et 4,5 V à 10 bar :') +
+        M('a = \\frac{4{,}5 - 0{,}5}{10 - 0} = 0{,}4\\,\\text{V/bar} \\qquad b = 0{,}5\\,\\text{V}') +
+        P('Donc S = 0,4 × X + 0,5. Pour une mesure de 2,9 V :') + M('X = \\frac{2{,}9 - 0{,}5}{0{,}4} = 6\\,\\text{bar}')) +
       H('4. Boucle de courant 4-20 mA') +
       graph({ x0: -20, x1: 100, dx: 20, y0: 0, y1: 24, dy: 4, w: 400, h: 220, xlab: 'T (°C)', ylab: 'I (mA)', series: [{ pts: [[-20, 4], [100, 20]] }],
         extra: (X, Y) => `<polyline class="c3" points="${X(-20)},${Y(12)} ${X(40)},${Y(12)} ${X(40)},${Y(0)}"/>` + dT(X(40) + 4, Y(12) - 6, '12 mA → 40 °C', 'start', 13), cap: 'Transmetteur −20 à 100 °C : 4 mA à −20 °C, 20 mA à 100 °C' }) +
       P('Le transmetteur délivre 4 mA au début de l\'étendue de mesure et 20 mA à la fin. Le « zéro vivant » à 4 mA permet de détecter une coupure de fil (0 mA). Un courant n\'est pas affaibli par la longueur du câble, contrairement à une tension. Aux bornes d\'une résistance de 250 Ω, on obtient 1 à 5 V.') +
       M('I = 4 + 16 \\times \\frac{X - X_{min}}{X_{max} - X_{min}}') + LEG(['I', 'le courant en mA'], ['X', 'la grandeur mesurée'], ['X_{min}', 'et Xmax les bornes de l\'étendue de mesure']) +
+      EX('Exemple', P('Avec le transmetteur de la figure (−20 à 100 °C), pour une température de 25 °C :') +
+        M('I = 4 + 16 \\times \\frac{25 - (-20)}{100 - (-20)} = 4 + 16 \\times \\frac{45}{120} = 10\\,\\text{mA}')) +
       BOX(P('Sortie linéaire : S = a·X + b, avec a la sensibilité.', '4-20 mA : 4 mA au minimum, 20 mA au maximum ; 0 mA = fil coupé.'))
   },
   {
@@ -560,10 +610,14 @@ const EXOS = [
         'Pont diviseur : UT est prise aux bornes du capteur') +
       M('U_T = V_{cc} \\times \\frac{R_T}{R_T + R}') + LEG(['U_T', 'la tension aux bornes du capteur en V'], ['V_{cc}', 'la tension d\'alimentation en V'], ['R_T', 'la résistance du capteur en Ω'], ['R', 'la résistance fixe en Ω']) +
       P('Une <b>CTN</b> (coefficient de température négatif) voit sa résistance <b>diminuer</b> quand la température augmente : U<sub>T</sub> diminue donc aussi. Une sonde PT100 (platine) augmente : R = 100 × (1 + 0,0039 × T). Si R = R<sub>T</sub>, U<sub>T</sub> vaut exactement V<sub>cc</sub> / 2.') +
+      EX('Exemple : CTN de 10 kΩ', P('La CTN vaut 10 kΩ à 25 °C ; elle est montée avec R = 10 kΩ sous V<sub>cc</sub> = 5 V :') + M('U_T = 5 \\times \\frac{10}{10 + 10} = 2{,}5\\,\\text{V}') +
+        P('À 50 °C, la CTN ne vaut plus que 3,6 kΩ :') + M('U_T = 5 \\times \\frac{3{,}6}{3{,}6 + 10} \\approx 1{,}32\\,\\text{V}')) +
       H('2. Mesure de courant par shunt') +
       P('Un shunt est une résistance très faible placée <b>en série</b> dans le circuit ; on mesure la petite tension à ses bornes (loi d\'Ohm U = R × I) pour en déduire le courant. Il est marqué par son courant et sa tension nominaux :') +
       M('R_{shunt} = \\frac{U_n}{I_n}') + LEG(['U_n', 'la tension nominale (ex : 75 mV)'], ['I_n', 'le courant nominal (ex : 100 A)']) +
       P('Il dissipe une puissance P = R × I², qui le chauffe : c\'est pourquoi sa résistance est très faible.') +
+      EX('Exemple : shunt 100 A / 75 mV', M('R_{shunt} = \\frac{0{,}075}{100} = 7{,}5 \\times 10^{-4}\\,\\Omega = 0{,}75\\,\\text{m}\\Omega') +
+        P('Si on mesure 30 mV à ses bornes : I = 0,030 / 0,000 75 = 40 A. Il dissipe alors P = 0,000 75 × 40² = 1,2 W.')) +
       H('3. Codeurs') +
       UL('<b>Codeur incrémental</b> : il délivre N impulsions par tour ; on compte les impulsions pour connaître l\'angle et on les compte par seconde pour connaître la vitesse. Il perd sa position à la coupure de courant.',
         '<b>Codeur absolu</b> : chaque position correspond à un code unique sur n bits, soit 2<sup>n</sup> positions par tour (résolution 360° / 2<sup>n</sup>). Il connaît sa position dès la mise sous tension.',
@@ -583,6 +637,8 @@ const EXOS = [
       H('1. Amplification') +
       M('A = \\frac{U_s}{U_e}') + LEG(['A', 'le gain en tension (sans unité)'], ['U_s', 'la tension de sortie'], ['U_e', 'la tension d\'entrée (même unité)']) +
       M('G_{dB} = 20 \\log(A)') + P('Un gain de 10 vaut 20 dB, un gain de 100 vaut 40 dB ; un gain négatif en dB signifie une atténuation. On utilise des amplificateurs intégrés dont le gain se règle par une résistance.') +
+      EX('Exemple', P('Un capteur délivre 20 mV au maximum ; on veut 2 V pour utiliser toute la plage du CAN :') +
+        M('A = \\frac{2}{0{,}020} = 100 \\qquad G_{dB} = 20 \\log(100) = 40\\,\\text{dB}')) +
       H('2. Adaptateur de dynamique') +
       P('Il transforme la plage du capteur en la plage complète du CAN (par exemple 0 à 3,3 V) : on profite ainsi de toutes les valeurs du convertisseur, donc de sa meilleure résolution.') +
       graph({ x0: -200, x1: 800, dx: 200, y0: 0, y1: 3.5, dy: 0.5, w: 400, h: 220, xlab: 'Vs1 (mV)', ylab: 'Vs2 (V)', series: [{ pts: [[-100, 0], [600, 3.3]] }],
@@ -593,6 +649,8 @@ const EXOS = [
       P('Un filtre RC laisse passer les basses fréquences (le signal utile, qui varie lentement) et atténue les hautes (le bruit) :') +
       M('f_c = \\frac{1}{2 \\pi R C}') + LEG(['f_c', 'la fréquence de coupure en Hz'], ['R', 'la résistance en Ω'], ['C', 'la capacité en F']) +
       P('À la fréquence de coupure, le gain vaut −3 dB (le signal est multiplié par 0,7) ; au-delà, il diminue de 20 dB par décade (chaque fois que la fréquence est multipliée par 10, le signal est divisé par 10).') +
+      EX('Exemple', P('R = 10 kΩ et C = 100 nF = 100 × 10⁻⁹ F :') + M('f_c = \\frac{1}{2 \\pi \\times 10\\,000 \\times 100 \\times 10^{-9}} \\approx 159\\,\\text{Hz}') +
+        P('Un bruit à 1 590 Hz (une décade au-dessus) est atténué d\'environ 20 dB : son amplitude est divisée par 10.')) +
       BOX(P('G = 20 log A ; fc = 1 / (2πRC).', 'Adaptateur : la plage du capteur devient la pleine échelle du CAN.'))
   },
   {
@@ -606,10 +664,12 @@ const EXOS = [
       M('q = \\frac{V_{max} - V_{min}}{2^n}') + LEG(['q', 'le quantum en V'], ['V_{max}', 'et Vmin les bornes de la plage d\'entrée en V'], ['n', 'le nombre de bits du CAN']) +
       M('N = \\left\\lfloor \\frac{U - V_{min}}{q} \\right\\rfloor') + LEG(['N', 'la valeur numérique (entier de 0 à 2ⁿ − 1)'], ['U', 'la tension d\'entrée en V']) +
       P('Les crochets signifient « partie entière » : on arrondit à l\'entier inférieur. Inversement, la tension correspondant à N vaut V<sub>min</sub> + N × q.') +
+      EX('Exemple : CAN 12 bits sur −10 à +10 V', M('q = \\frac{10 - (-10)}{2^{12}} = \\frac{20}{4\\,096} \\approx 4{,}88\\,\\text{mV}') +
+        P('Pour U = 3 V :') + M('N = \\left\\lfloor \\frac{3 - (-10)}{0{,}004\\,88} \\right\\rfloor = \\lfloor 2\\,662{,}4 \\rfloor = 2\\,662')) +
       H('Erreurs et résolution') +
       UL('L\'erreur de quantification est au plus d\'un quantum q (un demi-quantum si le CAN arrondit au plus proche).', 'Résolution d\'une chaîne de mesure : on ramène le quantum à la grandeur mesurée en le divisant par la sensibilité du capteur et le gain de l\'amplificateur.',
         'L\'erreur totale d\'une chaîne additionne les erreurs du capteur, du conditionnement et de la conversion.') +
-      EX('Exemple', P('CAN 10 bits sur 0 à 5 V : q = 5 / 1 024 ≈ 4,9 mV. Un capteur de 10 mV/°C, amplifié 5 fois, donne 50 mV/°C : la résolution vaut 4,9 / 50 ≈ 0,1 °C. Une tension de 1,8 V donne N = 1,8 / 0,0049 ≈ 368 (en arrondissant à l\'entier inférieur).')) +
+      EX('Exemple', P('CAN 10 bits sur 0 à 5 V : q = 5 / 1 024 ≈ 4,9 mV. Un capteur de 10 mV/°C, amplifié 5 fois, donne 50 mV/°C : la résolution vaut 4,9 / 50 ≈ 0,1 °C. Une tension de 1,8 V donne 1,8 / (5 / 1 024) ≈ 368,6, soit N = 368 (en arrondissant à l\'entier inférieur).')) +
       H('Échantillonnage') +
       P('Le CAN prend Fe mesures par seconde (fréquence d\'échantillonnage). Pour bien reconstituer un signal, Fe doit valoir au moins le double de sa plus haute fréquence (théorème de Shannon) : c\'est pourquoi le son est échantillonné à 44,1 kHz, plus du double de 20 kHz, limite de l\'oreille.') +
       BOX(P('q = (Vmax − Vmin) / 2ⁿ ; N = partie entière de (U − Vmin) / q.', 'Fe ≥ 2 × fmax.'))
@@ -647,6 +707,8 @@ const EXOS = [
       H('2. Taille des données') +
       M('\\text{taille (bits)} = n \\times N_{valeurs}') + LEG(['n', 'le nombre de bits par valeur'], ['N_{valeurs}', 'le nombre de valeurs stockées']) +
       P('Une image de L × H pixels en couleur (24 bits par pixel) occupe L × H × 3 octets : une photo de 12 mégapixels occupe environ 36 Mo avant compression. Un son occupe Fe × n × voies × durée bits.') +
+      EX('Exemple : enregistreur de température', P('Une mesure sur 16 bits toutes les 10 s pendant 24 h : N = 24 × 3 600 / 10 = 8 640 valeurs.') +
+        M('\\text{taille} = 16 \\times 8\\,640 = 138\\,240\\,\\text{bits} = 17\\,280\\,\\text{octets} \\approx 17{,}3\\,\\text{ko}')) +
       H('3. Compression') +
       M('\\tau = \\frac{\\text{taille initiale}}{\\text{taille compressée}}') + P('Une compression <b>sans perte</b> (ZIP, PNG) permet de retrouver exactement les données : indispensable pour un programme ou un tableau de mesures. Une compression <b>avec perte</b> (JPEG, MP3, H.264) supprime des détails peu perceptibles et va beaucoup plus loin (taux de 10 à 100).') +
       BOX(P('f = 1 / T ; α = thaut / T.', 'Image : L × H × 3 octets en couleur.'))
@@ -782,6 +844,9 @@ print(n)`) +
     body:
       H('1. Équations logiques') +
       P('ET (·), OU (+), NON (barre), OU exclusif (⊕). Pour écrire l\'équation d\'une sortie à partir d\'un texte, on repère les conditions reliées par « et » ou « ou ». Lois de De Morgan, utiles pour simplifier :') + M('\\overline{a \\cdot b} = \\overline{a} + \\overline{b} \\qquad \\overline{a + b} = \\overline{a} \\cdot \\overline{b}') +
+      EX('Exemple : vérifier une loi de De Morgan', P('Pour a = 1 et b = 0, les deux écritures donnent bien le même résultat :') +
+        M('\\overline{a \\cdot b} = \\overline{1 \\cdot 0} = \\overline{0} = 1 \\qquad \\overline{a} + \\overline{b} = 0 + 1 = 1') +
+        P('Une porte « NON-ET » peut donc être réalisée avec deux inverseurs et une porte OU.')) +
       H('2. Régulation tout ou rien à hystérésis') +
       P('Pour éviter que l\'actionneur ne commute sans arrêt autour de la consigne (ce qui l\'userait), on utilise deux seuils. Exemple d\'un chauffage réglé à 20 °C avec un écart de ± 0,5 °C : il s\'allume sous 19,5 °C et s\'éteint au-dessus de 20,5 °C ; entre les deux, il garde son état précédent. C\'est donc de la logique séquentielle : la sortie dépend aussi du passé.') +
       graph({ x0: 0, x1: 60, dx: 10, y0: 18, y1: 22, dy: 1, w: 400, h: 220, xlab: 't (min)', ylab: 'T (°C)',
@@ -821,6 +886,9 @@ digitalWrite(RELAIS, chauffe);`) +
       BOX(P('Longue portée et faible consommation : LoRa ; haut débit : Wi-Fi ; identification : RFID.'))
   }
 ];
+
+// ---------- Liens vers les exercices (fiche → [route, titre], généré par liens.js) ----------
+const EXO_LIENS = { "Chaîne d'information et diagrammes SysML": [ [ "1-1", "Acquérir, traiter, communiquer" ], [ "1-2", "Nature des signaux dans un IBD" ], [ "1-3", "Diagrammes SysML" ], [ "1-4", "Parcours d'un diagramme d'états" ] ], "Caractéristiques des capteurs": [ [ "2-1", "Caractéristiques d'un capteur" ], [ "2-2", "Capteur à sortie linéaire" ], [ "2-3", "Boucle de courant 4-20 mA" ] ], "Capteurs résistifs, shunt et codeurs": [ [ "2-4", "Thermistance CTN et pont diviseur" ], [ "2-5", "Mesure de courant par shunt" ], [ "2-6", "Codeur absolu" ], [ "2-7", "Code Gray et OU exclusif" ], [ "2-8", "Anémomètre à ultrasons" ] ], "Amplifier, adapter et filtrer": [ [ "3-1", "Gain d'amplification" ], [ "3-2", "Adaptateur de dynamique" ], [ "3-3", "Filtre passe-bas du premier ordre" ] ], "Conversion analogique-numérique": [ [ "3-4", "Convertisseur analogique-numérique" ], [ "3-5", "Résolution et erreur totale d'une chaîne de mesure" ] ], "Coder l'information": [ [ "4-1", "Conversions binaire, hexadécimal et décimal" ], [ "4-2", "Température codée sur deux octets" ], [ "4-3", "Décoder une chaîne ASCII dans une trame" ], [ "4-4", "Couleur RVB en hexadécimal" ] ], "Chronogrammes, taille des données et compression": [ [ "4-5", "Lecture d'un chronogramme" ], [ "4-6", "Taille de stockage et compression" ] ], "Liaison série asynchrone (UART, RS232, RS485)": [ [ "5-1", "Trame UART / RS232" ], [ "5-2", "Durée d'une trame et débit" ], [ "5-3", "Bits de parité et détection d'erreur" ] ], "Bus de communication : I2C, Modbus, KNX": [ [ "5-4", "Bus I2C" ], [ "5-5", "Trame Modbus" ], [ "5-9", "Adressage sur un bus KNX" ], [ "5-6", "Typologie des communications" ], [ "5-7", "Bus de terrain" ], [ "5-8", "Trame RFID" ] ], "Adressage IP et masques de sous-réseau": [ [ "6-1", "Masque de sous-réseau" ], [ "6-2", "Adresse réseau, broadcast et plage d'adresses" ], [ "6-3", "Masque optimal" ] ], "Trames, modèle OSI et services réseau": [ [ "6-4", "Lire une trame Ethernet / IP" ], [ "6-5", "Modèle OSI" ], [ "6-6", "Équipements et services réseau" ], [ "6-7", "Débit Wi-Fi et temps de transfert" ] ], "Algorithmes et programmes : Arduino et Python": [ [ "7-1", "Types de variables" ], [ "7-2", "Trace d'un algorigramme" ], [ "7-3", "Trace d'un programme Arduino" ], [ "7-4", "Trace d'un programme Python" ] ], "Logique, régulation et temps réel": [ [ "7-6", "Équation logique" ], [ "7-5", "Régulation tout ou rien à hystérésis" ], [ "7-7", "Système temps réel" ] ], "Objets connectés et transmission sans fil": [ [ "8-1", "Technologies sans fil" ], [ "8-2", "Identifiants RFID" ] ] };
 
 // ---------- Affichage ----------
 const nav = document.getElementById('nav');
@@ -923,7 +991,8 @@ function show(i) {
     <h2>${e.title}</h2>
     <p class="support">${e.support}</p>
     ${e.body}
-    <div class="btns"><a class="go" href="Exercices_SIN.html#c${e.chap}-1">S'entraîner : exercices du chapitre ${e.chap} →</a></div>`;
+    <div class="train"><b>S'entraîner sur cette fiche :</b><div class="btns">${(EXO_LIENS[e.title] || [[`${e.chap}-1`, `exercices du chapitre ${e.chap}`]])
+      .map(([r, t]) => `<a class="go" href="Exercices_SIN.html#c${r}">${t} →</a>`).join('')}</div></div>`;
   renderMath(card);
   fitToWidth(card);
   nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', +a.dataset.i === i));

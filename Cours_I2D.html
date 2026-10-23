@@ -267,6 +267,10 @@ svg .f2 { fill: var(--val-bg); stroke: var(--val); stroke-width: 2.6; }
 .lia b { display: block; font-size: 14px; }
 .lia span { display: block; font-size: 12px; color: var(--muted); }
 svg.liasym { display: block; width: 100%; max-width: 150px; height: auto; margin: 0 auto 4px; }
+svg .fk { fill: var(--text); stroke: var(--text); stroke-width: 1; }
+.train { margin-top: 22px; }
+.train b { display: block; font-size: 14px; color: var(--muted); }
+.train .btns { margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -507,6 +511,58 @@ const liaSym = k => `<svg class="liasym" viewBox="0 0 150 92" role="img">${LIA_S
 const LIA_GRID = (cles = LIAISONS.map(l => l[0])) => `<div class="lias">${LIAISONS.filter(l => cles.includes(l[0])).map(([k, n, d]) =>
   `<div class="lia">${liaSym(k)}<b>${n}</b><span>${d}</span></div>`).join('')}</div>`;
 
+// ---------- Symboles fluidiques (hydraulique et pneumatique, simplifiés d'après l'ISO 1219) ----------
+const FLU_SVG = {
+  verinDE: `<rect class="line" x="16" y="28" width="92" height="34"/><line class="line" x1="50" y1="28" x2="50" y2="62" style="stroke-width:4"/>
+    <rect class="thin" x="50" y="42" width="90" height="6"/><line class="line" x1="26" y1="62" x2="26" y2="84"/><line class="line" x1="98" y1="62" x2="98" y2="84"/>`,
+  verinSE: `<rect class="line" x="16" y="28" width="92" height="34"/><line class="line" x1="40" y1="28" x2="40" y2="62" style="stroke-width:4"/>
+    <rect class="thin" x="40" y="42" width="100" height="6"/><line class="line" x1="26" y1="62" x2="26" y2="84"/>
+    <polyline class="thin" points="44,32 52,58 60,32 68,58 76,32 84,58 92,32 100,58 106,40"/>`,
+  dist42: `<rect class="line" x="35" y="26" width="40" height="40"/><rect class="line" x="75" y="26" width="40" height="40"/>
+    <line class="thin" x1="43" y1="62" x2="67" y2="30"/><path class="thin" d="M59 31 L67 30 L65 38"/><line class="thin" x1="67" y1="62" x2="43" y2="30"/><path class="thin" d="M45 38 L43 30 L51 31"/>
+    <line class="thin" x1="85" y1="62" x2="85" y2="30"/><path class="thin" d="M81 37 L85 30 L89 37"/><line class="thin" x1="105" y1="30" x2="105" y2="62"/><path class="thin" d="M101 55 L105 62 L109 55"/>
+    <line class="line" x1="85" y1="66" x2="85" y2="84"/><line class="line" x1="105" y1="66" x2="105" y2="84"/><line class="line" x1="85" y1="26" x2="85" y2="8"/><line class="line" x1="105" y1="26" x2="105" y2="8"/>
+    <rect class="thin" x="19" y="36" width="16" height="20"/><line class="thin" x1="19" y1="56" x2="35" y2="36"/>
+    <polyline class="thin" points="115,46 119,38 124,54 129,38 134,54 138,46"/>`,
+  clapet: `<line class="line" x1="10" y1="46" x2="60" y2="46"/><line class="line" x1="90" y1="46" x2="140" y2="46"/><circle class="line" cx="70" cy="46" r="10"/>
+    <polyline class="line" points="78,30 92,46 78,62"/>`,
+  rdu: `<line class="line" x1="10" y1="30" x2="140" y2="30"/><path class="line" d="M62 20 Q75 30 88 20 M62 40 Q75 30 88 40"/>
+    <line class="thin" x1="58" y1="48" x2="92" y2="12"/><path class="thin" d="M84 14 L92 12 L90 20"/>
+    <polyline class="line" points="30,30 30,66 64,66"/><polyline class="line" points="88,66 120,66 120,30"/><circle class="line" cx="70" cy="66" r="7"/><polyline class="line" points="76,55 86,66 76,77"/>`,
+  limiteur: `<rect class="line" x="48" y="20" width="50" height="50"/><line class="line" x1="62" y1="70" x2="62" y2="88"/><line class="line" x1="62" y1="20" x2="62" y2="4"/>
+    <line class="thin" x1="80" y1="64" x2="80" y2="27"/><path class="thin" d="M76 34 L80 27 L84 34"/>
+    <polyline class="thin" points="98,45 103,37 108,53 113,37 118,53 123,37 128,45"/><line class="thin" x1="104" y1="60" x2="128" y2="30"/>
+    <polyline class="c3" points="62,80 34,80 34,32 48,32"/>`,
+  pompe: `<circle class="line" cx="75" cy="46" r="22"/><path class="fk" d="M75 24 L67 37 H83 Z"/><line class="line" x1="75" y1="24" x2="75" y2="6"/><line class="line" x1="75" y1="68" x2="75" y2="86"/>
+    <line class="thin" x1="97" y1="46" x2="128" y2="46"/><path class="thin" d="M110 41 A6 6 0 1 0 110 51"/>`,
+  compresseur: `<circle class="line" cx="75" cy="46" r="22"/><path class="line" d="M75 24 L67 37 H83 Z"/><line class="line" x1="75" y1="24" x2="75" y2="6"/><line class="line" x1="75" y1="68" x2="75" y2="86"/>
+    <line class="thin" x1="97" y1="46" x2="128" y2="46"/><path class="thin" d="M110 41 A6 6 0 1 0 110 51"/>`,
+  reservoir: `<polyline class="line" points="38,36 38,74 112,74 112,36"/><line class="line" x1="75" y1="8" x2="75" y2="64"/>`,
+  filtre: `<path class="line" d="M75 20 L105 46 L75 72 L45 46 Z"/><line class="c3" x1="75" y1="20" x2="75" y2="72"/><line class="line" x1="10" y1="46" x2="45" y2="46"/><line class="line" x1="105" y1="46" x2="140" y2="46"/>`,
+  manometre: `<circle class="line" cx="75" cy="38" r="20"/><line class="thin" x1="63" y1="50" x2="87" y2="26"/><path class="thin" d="M79 27 L87 26 L86 34"/><line class="line" x1="75" y1="58" x2="75" y2="86"/>`
+};
+// Les 11 composants : [clé du symbole, nom, rôle]
+const FLUIDES = [['pompe', 'Pompe hydraulique', 'Alimenter : met l\'huile sous pression'], ['compresseur', 'Compresseur', 'Alimenter : produit l\'air comprimé'],
+  ['reservoir', 'Réservoir', 'stocke l\'huile (retour à l\'air libre)'], ['filtre', 'Filtre', 'retient les impuretés du fluide'],
+  ['limiteur', 'Limiteur de pression', 'protège le circuit en renvoyant l\'huile au réservoir'], ['dist42', 'Distributeur 4/2 monostable', 'Distribuer : 4 orifices, 2 positions, ressort de rappel'],
+  ['clapet', 'Clapet anti-retour', 'laisse passer le fluide dans un seul sens'], ['rdu', 'Réducteur de débit unidirectionnel', 'règle la vitesse de la tige d\'un vérin'],
+  ['verinSE', 'Vérin simple effet', 'Convertir : sortie par le fluide, rentrée par ressort'], ['verinDE', 'Vérin double effet', 'Convertir : sortie et rentrée par le fluide'],
+  ['manometre', 'Manomètre', 'mesure la pression']];
+// Symbole seul (pour un exercice) et grille de cartes (pour un cours)
+const fluSym = k => `<svg class="liasym" viewBox="0 0 150 92" role="img">${FLU_SVG[k]}</svg>`;
+const FLU_GRID = (cles = FLUIDES.map(l => l[0])) => `<div class="lias">${FLUIDES.filter(l => cles.includes(l[0])).map(([k, n, d]) =>
+  `<div class="lia">${fluSym(k)}<b>${n}</b><span>${d}</span></div>`).join('')}</div>`;
+// Circuit hydraulique complet, composants numérotés de 1 à 5
+const FLU_NUM = [['Pompe hydraulique', 28, 186], ['Limiteur de pression', 168, 194], ['Distributeur 4/2 monostable', 250, 130], ['Vérin double effet', 106, 36], ['Réservoir', 232, 234]];
+const FLU_CIRCUIT = (cap = FLU_NUM.map((c, i) => `${i + 1} : ${c[0].toLowerCase()}`).join(' ; ')) => fig(`<svg viewBox="0 0 340 256" role="img" style="max-width:440px">
+  <g transform="translate(102 -8)">${FLU_SVG.verinDE}</g><g transform="translate(95 84)">${FLU_SVG.dist42}</g><g transform="translate(-15 154)">${FLU_SVG.pompe}</g>
+  <polyline class="line" points="128,76 128,84 180,84 180,92"/><line class="line" x1="200" y1="76" x2="200" y2="92"/>
+  <polyline class="line" points="60,160 60,168 180,168"/><line class="line" x1="200" y1="168" x2="200" y2="236"/>
+  <line class="line" x1="140" y1="168" x2="140" y2="182"/><rect class="line" x="128" y="182" width="24" height="24"/><line class="thin" x1="146" y1="202" x2="146" y2="187"/>
+  <path class="thin" d="M143 192 L146 187 L149 192"/><line class="line" x1="140" y1="206" x2="140" y2="236"/>
+  ${[60, 140, 200].map(x => `<polyline class="line" points="${x - 16},228 ${x - 16},246 ${x + 16},246 ${x + 16},228"/>`).join('')}
+  ${FLU_NUM.map(([, x, y], i) => `<circle class="thin" cx="${x}" cy="${y}" r="9"/>` + dT(x, y + 4, String(i + 1), 'middle', 12)).join('')}</svg>`, cap);
+
 // ---------- Mise en forme des fiches ----------
 const H = t => `<h3>${t}</h3>`;
 const P = (...t) => t.map(x => `<p>${x}</p>`).join('');
@@ -585,6 +641,9 @@ const EXOS = [
         'La même brique (même poids F) posée à plat ou debout : la pression sur le sol change') +
       P('La pression est une force répartie sur une surface :') + M('p = \\frac{F}{S}') + P(`avec ${m('p')} en Pa, ${m('F')} en N et ${m('S')} en m².`) +
       P('Plus la surface d\'appui est grande, plus la pression est faible (raquettes à neige, fondations d\'un mur). Rappel : 1 bar = 10⁵ Pa.') +
+      EX('Exemple : une brique à plat ou debout', P('Une brique de 2,5 kg (poids F = 2,5 × 9,81 ≈ 24,5 N) mesure 20 × 10 × 5 cm.') +
+        M('\\text{à plat : } p = \\frac{24{,}5}{0{,}20 \\times 0{,}10} = 1\\,225\\,\\text{Pa}') + M('\\text{debout : } p = \\frac{24{,}5}{0{,}10 \\times 0{,}05} = 4\\,900\\,\\text{Pa}') +
+        P('La surface d\'appui est 4 fois plus petite : la pression est 4 fois plus grande.')) +
       H('5. Rendement') +
       P('Toute conversion d\'énergie s\'accompagne de pertes (le plus souvent de la chaleur). Le rendement compare la puissance utile à la puissance absorbée :') +
       M('\\eta = \\frac{P_u}{P_a} \\qquad P_{pertes} = P_a - P_u') +
@@ -646,6 +705,8 @@ const EXOS = [
       P('Toute transformation produit des pertes, le plus souvent sous forme de chaleur. Dans les pays développés, elles représentent 60 à 70 % de l\'énergie de départ.') +
       table(['Convertisseur', 'Énergie d\'entrée', 'Énergie de sortie'], [['Moteur électrique', 'électrique', 'mécanique'], ['Alternateur, génératrice', 'mécanique', 'électrique'],
         ['Panneau photovoltaïque', 'rayonnante', 'électrique'], ['Radiateur électrique', 'électrique', 'thermique'], ['Batterie en décharge', 'chimique', 'électrique'], ['Moteur thermique', 'chimique', 'mécanique']]) +
+      EX('Exemple : un moteur électrique', P('Un moteur reçoit 1 000 J d\'énergie électrique et fournit 850 J d\'énergie mécanique :') +
+        M('\\text{pertes} = E_{initiale} - E_{finale} = 1\\,000 - 850 = 150\\,\\text{J}') + P('Ces 150 J partent en chaleur ; le rendement vaut 850 / 1 000 = 0,85.')) +
       H('4. Énergie primaire, secondaire, finale et utile') +
       dSV(340, 190, [['primaire', 100], ['secondaire', 65], ['finale', 60], ['utile', 35]].map(([n, val], k) =>
         `<rect class="${k === 3 ? 'flow' : 'fillv'}" x="${22 + k * 82}" y="${150 - val * 1.2}" width="56" height="${val * 1.2}" rx="3"/>` + dT(50 + k * 82, 144 - val * 1.2, val + ' %', 'middle', 13) + dT(50 + k * 82, 170, n, 'middle', 13)).join('') +
@@ -674,6 +735,8 @@ const EXOS = [
         extra: (X, Y) => `<rect class="flow" x="${X(0)}" y="${Y(2)}" width="${X(3) - X(0)}" height="${Y(0) - Y(2)}"/><polyline class="c1" points="${X(0)},${Y(2)} ${X(3)},${Y(2)} ${X(3)},${Y(0)}"/>` +
           dT((X(0) + X(3)) / 2, (Y(0) + Y(2)) / 2 + 5, 'E = 2 kW × 3 h = 6 kWh'), cap: 'Un appareil de 2 kW pendant 3 h : l\'énergie est l\'aire sous la courbe de puissance' }) +
       P('On utilise le Wh ou le kWh pour l\'électricité car le joule est une unité trop petite : un foyer consomme de l\'ordre de 10 000 kWh par an, soit 3,6 × 10¹⁰ J.') +
+      EX('Exemple : une bouilloire', P('Une bouilloire de 2 000 W fonctionne 3 min, soit 3 / 60 = 0,05 h :') + M('E = 2\\,000 \\times 0{,}05 = 100\\,\\text{Wh} = 0{,}1\\,\\text{kWh}') +
+        P('En joules (durée en secondes) : E = 2 000 × 180 = 360 000 J, ce qui correspond bien à 0,1 × 3,6 × 10⁶ J.')) +
       H('2. Convertir les durées') +
       P('Les durées doivent être en heures décimales pour un calcul en Wh : 1 h 30 min = 1,5 h ; 45 min = 45 / 60 = 0,75 h ; 10 min ≈ 0,167 h. Attention : 1,5 h ne fait pas 1 h 50 min.') +
       H('3. Coût de l\'énergie') +
@@ -818,6 +881,8 @@ const EXOS = [
       P('Un angle se mesure en tours, en degrés ou en radians : 1 tour = 360° = 2π rad. La vitesse de rotation s\'exprime :') +
       UL('en <b>tours par minute</b> (tr/min), notée N ;', 'en <b>radians par seconde</b> (rad/s), notée ω et appelée vitesse angulaire.') +
       M('\\omega = \\frac{2 \\pi N}{60}') + P(`avec ${m('\\omega')} en rad/s et ${m('N')} en tr/min : on multiplie par 2π pour passer des tours aux radians et on divise par 60 pour passer des minutes aux secondes.`) + P('Inversement :') + M('N = \\frac{60\\, \\omega}{2 \\pi}') +
+      EX('Exemple', P('Un moteur tourne à N = 1 500 tr/min :') + M('\\omega = \\frac{2 \\pi \\times 1\\,500}{60} \\approx 157\\,\\text{rad/s}') +
+        P('Inversement, une roue qui tourne à ω = 10 rad/s fait :') + M('N = \\frac{60 \\times 10}{2 \\pi} \\approx 95{,}5\\,\\text{tr/min}')) +
       H('3. Lien entre rotation et translation') +
       P('Pour une roue, une poulie ou une pale de rayon R (en m) :') +
       dSV(340, 190, `<circle class="flow" cx="130" cy="100" r="70"/><line class="line" x1="130" y1="100" x2="200" y2="100"/><circle class="pt" cx="130" cy="100" r="3"/><circle class="pt" cx="200" cy="100" r="4"/>` +
@@ -827,7 +892,7 @@ const EXOS = [
       UL(`distance parcourue en un tour : ${m('d = 2 \\pi R = \\pi D')}, avec D le diamètre en m ;`, `distance parcourue pour un angle θ en radians : ${m('d = R \\times \\theta')} ;`, 'vitesse linéaire d\'un point situé à la distance R de l\'axe :') +
       M('V = R \\times \\omega') + P(`avec ${m('V')} en m/s, ${m('R')} en m et ${m('\\omega')} en rad/s.`) +
       EX('Exemple : pale d\'éolienne', P('Une pale de 40 m tourne à 14 tr/min :') + M('\\omega = \\frac{2 \\pi \\times 14}{60} = 1{,}47\\,\\text{rad/s}') +
-        M('V = 40 \\times 1{,}47 = 58{,}6\\,\\text{m/s} \\approx 211\\,\\text{km/h}')) +
+        M('V = 40 \\times 1{,}47 = 58{,}8\\,\\text{m/s} \\approx 212\\,\\text{km/h}')) +
       EX('Exemple : roue de véhicule', P('Un véhicule roule à 209 km/h avec des roues de 88,9 cm de diamètre :') + M('V = \\frac{209}{3{,}6} = 58{,}1\\,\\text{m/s} \\qquad \\omega = \\frac{V}{R} = \\frac{58{,}1}{0{,}4445} = 131\\,\\text{rad/s}') +
         M('N = \\frac{60 \\times 131}{2 \\pi} \\approx 1\\,250\\,\\text{tr/min}')) +
       H('4. Le vecteur vitesse') +
@@ -850,6 +915,8 @@ const EXOS = [
       P('Une tension sinusoïdale est caractérisée par :') +
       UL(`sa <b>période</b> T (en s) et sa <b>fréquence</b> ${m('f = 1/T')} (en Hz) ;`, 'son <b>amplitude</b> Umax (valeur maximale) ;', 'sa <b>valeur efficace</b> U : la tension continue qui produirait le même effet (le même échauffement).') +
       M('U = \\frac{U_{max}}{\\sqrt{2}}') + P(`avec ${m('U')} la valeur efficace et ${m('U_{max}')} l'amplitude, toutes deux en V. Cette relation n'est valable que pour une sinusoïde.`) +
+      EX('Exemple : la tension du secteur', P('Sur la courbe ci-dessus, la période vaut T = 20 ms = 0,020 s et l\'amplitude Umax = 325 V :') +
+        M('f = \\frac{1}{T} = \\frac{1}{0{,}020} = 50\\,\\text{Hz}') + M('U = \\frac{325}{\\sqrt{2}} \\approx 230\\,\\text{V}')) +
       H('3. Monophasé et triphasé') +
       P('En triphasé, l\'alternateur délivre trois sinusoïdes de même fréquence et de même amplitude, décalées de 120°. Le réseau français est en 230 V / 400 V, 50 Hz :') +
       UL('V = 230 V : tension simple, entre une phase et le neutre ;', 'U = 400 V : tension composée, entre deux phases.') + M('U = \\sqrt{3} \\times V') +
@@ -863,6 +930,9 @@ const EXOS = [
       H('5. Le transport de l\'électricité') +
       UL('On transporte en triphasé : c\'est le meilleur compromis entre puissance transportée et coût.', `On élève la tension (jusqu'à 400 kV) pour réduire le courant et donc les pertes par effet Joule ${m('P_J = R \\times I^2')}, avec P<sub>J</sub> les pertes en W, R la résistance des câbles en Ω et I le courant en A.`,
         'Les câbles sont en aluminium (plus léger et moins cher que le cuivre) et nus, sans isolant, pour ne pas les alourdir.') +
+      EX('Exemple : pourquoi élever la tension', P('Une ligne de résistance R = 2 Ω transporte 100 kW. En simplifiant (I = P / U), le courant vaut 100 000 / 400 = 250 A sous 400 V, mais seulement 100 000 / 20 000 = 5 A sous 20 000 V :') +
+        M('\\text{sous 400 V : } P_J = 2 \\times 250^2 = 125\\,000\\,\\text{W}') + M('\\text{sous 20 000 V : } P_J = 2 \\times 5^2 = 50\\,\\text{W}') +
+        P('À 400 V, les pertes dépasseraient la puissance transportée : élever la tension est indispensable.')) +
       H('6. Dangers et protections') +
       P('La gravité d\'une électrocution dépend du trajet du courant dans le corps, de son intensité et de sa durée : quelques dizaines de milliampères pendant quelques dizaines de millisecondes suffisent à être en danger.') +
       UL('Le <b>disjoncteur</b> protège l\'installation contre les surcharges et les courts-circuits.', 'Le <b>dispositif différentiel 30 mA</b> protège les personnes en coupant le courant en cas de fuite vers la terre.') +
@@ -959,10 +1029,15 @@ const EXOS = [
       P('Il ne fonctionne qu\'en alternatif. Le rapport des tensions est égal au rapport des nombres de spires :') + M('\\frac{U_2}{U_1} = \\frac{N_2}{N_1}') +
       P(`avec ${m('U_1')} la tension d'entrée (au primaire) et ${m('U_2')} la tension de sortie (au secondaire), en V, ${m('N_1')} et ${m('N_2')} les nombres de spires des bobines primaire et secondaire.`) +
       P('Si N2 < N1, il abaisse la tension. Son rendement est très bon (souvent plus de 95 %).') +
+      EX('Exemple : transformateur 230 V / 12 V', P('Le primaire compte N₁ = 1 150 spires. On cherche le nombre de spires du secondaire :') +
+        M('N_2 = N_1 \\times \\frac{U_2}{U_1} = 1\\,150 \\times \\frac{12}{230} = 60\\ \\text{spires}')) +
       H('4. Le hacheur et la commande PWM') +
       P('Le hacheur découpe une tension continue en créneaux : la tension moyenne en sortie vaut α × U, où U est la tension continue d\'entrée et α le rapport cyclique du signal PWM (sans unité, entre 0 et 1). C\'est ainsi qu\'on règle la vitesse d\'un moteur ou la luminosité d\'une LED.') +
       H('5. Les schémas fluidiques') +
       P('En hydraulique et en pneumatique, on représente aussi les circuits par des symboles normalisés : pompe ou compresseur (Alimenter), distributeur (Distribuer), vérin ou moteur hydraulique (Convertir), canalisations et appareils de mesure. On y retrouve la même logique que pour la chaîne de puissance électrique.') +
+      P('Symboles des principaux composants (traits simplifiés ; en hydraulique le triangle de la pompe est plein, en pneumatique il est vide) :') + FLU_GRID() +
+      P('Exemple de circuit : la pompe aspire l\'huile dans le réservoir et l\'envoie vers le distributeur ; le limiteur protège le circuit contre les surpressions ; selon la position du distributeur, l\'huile fait sortir ou rentrer la tige du vérin, et l\'huile qui revient du vérin retourne au réservoir.') +
+      FLU_CIRCUIT() +
       BOX(P('Redresseur : AC → DC ; onduleur : DC → AC ; hacheur : DC → DC réglable ; transformateur : AC → AC.', 'U2 / U1 = N2 / N1 pour un transformateur.'))
   },
   // ===================== Séquence 5 =====================
@@ -989,6 +1064,8 @@ const EXOS = [
       graph({ x0: 0, x1: 30, dx: 5, y0: 0, y1: 6, dy: 1, w: 420, h: 220, xlab: 't (ms)', ylab: 'u (V)',
         series: [{ pts: [[0, 0], [0, 5], [2.5, 5], [2.5, 0], [10, 0], [10, 5], [12.5, 5], [12.5, 0], [20, 0], [20, 5], [22.5, 5], [22.5, 0], [30, 0]] }], cap: 'T = 10 ms et 2,5 ms à l\'état haut : α = 25 %' }) +
       P('On l\'utilise pour commander la vitesse d\'un moteur ou la luminosité d\'une LED : la tension moyenne vaut α × Umax, où Umax est la tension à l\'état haut.') +
+      EX('Exemple : vitesse d\'un moteur', P('Un moteur 12 V est commandé par un signal PWM de période T = 2 ms, à l\'état haut pendant 1,5 ms :') +
+        M('\\alpha = \\frac{1{,}5}{2} = 0{,}75 = 75\\,\\%') + P('La tension moyenne vaut 0,75 × 12 = 9 V.')) +
       H('5. Harmoniques et filtres') +
       P('Un signal périodique non sinusoïdal est la somme d\'une sinusoïde de même fréquence (le <b>fondamental</b>) et de sinusoïdes de fréquences multiples 2f, 3f… (les <b>harmoniques</b>). Un filtre laisse passer certaines fréquences et en atténue d\'autres :') +
       UL('<b>passe-bas</b> : garde les basses fréquences (supprime le bruit rapide) ;', '<b>passe-haut</b> : garde les hautes fréquences ;', '<b>passe-bande</b> : garde une bande de fréquences.') +
@@ -1113,6 +1190,8 @@ const EXOS = [
       M('M_A(\\vec F) = \\pm\\, L \\times F') +
       P(`avec ${m('M_A(\\vec F)')} le moment de la force au point A en N·m, ${m('L')} le bras de levier en m et ${m('F')} la valeur de la force en N.`) +
       P('L est le <b>bras de levier</b> : la distance entre le point A et la <b>droite d\'action</b> de la force (et non la distance entre A et le point d\'application). Le moment est positif si la force fait tourner dans le sens trigonométrique (inverse des aiguilles d\'une montre), négatif sinon.') +
+      EX('Exemple : une clé de serrage', P('On pousse avec F = 60 N au bout d\'une clé, perpendiculairement au manche, à L = 0,25 m de l\'axe de l\'écrou :') +
+        M('M = 0{,}25 \\times 60 = 15\\,\\text{N·m}') + P('Si la force était inclinée, le bras de levier (distance entre l\'axe et la droite d\'action) serait plus court : le moment serait plus faible.')) +
       H('4. Principe fondamental de la statique (PFS)') +
       P('Un corps est en <b>équilibre</b> s\'il n\'a ni translation ni rotation. Alors :') +
       UL('la somme vectorielle des forces qui s\'appliquent sur lui est nulle ;', 'la somme des moments de ces forces en un même point est nulle.') +
@@ -1148,6 +1227,8 @@ const EXOS = [
       M('d = m \\times Z \\qquad a = \\frac{d_1 + d_2}{2} = \\frac{m\\,(Z_1 + Z_2)}{2}') +
       P(`avec ${m('d')} le diamètre primitif en mm, ${m('m')} le module en mm, ${m('Z')} le nombre de dents, ${m('a')} l'entraxe en mm ; les indices 1 et 2 désignent les deux roues de l'engrenage.`) +
       P('d est le diamètre primitif et a l\'entraxe. Deux roues ne peuvent engrener que si elles ont le <b>même module</b>.') +
+      EX('Exemple', P('Deux roues de module m = 2 mm ont Z₁ = 20 et Z₂ = 50 dents :') +
+        M('d_1 = 2 \\times 20 = 40\\,\\text{mm} \\qquad d_2 = 2 \\times 50 = 100\\,\\text{mm}') + M('a = \\frac{40 + 100}{2} = 70\\,\\text{mm}')) +
       H('3. Rapport de transmission') +
       M('r = \\frac{N_{sortie}}{N_{entrée}} = \\frac{\\omega_{sortie}}{\\omega_{entrée}} = \\frac{Z_{menante}}{Z_{menée}}') +
       P(`avec ${m('r')} le rapport de transmission (sans unité), ${m('N')} les vitesses de rotation en tr/min ou ${m('\\omega')} en rad/s (la même unité en haut et en bas), ${m('Z_{menante}')} le nombre de dents de la roue menante et ${m('Z_{menée}')} celui de la roue menée.`) +
@@ -1158,11 +1239,17 @@ const EXOS = [
         'Dans un <b>train</b>, chaque étage combine deux roues fixées sur le même arbre :') +
       M('r = \\frac{\\text{produit des } Z \\text{ des roues menantes}}{\\text{produit des } Z \\text{ des roues menées}} = r_1 \\times r_2 \\times \\dots') +
       P('Le sens de sortie s\'inverse à chaque contact extérieur.') +
+      EX('Exemple : train à deux étages', P('Un pignon de 12 dents mène une roue de 48 dents ; sur le même arbre, un pignon de 15 dents mène une roue de 45 dents :') +
+        M('r = \\frac{12 \\times 15}{48 \\times 45} = \\frac{180}{2\\,160} = \\frac{1}{12}') +
+        P('On retrouve r = r₁ × r₂ = 12/48 × 15/45 = 1/4 × 1/3 = 1/12 : la sortie tourne 12 fois moins vite que l\'entrée.')) +
       H('5. Couple et puissance') +
       P('En rotation, la puissance vaut P = C × ω (C en N·m, ω en rad/s). Un réducteur conserve la puissance aux pertes près :') +
       M('P_s = \\eta \\times P_e \\qquad C_s = \\frac{\\eta \\times C_e}{r}') +
       P(`avec ${m('P_e')} et ${m('P_s')} les puissances en entrée et en sortie du réducteur en W, ${m('C_e')} et ${m('C_s')} les couples en entrée et en sortie en N·m, ${m('\\eta')} le rendement du réducteur et ${m('r')} son rapport de transmission (tous deux sans unité).`) +
       P('Réduire la vitesse augmente donc le couple disponible.') +
+      EX('Exemple', P('Un moteur fournit Pe = 300 W avec un couple Ce = 2 N·m à un réducteur de rapport r = 1/20 et de rendement η = 0,8 :') +
+        M('P_s = 0{,}8 \\times 300 = 240\\,\\text{W}') + M('C_s = \\frac{0{,}8 \\times 2}{1/20} = 32\\,\\text{N·m}') +
+        P('Vérification : le moteur tourne à ω = 300 / 2 = 150 rad/s, la sortie à 150 / 20 = 7,5 rad/s, et 32 × 7,5 = 240 W.')) +
       BOX(P('r = Z menante / Z menée = N sortie / N entrée.', 'Train : r = produit des Z menantes / produit des Z menées. d = m × Z.'))
   },
   {
@@ -1389,6 +1476,8 @@ print(niveau)`) +
       H('3. Mesurer E par la flèche') +
       P('Pour une éprouvette de section carrée h × h, encastrée à une extrémité et tirée à l\'autre par une force F, la flèche f vaut :') + M('f = \\frac{4\\,F\\,L^3}{E\\,h^4} \\quad \\Rightarrow \\quad E = \\frac{4\\,F\\,L^3}{f\\,h^4}') +
       P(`avec ${m('f')} la flèche en m, ${m('F')} la force en N, ${m('L')} la longueur de l'éprouvette en m, ${m('h')} le côté de sa section en m et ${m('E')} le module de Young en Pa.`) +
+      EX('Exemple', P('Une éprouvette de section carrée h = 10 mm = 0,01 m et de longueur L = 0,2 m fléchit de f = 2 mm = 0,002 m sous F = 10 N :') +
+        M('E = \\frac{4 \\times 10 \\times 0{,}2^3}{0{,}002 \\times 0{,}01^4} = 1{,}6 \\times 10^{10}\\,\\text{Pa} = 16\\,\\text{GPa}') + P('Cette valeur correspond à un bois ou à un composite.')) +
       H('4. Les propriétés à connaître') +
       UL('<b>Élasticité</b> : aptitude à reprendre sa forme initiale.', '<b>Plasticité</b> : aptitude à garder la forme donnée par une déformation (pâte à modeler).', '<b>Ductilité</b> : capacité à se déformer beaucoup avant de rompre.',
         '<b>Rigidité</b> : résistance à la déformation (module de Young élevé).', '<b>Dureté</b> : résistance à l\'usure et à la pénétration.') +
@@ -1400,6 +1489,9 @@ print(niveau)`) +
       BOX(P('σ = F / S ; ε = ΔL / L0 ; loi de Hooke σ = E × ε (domaine élastique).', 'Re : fin du domaine élastique ; Rm : résistance maximale.'))
   }
 ];
+
+// ---------- Liens vers les exercices (fiche → [route, titre], généré par liens.js) ----------
+const EXO_LIENS = { "Unités et grandeurs": [ [ "1-1", "Conversions d'unités" ], [ "1-2", "Ballon d'eau chaude" ] ], "Grandeurs mécaniques de base et rendement": [ [ "1-3", "Masse volumique" ], [ "1-4", "Poids et pression d'un mur" ], [ "1-5", "Vitesse linéaire" ], [ "1-6", "Dérouleur de fibre optique" ], [ "1-9", "Rendement d'une chaîne de puissance" ] ], "Chaînes de puissance et d'information": [ [ "1-7", "Fonctions des chaînes d'information et d'énergie" ], [ "1-8", "Composants électroniques" ] ], "Sources et formes d'énergie": [ [ "2-1", "Sources et formes d'énergie" ], [ "2-2", "Énergie primaire, secondaire, finale et utile" ], [ "2-3", "Conversions d'énergie" ] ], "Énergie, puissance et coût": [ [ "2-6", "Énergie, puissance et coût" ], [ "2-4", "Unités d'énergie" ], [ "2-5", "Conversions de durées" ], [ "2-7", "Box internet et mise en veille" ], [ "2-8", "Consommation du Bitcoin et parc éolien" ], [ "2-9", "Comparaison de modes de chauffage" ] ], "Ressources énergétiques, mix et réseaux": [ [ "2-11", "Mix énergétique et réseaux électriques" ], [ "2-10", "Diagramme de Sankey" ] ], "Développement durable et cycle de vie": [ [ "2-12", "Développement durable et cycle de vie" ], [ "2-13", "ACV d'une bouteille en verre" ], [ "2-14", "Émissions du transport des bouteilles" ] ], "Contacts, mouvements et degrés de liberté": [ [ "3-1", "Contacts et mouvements" ], [ "3-2", "Degrés de liberté et liaisons" ] ], "Liaisons et schéma cinématique": [ [ "3-3", "Symboles des liaisons" ], [ "3-4", "Liaisons de la vie courante" ], [ "3-5", "Classes d'équivalence" ] ], "Relations cinématiques : translation et rotation": [ [ "3-7", "Vitesse de l'extrémité d'un bras robotisé" ], [ "3-6", "Bras robotisé : coordonnées articulaires" ] ], "Grandeurs électriques": [ [ "4-1", "Courant continu, alternatif et réseau électrique" ], [ "4-2", "Lire un signal électrique" ], [ "4-3", "Courant absorbé par un moteur" ] ], "Énergie solaire photovoltaïque": [ [ "4-4", "Photovoltaïque" ], [ "4-5", "Caractéristique d'un panneau photovoltaïque" ], [ "4-6", "Associations de panneaux" ], [ "4-7", "Production d'un panneau" ], [ "4-8", "Dimensionnement d'une installation photovoltaïque" ] ], "Piles, accumulateurs et batteries": [ [ "4-9", "Piles, accumulateurs et batteries" ], [ "4-10", "Batterie : énergie, autonomie et recharge" ], [ "4-11", "Associations de batteries" ], [ "4-12", "Énergie massique et volumique" ], [ "4-13", "Choix d'une batterie de vélo électrique" ] ], "Convertir l'énergie électrique": [ [ "4-14", "Redresseur, onduleur, hacheur, transformateur" ], [ "4-15", "Schémas fluidiques" ], [ "4-16", "Éoliennes" ] ], "Information et signaux": [ [ "5-1", "Nature de l'information" ], [ "5-2", "Lire un oscillogramme" ], [ "5-3", "Signal PWM et rapport cyclique" ], [ "5-15", "Harmoniques et filtres" ] ], "Capteurs et détecteurs": [ [ "5-6", "Types et choix de capteurs" ], [ "5-7", "Capteur à sortie en tension" ], [ "5-8", "Sonde de température PT100" ], [ "5-9", "Thermocouple" ], [ "5-16", "Pesage de l'Hemo-mixer" ] ], "Codage de l'information": [ [ "5-10", "Conversions binaire, décimal et hexadécimal" ], [ "5-11", "Nombre de valeurs codables" ], [ "5-12", "Débit et durée de téléchargement" ], [ "5-13", "Opérations logiques sur des mots binaires" ], [ "5-14", "Code ASCII" ] ], "Conversion analogique-numérique": [ [ "5-5", "Convertisseur analogique-numérique (CAN)" ], [ "5-4", "Échantillonnage et taille des fichiers" ] ], "Actions mécaniques et équilibre": [ [ "6-1", "Actions mécaniques et PFS" ], [ "6-2", "Moment d'une force : la barrière" ], [ "6-3", "Poutre sur deux appuis" ], [ "6-4", "Balcon : charge répartie et coefficient de sécurité" ], [ "6-5", "Vérin double effet" ] ], "Engrenages et réducteurs de vitesse": [ [ "6-7", "Engrenages" ], [ "6-8", "Engrenage simple et module" ], [ "6-9", "Train d'engrenages" ], [ "6-10", "Motoréducteur du robot mBot" ] ], "Puissance d'un véhicule en déplacement": [ [ "6-6", "Puissance d'un véhicule en déplacement" ], [ "6-11", "Ouvre-portail : puissances et rendements" ] ], "Algorithmique et algorigrammes": [ [ "7-1", "Algorithmique et algorigrammes" ], [ "7-2", "Parcours d'un algorithme de régulation" ], [ "7-4", "Trace d'une boucle Tant que" ] ], "Logique combinatoire": [ [ "7-6", "Fonctions logiques" ], [ "7-7", "Table de vérité" ], [ "7-8", "Barre de LED et binaire" ] ], "Bases de la programmation en Python": [ [ "7-5", "Bases de Python" ], [ "7-3", "Trace d'une boucle for en Python" ], [ "7-9", "Bras robotisé : déplacer des objets avec une boucle" ] ], "Familles et propriétés physiques des matériaux": [ [ "8-1", "Familles de matériaux" ], [ "8-3", "Chaleur et température" ] ], "Comportement mécanique et choix des matériaux": [ [ "8-4", "Essai de traction sur une éprouvette" ], [ "8-2", "Propriétés et sollicitations des matériaux" ], [ "8-5", "Module d'Young à partir d'une flèche" ], [ "8-6", "Choix de matériaux et éco-conception" ] ] };
 
 // ---------- Affichage ----------
 const nav = document.getElementById('nav');
@@ -1502,7 +1594,8 @@ function show(i) {
     <h2>${e.title}</h2>
     <p class="support">${e.support}</p>
     ${e.body}
-    <div class="btns"><a class="go" href="Exercices_I2D.html#c${e.chap}-1">S'entraîner : exercices de la séquence ${e.chap} →</a></div>`;
+    <div class="train"><b>S'entraîner sur cette fiche :</b><div class="btns">${(EXO_LIENS[e.title] || [[`${e.chap}-1`, `exercices de la séquence ${e.chap}`]])
+      .map(([r, t]) => `<a class="go" href="Exercices_I2D.html#c${r}">${t} →</a>`).join('')}</div></div>`;
   renderMath(card);
   fitToWidth(card);
   nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', +a.dataset.i === i));

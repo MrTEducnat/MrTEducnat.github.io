@@ -246,6 +246,7 @@ svg .f2 { fill: var(--val-bg); stroke: var(--val); stroke-width: 2.6; }
 .lia b { display: block; font-size: 14px; }
 .lia span { display: block; font-size: 12px; color: var(--muted); }
 svg.liasym { display: block; width: 100%; max-width: 150px; height: auto; margin: 0 auto 4px; }
+svg .fk { fill: var(--text); stroke: var(--text); stroke-width: 1; }
 </style>
 </head>
 <body>
@@ -490,6 +491,58 @@ const LIAISONS = [['encastrement', 'Encastrement', '0 ddl : aucun mouvement'], [
 const liaSym = k => `<svg class="liasym" viewBox="0 0 150 92" role="img">${LIA_SVG[k]}</svg>`;
 const LIA_GRID = (cles = LIAISONS.map(l => l[0])) => `<div class="lias">${LIAISONS.filter(l => cles.includes(l[0])).map(([k, n, d]) =>
   `<div class="lia">${liaSym(k)}<b>${n}</b><span>${d}</span></div>`).join('')}</div>`;
+
+// ---------- Symboles fluidiques (hydraulique et pneumatique, simplifiés d'après l'ISO 1219) ----------
+const FLU_SVG = {
+  verinDE: `<rect class="line" x="16" y="28" width="92" height="34"/><line class="line" x1="50" y1="28" x2="50" y2="62" style="stroke-width:4"/>
+    <rect class="thin" x="50" y="42" width="90" height="6"/><line class="line" x1="26" y1="62" x2="26" y2="84"/><line class="line" x1="98" y1="62" x2="98" y2="84"/>`,
+  verinSE: `<rect class="line" x="16" y="28" width="92" height="34"/><line class="line" x1="40" y1="28" x2="40" y2="62" style="stroke-width:4"/>
+    <rect class="thin" x="40" y="42" width="100" height="6"/><line class="line" x1="26" y1="62" x2="26" y2="84"/>
+    <polyline class="thin" points="44,32 52,58 60,32 68,58 76,32 84,58 92,32 100,58 106,40"/>`,
+  dist42: `<rect class="line" x="35" y="26" width="40" height="40"/><rect class="line" x="75" y="26" width="40" height="40"/>
+    <line class="thin" x1="43" y1="62" x2="67" y2="30"/><path class="thin" d="M59 31 L67 30 L65 38"/><line class="thin" x1="67" y1="62" x2="43" y2="30"/><path class="thin" d="M45 38 L43 30 L51 31"/>
+    <line class="thin" x1="85" y1="62" x2="85" y2="30"/><path class="thin" d="M81 37 L85 30 L89 37"/><line class="thin" x1="105" y1="30" x2="105" y2="62"/><path class="thin" d="M101 55 L105 62 L109 55"/>
+    <line class="line" x1="85" y1="66" x2="85" y2="84"/><line class="line" x1="105" y1="66" x2="105" y2="84"/><line class="line" x1="85" y1="26" x2="85" y2="8"/><line class="line" x1="105" y1="26" x2="105" y2="8"/>
+    <rect class="thin" x="19" y="36" width="16" height="20"/><line class="thin" x1="19" y1="56" x2="35" y2="36"/>
+    <polyline class="thin" points="115,46 119,38 124,54 129,38 134,54 138,46"/>`,
+  clapet: `<line class="line" x1="10" y1="46" x2="60" y2="46"/><line class="line" x1="90" y1="46" x2="140" y2="46"/><circle class="line" cx="70" cy="46" r="10"/>
+    <polyline class="line" points="78,30 92,46 78,62"/>`,
+  rdu: `<line class="line" x1="10" y1="30" x2="140" y2="30"/><path class="line" d="M62 20 Q75 30 88 20 M62 40 Q75 30 88 40"/>
+    <line class="thin" x1="58" y1="48" x2="92" y2="12"/><path class="thin" d="M84 14 L92 12 L90 20"/>
+    <polyline class="line" points="30,30 30,66 64,66"/><polyline class="line" points="88,66 120,66 120,30"/><circle class="line" cx="70" cy="66" r="7"/><polyline class="line" points="76,55 86,66 76,77"/>`,
+  limiteur: `<rect class="line" x="48" y="20" width="50" height="50"/><line class="line" x1="62" y1="70" x2="62" y2="88"/><line class="line" x1="62" y1="20" x2="62" y2="4"/>
+    <line class="thin" x1="80" y1="64" x2="80" y2="27"/><path class="thin" d="M76 34 L80 27 L84 34"/>
+    <polyline class="thin" points="98,45 103,37 108,53 113,37 118,53 123,37 128,45"/><line class="thin" x1="104" y1="60" x2="128" y2="30"/>
+    <polyline class="c3" points="62,80 34,80 34,32 48,32"/>`,
+  pompe: `<circle class="line" cx="75" cy="46" r="22"/><path class="fk" d="M75 24 L67 37 H83 Z"/><line class="line" x1="75" y1="24" x2="75" y2="6"/><line class="line" x1="75" y1="68" x2="75" y2="86"/>
+    <line class="thin" x1="97" y1="46" x2="128" y2="46"/><path class="thin" d="M110 41 A6 6 0 1 0 110 51"/>`,
+  compresseur: `<circle class="line" cx="75" cy="46" r="22"/><path class="line" d="M75 24 L67 37 H83 Z"/><line class="line" x1="75" y1="24" x2="75" y2="6"/><line class="line" x1="75" y1="68" x2="75" y2="86"/>
+    <line class="thin" x1="97" y1="46" x2="128" y2="46"/><path class="thin" d="M110 41 A6 6 0 1 0 110 51"/>`,
+  reservoir: `<polyline class="line" points="38,36 38,74 112,74 112,36"/><line class="line" x1="75" y1="8" x2="75" y2="64"/>`,
+  filtre: `<path class="line" d="M75 20 L105 46 L75 72 L45 46 Z"/><line class="c3" x1="75" y1="20" x2="75" y2="72"/><line class="line" x1="10" y1="46" x2="45" y2="46"/><line class="line" x1="105" y1="46" x2="140" y2="46"/>`,
+  manometre: `<circle class="line" cx="75" cy="38" r="20"/><line class="thin" x1="63" y1="50" x2="87" y2="26"/><path class="thin" d="M79 27 L87 26 L86 34"/><line class="line" x1="75" y1="58" x2="75" y2="86"/>`
+};
+// Les 11 composants : [clé du symbole, nom, rôle]
+const FLUIDES = [['pompe', 'Pompe hydraulique', 'Alimenter : met l\'huile sous pression'], ['compresseur', 'Compresseur', 'Alimenter : produit l\'air comprimé'],
+  ['reservoir', 'Réservoir', 'stocke l\'huile (retour à l\'air libre)'], ['filtre', 'Filtre', 'retient les impuretés du fluide'],
+  ['limiteur', 'Limiteur de pression', 'protège le circuit en renvoyant l\'huile au réservoir'], ['dist42', 'Distributeur 4/2 monostable', 'Distribuer : 4 orifices, 2 positions, ressort de rappel'],
+  ['clapet', 'Clapet anti-retour', 'laisse passer le fluide dans un seul sens'], ['rdu', 'Réducteur de débit unidirectionnel', 'règle la vitesse de la tige d\'un vérin'],
+  ['verinSE', 'Vérin simple effet', 'Convertir : sortie par le fluide, rentrée par ressort'], ['verinDE', 'Vérin double effet', 'Convertir : sortie et rentrée par le fluide'],
+  ['manometre', 'Manomètre', 'mesure la pression']];
+// Symbole seul (pour un exercice) et grille de cartes (pour un cours)
+const fluSym = k => `<svg class="liasym" viewBox="0 0 150 92" role="img">${FLU_SVG[k]}</svg>`;
+const FLU_GRID = (cles = FLUIDES.map(l => l[0])) => `<div class="lias">${FLUIDES.filter(l => cles.includes(l[0])).map(([k, n, d]) =>
+  `<div class="lia">${fluSym(k)}<b>${n}</b><span>${d}</span></div>`).join('')}</div>`;
+// Circuit hydraulique complet, composants numérotés de 1 à 5
+const FLU_NUM = [['Pompe hydraulique', 28, 186], ['Limiteur de pression', 168, 194], ['Distributeur 4/2 monostable', 250, 130], ['Vérin double effet', 106, 36], ['Réservoir', 232, 234]];
+const FLU_CIRCUIT = (cap = FLU_NUM.map((c, i) => `${i + 1} : ${c[0].toLowerCase()}`).join(' ; ')) => fig(`<svg viewBox="0 0 340 256" role="img" style="max-width:440px">
+  <g transform="translate(102 -8)">${FLU_SVG.verinDE}</g><g transform="translate(95 84)">${FLU_SVG.dist42}</g><g transform="translate(-15 154)">${FLU_SVG.pompe}</g>
+  <polyline class="line" points="128,76 128,84 180,84 180,92"/><line class="line" x1="200" y1="76" x2="200" y2="92"/>
+  <polyline class="line" points="60,160 60,168 180,168"/><line class="line" x1="200" y1="168" x2="200" y2="236"/>
+  <line class="line" x1="140" y1="168" x2="140" y2="182"/><rect class="line" x="128" y="182" width="24" height="24"/><line class="thin" x1="146" y1="202" x2="146" y2="187"/>
+  <path class="thin" d="M143 192 L146 187 L149 192"/><line class="line" x1="140" y1="206" x2="140" y2="236"/>
+  ${[60, 140, 200].map(x => `<polyline class="line" points="${x - 16},228 ${x - 16},246 ${x + 16},246 ${x + 16},228"/>`).join('')}
+  ${FLU_NUM.map(([, x, y], i) => `<circle class="thin" cx="${x}" cy="${y}" r="9"/>` + dT(x, y + 4, String(i + 1), 'middle', 12)).join('')}</svg>`, cap);
 
 // ---------- Chapitres ----------
 const CHAPITRES = [
@@ -1494,16 +1547,19 @@ const EXOS = [
     ['Dans un pont de diodes, les alternances négatives :', 'deviennent positives', ['sont supprimées', 'restent négatives', 'sont doublées'], ''],
     ['Le condensateur ajouté en sortie d\'un pont de diodes sert à :', 'lisser la tension pour la rendre continue', ['augmenter la fréquence', 'supprimer le courant', 'inverser la tension'], '']
   ]),
-  Q(4, 'Schémas fluidiques', 'PC Schémas fluidiques', [
+  Q(4, 'Schémas fluidiques', 'PC Schémas fluidiques', () => [
     ...fromPairs([['pneumatique', 'l\'air comprimé'], ['aéraulique', 'l\'air (ventilation)'], ['hydraulique', 'l\'eau ou l\'huile'], ['frigorifique', 'un fluide caloporteur']],
       a => `Quel fluide utilise un système ${a} ?`),
-    ['Un vérin double effet permet :', 'de faire sortir et rentrer la tige grâce au fluide', ['seulement de sortir la tige', 'de pomper un liquide', 'de filtrer l\'huile'], ''],
-    ['Un distributeur 4/2 monostable possède :', '4 orifices, 2 positions et un ressort de rappel', ['4 positions et 2 orifices', '2 vérins', '4 pompes'], ''],
-    ['Un réducteur de débit unidirectionnel (RDU) sert à :', 'régler la vitesse de la tige d\'un vérin', ['augmenter la pression', 'filtrer l\'air', 'changer le sens du fluide'], ''],
-    ['Dans un circuit hydraulique, le limiteur de pression sert à :', 'protéger la pompe en renvoyant l\'huile au réservoir', ['augmenter la vitesse', 'chauffer l\'huile', 'compter les cycles'], ''],
-    ['Un clapet anti-retour :', 'laisse passer le fluide dans un seul sens', ['laisse passer le fluide dans les deux sens', 'augmente le débit', 'règle la température'], ''],
+    [`Un vérin double effet${fluSym('verinDE')}permet :`, 'de faire sortir et rentrer la tige grâce au fluide', ['seulement de sortir la tige', 'de pomper un liquide', 'de filtrer l\'huile'], ''],
+    [`Un distributeur 4/2 monostable${fluSym('dist42')}possède :`, '4 orifices, 2 positions et un ressort de rappel', ['4 positions et 2 orifices', '2 vérins', '4 pompes'], ''],
+    [`Un réducteur de débit unidirectionnel (RDU)${fluSym('rdu')}sert à :`, 'régler la vitesse de la tige d\'un vérin', ['augmenter la pression', 'filtrer l\'air', 'changer le sens du fluide'], ''],
+    [`Dans un circuit hydraulique, le limiteur de pression${fluSym('limiteur')}sert à :`, 'protéger la pompe en renvoyant l\'huile au réservoir', ['augmenter la vitesse', 'chauffer l\'huile', 'compter les cycles'], ''],
+    [`Un clapet anti-retour${fluSym('clapet')}a pour rôle :`,'laisse passer le fluide dans un seul sens', ['laisse passer le fluide dans les deux sens', 'augmente le débit', 'règle la température'], ''],
     ['Le thermosiphon est :', 'une circulation naturelle : l\'eau chaude monte et aspire l\'eau froide', ['une pompe électrique', 'un type de radiateur', 'une vanne'], ''],
-    ['Une centrale de traitement d\'air (CTA) double flux :', 'récupère une partie de la chaleur de l\'air sortant', ['ne fait que chauffer l\'air', 'fonctionne à l\'huile', 'remplace la chaudière'], '']
+    ['Une centrale de traitement d\'air (CTA) double flux :', 'récupère une partie de la chaleur de l\'air sortant', ['ne fait que chauffer l\'air', 'fonctionne à l\'huile', 'remplace la chaudière'], ''],
+    // Reconnaître un symbole (mêmes dessins que le cours) et lire un circuit
+    ...FLUIDES.map(([k, n]) => [`Quel composant ce symbole représente-t-il ?${fluSym(k)}`, n, FLUIDES.map(f => f[1]), '']),
+    ...sample([0, 1, 2, 3, 4], 2).map(k => [`Sur ce circuit hydraulique, quel est le composant n° ${k + 1} ?${FLU_CIRCUIT('Circuit hydraulique')}`, FLU_NUM[k][0], FLU_NUM.map(c => c[0]), ''])
   ]),
   Q(4, 'Éoliennes', 'TP Éoliennes', [
     ['Une éolienne convertit d\'abord :', 'l\'énergie cinétique du vent en énergie mécanique', ['l\'énergie électrique en énergie mécanique', 'l\'énergie thermique en électricité', 'le rayonnement en électricité'], ''],
@@ -2630,7 +2686,7 @@ function show(i) {
   current = i;
   const e = EXOS[i], data = e.gen();
   card.innerHTML = `
-    <div class="crumb">Séquence ${e.chap} · ${CHAPITRES[e.chap - 1]}</div>
+    <div class="crumb">I2D · Séquence ${e.chap} · ${CHAPITRES[e.chap - 1]}</div>
     <h2>${e.title}</h2>
     <p class="support">${e.support}</p>
     ${data.statement}

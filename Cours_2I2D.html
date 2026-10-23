@@ -257,6 +257,20 @@ a.go:hover, a.go:focus-visible { background: var(--accent-bg); outline: none; }
   .card { padding: 18px 16px; }
   .card h2 { font-size: 19px; }
 }
+/* Symboles des liaisons : pièce 1 en bleu, pièce 2 en orange */
+svg .l1 { stroke: var(--accent); stroke-width: 2.6; fill: none; stroke-linecap: round; }
+svg .l2 { stroke: var(--val); stroke-width: 2.6; fill: none; stroke-linecap: round; }
+svg .f1 { fill: var(--accent-bg); stroke: var(--accent); stroke-width: 2.6; }
+svg .f2 { fill: var(--val-bg); stroke: var(--val); stroke-width: 2.6; }
+.lias { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin: 14px 0; }
+.lia { border: 1px solid var(--border); border-radius: 8px; padding: 6px 6px 8px; text-align: center; background: var(--surface); }
+.lia b { display: block; font-size: 14px; }
+.lia span { display: block; font-size: 12px; color: var(--muted); }
+svg.liasym { display: block; width: 100%; max-width: 150px; height: auto; margin: 0 auto 4px; }
+svg .fk { fill: var(--text); stroke: var(--text); stroke-width: 1; }
+.train { margin-top: 22px; }
+.train b { display: block; font-size: 14px; color: var(--muted); }
+.train .btns { margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -465,6 +479,37 @@ const CHAPITRES = [
   'Durabilité des structures',
   'Éclairage'
 ];
+// ---------- Symboles des liaisons (schémas plans simplifiés, axe principal x horizontal) ----------
+// Pièce 1 en bleu (classe l1), pièce 2 en orange (classe l2)
+const LIA_SVG = {
+  encastrement: `<line class="l2" x1="60" y1="18" x2="60" y2="72"/><line class="l2" x1="20" y1="72" x2="60" y2="72"/><line class="l1" x1="60" y1="45" x2="132" y2="45"/>
+    <path class="pt" d="M60 45 L76 45 L60 31 Z"/>`,
+  pivot: `<rect class="f2" x="55" y="31" width="40" height="28"/><line class="l2" x1="75" y1="59" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>
+    <line class="l1" x1="48" y1="35" x2="48" y2="55"/><line class="l1" x1="102" y1="35" x2="102" y2="55"/>`,
+  glissiere: `<rect class="f2" x="50" y="27" width="50" height="36"/><line class="l2" x1="75" y1="63" x2="75" y2="84"/><rect class="f1" x="14" y="39" width="122" height="12"/>`,
+  helicoidale: `<rect class="f2" x="50" y="29" width="50" height="32"/><line class="l2" x1="75" y1="61" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>
+    <line class="l2" x1="56" y1="58" x2="66" y2="32"/><line class="l2" x1="70" y1="58" x2="80" y2="32"/><line class="l2" x1="84" y1="58" x2="94" y2="32"/>`,
+  pivotglissant: `<rect class="f2" x="55" y="31" width="40" height="28"/><line class="l2" x1="75" y1="59" x2="75" y2="82"/><line class="l1" x1="14" y1="45" x2="136" y2="45"/>`,
+  rotuledoigt: `<path class="l2" d="M75 26 A20 20 0 1 0 75 64"/><line class="l2" x1="55" y1="45" x2="18" y2="45"/><circle class="f1" cx="75" cy="45" r="13"/><line class="l1" x1="88" y1="45" x2="134" y2="45"/>
+    <line class="l1" x1="75" y1="32" x2="75" y2="14"/><line class="l2" x1="68" y1="10" x2="68" y2="24"/><line class="l2" x1="82" y1="10" x2="82" y2="24"/>`,
+  rotule: `<path class="l2" d="M75 26 A20 20 0 1 0 75 64"/><line class="l2" x1="55" y1="45" x2="18" y2="45"/><circle class="f1" cx="75" cy="45" r="13"/><line class="l1" x1="88" y1="45" x2="134" y2="45"/>`,
+  appuiplan: `<line class="l1" x1="38" y1="39" x2="112" y2="39"/><line class="l1" x1="75" y1="39" x2="75" y2="12"/><line class="l2" x1="38" y1="51" x2="112" y2="51"/><line class="l2" x1="75" y1="51" x2="75" y2="80"/>`,
+  annulaire: `<line class="l2" x1="36" y1="27" x2="114" y2="27"/><line class="l2" x1="36" y1="63" x2="114" y2="63"/><line class="l2" x1="75" y1="63" x2="75" y2="84"/>
+    <circle class="f1" cx="75" cy="45" r="17"/><line class="l1" x1="92" y1="45" x2="136" y2="45"/>`,
+  rectiligne: `<line class="l2" x1="22" y1="62" x2="128" y2="62"/><line class="l2" x1="75" y1="62" x2="75" y2="84"/><rect class="f1" x="46" y="38" width="58" height="24"/>
+    <ellipse class="f1" cx="46" cy="50" rx="6" ry="12"/><line class="l1" x1="75" y1="38" x2="75" y2="12"/>`,
+  ponctuelle: `<line class="l2" x1="22" y1="62" x2="128" y2="62"/><line class="l2" x1="75" y1="62" x2="75" y2="84"/><circle class="f1" cx="75" cy="52" r="10"/><line class="l1" x1="75" y1="42" x2="75" y2="12"/>`
+};
+// Les 11 liaisons : [clé du symbole, nom, degrés de liberté et mouvements]
+const LIAISONS = [['encastrement', 'Encastrement', '0 ddl : aucun mouvement'], ['pivot', 'Pivot', '1 ddl : Rx'], ['glissiere', 'Glissière', '1 ddl : Tx'],
+  ['helicoidale', 'Hélicoïdale', '1 ddl : Rx et Tx liés'], ['pivotglissant', 'Pivot glissant', '2 ddl : Rx, Tx'], ['rotuledoigt', 'Rotule à doigt', '2 ddl : Rx, Ry'],
+  ['rotule', 'Rotule', '3 ddl : Rx, Ry, Rz'], ['appuiplan', 'Appui plan', '3 ddl : Tx, Ty, Rz'], ['annulaire', 'Linéaire annulaire', '4 ddl : Tx, Rx, Ry, Rz'],
+  ['rectiligne', 'Linéaire rectiligne', '4 ddl : Tx, Ty, Rx, Rz'], ['ponctuelle', 'Ponctuelle', '5 ddl : Tx, Ty, Rx, Ry, Rz']];
+// Symbole seul (pour un exercice) et grille de cartes (pour un cours)
+const liaSym = k => `<svg class="liasym" viewBox="0 0 150 92" role="img">${LIA_SVG[k]}</svg>`;
+const LIA_GRID = (cles = LIAISONS.map(l => l[0])) => `<div class="lias">${LIAISONS.filter(l => cles.includes(l[0])).map(([k, n, d]) =>
+  `<div class="lia">${liaSym(k)}<b>${n}</b><span>${d}</span></div>`).join('')}</div>`;
+
 
 // ---------- Mise en forme des fiches ----------
 const H = t => `<h3>${t}</h3>`;
@@ -544,9 +589,14 @@ const EXOS = [
       P('Pour des constituants placés les uns après les autres, la puissance de sortie de l\'un est la puissance d\'entrée du suivant : les rendements se <b>multiplient</b>.') +
       M('\\eta_{global} = \\eta_1 \\times \\eta_2 \\times \\eta_3') +
       P('Pour trouver la puissance à fournir en entrée, on divise : P<sub>a</sub> = P<sub>u</sub> / η. Les pertes valent P<sub>a</sub> − P<sub>u</sub>.') +
+      EX('Exemple', P('Un moteur absorbe 500 W et fournit 425 W : η = 425 / 500 = 0,85.') +
+        P('Pour obtenir 200 W utiles avec la chaîne de la figure (η = 0,73) :') + M('P_a = \\frac{P_u}{\\eta} = \\frac{200}{0{,}73} \\approx 274\\,\\text{W}') +
+        P('Les pertes valent 274 − 200 = 74 W.')) +
       H('3. Énergie et coût') +
       M('E = P \\times \\Delta t') + LEG(['E', 'l\'énergie en Wh (ou J)'], ['P', 'la puissance en W'], ['\\Delta t', 'la durée en h (ou s)']) +
       P('Le coût de l\'énergie vaut : énergie en kWh × prix du kWh. Pour une production (éolienne, panneaux), la recette se calcule de la même façon avec le prix de vente.') +
+      EX('Exemple : un radiateur', P('Un radiateur de 1 500 W fonctionne 6 h par jour pendant 150 jours, soit 900 h :') +
+        M('E = 1\\,500 \\times 900 = 1\\,350\\,000\\,\\text{Wh} = 1\\,350\\,\\text{kWh}') + P('À 0,25 € le kWh : 1 350 × 0,25 = 337,50 € par an.')) +
       H('4. Temps de retour sur investissement') +
       M('T_R = \\frac{I}{G}') + LEG(['T_R', 'le temps de retour en années'], ['I', 'l\'investissement en €'], ['G', 'le gain net annuel en € (économies ou recettes moins la maintenance)']) +
       EX('Exemple', P('Une installation de 25 kW produit 1 100 h équivalentes par an : E = 25 × 1 100 = 27 500 kWh. Vendue 0,13 €/kWh, elle rapporte 3 575 € ; avec 400 € de maintenance, le gain net est de 3 175 €. Pour un investissement de 38 000 € :') +
@@ -636,6 +686,8 @@ const EXOS = [
       UL('<b>Énergie grise</b> : énergie nécessaire sur tout le cycle de vie d\'un matériau ou d\'un produit.', '<b>Bilan carbone</b> : total des émissions de gaz à effet de serre.',
         '<b>Transfert d\'impact</b> : une amélioration sur une étape ou un critère en dégrade un autre (ex : la voiture électrique émet moins à l\'usage mais plus à la fabrication de sa batterie).') +
       P('Pour comparer deux solutions, on calcule la variation de chaque indicateur :') + M('\\text{variation} = \\frac{B - A}{A} \\times 100') + LEG(['A', 'la valeur de départ'], ['B', 'la nouvelle valeur (résultat en %, négatif si l\'impact baisse)']) +
+      EX('Exemple', P('Une bouteille allégée passe de A = 250 g éq. CO₂ à B = 180 g éq. CO₂ :') + M('\\text{variation} = \\frac{180 - 250}{250} \\times 100 = -28\\,\\%') +
+        P('Le signe moins indique une baisse de 28 % des émissions.')) +
       BOX(P('ACV : normalisée, multicritère, sur tout le cycle de vie.', 'On agit d\'abord sur l\'étape la plus pénalisante ; attention aux transferts d\'impact.'))
   },
   {
@@ -697,6 +749,10 @@ const EXOS = [
       H('4. Compacité') +
       M('C = \\frac{S_p}{V_{ch}}') + LEG(['C', 'la compacité en m⁻¹'], ['S_p', 'la surface des parois déperditives (murs, toiture, plancher bas) en m²'], ['V_{ch}', 'le volume chauffé en m³']) +
       P('La chaleur s\'échappe par les parois : à volume égal, moins il y a de surface d\'échange, moins on perd. Une maison à étage est plus compacte qu\'un plain-pied de même volume ; une sphère serait la forme idéale.') +
+      EX('Exemple : deux maisons de 300 m³', P('Plain-pied de 12 × 10 m, 2,5 m sous plafond : murs 2 × (12 + 10) × 2,5 = 110 m², toiture 120 m², plancher 120 m², soit S<sub>p</sub> = 350 m².') +
+        M('C = \\frac{350}{300} \\approx 1{,}17\\,\\text{m}^{-1}') +
+        P('Maison à étage de 6 × 10 m, 5 m de haut : murs 2 × (6 + 10) × 5 = 160 m², toiture 60 m², plancher 60 m², soit S<sub>p</sub> = 280 m².') +
+        M('C = \\frac{280}{300} \\approx 0{,}93\\,\\text{m}^{-1}') + P('La maison à étage, plus compacte, perd moins de chaleur.')) +
       BOX(P('Bâtiment : 43 % de l\'énergie consommée en France.', 'Compacité C = Sp / V : plus elle est petite, mieux c\'est.'))
   },
   {
@@ -713,10 +769,15 @@ const EXOS = [
         'Paroi multicouche : les résistances des couches s\'additionnent') +
       P('Pour une paroi de plusieurs couches, la chaleur doit traverser chaque couche l\'une après l\'autre : les résistances s\'additionnent, en ajoutant les résistances superficielles intérieure et extérieure (échanges avec l\'air) :') +
       M('R_{totale} = R_{se} + R_1 + R_2 + \\dots + R_{si}') + P('Valeurs courantes pour un mur : R<sub>se</sub> = 0,04 et R<sub>si</sub> = 0,13 m²·K/W.') +
+      EX('Exemple : mur en brique isolé', P('Brique de 20 cm (λ = 0,5), polystyrène de 10 cm (λ = 0,038) et plaque de plâtre de 13 mm (λ = 0,25) :') +
+        M('R_{brique} = \\frac{0{,}20}{0{,}5} = 0{,}4 \\qquad R_{PSE} = \\frac{0{,}10}{0{,}038} \\approx 2{,}63 \\qquad R_{plâtre} = \\frac{0{,}013}{0{,}25} = 0{,}052') +
+        M('R_{totale} = 0{,}04 + 0{,}4 + 2{,}63 + 0{,}052 + 0{,}13 \\approx 3{,}25\\,\\text{m}^2\\text{·K/W}')) +
       H('2. Coefficient U et flux') +
       M('U = \\frac{1}{R_{totale}}') + M('\\Phi = U \\times S \\times (T_{int} - T_{ext})') +
       LEG(['U', 'le coefficient de transmission en W/(m²·K)'], ['\\Phi', 'le flux thermique (puissance perdue) en W'], ['S', 'la surface de la paroi en m²'], ['T', 'les températures en °C']) +
       P('U indique combien de watts traversent 1 m² de paroi pour 1 °C d\'écart. Une paroi bien isolée a un U faible (moins de 0,2 W/(m²·K) pour un mur neuf).') +
+      EX('Exemple : suite du mur en brique', P('Avec R<sub>totale</sub> = 3,25 m²·K/W, pour 40 m² de mur, 19 °C dedans et −5 °C dehors :') +
+        M('U = \\frac{1}{3{,}25} \\approx 0{,}308\\,\\text{W/(m}^2\\text{·K)}') + M('\\Phi = 0{,}308 \\times 40 \\times (19 - (-5)) \\approx 296\\,\\text{W}')) +
       H('3. Déperditions d\'un logement') +
       P('On additionne les déperditions de chaque paroi (D = U × S, en W/K) et celles du renouvellement d\'air :') + M('D_v = 0{,}34 \\times Q_v') +
       LEG(['D_v', 'les déperditions par ventilation en W/K'], ['Q_v', 'le débit d\'air en m³/h']) + M('P = D_{totale} \\times (T_{int} - T_{ext})') +
@@ -733,6 +794,8 @@ const EXOS = [
       P('Méthode rapide pour dimensionner les radiateurs d\'une pièce :') +
       M('P = K \\times V \\times (T_{int} - T_{ext})') + LEG(['P', 'la puissance de chauffage en W'], ['K', 'un coefficient global en W/(m³·K) (environ 0,8 pour un logement récent)'], ['V', 'le volume de la pièce en m³'], ['T', 'les températures en °C']) +
       P('On prend la température extérieure de base de la zone climatique (−7 °C en zone D), puis on applique un coefficient de sécurité de 1,2. On arrondit le nombre de radiateurs à l\'entier supérieur : mieux vaut un peu trop que pas assez.') +
+      EX('Exemple : une chambre', P('Chambre de 4 × 3,5 × 2,5 m = 35 m³, K = 0,8 W/(m³·K), 19 °C dedans et −7 °C dehors :') +
+        M('P = 0{,}8 \\times 35 \\times (19 - (-7)) = 728\\,\\text{W}') + P('Avec le coefficient de sécurité : 728 × 1,2 ≈ 874 W, soit un radiateur de 1 000 W.')) +
       H('2. Chauffer de l\'eau') +
       M('Q = m \\times c \\times \\Delta T') + LEG(['Q', 'l\'énergie en J'], ['m', 'la masse d\'eau en kg (1 L ≈ 1 kg)'], ['c', 'la capacité thermique massique, 4 185 J/(kg·K) pour l\'eau'], ['\\Delta T', 'l\'élévation de température en K ou °C']) +
       P('L\'eau demande beaucoup d\'énergie : chauffer 200 L de 15 à 60 °C demande 200 × 4 185 × 45 ≈ 37,7 MJ, soit 10,5 kWh. La durée de chauffe vaut t = Q / (P × η) avec P la puissance de la résistance.') +
@@ -759,6 +822,8 @@ const EXOS = [
       P('En réalité l\'éclairement varie (nuit, nuages, saisons). On utilise donc le <b>productible</b> du site, en kWh produits par kWc installé et par an (de 900 au nord à 1 400 au sud de la France) :') +
       M('E = P_c \\times \\text{productible}') +
       P('Les modules vieillissent et perdent environ 0,5 % de production par an : la production de l\'année n vaut E₁ × (1 − 0,005)<sup>n − 1</sup>. Après 25 ans, il reste environ 89 % de la production initiale.') +
+      EX('Exemple', P('10 m² de modules de rendement 0,2 :') + M('P_c = 10 \\times 0{,}2 \\times 1\\,000 = 2\\,000\\,\\text{W} = 2\\,\\text{kWc}') +
+        P('Dans une région où le productible vaut 1 200 kWh/kWc par an :') + M('E = 2 \\times 1\\,200 = 2\\,400\\,\\text{kWh par an}')) +
       H('2. Éolien') +
       dSV(340, 200, `<line class="line" x1="170" y1="70" x2="170" y2="190"/><circle class="fillv" cx="170" cy="70" r="7"/>` + [90, 210, 330].map(a => { const r = a * Math.PI / 180; return `<line class="line" x1="170" y1="70" x2="${(170 + 60 * Math.cos(r)).toFixed(1)}" y2="${(70 - 60 * Math.sin(r)).toFixed(1)}"/>`; }).join('') +
         dA(20, 60, 90, 60) + dA(20, 90, 90, 90) + dT(20, 48, 'vent', 'start', 12) + dCote(240, 70, 240, 10, 'R') + dT(185, 186, 'mât', 'start', 12),
@@ -779,6 +844,9 @@ const EXOS = [
       M('E = U \\times Q') + LEG(['E', 'l\'énergie stockée en Wh'], ['U', 'la tension nominale en V'], ['Q', 'la capacité en Ah']) +
       P('On ne décharge en général que 80 à 90 % de la batterie (profondeur de décharge) pour préserver sa durée de vie : l\'énergie <b>utile</b> vaut E × profondeur de décharge.') +
       EX('Méthode : nombre de modules', P('1) Énergie nécessaire par jour = consommation × distance (ou durée). 2) Énergie utile d\'un module = U × Q × profondeur de décharge. 3) Nombre de modules = énergie nécessaire / énergie utile d\'un module, arrondi à l\'entier <b>supérieur</b>. 4) Durée de recharge : t = E / (P × η).')) +
+      EX('Exemple : batteries d\'un bus électrique', P('Le bus consomme 1,2 kWh/km et parcourt 200 km par jour : il lui faut 1,2 × 200 = 240 kWh. Un module de 48 V et 100 Ah, déchargé à 80 % :') +
+        M('E_{utile} = 48 \\times 100 \\times 0{,}8 = 3\\,840\\,\\text{Wh} = 3{,}84\\,\\text{kWh}') + M('N = \\frac{240}{3{,}84} = 62{,}5 \\ \\Rightarrow\\ 63\\ \\text{modules}') +
+        P('Avec un chargeur de 150 kW de rendement 0,9 : t = 240 / (150 × 0,9) ≈ 1,78 h, soit environ 1 h 47 min.')) +
       H('2. STEP (station de transfert d\'énergie par pompage)') +
       dSV(340, 170, `<path class="thin" d="M40 30 L50 58 H130 L140 30"/><polygon class="flow" points="42,36 50,58 130,58 138,36"/><path class="thin" d="M200 120 L210 150 H290 L300 120"/><polygon class="flow" points="202,128 210,150 290,150 298,128"/>
         <polyline class="line" points="130,56 215,140"/><circle class="fillv" cx="190" cy="115" r="11"/><line class="c3" x1="20" y1="36" x2="42" y2="36"/><line class="c3" x1="20" y1="128" x2="202" y2="128"/>` +
@@ -787,6 +855,8 @@ const EXOS = [
       P('L\'eau stockée en hauteur possède une énergie potentielle de pesanteur. En redescendant, elle fait tourner une turbine :') +
       M('E = m \\times g \\times h \\times \\eta') + LEG(['E', 'l\'énergie restituée en J'], ['m', 'la masse d\'eau en kg (1 m³ d\'eau = 1 000 kg)'], ['g', '= 9,81 m/s²'], ['h', 'la hauteur de chute en m'], ['\\eta', 'le rendement de turbinage']) +
       P('Le rendement d\'un cycle complet (pompage puis turbinage) est d\'environ 75 % : on récupère les trois quarts de l\'énergie utilisée pour pomper. C\'est aujourd\'hui le moyen de stockage de masse le plus utilisé au monde.') +
+      EX('Exemple', P('Le bassin haut contient 500 000 m³ d\'eau (m = 5 × 10⁸ kg), 300 m au-dessus du bassin bas ; le rendement de turbinage vaut 0,9 :') +
+        M('E = 5 \\times 10^8 \\times 9{,}81 \\times 300 \\times 0{,}9 \\approx 1{,}32 \\times 10^{12}\\,\\text{J}') + P('Soit 1,32 × 10¹² / 3,6 × 10⁶ ≈ 368 000 kWh = 368 MWh.')) +
       H('3. Unités d\'énergie') +
       table(['Unité', 'Équivalence'], [['1 kWh', '3,6 MJ = 3,6 × 10⁶ J'], ['1 MWh', '3,6 × 10⁹ J'], ['1 tep', '11 630 kWh (énergie d\'une tonne de pétrole)']]) +
       P('Pour passer des joules aux kWh, on divise par 3,6 × 10⁶. L\'énergie primaire d\'un logement chauffé à l\'électricité se calcule avec un coefficient de conversion (2,3 dans la RE2020) : E<sub>p</sub> = 2,3 × énergie finale électrique, car produire et acheminer 1 kWh électrique consomme plus d\'énergie primaire.') +
@@ -809,6 +879,8 @@ const EXOS = [
       P('1 mm de pluie correspond à 1 L par m² de toiture (0,001 m × 1 m² = 0,001 m³). Une toiture de 150 m² sous 800 mm de pluie par an reçoit donc 120 m³ d\'eau, dont on ne récupère qu\'une partie :') + M('V = S \\times h \\times C_r \\times \\eta') +
       LEG(['V', 'le volume récupérable en m³'], ['S', 'la surface de toiture en m²'], ['h', 'la hauteur de pluie annuelle en m'], ['C_r', 'le coefficient de ruissellement (0,9 pour des tuiles, 0,5 pour une toiture végétalisée)'], ['\\eta', 'le rendement du filtre']) +
       P('Le taux de couverture compare ce volume aux besoins (WC, arrosage) ; le volume de la cuve se choisit pour quelques semaines d\'autonomie : besoins journaliers × nombre de jours.') +
+      EX('Exemple', P('Toiture en tuiles de 150 m² (C<sub>r</sub> = 0,9), 800 mm de pluie par an (h = 0,8 m), filtre de rendement 0,9 :') +
+        M('V = 150 \\times 0{,}8 \\times 0{,}9 \\times 0{,}9 = 97{,}2\\,\\text{m}^3\\ \\text{par an}')) +
       BOX(P('Q = v × S ; t = V / Q.', '1 mm de pluie = 1 L/m².'))
   },
   // ===================== Chapitre 6 =====================
@@ -884,6 +956,8 @@ const EXOS = [
       H('1. Débit') +
       M('D = \\frac{N}{\\Delta t}') + LEG(['D', 'le débit en bit/s'], ['N', 'le nombre de bits transmis'], ['\\Delta t', 'la durée en s']) +
       P('Sur une liaison synchrone, un bit passe à chaque période d\'horloge : D = f = 1 / T. On lit donc le débit sur un oscillogramme en mesurant la période de l\'horloge. Une taille en octets se multiplie par 8 pour obtenir des bits.') +
+      EX('Exemple', P('Un fichier de 2 Mo (2 × 10⁶ × 8 = 1,6 × 10⁷ bits) est transmis en 4 s :') + M('D = \\frac{1{,}6 \\times 10^7}{4} = 4 \\times 10^6\\,\\text{bit/s} = 4\\,\\text{Mbit/s}') +
+        P('Sur une liaison synchrone dont l\'horloge a une période de 1 µs : D = 1 / 10⁻⁶ = 10⁶ bit/s = 1 Mbit/s.')) +
       H('2. Trame série') +
       wave([{ l: 0, t: 'S' }, { l: 1, t: 'b0' }, { l: 0, t: 'b1' }, { l: 0, t: 'b2' }, { l: 0, t: 'b3' }, { l: 0, t: 'b4' }, { l: 0, t: 'b5' }, { l: 1, t: 'b6' }, { l: 0, t: 'P' }, { l: 1, t: 'St' }],
         'Caractère « A » (65 = 100 0001) sur 7 bits, poids faible en premier, parité paire') +
@@ -893,6 +967,8 @@ const EXOS = [
       H('4. Vidéo') +
       M('D_{brut} = L \\times H \\times b \\times f') + LEG(['L', 'et H la définition en pixels'], ['b', 'le nombre de bits par pixel (24 en couleur)'], ['f', 'le nombre d\'images par seconde']) +
       P('Une caméra Full HD (1 920 × 1 080) à 25 images/s produit environ 1,2 Gbit/s : c\'est pourquoi on compresse (H.264, H.265), ce qui divise le débit par 50 à 200. Pour identifier une personne, on vise au moins 250 pixels par mètre de largeur filmée (125 pour la reconnaître).') +
+      EX('Exemple : caméra HD', P('Une caméra 1 280 × 720 pixels, 24 bits par pixel, 15 images/s :') + M('D_{brut} = 1\\,280 \\times 720 \\times 24 \\times 15 \\approx 3{,}32 \\times 10^8\\,\\text{bit/s} = 332\\,\\text{Mbit/s}') +
+        P('Compressé 100 fois, le flux ne fait plus que 3,3 Mbit/s.')) +
       BOX(P('D = N / Δt ; octets × 8 = bits.', 'Parité paire : nombre total de 1 pair.'))
   },
   // ===================== Chapitre 7 =====================
@@ -910,6 +986,8 @@ const EXOS = [
       dSV(340, 120, `<polygon class="flow" points="20,95 300,95 300,40"/><line class="ax" x1="20" y1="95" x2="300" y2="40"/>` + dCote(20, 110, 300, 110, 'L', -4) + dCote(316, 95, 316, 40, 'Δh'), 'Profil d\'une rampe') +
       table(['Pente', 'Règle'], [['≤ 5 %', 'autorisée'], ['5 à 8 %', 'tolérée sur 2 m maximum'], ['8 à 10 %', 'tolérée sur 0,5 m maximum'], ['> 10 %', 'interdite']]) +
       P('Il faut un palier de repos tous les 10 m si la pente dépasse 4 %, et un garde-corps si la hauteur de chute dépasse 40 cm. Une pente de 5 % signifie 5 cm de montée pour 1 m parcouru : pour franchir 50 cm, il faut 10 m de rampe.') +
+      EX('Exemple', P('Une rampe franchit Δh = 0,30 m sur L = 6 m :') + M('p = \\frac{0{,}30}{6} \\times 100 = 5\\,\\%') +
+        P('La pente est autorisée ; comme elle dépasse 4 %, il faudrait un palier de repos si la rampe dépassait 10 m.')) +
       BOX(P('Échelle 1:X : longueurs × X, surfaces × X², volumes × X³.', 'Pente = Δh / L × 100, au plus 5 % pour une rampe PMR.'))
   },
   {
@@ -928,9 +1006,12 @@ const EXOS = [
       H('2. Contrainte de compression') +
       M('\\sigma = \\frac{N}{A}') + LEG(['\\sigma', 'la contrainte en Pa (ou en MPa si N en N et A en mm²)'], ['N', 'l\'effort normal en N'], ['A', 'la section en m² (ou mm²)']) +
       P('Le poteau résiste si σ reste inférieure à la résistance du matériau divisée par le coefficient de sécurité.') +
+      EX('Exemple', P('Un poteau en béton de 25 × 25 cm (A = 250 × 250 = 62 500 mm²) supporte N = 500 kN = 500 000 N :') + M('\\sigma = \\frac{500\\,000}{62\\,500} = 8\\,\\text{MPa}')) +
       H('3. Pression sur le sol') +
       M('p = \\frac{F}{S}') + LEG(['p', 'la pression en Pa (1 kPa = 1 kN/m²)'], ['F', 'le poids total transmis en N'], ['S', 'la surface d\'appui en m²']) +
       P('Le sol convient si p reste inférieure à sa pression admissible (de 100 à 300 kPa pour des sols courants). Sinon on élargit la fondation, ou on choisit un radier (une dalle sous tout l\'ouvrage) qui répartit la charge sur une grande surface.') +
+      EX('Exemple', P('Une semelle de 1,2 × 1,2 m (S = 1,44 m²) transmet 250 kN au sol :') + M('p = \\frac{250}{1{,}44} \\approx 174\\,\\text{kPa}') +
+        P('Pour un sol de pression admissible 200 kPa, la semelle convient.')) +
       BOX(P('σ = N / A ; p = F / S.', 'Béton armé : 25 kN/m³ ; eau : 10 kN/m³ environ.'))
   },
   {
@@ -947,6 +1028,8 @@ const EXOS = [
       H('2. Coefficient de sécurité') +
       M('s = \\frac{R_e}{\\sigma_{max}}') + LEG(['s', 'le coefficient de sécurité (sans unité, supérieur à 1)'], ['R_e', 'la limite élastique du matériau en MPa'], ['\\sigma_{max}', 'la contrainte maximale calculée ou simulée en MPa']) +
       P('Il couvre les incertitudes (défauts du matériau, charges imprévues). Il vaut souvent 1,5 à 3 ; trop grand, il alourdit et renchérit l\'ouvrage.') +
+      EX('Exemple', P('Une poutre en acier S235 (R<sub>e</sub> = 235 MPa) subit au plus σ<sub>max</sub> = 94 MPa :') + M('s = \\frac{235}{94} = 2{,}5') +
+        P('Si le cahier des charges impose s ≥ 1,5, la poutre convient.')) +
       H('3. Indice de rigidité') +
       M('I_s = \\frac{L}{f}') + LEG(['I_s', 'l\'indice de rigidité (sans unité)'], ['L', 'la portée'], ['f', 'la flèche maximale, dans la même unité']) +
       P('La norme impose un indice minimal (par exemple 250 à 500) : une poutre trop souple fléchit trop (fissures, sensation de plancher qui bouge), même si elle ne casse pas.') +
@@ -954,6 +1037,8 @@ const EXOS = [
       P('Un corps flotte en déplaçant une masse d\'eau égale à sa propre masse (poussée d\'Archimède). Pour un caisson de base S :') +
       M('h = \\frac{m}{\\rho \\times S}') + LEG(['h', 'la hauteur immergée en m'], ['m', 'la masse totale en kg'], ['\\rho', 'la masse volumique de l\'eau en kg/m³'], ['S', 'la surface de la base en m²']) +
       P('La hauteur hors de l\'eau (franc-bord) vaut la hauteur du caisson moins h ; si h dépasse la hauteur du caisson, il coule.') +
+      EX('Exemple', P('Un caisson de 4 × 2,5 m (S = 10 m²), de 3 000 kg, flotte dans de l\'eau douce (ρ = 1 000 kg/m³) :') + M('h = \\frac{3\\,000}{1\\,000 \\times 10} = 0{,}3\\,\\text{m}') +
+        P('S\'il mesure 0,8 m de haut, son franc-bord vaut 0,8 − 0,3 = 0,5 m.')) +
       BOX(P('s = Re / σmax > 1 ; Is = L / f au-dessus du minimum de la norme.', 'Flottaison : h = m / (ρ × S).'))
   },
   // ===================== Chapitre 8 =====================
@@ -970,6 +1055,8 @@ const EXOS = [
         ['Intensité I', 'candela (cd)', 'flux dans une direction'], ['Efficacité', 'lm/W', 'flux produit par watt']]) +
       M('E = \\frac{\\Phi}{S}') + LEG(['E', 'l\'éclairement en lx'], ['\\Phi', 'le flux reçu en lm'], ['S', 'la surface éclairée en m²']) +
       P('Efficacités moyennes : halogène 20 lm/W, fluocompacte 55 lm/W, LED 120 lm/W. Pour un même éclairement, une LED consomme donc 6 fois moins qu\'une halogène. Éclairements recommandés : 300 à 500 lx dans une salle de classe ou un bureau, 100 à 200 lx dans un couloir.') +
+      EX('Exemple', P('Une lampe LED de 10 W (efficacité 120 lm/W) émet Φ = 10 × 120 = 1 200 lm. Si tout ce flux arrive sur un bureau de 3 m² :') +
+        M('E = \\frac{1\\,200}{3} = 400\\,\\text{lx}') + P('C\'est l\'éclairement recommandé pour un bureau.')) +
       H('Confort visuel') +
       UL('<b>Température de couleur</b> (en K) : 2 700 K lumière chaude (salon), 4 000 K neutre (bureau), 6 500 K froide (atelier).', '<b>IRC</b> (indice de rendu des couleurs, sur 100) : au moins 80 dans un bureau, plus de 90 pour juger des couleurs.',
         '<b>UGR</b> : éblouissement d\'inconfort, au plus 19 dans un bureau.', '<b>Uniformité</b> U = Emin / Emoy : au moins 0,6 en général, pour éviter les zones sombres.') +
@@ -986,15 +1073,22 @@ const EXOS = [
         dCote(36, 32, 36, 150, 'd') + dT(170, 110, 'α', 'middle') + dT(170, 166, 'surface éclairée', 'middle', 13), 'Un luminaire éclaire un cône d\'angle α') +
       P('Plus le luminaire est haut, plus il faut de flux (le carré de d), car la lumière s\'étale sur une plus grande surface.') +
       EX('Méthode', P('1) Calculer Φ avec la formule (calculatrice en degrés). 2) Surface éclairée par un luminaire : S = Φ / E. 3) Nombre de luminaires : N = surface de la salle / S, arrondi à l\'entier supérieur. 4) Si le flux réel du luminaire choisi est différent, recalculer N = S<sub>salle</sub> × E / Φ<sub>réel</sub>.')) +
+      EX('Exemple : salle d\'expédition de 80 m²', P('On veut E = 300 lx avec des luminaires placés à d = 2,5 m au-dessus du plan de travail, d\'angle d\'ouverture α = 30° :') +
+        M('\\Phi = \\frac{300 \\times 2{,}5^2}{\\cos(15^\\circ)} \\approx 1\\,941\\,\\text{lm}') + M('S = \\frac{1\\,941}{300} \\approx 6{,}47\\,\\text{m}^2 \\qquad N = \\frac{80}{6{,}47} \\approx 12{,}4 \\ \\Rightarrow\\ 13\\ \\text{luminaires}')) +
       H('2. Rentabilité d\'un relighting LED') +
       P('Pour un éclairage allumé 6 h par jour (2 190 h par an), l\'énergie d\'un luminaire de P watts vaut 2,19 × P kWh par an :') + M('C = 2{,}19 \\times N \\times P \\times prix') +
       LEG(['C', 'le coût annuel en €'], ['N', 'le nombre de luminaires'], ['P', 'la puissance d\'un luminaire en W'], ['prix', 'le prix du kWh en €']) +
       P('Le temps de retour vaut : investissement / (coût actuel − coût avec LED). Graphiquement, c\'est le point où la droite du coût cumulé des LED (qui part de l\'investissement) croise celle de l\'éclairage actuel.') +
+      EX('Exemple', P('50 luminaires de 72 W, kWh à 0,20 € :') + M('C = 2{,}19 \\times 50 \\times 72 \\times 0{,}20 \\approx 1\\,577\\ \\text{€ par an}') +
+        P('Des luminaires LED de 36 W coûteraient deux fois moins : 788 € par an. Pour un investissement de 5 000 €, le temps de retour vaut 5 000 / (1 577 − 788) ≈ 6,3 ans.')) +
       H('3. Balisage') +
       P('Sur un parcours fermé, il y a autant de balises que d\'intervalles : n = périmètre / espacement, arrondi à l\'entier supérieur. Énergie annuelle : E = n × P × durée d\'allumage (un détecteur crépusculaire allume les balises environ 4 000 h par an).') +
       BOX(P('Φ = E × d² / cos(α / 2) ; N = Ssalle / S, arrondi au-dessus.', 'Coût annuel (6 h/jour) : 2,19 × N × P × prix.'))
   }
 ];
+
+// ---------- Liens vers les exercices (fiche → [route, titre], généré par liens.js) ----------
+const EXO_LIENS = { "Transformer une formule et convertir les unités": [ [ "1-1", "Transformer une formule" ], [ "1-2", "Conversions d'unités pièges" ] ], "Puissance, énergie, rendement et rentabilité": [ [ "1-4", "Puissance électrique, mécanique et de translation" ], [ "1-5", "Rendement global d'une chaîne" ], [ "1-6", "Énergie, coût et temps de retour sur investissement" ] ], "Périmètres, surfaces et volumes": [ [ "1-3", "Périmètres, surfaces et volumes" ] ], "Les diagrammes SysML": [ [ "2-1", "Diagrammes SysML" ] ], "Chaînes de puissance, d'information et nature de l'énergie": [ [ "2-2", "Chaînes de puissance et d'information" ], [ "2-3", "Nature et forme de l'énergie" ] ], "Analyse du cycle de vie et éco-conception": [ [ "3-1", "Analyse du cycle de vie et éco-conception" ], [ "3-2", "Lire un résultat d'ACV" ] ], "Labels, recyclage et empreinte environnementale": [ [ "3-3", "Symboles du recyclage et labels" ], [ "3-4", "Empreinte environnementale et développement durable" ], [ "3-5", "Certification NF Environnement d'un BAES" ] ], "Comparer des solutions : CO₂ et choix multicritère": [ [ "3-6", "Émissions de CO₂ : comparer deux solutions" ], [ "3-7", "Choix multicritère du matériau d'un poteau" ] ], "Énergie et bâtiment : enjeux et réglementation": [ [ "4-1", "Réglementation et conception du bâtiment" ], [ "4-5", "Compacité d'un bâtiment" ] ], "Résistance thermique et déperditions": [ [ "4-2", "Résistance thermique d'une paroi multicouche" ], [ "4-3", "Épaisseur d'isolant pour une déperdition cible" ], [ "4-4", "Déperditions d'un logement et puissance de chauffage" ], [ "4-9", "Thermographie : caméra thermique" ] ], "Chauffage et efficacité énergétique": [ [ "4-6", "Puissance de chauffage par le volume" ], [ "4-7", "Chauffer de l'eau" ], [ "4-8", "Apports solaires et renouvellement d'air" ], [ "4-10", "Efficacité énergétique passive et active" ] ], "Production d'électricité renouvelable": [ [ "5-1", "Installation photovoltaïque" ], [ "5-2", "Éolienne : facteur de charge et production" ] ], "Stocker l'énergie et convertir les unités": [ [ "5-3", "Batteries embarquées : nombre et recharge" ], [ "5-4", "Station de transfert d'énergie par pompage (STEP)" ], [ "5-5", "Unités d'énergie : tep, MJ et énergie primaire" ] ], "Gérer l'eau : débits et récupération": [ [ "5-6", "Bassins et débits : filtration et vidange" ], [ "5-7", "Récupération d'eau de pluie" ] ], "Architectures et équipements réseau": [ [ "6-1", "Réseaux : vocabulaire et architectures" ], [ "6-2", "Équipements réseau : hub, switch, routeur" ], [ "6-3", "Topologies de réseau" ] ], "Modèles OSI et TCP/IP": [ [ "6-4", "Modèles OSI et TCP/IP, encapsulation" ] ], "Adressage IPv4": [ [ "6-5", "Adressage IPv4" ], [ "6-6", "Masque et adresses pour n machines" ], [ "6-7", "Adresse IP lue dans une trame, validité" ] ], "Transmettre l'information : débit, trames et logique": [ [ "6-8", "Débit lu sur l'horloge et durée de transmission" ], [ "6-10", "Décoder une trame série" ], [ "6-9", "Table de vérité et équation logique" ], [ "6-11", "Vidéosurveillance : débit, stockage et résolution" ] ], "Plans, échelles et accessibilité": [ [ "7-1", "Plans et échelles" ], [ "7-2", "Pentes et rampes d'accès PMR" ], [ "7-8", "Maquette 3D : échelle, volume et coût" ] ], "Descente de charges, contraintes et fondations": [ [ "7-3", "Descente de charges sur un poteau" ], [ "7-4", "Pression exercée sur un radier" ] ], "Sollicitations, sécurité, rigidité et flottaison": [ [ "7-7", "Sollicitations mécaniques" ], [ "7-5", "Coefficient de sécurité et indice de rigidité" ], [ "7-6", "Flottaison : hauteur d'immersion" ] ], "Grandeurs photométriques et confort visuel": [ [ "8-1", "Grandeurs photométriques et confort visuel" ], [ "8-2", "Éclairement, flux et efficacité lumineuse" ], [ "8-4", "Uniformité de l'éclairement" ] ], "Dimensionner et rentabiliser un éclairage": [ [ "8-3", "Dimensionner un éclairage" ], [ "8-5", "Rentabilité d'un relighting LED" ], [ "8-6", "Balisage lumineux d'un cheminement" ] ] };
 
 // ---------- Affichage ----------
 const nav = document.getElementById('nav');
@@ -1097,7 +1191,8 @@ function show(i) {
     <h2>${e.title}</h2>
     <p class="support">${e.support}</p>
     ${e.body}
-    <div class="btns"><a class="go" href="Exercices_2I2D.html#c${e.chap}-1">S'entraîner : exercices du chapitre ${e.chap} →</a></div>`;
+    <div class="train"><b>S'entraîner sur cette fiche :</b><div class="btns">${(EXO_LIENS[e.title] || [[`${e.chap}-1`, `exercices du chapitre ${e.chap}`]])
+      .map(([r, t]) => `<a class="go" href="Exercices_2I2D.html#c${r}">${t} →</a>`).join('')}</div></div>`;
   renderMath(card);
   fitToWidth(card);
   nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', +a.dataset.i === i));

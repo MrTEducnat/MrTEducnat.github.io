@@ -267,6 +267,10 @@ svg .f2 { fill: var(--val-bg); stroke: var(--val); stroke-width: 2.6; }
 .lia b { display: block; font-size: 14px; }
 .lia span { display: block; font-size: 12px; color: var(--muted); }
 svg.liasym { display: block; width: 100%; max-width: 150px; height: auto; margin: 0 auto 4px; }
+svg .fk { fill: var(--text); stroke: var(--text); stroke-width: 1; }
+.train { margin-top: 22px; }
+.train b { display: block; font-size: 14px; color: var(--muted); }
+.train .btns { margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -583,6 +587,8 @@ const EXOS = [
       P('Le vecteur vitesse est tangent à la trajectoire, dans le sens du mouvement. Pour un point à la distance R de l\'axe de rotation :') +
       M('V = R \\times \\omega') + LEG(['V', 'la vitesse linéaire en m/s'], ['R', 'la distance à l\'axe en m'], ['\\omega', 'la vitesse angulaire en rad/s']) +
       M('\\omega = \\frac{2 \\pi N}{60}') + LEG(['N', 'la vitesse de rotation en tr/min']) +
+      EX('Exemple : disque de meuleuse', P('Un disque de 125 mm de diamètre (R = 0,0625 m) tourne à 11 000 tr/min :') +
+        M('\\omega = \\frac{2 \\pi \\times 11\\,000}{60} \\approx 1\\,152\\,\\text{rad/s}') + M('V = 0{,}0625 \\times 1\\,152 \\approx 72\\,\\text{m/s} \\approx 259\\,\\text{km/h}')) +
       H('Accélération') +
       P('a = Δv / Δt (en m/s²). Un mouvement uniformément accéléré part de 0 et atteint v au bout de t = v / a, en parcourant d = v² / (2a). Un cycle de déplacement typique comporte une phase d\'accélération, une phase à vitesse constante et une phase de freinage.') +
       BOX(P('V = R × ω ; ω = 2πN / 60.', 'Vitesse tangente à la trajectoire.'))
@@ -600,13 +606,19 @@ const EXOS = [
         'Le pignon tourne, la crémaillère avance (ou le pignon roule sur une crémaillère fixe)') +
       M('V = \\omega \\times \\frac{m \\times Z}{2}') + LEG(['V', 'la vitesse de la crémaillère (ou du pignon qui la parcourt) en m/s'], ['\\omega', 'la vitesse angulaire du pignon en rad/s'], ['m', 'le module en m'], ['Z', 'le nombre de dents du pignon']) +
       P('m × Z / 2 est le rayon primitif du pignon. À chaque tour, la crémaillère avance de la circonférence primitive π × m × Z.') +
+      EX('Exemple', P('Pignon de module m = 2 mm = 0,002 m et Z = 20 dents, tournant à ω = 5 rad/s :') + M('V = 5 \\times \\frac{0{,}002 \\times 20}{2} = 0{,}1\\,\\text{m/s}') +
+        P('À chaque tour, la crémaillère avance de π × 2 × 20 ≈ 126 mm.')) +
       H('2. Système vis-écrou') +
       M('V = p \\times \\frac{N}{60}') + LEG(['V', 'la vitesse de translation en mm/s'], ['p', 'le pas de la vis en mm (déplacement pour un tour)'], ['N', 'la vitesse de rotation en tr/min']) +
       P('Le système vis-écrou réduit fortement la vitesse et multiplie l\'effort : un petit couple suffit pour obtenir une grande poussée (cric, étau, vérin électrique). Une vis à plusieurs filets avance du pas × nombre de filets à chaque tour. Une vis d\'Archimède (vis de dosage) déplace à chaque tour le volume compris entre deux spires : débit = volume par tour × nombre de tours par seconde.') +
+      EX('Exemple', P('Vis de pas 5 mm tournant à 1 200 tr/min :') + M('V = 5 \\times \\frac{1\\,200}{60} = 100\\,\\text{mm/s}') + P('Une course de 300 mm dure 300 / 100 = 3 s.')) +
       H('3. Loi entrée-sortie d\'un vérin') +
       P('Quand un vérin fait tourner un levier, sa longueur dépend de l\'angle θ. Dans le triangle formé par le pivot et les deux attaches, la loi d\'Al-Kashi donne :') +
       M('L = \\sqrt{a^2 + b^2 - 2 a b \\cos\\theta}') + LEG(['L', 'la longueur du vérin'], ['a', 'et b les distances du pivot aux deux attaches'], ['\\theta', 'l\'angle entre ces deux segments']) +
       P('La course est la différence entre les longueurs aux deux positions extrêmes. Si θ = 90°, on retrouve Pythagore : L² = a² + b².') +
+      EX('Exemple', P('a = 400 mm et b = 300 mm. À θ = 90° :') + M('L = \\sqrt{400^2 + 300^2} = 500\\,\\text{mm}') +
+        P('À θ = 60° (cos 60° = 0,5) :') + M('L = \\sqrt{160\\,000 + 90\\,000 - 2 \\times 400 \\times 300 \\times 0{,}5} = \\sqrt{130\\,000} \\approx 361\\,\\text{mm}') +
+        P('Course du vérin entre ces deux positions : 500 − 361 = 139 mm.')) +
       H('4. Durée d\'un cycle') +
       P('Pour chaque phase : t = d / v. La durée du cycle est la somme des durées des phases, y compris les temps morts (basculement, attente). On la compare à la durée imposée par le cahier des charges.') +
       BOX(P('Crémaillère : V = ω × r ; vis-écrou : V = p × N / 60.', 'Al-Kashi : L² = a² + b² − 2ab cos θ.'))
@@ -624,10 +636,12 @@ const EXOS = [
         dT(70, 75, 'd₁', 'middle', 13) + dT(250, 75, 'd₂', 'middle', 13) + dRot(70, 70, 34, 120, 200, 'arrowv') + dT(160, 136, 'r = d₁ / d₂ : la grande poulie tourne moins vite', 'middle', 12),
         'Poulies-courroie : la courroie a la même vitesse sur les deux poulies') +
       P('Une poulie et une courroie tournent sans glisser : la vitesse linéaire de la courroie vaut V = ω × d / 2, la même sur les deux poulies, d\'où ω₁ × d₁ = ω₂ × d₂.') +
+      EX('Exemple : poulies', P('Une poulie motrice de 60 mm tourne à 1 500 tr/min et entraîne une poulie de 180 mm :') + M('r = \\frac{60}{180} = \\frac{1}{3} \\qquad N_s = 1\\,500 \\times \\frac{1}{3} = 500\\,\\text{tr/min}')) +
       H('2. Couple et puissance') +
       M('P = C \\times \\omega') + LEG(['P', 'la puissance en W'], ['C', 'le couple en N·m'], ['\\omega', 'la vitesse angulaire en rad/s']) +
       M('C_s = \\frac{\\eta \\times C_e}{r}') + LEG(['C_s', 'et Ce les couples de sortie et d\'entrée en N·m'], ['\\eta', 'le rendement de la transmission']) +
       P('Un réducteur divise la vitesse et multiplie le couple, à la perte près : la puissance se conserve (P<sub>s</sub> = η × P<sub>e</sub>). Avec r = 1/40 et η = 0,9, un couple de 10 N·m devient 10 × 40 × 0,9 = 360 N·m.') +
+      EX('Exemple', P('Un moteur fournit un couple de 2 N·m à 1 500 tr/min, soit ω = 2π × 1 500 / 60 ≈ 157 rad/s :') + M('P = 2 \\times 157 = 314\\,\\text{W}')) +
       H('3. Treuil et câble') +
       P('Le câble s\'enroule sur un tambour de diamètre D ; son rayon d\'enroulement vaut (D + d) / 2 avec d le diamètre du câble (le câble s\'enroule par son centre). Vitesse du câble : V = ω<sub>tambour</sub> × R ; force disponible : F = P / V ; masse levable : m = F / g.') +
       H('4. Éolienne : vitesse en bout de pale') +
@@ -669,15 +683,19 @@ const EXOS = [
         'Le poids P se décompose : Pt (parallèle à la pente) fait glisser, Pn (perpendiculaire) plaque l\'objet contre la pente') +
       P('Sur une pente d\'angle α, le poids P = m × g se décompose en :') +
       M('P_t = P \\times \\sin\\alpha \\qquad P_n = P \\times \\cos\\alpha') + LEG(['P_t', 'la composante parallèle à la pente (qui fait glisser) en N'], ['P_n', 'la composante perpendiculaire (qui plaque) en N']) +
+      EX('Exemple', P('Une caisse de 50 kg (P = 50 × 9,81 = 490,5 N) repose sur une pente de 20° :') +
+        M('P_t = 490{,}5 \\times \\sin 20^\\circ \\approx 168\\,\\text{N} \\qquad P_n = 490{,}5 \\times \\cos 20^\\circ \\approx 461\\,\\text{N}')) +
       H('2. Frottement') +
       M('T = f \\times N') + LEG(['T', 'l\'effort tangentiel maximal en N'], ['f', 'le coefficient de frottement (sans unité)'], ['N', 'l\'effort normal en N']) +
       P('L\'angle de frottement φ vérifie tan φ = f. Un objet posé sur une pente d\'angle α glisse si α > φ : par exemple, avec f = 0,3, φ ≈ 16,7° ; l\'objet tient sur une pente de 15° mais glisse sur une pente de 20°. Pour faire monter une charge à vitesse constante : F = P<sub>t</sub> + f × P<sub>n</sub>.') +
       H('3. Pression') +
       M('F = p \\times S') + LEG(['F', 'l\'effort en N'], ['p', 'la pression en Pa (1 bar = 10⁵ Pa)'], ['S', 'la surface en m²']) +
       P('Dans un vérin, la poussée utilise toute la surface du piston (π D² / 4) ; en traction, on retire la section de la tige, l\'effort est donc plus faible. Pour un effort donné, on calcule la surface nécessaire S = F / p puis le diamètre, et on choisit le diamètre normalisé immédiatement supérieur. Sur une paroi immergée, la pression augmente avec la profondeur : p = ρ × g × h.') +
+      EX('Exemple : vérin Ø 50 mm sous 6 bar', P('S = π × 0,05² / 4 ≈ 1,96 × 10⁻³ m² et p = 6 × 10⁵ Pa :') + M('F = 6 \\times 10^5 \\times 1{,}96 \\times 10^{-3} \\approx 1\\,178\\,\\text{N}')) +
       H('4. Ressort') +
       M('F = k \\times x') + LEG(['F', 'l\'effort en N'], ['k', 'la raideur en N/mm'], ['x', 'l\'écrasement ou l\'allongement en mm']) +
       P('La raideur se mesure : on applique un effort connu et on mesure l\'écrasement (k = F / x). Dans un clapet de sécurité, le ressort s\'ouvre quand l\'effort de pression p × S dépasse son effort de tarage.') +
+      EX('Exemple', P('Un ressort de raideur k = 12 N/mm est comprimé de 15 mm :') + M('F = 12 \\times 15 = 180\\,\\text{N}') + P('Sous 90 N, il s\'écraserait de 90 / 12 = 7,5 mm.')) +
       BOX(P('Glissement si α > φ, avec tan φ = f.', 'F = p × S ; F = k × x.'))
   },
   // ===================== Chapitre 4 =====================
@@ -694,9 +712,12 @@ const EXOS = [
       P('Deux barres du même acier, l\'une fine et l\'autre épaisse, ne cassent pas sous le même effort : ce qui compte est l\'effort par unité de surface, la <b>contrainte</b>.') +
       M('\\sigma = \\frac{F}{S}') + LEG(['\\sigma', 'la contrainte en MPa'], ['F', 'l\'effort de traction ou de compression en N'], ['S', 'la section en mm²']) +
       P('1 MPa = 1 N/mm². Pour un câble ou une barre ronde : S = π d² / 4.') +
+      EX('Exemple', P('Une barre ronde de 12 mm de diamètre (S = π × 12² / 4 ≈ 113 mm²) est tirée par 15 kN :') + M('\\sigma = \\frac{15\\,000}{113} \\approx 133\\,\\text{MPa}')) +
       H('3. Coefficient de sécurité') +
       M('s = \\frac{R_e}{\\sigma_{max}}') + LEG(['s', 'le coefficient de sécurité (sans unité)'], ['R_e', 'la limite élastique du matériau en MPa'], ['\\sigma_{max}', 'la contrainte maximale en MPa']) +
       P('La pièce est validée si s est supérieur ou égal à la valeur imposée par le cahier des charges (souvent 2 à 5 pour un câble de levage). Section minimale pour un coefficient s imposé : S<sub>min</sub> = s × F / R<sub>e</sub>, puis on choisit la section normalisée immédiatement supérieure.') +
+      EX('Exemple : suite de la barre', P('Elle est en acier S235 (R<sub>e</sub> = 235 MPa) :') + M('s = \\frac{235}{133} \\approx 1{,}8') +
+        P('Si le cahier des charges impose s = 3 : S<sub>min</sub> = 3 × 15 000 / 235 ≈ 191 mm², soit un diamètre d\'au moins 15,6 mm. On choisit Ø 16 mm.')) +
       H('4. Loi de Hooke') +
       M('\\sigma = E \\times \\varepsilon \\qquad \\varepsilon = \\frac{\\Delta L}{L_0}') + LEG(['E', 'le module de Young en MPa'], ['\\varepsilon', 'l\'allongement relatif (sans unité)'], ['\\Delta L', 'l\'allongement'], ['L_0', 'la longueur initiale (même unité)']) +
       P('Valable seulement dans le domaine élastique (σ < Re) : la pièce reprend sa forme quand on la relâche. Au-delà, elle se déforme définitivement. Ordres de grandeur de E : acier 210 GPa, aluminium 70 GPa, bois 10 GPa (1 GPa = 1 000 MPa).') +
@@ -717,11 +738,14 @@ const EXOS = [
       dSV(340, 145, `<rect class="flow" x="60" y="30" width="30" height="90"/><rect class="fillv" x="200" y="60" width="90" height="30"/>` + dA(75, 4, 75, 26, 'arrowv') + dA(245, 34, 245, 56, 'arrowv') +
         dT(75, 138, 'sur chant : I grand', 'middle', 12) + dT(245, 138, 'à plat : I petit', 'middle', 12), 'Même section, même charge verticale : sur chant, h est grand et I = b h³ / 12 est beaucoup plus grand') +
       P('Comme h est au cube, une planche posée sur chant est beaucoup plus rigide et résistante que posée à plat : pour une section 20 × 100, I vaut 1,67 × 10⁶ mm⁴ sur chant contre 6,7 × 10⁴ mm⁴ à plat, 25 fois moins. Pour une poutre en porte-à-faux de longueur L chargée par F à son extrémité : M<sub>f</sub> = F × L, maximal à l\'encastrement (c\'est là qu\'elle casse).') +
+      EX('Exemple : planche en porte-à-faux', P('Planche de 20 × 100 mm posée sur chant (I = 1,67 × 10⁶ mm⁴, v = 50 mm), longue de 1 m et chargée de 500 N à son extrémité : M<sub>f</sub> = 500 × 1 000 = 5 × 10⁵ N·mm.') +
+        M('\\sigma_{max} = \\frac{5 \\times 10^5 \\times 50}{1{,}67 \\times 10^6} \\approx 15\\,\\text{MPa}')) +
       H('2. Flèche') +
       dSV(340, 130, dMur(40, 30, 90) + `<rect class="fillv" x="40" y="50" width="240" height="12"/><path class="c3" d="M40 56 Q170 58 280 92"/>` + dA(280, 92, 280, 124) + dT(272, 118, 'F', 'end') + dCote(300, 56, 300, 92, 'f') + dCote(40, 22, 280, 22, 'L', -6),
         'Poutre en porte-à-faux (déformée exagérée)') +
       M('f = \\frac{F \\times L^3}{3 \\times E \\times I}') + LEG(['f', 'la flèche en mm'], ['F', 'la charge en N'], ['L', 'la longueur en mm'], ['E', 'le module de Young en MPa'], ['I', 'le moment quadratique en mm⁴']) +
       P('Doubler la longueur multiplie la flèche par 8. Inversement, une flèche mesurée permet de retrouver E (E = F L³ / (3 f I)), donc d\'identifier le matériau.') +
+      EX('Exemple : suite de la planche', P('En bois de module E = 10 000 MPa :') + M('f = \\frac{500 \\times 1\\,000^3}{3 \\times 10\\,000 \\times 1{,}67 \\times 10^6} \\approx 10\\,\\text{mm}')) +
       H('3. Simulation par éléments finis') +
       P('Un logiciel découpe la pièce en petits éléments (maillage) et calcule contraintes et déplacements. On renseigne le matériau, les fixations et les efforts ; on lit la contrainte maximale (pour le coefficient de sécurité) et le déplacement maximal (pour la flèche). Un maillage plus fin donne un résultat plus précis mais plus long à calculer. Les zones rouges de la carte des contraintes montrent où la pièce risque de casser ; on peut y ajouter de la matière, ou en retirer ailleurs pour alléger.') +
       BOX(P('σmax = Mf × v / I ; I = b h³ / 12 (h dans le sens de la charge).', 'Porte-à-faux : f = F L³ / (3 E I).'))
@@ -758,6 +782,9 @@ const EXOS = [
       P('Le choix final tient compte d\'autres critères : coût, disponibilité, procédé, recyclabilité, CO₂. On note chaque solution sur chaque critère, on multiplie par le coefficient d\'importance du critère et on additionne. Les solutions qui ne respectent pas une exigence impérative sont éliminées avant.') +
       H('3. Gain de masse et CO₂') +
       M('m = \\rho \\times V') + P('Le CO₂ de fabrication vaut la masse × l\'émission par kilogramme du matériau (acier environ 2 kg CO₂/kg, aluminium primaire environ 8 à 10, aluminium recyclé environ 1). Un matériau plus léger peut donc émettre plus à la fabrication mais moins à l\'usage (un véhicule plus léger consomme moins) : il faut raisonner sur tout le cycle de vie.') +
+      EX('Exemple : tube en aluminium ou en acier', P('Le tube a un volume de matière de 0,8 dm³ = 8 × 10⁻⁴ m³ :') +
+        M('m_{alu} = 2\\,700 \\times 8 \\times 10^{-4} = 2{,}16\\,\\text{kg} \\qquad m_{acier} = 7\\,850 \\times 8 \\times 10^{-4} = 6{,}28\\,\\text{kg}') +
+        P('CO₂ de fabrication : aluminium primaire 2,16 × 9 ≈ 19 kg, acier 6,28 × 2 ≈ 13 kg. L\'aluminium, plus léger, émet ici plus à la fabrication : il faut regarder tout le cycle de vie.')) +
       BOX(P('Ashby : maximiser l\'indice adapté à la sollicitation.', 'Matrice : éliminer, puis noter et pondérer.'))
   },
   {
@@ -824,6 +851,9 @@ const EXOS = [
       BOX(P('sin = opp / hyp ; cos = adj / hyp ; tan = opp / adj.', 'Jeu min = alésage min − arbre max.'))
   }
 ];
+
+// ---------- Liens vers les exercices (fiche → [route, titre], généré par liens.js) ----------
+const EXO_LIENS = { "Liaisons, classes d'équivalence et graphe des liaisons": [ [ "1-1", "Degrés de liberté et nom des liaisons" ], [ "1-2", "Symboles normalisés des liaisons" ], [ "1-3", "Classes d'équivalence et graphe des liaisons" ], [ "1-4", "Surfaces de contact et liaison associée" ] ], "Mouvements et trajectoires": [ [ "1-5", "Mouvements et trajectoires" ], [ "2-1", "Vitesse en bout de pale et TSR" ] ], "Transformer un mouvement": [ [ "2-2", "Pignon-crémaillère" ], [ "2-5", "Système vis-écrou" ], [ "2-8", "Loi entrée-sortie : course d'un vérin" ], [ "2-7", "Vis de dosage : débit volumique" ] ], "Transmettre la puissance : réducteurs, poulies, treuils": [ [ "2-4", "Réducteur : couple, vitesse et puissance" ], [ "2-3", "Transmission par poulies et courroie" ], [ "2-6", "Treuil : vitesse et force du câble" ], [ "2-9", "Durée d'un cycle de déplacement" ] ], "Actions mécaniques et principe fondamental de la statique": [ [ "3-1", "Actions mécaniques, PFS et stabilité" ], [ "3-2", "Poids et répartition de la charge sur des appuis" ], [ "3-4", "Moment d'une force et couple moteur" ], [ "3-5", "Solide soumis à trois forces" ] ], "Frottement, plan incliné, pression et ressorts": [ [ "3-3", "Plan incliné : composantes du poids" ], [ "3-6", "Frottement et cône de frottement" ], [ "3-7", "Vérin : pression, section et efforts" ], [ "3-8", "Ressort : raideur et effort" ], [ "3-9", "Pression et effort sur une paroi" ] ], "Contraintes, loi de Hooke et coefficient de sécurité": [ [ "4-2", "Contrainte normale et coefficient de sécurité" ], [ "4-1", "Sollicitations simples" ], [ "4-3", "Section minimale d'un câble" ], [ "4-4", "Loi de Hooke : allongement d'un câble" ] ], "Flexion, flèche et simulation": [ [ "4-5", "Flexion : moment quadratique et contrainte" ], [ "4-6", "Flèche d'une poutre et module d'Young" ], [ "4-7", "Exploiter une simulation : masse maximale" ] ], "Familles, propriétés et protection des matériaux": [ [ "5-1", "Familles, propriétés et protection des matériaux" ] ], "Choisir un matériau : Ashby et matrice multicritère": [ [ "5-2", "Indice de performance (méthode d'Ashby)" ], [ "5-3", "Matrice de choix multicritère" ], [ "5-4", "Gain de masse et impact CO₂" ] ], "Procédés de fabrication et cycle de vie": [ [ "5-6", "Procédés de fabrication et d'assemblage" ], [ "5-5", "Cycle de vie et éco-conception" ] ], "Chaîne de puissance, moteur et stockage": [ [ "6-1", "Puissances et rendements en cascade" ], [ "6-2", "Choix d'un moteur" ], [ "6-3", "Puissance et rendement d'un vérin électrique" ], [ "6-4", "Stockeurs d'énergie" ] ], "Plans, géométrie et maquette numérique": [ [ "7-1", "Échelle d'un plan" ], [ "7-2", "Trigonométrie appliquée" ], [ "7-3", "Maquette numérique et conception" ], [ "7-4", "Jeu de fonctionnement" ] ] };
 
 // ---------- Affichage ----------
 const nav = document.getElementById('nav');
@@ -926,7 +956,8 @@ function show(i) {
     <h2>${e.title}</h2>
     <p class="support">${e.support}</p>
     ${e.body}
-    <div class="btns"><a class="go" href="Exercices_ITEC.html#c${e.chap}-1">S'entraîner : exercices du chapitre ${e.chap} →</a></div>`;
+    <div class="train"><b>S'entraîner sur cette fiche :</b><div class="btns">${(EXO_LIENS[e.title] || [[`${e.chap}-1`, `exercices du chapitre ${e.chap}`]])
+      .map(([r, t]) => `<a class="go" href="Exercices_ITEC.html#c${r}">${t} →</a>`).join('')}</div></div>`;
   renderMath(card);
   fitToWidth(card);
   nav.querySelectorAll('a').forEach(a => a.classList.toggle('on', +a.dataset.i === i));
