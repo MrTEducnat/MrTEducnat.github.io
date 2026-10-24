@@ -2566,7 +2566,7 @@ print(n, x)</pre>` +
             'L\'éprouvette reste-t-elle dans le domaine élastique ?', `Si oui, calculer l'allongement ${m('\\Delta L')} de l'éprouvette.`),
         steps: [
           ['1. Section', M(`S = \\frac{\\pi d^2}{4} = \\frac{\\pi \\times ${d}^2}{4} = \\boxed{${tx(S, 2)}\\,\\text{mm}^2}`)],
-          ['2. Contrainte', `<p>Avec F en N et S en mm², σ est en N/mm², c'est-à-dire en MPa.</p>` +
+          ['2. Contrainte', `<p>Avec la force F en N et la section S en mm², la contrainte σ est en N/mm², c'est-à-dire en MPa.</p>` +
             M(`\\sigma = \\frac{F}{S} = \\frac{${tx(F, 0)}}{${tx(S, 2)}} = \\boxed{${tx(sig, 1)}${u('MPa')}}`)],
           ['3. Domaine élastique',
             M(`\\sigma = ${tx(sig, 1)}${u('MPa')} ${elas ? '<' : '\\geq'} R_e = ${tx(mat.Re)}${u('MPa')}`) +

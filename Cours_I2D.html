@@ -638,10 +638,10 @@ const EXOS = [
     body:
       P('Pour décrire un système technique, on commence par quelques grandeurs simples : à quelle vitesse il se déplace, combien il pèse, quelle pression il exerce et quelle part de l\'énergie reçue il restitue. Cette fiche définit ces grandeurs (vitesse, masse volumique, poids, pression, rendement) avec leurs formules et leurs unités.') +
       H('1. Vitesse') +
-      P('La vitesse moyenne est la distance parcourue divisée par la durée du parcours :') + M('v = \\frac{d}{\\Delta t}') + P(`avec ${m('v')} en m/s, ${m('d')} en m et ${m('\\Delta t')} en s.`) +
+      P('La vitesse moyenne est la distance parcourue divisée par la durée du parcours :') + M('v = \\frac{d}{\\Delta t}') + P(`avec ${m('v')} la vitesse en m/s, ${m('d')} la distance en m et ${m('\\Delta t')} le temps en s.`) +
       EX('Exemple', P('Un tapis roulant déplace un colis de 12 m en 8 s : v = 12 / 8 = 1,5 m/s, soit 1,5 × 3,6 = 5,4 km/h (en une heure, 1,5 × 3 600 = 5 400 m = 5,4 km).')) +
       H('2. Masse volumique') +
-      P('C\'est la masse d\'un matériau par unité de volume. Elle permet d\'identifier un matériau.') + M('\\rho = \\frac{m}{V}') + P(`avec ${m('\\rho')} en kg/m³, ${m('m')} en kg et ${m('V')} en m³.`) +
+      P('C\'est la masse d\'un matériau par unité de volume. Elle permet d\'identifier un matériau.') + M('\\rho = \\frac{m}{V}') + P(`avec ${m('\\rho')} la masse volumique en kg/m³, ${m('m')} la masse en kg et ${m('V')} le volume en m³.`) +
       P('Repères : eau 1 000 kg/m³, air 1,2 kg/m³, aluminium 2 700 kg/m³, acier 7 850 kg/m³, béton 2 400 kg/m³.') +
       EX('Exemple', P('100 mL d\'un liquide pèsent 184 g. On convertit : m = 0,184 kg et V = 0,1 L = 10⁻⁴ m³.') + M('\\rho = \\frac{0{,}184}{10^{-4}} = 1\\,840\\,\\text{kg/m}^3')) +
       H('3. Poids') +
@@ -652,7 +652,7 @@ const EXOS = [
         <rect class="flow" x="20" y="146" width="120" height="4"/><rect class="flow" x="230" y="146" width="40" height="4"/>` + dA(80, 70, 80, 116, 'arrowv') + dA(250, 10, 250, 56, 'arrowv') +
         dT(88, 95, 'F', 'start') + dT(258, 34, 'F', 'start') + dT(80, 172, 'S grande : p faible', 'middle', 13) + dT(250, 172, 'S petite : p forte', 'middle', 13),
         'La même brique (même poids F) posée à plat ou debout : la pression sur le sol change') +
-      P('La pression est une force répartie sur une surface :') + M('p = \\frac{F}{S}') + P(`avec ${m('p')} en Pa, ${m('F')} en N et ${m('S')} en m².`) +
+      P('La pression est une force répartie sur une surface :') + M('p = \\frac{F}{S}') + P(`avec ${m('p')} la pression en Pa, ${m('F')} la force en N et ${m('S')} la surface d'appui en m².`) +
       P('Plus la surface d\'appui est grande, plus la pression est faible (raquettes à neige, fondations d\'un mur). Rappel : 1 bar = 10⁵ Pa.') +
       EX('Exemple : une brique à plat ou debout', P('Une brique de 2,5 kg (poids F = 2,5 × 9,81 ≈ 24,5 N) mesure 20 × 10 × 5 cm.') +
         M('\\text{à plat : } p = \\frac{24{,}5}{0{,}20 \\times 0{,}10} = 1\\,225\\,\\text{Pa}') + M('\\text{debout : } p = \\frac{24{,}5}{0{,}10 \\times 0{,}05} = 4\\,900\\,\\text{Pa}') +
@@ -911,12 +911,12 @@ const EXOS = [
     body:
       P('Une fois les mouvements identifiés, on veut les chiffrer : à quelle vitesse avance un véhicule dont les roues tournent à 1 000 tr/min ? À quelle vitesse se déplace le bout d\'une pale d\'éolienne ? Cette fiche donne les relations entre vitesse de translation, vitesse de rotation et rayon, ainsi que les conversions d\'unités associées.') +
       H('1. Translation rectiligne') +
-      M('v = \\frac{d}{\\Delta t}') + P(`avec ${m('v')} en m/s, ${m('d')} en m et ${m('\\Delta t')} en s.`) +
+      M('v = \\frac{d}{\\Delta t}') + P(`avec ${m('v')} la vitesse en m/s, ${m('d')} la distance en m et ${m('\\Delta t')} le temps en s.`) +
       P('Pour passer des km/h aux m/s on divise par 3,6 ; pour passer des m/s aux km/h on multiplie par 3,6. Pourquoi 3,6 ? Parce que 1 km = 1 000 m et 1 h = 3 600 s : 1 km/h = 1 000 m / 3 600 s = 1 / 3,6 m/s. Exemple : 36 km/h = 36 000 m en 3 600 s = 10 m/s, et 5 m/s = 5 × 3 600 = 18 000 m par heure = 18 km/h.') +
       H('2. Rotation') +
       P('Un angle se mesure en tours, en degrés ou en radians : 1 tour = 360° = 2π rad. La vitesse de rotation s\'exprime :') +
       UL('en <b>tours par minute</b> (tr/min), notée N ;', 'en <b>radians par seconde</b> (rad/s), notée ω et appelée vitesse angulaire.') +
-      M('\\omega = \\frac{2 \\pi N}{60}') + P(`avec ${m('\\omega')} en rad/s et ${m('N')} en tr/min : on multiplie par 2π pour passer des tours aux radians et on divise par 60 pour passer des minutes aux secondes.`) + P('Inversement :') + M('N = \\frac{60\\, \\omega}{2 \\pi}') +
+      M('\\omega = \\frac{2 \\pi N}{60}') + P(`avec ${m('\\omega')} la vitesse angulaire en rad/s et ${m('N')} la vitesse de rotation en tr/min : on multiplie par 2π pour passer des tours aux radians et on divise par 60 pour passer des minutes aux secondes.`) + P('Inversement :') + M('N = \\frac{60\\, \\omega}{2 \\pi}') +
       EX('Exemple', P('Un moteur tourne à N = 1 500 tr/min :') + M('\\omega = \\frac{2 \\pi \\times 1\\,500}{60} \\approx 157\\,\\text{rad/s}') +
         P('Inversement, une roue qui tourne à ω = 10 rad/s fait :') + M('N = \\frac{60 \\times 10}{2 \\pi} \\approx 95{,}5\\,\\text{tr/min}')) +
       H('3. Lien entre rotation et translation') +
@@ -926,7 +926,7 @@ const EXOS = [
         dT(208, 40, 'V = R × ω', 'start') + dT(130, 152, 'ω'),
         'Le point M tourne avec la roue : sa vitesse V est tangente au cercle') +
       UL(`distance parcourue en un tour : ${m('d = 2 \\pi R = \\pi D')}, avec D le diamètre en m ;`, `distance parcourue pour un angle θ en radians : ${m('d = R \\times \\theta')} ;`, 'vitesse linéaire d\'un point situé à la distance R de l\'axe :') +
-      M('V = R \\times \\omega') + P(`avec ${m('V')} en m/s, ${m('R')} en m et ${m('\\omega')} en rad/s.`) +
+      M('V = R \\times \\omega') + P(`avec ${m('V')} la vitesse linéaire du point en m/s, ${m('R')} sa distance à l'axe (le rayon) en m et ${m('\\omega')} la vitesse angulaire en rad/s.`) +
       EX('Exemple : pale d\'éolienne', P('Une pale de 40 m tourne à 14 tr/min :') + M('\\omega = \\frac{2 \\pi \\times 14}{60} = 1{,}47\\,\\text{rad/s}') +
         M('V = 40 \\times 1{,}47 = 58{,}8\\,\\text{m/s} \\approx 212\\,\\text{km/h}') +
         P('En km/h, on multiplie par 3,6 : en une heure (3 600 s), le bout de pale parcourt 58,8 × 3 600 ≈ 212 000 m, soit 212 km.')) +
@@ -934,7 +934,7 @@ const EXOS = [
         M('N = \\frac{60 \\times 131}{2 \\pi} \\approx 1\\,250\\,\\text{tr/min}')) +
       H('4. Le vecteur vitesse') +
       P('La vitesse d\'un point est un vecteur : sa <b>direction</b> est tangente à la trajectoire, son <b>sens</b> est celui du mouvement, sa <b>norme</b> est la valeur de la vitesse et son <b>point d\'application</b> est le point étudié.') +
-      BOX(P('ω = 2πN / 60 et V = R × ω, avec ω en rad/s et R en m.', '÷ 3,6 pour passer des km/h aux m/s, car 1 km/h = 1 000 m / 3 600 s.'))
+      BOX(P('ω = 2πN / 60 et V = R × ω, avec ω la vitesse angulaire en rad/s, N la vitesse de rotation en tr/min, V la vitesse linéaire en m/s et R le rayon en m.', '÷ 3,6 pour passer des km/h aux m/s, car 1 km/h = 1 000 m / 3 600 s.'))
   },
   // ===================== Séquence 4 =====================
   {
@@ -998,7 +998,7 @@ const EXOS = [
       M('\\eta = \\frac{P_{crête}}{1\\,000 \\times S}') +
       P(`avec ${m('\\eta')} le rendement du panneau (sans unité), ${m('P_{crête}')} sa puissance crête en W, 1 000 W/m² l'irradiance des conditions standard et ${m('S')} la surface du panneau en m².`) +
       P('Connaissant le rendement, on calcule la puissance fournie pour n\'importe quelle irradiance :') + M('P = IR \\times S \\times \\eta') +
-      P(`avec ${m('P')} la puissance fournie en W, ${m('IR')} l'irradiance reçue en W/m², ${m('S')} en m² et ${m('\\eta')} sans unité.`) +
+      P(`avec ${m('P')} la puissance fournie en W, ${m('IR')} l'irradiance reçue en W/m², ${m('S')} la surface du panneau en m² et ${m('\\eta')} son rendement (sans unité).`) +
       P('Le rendement des panneaux courants est de l\'ordre de 15 à 20 %.') +
       EX('Exemple', P('Un panneau de 0,85 m², de rendement 16,5 %, reçoit 900 W/m² :') + M('P = 900 \\times 0{,}85 \\times 0{,}165 = 126\\,\\text{W}')) +
       H('4. Associer des panneaux') +
@@ -1019,7 +1019,7 @@ const EXOS = [
       P('Tous délivrent un courant <b>continu</b>.') +
       H('2. Caractéristiques') +
       UL('<b>Tension nominale</b> U (V) : tension en fonctionnement normal.', '<b>Capacité</b> Q (Ah) : quantité d\'électricité disponible. 1 Ah, c\'est 1 A pendant 1 h, ou 2 A pendant 30 min.') +
-      M('E = Q \\times U') + P(`avec ${m('E')} en Wh, ${m('Q')} en Ah et ${m('U')} en V.`) + P('L\'autonomie (durée de décharge) vaut :') +
+      M('E = Q \\times U') + P(`avec ${m('E')} l'énergie stockée en Wh, ${m('Q')} la capacité en Ah et ${m('U')} la tension en V.`) + P('L\'autonomie (durée de décharge) vaut :') +
       M('\\Delta t = \\frac{Q}{I} = \\frac{E}{P}') +
       P(`avec ${m('\\Delta t')} l'autonomie en h, ${m('Q')} la capacité en Ah, ${m('I')} le courant débité en A, ${m('E')} l'énergie stockée en Wh et ${m('P')} la puissance consommée en W.`) +
       EX('Exemples', P('Batterie 12 V, 7 Ah : E = 12 × 7 = 84 Wh.', 'Téléphone 3,7 V, 4 600 mAh : E = 3,7 × 4,6 ≈ 17 Wh. Avec un chargeur de 67 W, la recharge durerait en théorie 17 / 67 ≈ 0,25 h ≈ 15 min ; en réalité le constructeur annonce 39 min car la puissance de charge baisse en fin de charge.')) +
@@ -1211,7 +1211,7 @@ const EXOS = [
       P('On applique ET, OU… bit par bit à deux mots binaires. Le ET sert de <b>masque</b> pour isoler des bits : 1011 0110 ET 0000 1111 = 0000 0110.') +
       H('8. Débit et durée de transmission') +
       P('Le <b>débit</b> D est le nombre de bits transmis chaque seconde :') + M('D = \\frac{N}{\\Delta t}') +
-      P(`avec ${m('D')} en bit/s, ${m('N')} le nombre de bits transmis et ${m('\\Delta t')} la durée de la transmission en s.`) +
+      P(`avec ${m('D')} le débit en bit/s, ${m('N')} le nombre de bits transmis et ${m('\\Delta t')} la durée de la transmission en s.`) +
       P('Pour trouver la durée de transmission d\'un fichier, on isole Δt :') + M('\\Delta t = \\frac{N}{D}') +
       P('<b>Attention aux unités</b> : la taille d\'un fichier est donnée en <b>octets</b> (o, ou B en anglais), alors que le débit est donné en <b>bits</b> par seconde. Il faut donc convertir la taille en bits en la multipliant par 8, puisque 1 octet = 8 bits.') +
       table(['Taille du fichier', 'Débit'], [['1 ko = 10³ octets', '1 kbit/s = 10³ bit/s'], ['1 Mo = 10⁶ octets', '1 Mbit/s = 10⁶ bit/s'], ['1 Go = 10⁹ octets', '1 Gbit/s = 10⁹ bit/s']]) +
@@ -1219,7 +1219,7 @@ const EXOS = [
         P('1. Taille en octets : 5 Mo = 5 × 10⁶ octets.', '2. Taille en bits : N = 5 × 10⁶ × 8 = 4 × 10⁷ bits.', '3. Débit en bit/s : D = 20 × 10⁶ bit/s.', '4. Durée :') +
         M('\\Delta t = \\frac{N}{D} = \\frac{4 \\times 10^7}{20 \\times 10^6} = 2\\,\\text{s}')) +
       BOX(P('N bits : 2<sup>N</sup> valeurs, de 0 à 2<sup>N</sup> − 1.', '1 octet = 8 bits ; ne pas confondre b (bit) et B (byte, octet).',
-        'Durée de transmission : Δt = N / D, avec N en bits (taille en octets × 8) et D en bit/s.'))
+        'Durée de transmission : Δt = N / D, avec Δt la durée en s, N le nombre de bits (taille en octets × 8) et D le débit en bit/s.'))
   },
   {
     chap: 5,
@@ -1264,7 +1264,7 @@ const EXOS = [
       H('2. Les forces') +
       P('Une force est un vecteur : direction, sens, norme (valeur en newtons, N) et point d\'application. On utilise aussi le décanewton : 1 daN = 10 N.') +
       P('<b>Principe des actions réciproques</b> : si A exerce une force sur B, alors B exerce sur A une force de même direction, de même norme et de sens opposé.') + M('\\vec F_{A/B} = -\\vec F_{B/A}') +
-      UL(`<b>Poids</b> : ${m('P = m \\times g')} (P en N, m en kg, g ≈ 9,81 N/kg), vertical, vers le bas, appliqué au centre de gravité.`, `<b>Force d'un fluide sur un piston</b> : ${m('F = p \\times S')}, avec F la force en N, p la pression en Pa et S la surface du piston en m².`,
+      UL(`<b>Poids</b> : ${m('P = m \\times g')} (avec P le poids en N, m la masse en kg et g l\'intensité de la pesanteur, environ 9,81 N/kg), vertical, vers le bas, appliqué au centre de gravité.`, `<b>Force d'un fluide sur un piston</b> : ${m('F = p \\times S')}, avec F la force en N, p la pression en Pa et S la surface du piston en m².`,
         '<b>Charge répartie</b> q (en N/m) sur une longueur L : elle équivaut à une force q × L appliquée au milieu de la longueur.') +
       EX('Exemple : vérin sous 3 bars', P('Piston Ø 40 mm, tige Ø 20 mm, p = 3 × 10⁵ Pa.') + M('F_{sortie} = p \\times \\frac{\\pi D^2}{4} = 3 \\times 10^5 \\times \\frac{\\pi \\times 0{,}04^2}{4} = 377\\,\\text{N}') +
         P('En rentrée, la tige réduit la surface utile : F = p × (π × 0,04² / 4 − π × 0,02² / 4) = 283 N.')) +
@@ -1315,7 +1315,7 @@ const EXOS = [
         M('d_1 = 2 \\times 20 = 40\\,\\text{mm} \\qquad d_2 = 2 \\times 50 = 100\\,\\text{mm}') + M('a = \\frac{40 + 100}{2} = 70\\,\\text{mm}')) +
       H('3. Rapport de transmission') +
       M('r = \\frac{N_{sortie}}{N_{entrée}} = \\frac{\\omega_{sortie}}{\\omega_{entrée}} = \\frac{Z_{menante}}{Z_{menée}}') +
-      P(`avec ${m('r')} le rapport de transmission (sans unité), ${m('N')} les vitesses de rotation en tr/min ou ${m('\\omega')} en rad/s (la même unité en haut et en bas), ${m('Z_{menante}')} le nombre de dents de la roue menante et ${m('Z_{menée}')} celui de la roue menée.`) +
+      P(`avec ${m('r')} le rapport de transmission (sans unité), ${m('N')} les vitesses de rotation en tr/min ou ${m('\\omega')} les vitesses angulaires en rad/s (la même unité en haut et en bas), ${m('Z_{menante}')} le nombre de dents de la roue menante et ${m('Z_{menée}')} celui de la roue menée.`) +
       UL('r < 1 : <b>réducteur</b> (après un moteur, pour réduire la vitesse et augmenter le couple) ;', 'r > 1 : <b>multiplicateur</b> (éolienne, pour augmenter la vitesse de la génératrice).') +
       EX('Exemple : pétrin', P('Un moteur à 480 tr/min doit entraîner une pale à 30 tr/min : r = 30 / 480 = 0,0625. Avec un pignon de 10 dents : Zmenée = 10 / 0,0625 = 160 dents. Avec m = 3, la roue mesure 3 × 160 = 480 mm : trop grande pour une cuve de 450 mm, il faut plusieurs étages.')) +
       H('4. Cascade et train d\'engrenages') +
@@ -1327,7 +1327,7 @@ const EXOS = [
         M('r = \\frac{12 \\times 15}{48 \\times 45} = \\frac{180}{2\\,160} = \\frac{1}{12}') +
         P('On retrouve r = r₁ × r₂ = 12/48 × 15/45 = 1/4 × 1/3 = 1/12 : la sortie tourne 12 fois moins vite que l\'entrée.')) +
       H('5. Couple et puissance') +
-      P('En rotation, la puissance vaut P = C × ω (C en N·m, ω en rad/s). Un réducteur conserve la puissance aux pertes près :') +
+      P('En rotation, la puissance vaut P = C × ω, avec P la puissance en W, C le couple en N·m et ω la vitesse angulaire en rad/s. Un réducteur conserve la puissance aux pertes près :') +
       M('P_s = \\eta \\times P_e \\qquad C_s = \\frac{\\eta \\times C_e}{r}') +
       P(`avec ${m('P_e')} et ${m('P_s')} les puissances en entrée et en sortie du réducteur en W, ${m('C_e')} et ${m('C_s')} les couples en entrée et en sortie en N·m, ${m('\\eta')} le rendement du réducteur et ${m('r')} son rapport de transmission (tous deux sans unité).`) +
       P('Réduire la vitesse augmente donc le couple disponible.') +
@@ -1525,7 +1525,7 @@ print(niveau)`) +
         return `<rect class="${k % 3 ? 'fillv' : 'flow'}" x="${x}" y="${y}" width="152" height="66" rx="8"/>` + dT(x + 76, y + 28, `<tspan font-weight="600">${n}</tspan>`) + dT(x + 76, y + 50, e, 'middle', 12);
       }).join(''), 'Les quatre familles de matériaux') +
       H('2. Masse volumique') +
-      M('\\rho = \\frac{m}{V}') + P(`avec ${m('\\rho')} en kg/m³, ${m('m')} en kg et ${m('V')} en m³.`) +
+      M('\\rho = \\frac{m}{V}') + P(`avec ${m('\\rho')} la masse volumique en kg/m³, ${m('m')} la masse en kg et ${m('V')} le volume en m³.`) +
       table(['Matériau', 'ρ (kg/m³)'], [['Air', '1,2'], ['Bois (chêne)', 'environ 700'], ['Eau', '1 000'], ['PLA', '1 250'], ['Béton', '2 400'], ['Verre', '2 500'], ['Aluminium', '2 700'], ['Acier', '7 850'], ['Cuivre', '8 960']]) +
       EX('Exemple', P('Un bloc de 2,5 × 1,3 × 1,6 cm pèse 5,4 g : V = 5,2 cm³ = 5,2 × 10⁻⁶ m³ et m = 5,4 × 10⁻³ kg.') + M('\\rho = \\frac{5{,}4 \\times 10^{-3}}{5{,}2 \\times 10^{-6}} \\approx 1\\,040\\,\\text{kg/m}^3')) +
       H('3. Chaleur et température') +

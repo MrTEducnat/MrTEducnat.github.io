@@ -820,7 +820,7 @@ const EXOS = [
             'Vérifier la résistance avec le coefficient de sécurité (2 × σ ≤ résistance).', 'Parmi les matériaux qui résistent, lequel choisir pour limiter la masse et le carbone ?'),
         steps: [
           ['1. Volume et masse', table(['Matériau', 'Volume (m³)', 'Masse (kg)'], rows.map(r => [r.n, fn(r.V, 3), fr(r.mm, 0)]))],
-          ['2. Contrainte', '<p>Avec F en N et S en mm², σ est en MPa :</p>' + table(['Matériau', 'σ (MPa)'], rows.map(r => [r.n, fn(r.sig, 3)]))],
+          ['2. Contrainte', '<p>Avec la force F en N et la section S en mm², la contrainte σ est en MPa :</p>' + table(['Matériau', 'σ (MPa)'], rows.map(r => [r.n, fn(r.sig, 3)]))],
           ['3. Vérification', table(['Matériau', '2 × σ', 'Résistance', 'Résiste ?'], rows.map(r => [r.n, fn(2 * r.sig, 3), r.R, r.ok ? 'Oui' : '<b>Non</b>']))],
           ['4. Choix', `<p>${okm.length ? `Le plus léger qui résiste est le <b>${okm[0].n.toLowerCase()}</b> (${fr(okm[0].mm, 0)} kg). Bilan carbone des solutions possibles : ${okm.map(r => `${r.n.toLowerCase()} ${fr(r.c, 0)} kg CO₂`).join(' ; ')} (le bois stocke du carbone).` : 'Aucun matériau ne résiste avec ces sections : il faut les augmenter.'}</p>`]
         ]
@@ -872,7 +872,7 @@ const EXOS = [
         steps: [
           ['1. Isolant', `<p>${C[ins][0]} : ${m(`\\lambda = ${tx(C[ins][2], 3)} < 0{,}07${u('W/(m·K)')}`)}, c'est l'isolant.
             Il est placé ${ite ? 'du côté extérieur du mur' : 'du côté intérieur du mur'} : c'est une isolation par ${ite ? 'l\'extérieur (ITE), qui supprime la plupart des ponts thermiques' : 'l\'intérieur (ITI), qui réduit un peu la surface habitable'}.</p>`],
-          ['2. Couches', '<p>Pour chaque couche, ' + m('R = \\frac{e}{\\lambda}') + ' avec e en mètres :</p>' + table(['Couche', 'R (m²·K/W)'], C.map((c, i) => [c[0], fr(Rs[i], 3)]))],
+          ['2. Couches', '<p>Pour chaque couche, ' + m('R = \\frac{e}{\\lambda}') + ', avec R la résistance thermique en m²·K/W, e l\'épaisseur en m et λ la conductivité thermique en W/(m·K) :</p>' + table(['Couche', 'R (m²·K/W)'], C.map((c, i) => [c[0], fr(Rs[i], 3)]))],
           ['3. Résistance totale', M(`R = R_{se} + \\sum \\frac{e}{\\lambda} + R_{si}`) + M(`R = 0{,}04 + ${Rs.map(r => tx(r, 3)).join(' + ')} + 0{,}13`) + M(`R = \\boxed{${tx(R, 2)}${u('m²·K/W')}}`)],
           ['4. Coefficient U', M(`U = \\frac{1}{R} = \\frac{1}{${tx(R, 2)}} = \\boxed{${tx(U, 3)}${u('W/(m²·K)')}}`)],
           ['5. Flux', M(`\\Phi = U \\times S \\times (T_{int} - T_{ext})`) + M(`\\Phi = ${tx(U, 3)} \\times ${S} \\times ${Ti - Te} = \\boxed{${tx(phi, 0)}${u('W')}}`)]
@@ -923,7 +923,7 @@ const EXOS = [
       const k = Dp.map((d, i) => [P[i][0], d]).concat([['Ventilation', Dv]]).sort((a, b) => b[1] - a[1])[0];
       return {
         statement: `<p>On étudie les déperditions d'une maison :</p>` + table(['Paroi', 'S (m²)', 'U (W/(m²·K))'], P.map(p => [p[0], fr(p[1], 1), fr(p[2], 2)])) +
-          `<p>Le débit de ventilation est ${v(Qv, 'm³/h')}. Les déperditions par renouvellement d'air valent ${m(`D_v = 0{,}34 \\times Q_v`)} (en W/K, ${m('Q_v')} en m³/h).
+          `<p>Le débit de ventilation est ${v(Qv, 'm³/h')}. Les déperditions par renouvellement d'air valent ${m(`D_v = 0{,}34 \\times Q_v`)}, avec ${m('D_v')} les déperditions par renouvellement d'air en W/K et ${m('Q_v')} le débit de ventilation en m³/h.
           Température intérieure : ${v(Ti, '°C')} ; température extérieure de base : ${v(Te, '°C')}.</p>` +
           dSV(340, 235, `<rect class="thin" x="90" y="100" width="160" height="90"/><path class="line" d="M78 100 L170 40 L262 100"/><rect class="flow" x="112" y="124" width="36" height="34"/>` +
             `<line class="line" x1="10" y1="190" x2="330" y2="190"/>` +

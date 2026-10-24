@@ -1260,7 +1260,7 @@ const EXOS = [
         { n: 'une poutre légère et rigide en flexion', tex: '\\frac{\\sqrt{E}}{\\rho}', f: x => Math.sqrt(x[1] * 1000) / x[3], u: '' }]);
       const mats = sample(M, 4), vals = mats.map(crit.f), best = mats[vals.indexOf(Math.max(...vals))];
       return {
-        statement: `<p>On cherche le meilleur matériau pour ${v(crit.n)}. L'indice de performance à <b>maximiser</b> est ${m('I = ' + crit.tex)} (E en MPa, ρ en kg/m³).</p>` +
+        statement: `<p>On cherche le meilleur matériau pour ${v(crit.n)}. L'indice de performance à <b>maximiser</b> est ${m('I = ' + crit.tex)} (avec E le module de Young en MPa et ρ la masse volumique en kg/m³).</p>` +
           table(['Matériau', 'E (GPa)', 'R<sub>e</sub> (MPa)', 'ρ (kg/m³)'], mats.map(x => [x[0], x[1], x[2], fr(x[3])])) +
           ol('Calculer l\'indice de performance de chaque matériau.', 'Quel matériau choisir selon ce seul critère ?', 'Quels autres critères faut-il prendre en compte avant de décider ?'),
         steps: [

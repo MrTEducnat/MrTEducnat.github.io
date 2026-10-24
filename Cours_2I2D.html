@@ -591,7 +591,7 @@ const EXOS = [
       P('La puissance mesure la vitesse à laquelle l\'énergie est transférée. Dans tous les domaines, elle s\'écrit comme le produit d\'une grandeur d\'<b>effort</b> (ce qui « pousse ») par une grandeur de <b>flux</b> (ce qui « circule ») :') +
       table(['Domaine', 'Puissance', 'Effort × flux'], [['Électrique (continu)', 'P = U × I', 'tension × courant'], ['Rotation', 'P = C × ω', 'couple × vitesse angulaire'],
         ['Translation', 'P = F × v', 'force × vitesse'], ['Hydraulique', 'P = p × Q', 'pression × débit']]) +
-      P('avec P en W, U en V, I en A, C en N·m, ω en rad/s, F en N, v en m/s, p en Pa et Q en m³/s. Attention : ω doit être en rad/s, pas en tr/min (ω = 2πN / 60).') +
+      P('avec P la puissance en W, U la tension en V, I l\'intensité en A, C le couple en N·m, ω la vitesse angulaire en rad/s, F la force en N, v la vitesse en m/s, p la pression en Pa et Q le débit volumique en m³/s. Attention : ω doit être en rad/s, pas en tr/min (ω = 2πN / 60).') +
       H('2. Rendement d\'une chaîne') +
       P('Aucun constituant ne restitue toute l\'énergie qu\'il reçoit : une partie part en chaleur (frottements, effet Joule). Le rendement mesure la part utile :') +
       M('\\eta = \\frac{P_u}{P_a}') + LEG(['\\eta', 'le rendement (sans unité, toujours inférieur à 1)'], ['P_u', 'la puissance utile en W'], ['P_a', 'la puissance absorbée en W']) +
@@ -876,7 +876,7 @@ const EXOS = [
         dCote(20, 36, 20, 128, 'h') + dT(90, 22, 'bassin haut', 'middle', 13) + dT(250, 166, 'bassin bas', 'middle', 13) + dT(206, 104, 'turbine-pompe', 'start', 13),
         'On pompe quand l\'électricité est abondante, on turbine quand on en a besoin') +
       P('L\'eau stockée en hauteur possède une énergie potentielle de pesanteur. En redescendant, elle fait tourner une turbine :') +
-      M('E = m \\times g \\times h \\times \\eta') + LEG(['E', 'l\'énergie restituée en J'], ['m', 'la masse d\'eau en kg (1 m³ d\'eau = 1 000 kg)'], ['g', '= 9,81 m/s²'], ['h', 'la hauteur de chute en m'], ['\\eta', 'le rendement de turbinage']) +
+      M('E = m \\times g \\times h \\times \\eta') + LEG(['E', 'l\'énergie restituée en J'], ['m', 'la masse d\'eau en kg (1 m³ d\'eau = 1 000 kg)'], ['g', 'l\'intensité de la pesanteur (9,81 m/s²)'], ['h', 'la hauteur de chute en m'], ['\\eta', 'le rendement de turbinage']) +
       P('Le rendement d\'un cycle complet (pompage puis turbinage) est d\'environ 75 % : on récupère les trois quarts de l\'énergie utilisée pour pomper. C\'est aujourd\'hui le moyen de stockage de masse le plus utilisé au monde.') +
       EX('Exemple', P('Le bassin haut contient 500 000 m³ d\'eau (m = 5 × 10⁸ kg), 300 m au-dessus du bassin bas ; le rendement de turbinage vaut 0,9 :') +
         M('E = 5 \\times 10^8 \\times 9{,}81 \\times 300 \\times 0{,}9 \\approx 1{,}32 \\times 10^{12}\\,\\text{J}') + P('Soit 1,32 × 10¹² / 3,6 × 10⁶ ≈ 368 000 kWh = 368 MWh.')) +
@@ -1033,7 +1033,7 @@ const EXOS = [
       UL('<b>Charges permanentes G</b> : poids propre de la structure (béton armé : 25 kN/m³) et des revêtements.', '<b>Charges d\'exploitation Q</b> : personnes, mobilier (en kN/m²).', '<b>Charges climatiques</b> : neige, vent.') +
       P('Un poteau reprend la surface qui l\'entoure, jusqu\'à mi-distance des poteaux voisins (sa « zone d\'influence »). La charge vaut la charge surfacique × cette surface. Pour une dalle de 20 cm : 0,20 × 25 = 5 kN/m².') +
       H('2. Contrainte de compression') +
-      M('\\sigma = \\frac{N}{A}') + LEG(['\\sigma', 'la contrainte en Pa (ou en MPa si N en N et A en mm²)'], ['N', 'l\'effort normal en N'], ['A', 'la section en m² (ou mm²)']) +
+      M('\\sigma = \\frac{N}{A}') + LEG(['\\sigma', 'la contrainte en Pa (ou en MPa si l\'effort N est en N et la section A en mm²)'], ['N', 'l\'effort normal en N'], ['A', 'la section en m² (ou mm²)']) +
       P('Le poteau résiste si σ reste inférieure à la résistance du matériau divisée par le coefficient de sécurité.') +
       EX('Exemple', P('Un poteau en béton de 25 × 25 cm (A = 250 × 250 = 62 500 mm²) supporte N = 500 kN = 500 000 N :') + M('\\sigma = \\frac{500\\,000}{62\\,500} = 8\\,\\text{MPa}')) +
       H('3. Pression sur le sol') +
