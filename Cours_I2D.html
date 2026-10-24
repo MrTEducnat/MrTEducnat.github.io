@@ -1520,10 +1520,11 @@ print(niveau)`) +
       P('Choisir le matériau d\'un objet, c\'est trouver celui dont les propriétés correspondent à l\'usage : léger pour un vélo, isolant pour un mur, résistant à la chaleur pour une casserole. Cette fiche présente les familles de matériaux et leurs propriétés physiques : masse volumique, comportement face à la chaleur, homogénéité et isotropie.') +
       H('1. Les familles de matériaux') +
       P('Un matériau est une matière choisie pour ses propriétés en vue d\'un usage précis. On en compte environ 80 000, regroupés en quatre familles :') +
-      table(['Famille', 'Exemples'], [['Métaux et alliages', 'acier, fonte (ferreux) ; aluminium, cuivre, zinc, laiton (non ferreux)'],
-        ['Organiques', 'plastiques (thermoplastiques comme le PLA ou l\'ABS, thermodurcissables), élastomères, bois, papier, fibres naturelles'],
-        ['Minéraux (céramiques)', 'verre, béton, brique, céramique, pierre'], ['Composites', 'association d\'un renfort et d\'une matrice : fibre de carbone et résine, béton armé, contreplaqué']]) +
-      dSV(340, 170, [['Métaux', 'acier, aluminium'], ['Organiques', 'plastiques, bois'], ['Minéraux', 'verre, béton'], ['Composites', 'carbone + résine']].map(([n, e], k) => {
+      table(['Famille', 'Exemples'], [['Métalliques (métaux et alliages)', 'acier, fonte (ferreux) ; aluminium, cuivre, zinc, laiton, bronze (non ferreux)'],
+        ['Polymères (plastiques)', 'thermoplastiques (PLA, ABS, PVC, PMMA, polystyrène), thermodurcissables (résines), élastomères (caoutchouc)'],
+        ['Céramiques', 'verre, porcelaine, brique, béton, plâtre, pierre'],
+        ['Composites', 'association d\'un renfort et d\'une matrice : fibre de carbone et résine, béton armé, contreplaqué ; le bois est un composite naturel (fibres de cellulose dans de la lignine)']]) +
+      dSV(340, 170, [['Métalliques', 'acier, aluminium'], ['Polymères', 'plastiques, caoutchouc'], ['Céramiques', 'verre, brique, béton'], ['Composites', 'carbone + résine, bois']].map(([n, e], k) => {
         const x = 14 + (k % 2) * 160, y = 14 + Math.floor(k / 2) * 76;
         return `<rect class="${k % 3 ? 'fillv' : 'flow'}" x="${x}" y="${y}" width="152" height="66" rx="8"/>` + dT(x + 76, y + 28, `<tspan font-weight="600">${n}</tspan>`) + dT(x + 76, y + 50, e, 'middle', 12);
       }).join(''), 'Les quatre familles de matériaux') +
@@ -1541,7 +1542,7 @@ print(niveau)`) +
       H('4. Homogénéité et isotropie') +
       UL('<b>Homogène</b> : même composition en tout point (verre, plastique, acier). <b>Hétérogène</b> sinon (bois, béton, brique).',
         '<b>Isotrope</b> : mêmes propriétés dans toutes les directions (métaux, béton). <b>Anisotrope</b> sinon (bois, pièce imprimée en 3D couche par couche).') +
-      BOX(P('Quatre familles : métaux, organiques, minéraux, composites.', 'ρ = m / V ; Q = m × c × ΔT.'))
+      BOX(P('Quatre familles : métalliques, polymères (plastiques), céramiques, composites.', 'ρ = m / V ; Q = m × c × ΔT.'))
   },
   {
     chap: 8,
