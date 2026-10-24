@@ -854,7 +854,10 @@ const EXOS = [
           [plan + `<polygon ${trace} points="42,66 96,66 112,56 58,56"/><line class="c3" x1="77" y1="35" x2="77" y2="56"/>` +
             `<rect ${obj} x="42" y="14" width="54" height="18"/><polygon ${obj} points="42,14 58,6 112,6 96,14"/><polygon ${obj} points="96,14 112,6 112,24 96,32"/>`,
             'Surfacique plan', 'trace : une surface plane (livre soulevé de la table)'],
-          [`<rect ${obj} x="8" y="36" width="134" height="18" rx="3"/><rect ${trace} x="52" y="36" width="46" height="18"/><rect class="thin" x="52" y="18" width="46" height="54" rx="3"/>`,
+          // Arbre (cylindre couché) qui traverse une bague (alésage) dessinée en transparence ; la zone de contact est une bande cylindrique
+          [`<path ${obj} d="M14 37 H136 A4 9 0 0 1 136 55 H14 Z"/><ellipse ${obj} cx="14" cy="46" rx="4" ry="9"/>` +
+            `<path ${trace} d="M55 37 H95 A4 9 0 0 1 95 55 H55 A4 9 0 0 1 55 37 Z"/>` +
+            '<path class="thin" d="M55 26 H95 M55 66 H95 M95 26 A8 20 0 0 1 95 66"/><path class="thin" style="stroke-dasharray:3 3" d="M95 26 A8 20 0 0 0 95 66"/><ellipse class="thin" cx="55" cy="46" rx="8" ry="20"/>',
             'Surfacique cylindrique', 'trace : un cylindre (arbre dans un alésage)'],
           [`<line class="line" x1="75" y1="4" x2="75" y2="22"/><path class="thin" style="fill:var(--accent-bg)" d="M47 40 A28 28 0 0 0 103 40 H93 A18 18 0 0 1 57 40 Z"/>` +
             `<circle ${obj} cx="75" cy="40" r="18"/><path class="c2" style="stroke-width:4" d="M57 40 A18 18 0 0 0 93 40"/>`, 'Surfacique sphérique', 'trace : une calotte de sphère (rotule)']];
