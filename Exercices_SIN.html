@@ -691,14 +691,17 @@ const EXOS = [
     support: 'Annale : 2023_Métropole',
     gen() {
       const Tmin = pick([-50, -20, -10, 0]), Tmax = pick([50, 80, 100, 150]), R = 250;
-      const T1 = rnd(Tmin + 5, Tmax - 5, 0.5), I2 = rnd(5, 19, 0.01);
-      const a = 16 / (Tmax - Tmin), I1 = 4 + a * (T1 - Tmin), T2 = Tmin + (I2 - 4) / a;
+      const T1 = rnd(Tmin + 5, Tmax - 5, 0.5), I2 = rnd(6, 19, 0.01);
+      const a = 16 / (Tmax - Tmin), I1 = 4 + a * (T1 - Tmin), T2 = Tmin + (I2 - 4) / a, d = Tmax - Tmin <= 110 ? 20 : 50, x0 = Math.floor(Tmin / d) * d;
       return {
         statement: `<p>Un transmetteur de température délivre un courant de 4 mA pour ${v(Tmin, '°C')} et de 20 mA pour ${v(Tmax, '°C')},
           proportionnel entre les deux. Le courant traverse une résistance de ${v(R, 'Ω')} à l'entrée de l'automate.</p>` +
-          graph({ ...(d => ({ x0: Math.floor(Tmin / d) * d, x1: Math.ceil(Tmax / d) * d, dx: d }))(Tmax - Tmin <= 110 ? 20 : 50), y0: 0, y1: 24, dy: 4, w: 400, h: 230, xlab: 'T (°C)', ylab: 'I (mA)', series: [{ pts: [[Tmin, 4], [Tmax, 20]] }],
-            extra: (X, Y) => `<polyline class="c3" points="${X(Tmin)},${Y(I2)} ${X(T2)},${Y(I2)} ${X(T2)},${Y(0)}"/>` + dT(X(Tmin) + 6, Y(I2) - 6, `${fr(I2)} mA`, 'start', 13) +
-              dT(X(T2) + (T2 > (Tmin + Tmax) / 2 ? -4 : 4), Y(0) - 8, 'T = ?', T2 > (Tmin + Tmax) / 2 ? 'end' : 'start', 13),
+          graph({ x0, x1: Math.ceil(Tmax / d) * d, dx: d, y0: 0, y1: 24, dy: 4, w: 400, h: 230, xlab: 'T (°C)', ylab: 'I (mA)', series: [{ pts: [[Tmin, 4], [Tmax, 20]] }],
+            // Lecture depuis l'axe des courants ; si le point est près de l'axe, l'étiquette du courant passe à droite du point, sous les pointillés, pour ne pas couper la droite
+            extra: (X, Y) => { const xa = X(x0), pres = X(T2) - xa < 75;
+              return `<polyline class="c3" points="${xa},${Y(I2)} ${X(T2)},${Y(I2)} ${X(T2)},${Y(0)}"/>` +
+                (pres ? dT(X(T2) + 8, Y(I2) + 15, `${fr(I2)} mA`, 'start', 13) : dT(xa + 6, Y(I2) - 6, `${fr(I2)} mA`, 'start', 13)) +
+                dT(X(T2) + (T2 > (Tmin + Tmax) / 2 ? -4 : 4), Y(0) - 8, 'T = ?', T2 > (Tmin + Tmax) / 2 ? 'end' : 'start', 13); },
             cap: 'Caractéristique du transmetteur : 4 mA au minimum de l\'étendue de mesure, 20 mA au maximum' }) +
           ol('Pourquoi le zéro de la mesure correspond-il à 4 mA et non à 0 mA ?', `Calculer le courant pour ${v(T1, '°C', 1)}.`,
             `L'automate mesure ${v(I2, 'mA')}. Quelle est la température ?`, 'Quelle plage de tension obtient-on aux bornes de la résistance ?'),
