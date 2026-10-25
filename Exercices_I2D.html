@@ -284,6 +284,9 @@ const rnd = (a, b, step = 1) => {
   return +(a + step * Math.floor(Math.random() * (n + 1))).toFixed(6);
 };
 const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+// Tirage d'une version d'exercice différente de la précédente (clé = nom de l'exercice)
+const _vu = {};
+const pickNew = (k, arr) => { let i; do i = Math.floor(Math.random() * arr.length); while (arr.length > 1 && i === _vu[k]); _vu[k] = i; return arr[i]; };
 
 // Nombre au format français (texte)
 const fr = (x, d = 2) => Number(x).toLocaleString('fr-FR', { maximumFractionDigits: d });
@@ -2300,13 +2303,13 @@ const EXOS = [
     title: 'Parcours d\'un algorithme de régulation',
     support: 'TD Algorithmique',
     gen() {
-      const H1 = rnd(6, 8, 1), H2 = rnd(21, 23, 1), Tc = rnd(19, 21, 0.5), Tr = rnd(16, 18, 0.5);
-      const cas = Array.from({ length: 3 }, () => ({ h: rnd(0, 23, 1), T: rnd(15, 22, 0.5) })).map(c => {
-        const cons = c.h >= H1 && c.h < H2 ? Tc : Tr; return { ...c, cons, on: c.T < cons };
-      });
-      return {
-        statement: `<p>Le chauffage d'une maison est piloté par l'algorithme suivant :</p>
-<pre class="code">SI (heure ≥ ${H1}) ET (heure &lt; ${H2}) ALORS
+      // Chaque version : deux conditions combinées ou imbriquées, trois situations à tester
+      const ALGO = [
+        () => {
+          const H1 = rnd(6, 8, 1), H2 = rnd(21, 23, 1), Tc = rnd(19, 21, 0.5), Tr = rnd(16, 18, 0.5);
+          return {
+            intro: 'Le chauffage d\'une maison est piloté par l\'algorithme suivant :',
+            code: `SI (heure ≥ ${H1}) ET (heure &lt; ${H2}) ALORS
     consigne ← ${fr(Tc, 1)} °C
 SINON
     consigne ← ${fr(Tr, 1)} °C
@@ -2315,10 +2318,94 @@ SI température &lt; consigne ALORS
     Allumer le chauffage
 SINON
     Éteindre le chauffage
-FIN SI</pre>` + ol(...cas.map(c => `Il est ${v(c.h + ' h')} et la température est de ${v(c.T, '°C', 1)}. Le chauffage fonctionne-t-il ?`)),
-        steps: cas.map((c, i) => [`${i + 1}. ${c.h} h et ${fr(c.T, 1)} °C`,
-          `<p>${c.h >= H1 && c.h < H2 ? `${c.h} h est entre ${H1} h et ${H2} h` : `${c.h} h n'est pas entre ${H1} h et ${H2} h`} : consigne = ${fr(c.cons, 1)} °C.
-          ${fr(c.T, 1)} ${c.on ? '<' : '≥'} ${fr(c.cons, 1)} donc le chauffage est <b>${c.on ? 'allumé' : 'éteint'}</b>.</p>`])
+FIN SI`,
+            q: 'Le chauffage fonctionne-t-il ?',
+            cas: Array.from({ length: 3 }, () => ({ h: rnd(0, 23, 1), T: rnd(15, 22, 0.5) })).map(c => {
+              const jour = c.h >= H1 && c.h < H2, cons = jour ? Tc : Tr, on = c.T < cons;
+              return { txt: `Il est ${v(c.h + ' h')} et la température est de ${v(c.T, '°C', 1)}.`, titre: `${c.h} h et ${fr(c.T, 1)} °C`,
+                rep: `${jour ? `${c.h} h est entre ${H1} h et ${H2} h` : `${c.h} h n'est pas entre ${H1} h et ${H2} h`} : consigne = ${fr(cons, 1)} °C.
+          ${fr(c.T, 1)} ${on ? '<' : '≥'} ${fr(cons, 1)} donc le chauffage est <b>${on ? 'allumé' : 'éteint'}</b>.` };
+            })
+          };
+        },
+        () => {
+          const Hs = rnd(25, 40, 5), Hm = rnd(9, 10, 1), Hs2 = rnd(19, 21, 1);
+          const cas = shuffle([{ h: pick([rnd(5, Hm - 1, 1), rnd(Hs2, 23, 1)]), H: rnd(10, Hs - 5, 1) }, { h: rnd(Hm, Hs2 - 1, 1), H: rnd(10, Hs - 5, 1) },
+            { h: rnd(0, 23, 1), H: rnd(Hs, 70, 1) }]);
+          return {
+            intro: 'L\'arrosage automatique d\'un jardin est piloté par l\'algorithme suivant :',
+            code: `SI humidité du sol &lt; ${Hs} % ALORS
+    SI heure &lt; ${Hm} OU heure ≥ ${Hs2} ALORS
+        Ouvrir la vanne d'arrosage
+    SINON
+        Reporter l'arrosage
+    FIN SI
+SINON
+    Fermer la vanne d'arrosage
+FIN SI`,
+            q: 'Que fait le système ?',
+            cas: cas.map(c => {
+              const sec = c.H < Hs, ok = c.h < Hm || c.h >= Hs2;
+              return { txt: `Il est ${v(c.h + ' h')} et l'humidité du sol est de ${v(c.H, '%')}.`, titre: `${c.h} h et ${c.H} %`,
+                rep: !sec ? `${c.H} % ≥ ${Hs} % : le sol est assez humide, la vanne est <b>fermée</b>.`
+                  : `${c.H} % < ${Hs} % : le sol est sec. ${ok ? `${c.h} h est avant ${Hm} h ou après ${Hs2} h` : `${c.h} h est entre ${Hm} h et ${Hs2} h`},
+          donc ${ok ? '<b>la vanne s\'ouvre</b>' : 'l\'arrosage est <b>reporté</b> (on n\'arrose pas en pleine journée)'}.` };
+            })
+          };
+        },
+        () => {
+          const Vmax = rnd(40, 60, 5), Es = rnd(300, 600, 50);
+          const cas = shuffle([{ V: rnd(Vmax + 5, Vmax + 30, 5), E: rnd(100, 900, 50) }, { V: rnd(5, Vmax, 5), E: rnd(Es + 50, 900, 50) },
+            { V: rnd(5, Vmax, 5), E: rnd(50, Es, 50) }]);
+          return {
+            intro: 'Le volet roulant d\'une baie vitrée est piloté par l\'algorithme suivant :',
+            code: `SI vitesse du vent &gt; ${Vmax} km/h ALORS
+    Remonter le volet (protection)
+SINON
+    SI ensoleillement &gt; ${Es} W/m² ALORS
+        Descendre le volet
+    SINON
+        Remonter le volet
+    FIN SI
+FIN SI`,
+            q: 'Le volet est-il descendu ou remonté ?',
+            cas: cas.map(c => {
+              const vent = c.V > Vmax, sol = c.E > Es;
+              return { txt: `Le vent souffle à ${v(c.V, 'km/h')} et l'ensoleillement vaut ${v(c.E, 'W/m²')}.`, titre: `${c.V} km/h et ${c.E} W/m²`,
+                rep: vent ? `${c.V} km/h > ${Vmax} km/h : le vent est trop fort, le volet est <b>remonté</b> pour le protéger, quel que soit l'ensoleillement.`
+                  : `${c.V} km/h ≤ ${Vmax} km/h : on teste l'ensoleillement. ${c.E} W/m² ${sol ? '>' : '≤'} ${Es} W/m², donc le volet est <b>${sol ? 'descendu' : 'remonté'}</b>.` };
+            })
+          };
+        },
+        () => {
+          const C1 = rnd(1200, 1500, 100), C2 = rnd(800, 1000, 100), Hm = rnd(65, 75, 5);
+          const cas = shuffle([{ C: rnd(C1 + 50, 2000, 50), H: rnd(40, 90, 5) }, pick([{ C: rnd(C2 + 50, C1, 50), H: rnd(40, Hm, 5) }, { C: rnd(400, C2, 50), H: rnd(Hm + 5, 90, 5) }]),
+            { C: rnd(400, C2, 50), H: rnd(40, Hm, 5) }]);
+          return {
+            intro: 'La ventilation (VMC) d\'une salle de classe est pilotée par l\'algorithme suivant :',
+            code: `SI CO₂ &gt; ${C1} ppm ALORS
+    vitesse ← 2 (grande vitesse)
+SINON SI (CO₂ &gt; ${C2} ppm)
+      OU (humidité &gt; ${Hm} %) ALORS
+    vitesse ← 1 (petite vitesse)
+SINON
+    vitesse ← 0 (arrêt)
+FIN SI`,
+            q: 'Quelle est la vitesse de la ventilation ?',
+            cas: cas.map(c => {
+              const n = c.C > C1 ? 2 : (c.C > C2 || c.H > Hm) ? 1 : 0;
+              return { txt: `Le taux de CO₂ est de ${v(c.C, 'ppm')} et l'humidité de ${v(c.H, '%')}.`, titre: `${c.C} ppm et ${c.H} %`,
+                rep: n === 2 ? `${c.C} ppm > ${C1} ppm : la première condition est vraie, <b>vitesse = 2</b> (l'humidité n'est pas testée).`
+                  : `${c.C} ppm ≤ ${C1} ppm : on teste la deuxième condition. ${c.C} ppm ${c.C > C2 ? '>' : '≤'} ${C2} ppm et ${c.H} % ${c.H > Hm ? '>' : '≤'} ${Hm} % :
+          ${n ? 'au moins une des deux est vraie (OU), donc <b>vitesse = 1</b>' : 'aucune des deux n\'est vraie, donc <b>vitesse = 0</b>'}.` };
+            })
+          };
+        }
+      ];
+      const A = pickNew('regulation', ALGO)();
+      return {
+        statement: `<p>${A.intro}</p><pre class="code">${A.code}</pre>` + ol(...A.cas.map(c => `${c.txt} ${A.q}`)),
+        steps: A.cas.map((c, i) => [`${i + 1}. ${c.titre}`, `<p>${c.rep}</p>`])
       };
     }
   },
@@ -2327,29 +2414,104 @@ FIN SI</pre>` + ol(...cas.map(c => `Il est ${v(c.h + ' h')} et la température e
     title: 'Trace d\'une boucle for en Python',
     support: 'PC Initiation à la programmation en Python',
     gen() {
-      const n = rnd(12, 30, 1), k = rnd(2, 5, 1);
-      const vals = []; for (let i = 1; i <= n; i++) if (i % k === 0) vals.push(i);
-      const s = vals.reduce((a, b) => a + b, 0);
-      const partial = []; let acc = 0; vals.forEach(x => { acc += x; partial.push(acc); });
-      return {
-        statement: `
-          <p>On considère le programme Python suivant :</p>
-<pre class="code">n = <span class="v">${n}</span>
+      // Chaque version : une boucle for, une condition ou une accumulation, quatre questions
+      const ALGO = [
+        () => {
+          const n = rnd(12, 30, 1), k = rnd(2, 5, 1);
+          const vals = []; for (let i = 1; i <= n; i++) if (i % k === 0) vals.push(i);
+          const s = vals.reduce((a, b) => a + b, 0);
+          const partial = []; let acc = 0; vals.forEach(x => { acc += x; partial.push(acc); });
+          return {
+            intro: 'On considère le programme Python suivant :',
+            code: `n = <span class="v">${n}</span>
 k = <span class="v">${k}</span>
 s = 0
 for i in range(1, n + 1):
     if i % k == 0:
         s = s + i
-print(s)</pre>
-          <p>Rappel : <code>i % k</code> donne le reste de la division de <code>i</code> par <code>k</code>.</p>` +
-          ol('Quelles valeurs prend la variable <code>i</code> ?', 'Pour quelles valeurs de <code>i</code> la condition <code>i % k == 0</code> est-elle vraie ?',
-            'Combien de fois l\'instruction <code>s = s + i</code> est-elle exécutée ?', 'Quelle valeur le programme affiche-t-il ?'),
-        steps: [
-          ['1. Valeurs de i', `<p><code>range(1, n + 1)</code> produit les entiers de 1 à ${n} inclus.</p>`],
-          ['2. Condition vraie', `<p>La condition est vraie quand <code>i</code> est un multiple de ${k} :</p>` + `<p>i ∈ { ${vals.join(' ; ')} }</p>`],
-          ['3. Nombre d\'exécutions', M(`\\boxed{${vals.length}}\\ \\text{fois}`)],
-          ['4. Valeur affichée', `<p>Évolution de <code>s</code> : 0 → ${partial.join(' → ')}</p>` + M(`s = ${vals.join(' + ')} = \\boxed{${s}}`)]
-        ]
+print(s)`,
+            rappel: 'Rappel : <code>i % k</code> donne le reste de la division de <code>i</code> par <code>k</code>.',
+            q: ['Quelles valeurs prend la variable <code>i</code> ?', 'Pour quelles valeurs de <code>i</code> la condition <code>i % k == 0</code> est-elle vraie ?',
+              'Combien de fois l\'instruction <code>s = s + i</code> est-elle exécutée ?', 'Quelle valeur le programme affiche-t-il ?'],
+            steps: [
+              ['1. Valeurs de i', `<p><code>range(1, n + 1)</code> produit les entiers de 1 à ${n} inclus.</p>`],
+              ['2. Condition vraie', `<p>La condition est vraie quand <code>i</code> est un multiple de ${k} :</p>` + `<p>i ∈ { ${vals.join(' ; ')} }</p>`],
+              ['3. Nombre d\'exécutions', M(`\\boxed{${vals.length}}\\ \\text{fois}`)],
+              ['4. Valeur affichée', `<p>Évolution de <code>s</code> : 0 → ${partial.join(' → ')}</p>` + M(`s = ${vals.join(' + ')} = \\boxed{${s}}`)]
+            ]
+          };
+        },
+        () => {
+          const S = rnd(80, 85, 1), L = Array.from({ length: rnd(6, 7, 1) }, () => rnd(62, 96, 1));
+          if (!L.some(x => x >= S)) L[rnd(0, L.length - 1, 1)] = rnd(S, 96, 1);
+          const ok = L.filter(x => x >= S);
+          return {
+            intro: 'Un sonomètre a relevé le niveau sonore d\'un atelier (en dB) toutes les heures. On considère le programme Python suivant :',
+            code: `mesures = [${L.join(', ')}]
+nb = 0
+for x in mesures:
+    if x &gt;= <span class="v">${S}</span>:
+        nb = nb + 1
+print(nb)`,
+            q: ['Combien de fois la boucle est-elle parcourue ?', `Pour quelles valeurs de <code>x</code> la condition <code>x &gt;= ${S}</code> est-elle vraie ?`,
+              'Quelle valeur le programme affiche-t-il ?', 'Quel est le rôle de ce programme ?'],
+            steps: [
+              ['1. Passages', `<p><code>x</code> prend successivement chaque valeur de la liste : la boucle est parcourue <b>${L.length} fois</b>.</p>`],
+              ['2. Condition vraie', `<p>x ∈ { ${ok.join(' ; ')} }</p>`],
+              ['3. Valeur affichée', `<p>Évolution de <code>nb</code> : 0 → ${ok.map((_, i) => i + 1).join(' → ')}. Le programme affiche <b>${ok.length}</b>.</p>`],
+              ['4. Rôle', `<p>Il compte les mesures supérieures ou égales à ${S} dB, c'est-à-dire les heures où le bruit a dépassé le seuil.</p>`]
+            ]
+          };
+        },
+        () => {
+          const L = Array.from({ length: 7 }, () => rnd(15, 40, 1)), mx = [];
+          if (Math.max(...L) === L[0]) L.push(L.shift()); // tmax doit changer au moins une fois
+          let t = L[0];
+          L.forEach(x => { if (x > t) t = x; mx.push(t); });
+          return {
+            intro: 'Un capteur a relevé la température d\'une serre (en °C) toutes les heures. On considère le programme Python suivant :',
+            code: `temp = [${L.join(', ')}]
+tmax = temp[0]
+for t in temp:
+    if t &gt; tmax:
+        tmax = t
+print(tmax)`,
+            rappel: 'Rappel : <code>temp[0]</code> est le premier élément de la liste.',
+            q: ['Quelle est la valeur initiale de <code>tmax</code> ?', 'Compléter le tableau des valeurs de <code>tmax</code> après chaque passage dans la boucle.',
+              'Quelle valeur le programme affiche-t-il ?', 'Quel est le rôle de ce programme ?'],
+            steps: [
+              ['1. Valeur initiale', `<p><code>tmax = ${L[0]}</code> (premier élément).</p>`],
+              ['2. Tableau', table(['Passage', 't', 'tmax'], L.map((x, j) => [j + 1, x, mx[j]]))],
+              ['3. Valeur affichée', `<p>Le programme affiche <b>${t}</b>.</p>`],
+              ['4. Rôle', '<p>Il recherche la plus grande valeur de la liste : la température maximale de la serre.</p>']
+            ]
+          };
+        },
+        () => {
+          const a = rnd(0, 6, 1), p = rnd(2, 5, 1), nb = rnd(4, 7, 1), b = a + p * (nb - 1) + rnd(1, p, 1);
+          const vals = Array.from({ length: nb }, (_, i) => a + i * p), partial = []; let acc = 0; vals.forEach(x => { acc += x; partial.push(acc); });
+          return {
+            intro: 'On considère le programme Python suivant :',
+            code: `s = 0
+for i in range(<span class="v">${a}</span>, <span class="v">${b}</span>, <span class="v">${p}</span>):
+    s = s + i
+print(s)`,
+            rappel: 'Rappel : <code>range(a, b, p)</code> produit les entiers de a (inclus) à b (exclu), en avançant de p à chaque fois.',
+            q: ['Quelles valeurs prend la variable <code>i</code> ?', 'Combien de fois l\'instruction <code>s = s + i</code> est-elle exécutée ?',
+              'Compléter le tableau des valeurs de <code>s</code> après chaque passage.', 'Quelle valeur le programme affiche-t-il ?'],
+            steps: [
+              ['1. Valeurs de i', `<p>On part de ${a} et on ajoute ${p} tant qu'on reste strictement sous ${b} :</p><p>i ∈ { ${vals.join(' ; ')} }</p>`],
+              ['2. Nombre d\'exécutions', M(`\\boxed{${nb}}\\ \\text{fois}`)],
+              ['3. Tableau', table(['Passage', 'i', 's'], vals.map((x, j) => [j + 1, x, partial[j]]))],
+              ['4. Valeur affichée', M(`s = ${vals.join(' + ')} = \\boxed{${acc}}`)]
+            ]
+          };
+        }
+      ];
+      const A = pickNew('for', ALGO)();
+      return {
+        statement: `<p>${A.intro}</p><pre class="code">${A.code}</pre>` + (A.rappel ? `<p>${A.rappel}</p>` : '') + ol(...A.q),
+        steps: A.steps
       };
     }
   },
@@ -2358,25 +2520,87 @@ print(s)</pre>
     title: 'Trace d\'une boucle Tant que',
     support: 'Cours Algorithmique, PC Python',
     gen() {
-      const A = rnd(1, 5, 1), mult = Math.random() < 0.5, k = mult ? pick([2, 3]) : rnd(3, 9, 1), B = rnd(40, 300, 1);
-      const rows = []; let x = A, n = 0;
-      while (x < B) { x = mult ? x * k : x + k; n++; rows.push([n, x]); }
-      return {
-        statement: `<p>On considère le programme suivant :</p>
-<pre class="code">x = <span class="v">${A}</span>
+      // Chaque version : une boucle while, un compteur et une variable mise à jour, quatre questions
+      const vs = s => `<span class="v">${s}</span>`;
+      const ALGO = [
+        () => {
+          // Addition : B choisi pour 5 à 10 passages, comme pour la multiplication
+          const A = rnd(1, 5, 1), mult = Math.random() < 0.5, k = mult ? pick([2, 3]) : rnd(3, 9, 1), B = mult ? rnd(40, 300, 1) : A + k * rnd(5, 10, 1) - rnd(0, k - 1, 1);
+          const rows = []; let x = A, n = 0;
+          while (x < B) { x = mult ? x * k : x + k; n++; rows.push([n, n, x]); }
+          return {
+            code: `x = ${vs(A)}
 n = 0
-while x &lt; <span class="v">${B}</span>:
-    x = x ${mult ? '*' : '+'} <span class="v">${k}</span>
+while x &lt; ${vs(B)}:
+    x = x ${mult ? '*' : '+'} ${vs(k)}
     n = n + 1
-print(n, x)</pre>` +
-          ol('Quel est le rôle de la variable <code>n</code> ?', 'Compléter le tableau des valeurs de <code>n</code> et <code>x</code> à chaque passage dans la boucle.',
-            'Qu\'affiche le programme ?', `Que se passerait-il si la ligne <code>x = x ${mult ? '*' : '+'} ${k}</code> était supprimée ?`),
+print(n, x)`,
+            cpt: 'n', role: '<code>n</code> est un compteur de boucle : il compte le nombre de passages.',
+            head: ['Passage', 'n', 'x'], rows: [['départ', 0, A], ...rows], stop: `x ≥ ${B}`, out: `${n} ${x}`,
+            del: `x = x ${mult ? '*' : '+'} ${k}`, rdel: 'x ne changerait jamais : la condition resterait vraie et la boucle serait infinie.'
+          };
+        },
+        () => {
+          const C = rnd(80, 100, 5), c = rnd(8, 15, 1), Cm = rnd(15, 25, 5);
+          const rows = []; let x = C, h = 0;
+          while (x > Cm) { x -= c; h++; rows.push([h, h, x]); }
+          return {
+            intro: `Le programme suivant simule la décharge de la batterie d'un robot, qui perd ${v(c, '%')} de charge par heure :`,
+            code: `charge = ${vs(C)}
+h = 0
+while charge &gt; ${vs(Cm)}:
+    charge = charge - ${vs(c)}
+    h = h + 1
+print(h, charge)`,
+            cpt: 'h', role: '<code>h</code> est un compteur : il compte les passages dans la boucle, c\'est-à-dire les heures de fonctionnement.',
+            head: ['Passage', 'h', 'charge'], rows: [['départ', 0, C], ...rows], stop: `charge ≤ ${Cm}`, out: `${h} ${x}`,
+            del: `charge = charge - ${c}`, rdel: 'la charge ne diminuerait jamais : la condition resterait vraie et la boucle serait infinie.'
+          };
+        },
+        () => {
+          const A = rnd(200, 900, 1), B = rnd(5, 20, 1);
+          const rows = []; let x = A, n = 0;
+          while (x > B) { x = Math.floor(x / 2); n++; rows.push([n, n, x]); }
+          return {
+            code: `x = ${vs(A)}
+n = 0
+while x &gt; ${vs(B)}:
+    x = x // 2
+    n = n + 1
+print(n, x)`,
+            rappel: 'Rappel : <code>x // 2</code> donne le quotient entier de la division de x par 2 (on ne garde pas la virgule).',
+            cpt: 'n', role: '<code>n</code> est un compteur de boucle : il compte combien de fois on a divisé x par 2.',
+            head: ['Passage', 'n', 'x'], rows: [['départ', 0, A], ...rows], stop: `x ≤ ${B}`, out: `${n} ${x}`,
+            del: 'x = x // 2', rdel: 'x ne changerait jamais : la condition resterait vraie et la boucle serait infinie.'
+          };
+        },
+        () => {
+          const B = rnd(20, 60, 1);
+          const rows = []; let s = 0, i = 0;
+          while (s < B) { i++; s += i; rows.push([i, i, s]); }
+          return {
+            code: `s = 0
+i = 0
+while s &lt; ${vs(B)}:
+    i = i + 1
+    s = s + i
+print(i, s)`,
+            cpt: 'i', role: '<code>i</code> compte les passages dans la boucle ; c\'est aussi le nombre ajouté à <code>s</code> à chaque passage (1, puis 2, puis 3…).',
+            head: ['Passage', 'i', 's'], rows: [['départ', 0, 0], ...rows], stop: `s ≥ ${B}`, out: `${i} ${s}`,
+            del: 'i = i + 1', rdel: 'i resterait à 0 : on ajouterait 0 à s à chaque passage, la condition resterait vraie et la boucle serait infinie.'
+          };
+        }
+      ];
+      const A = pickNew('while', ALGO)();
+      return {
+        statement: `<p>${A.intro || 'On considère le programme suivant :'}</p><pre class="code">${A.code}</pre>` + (A.rappel ? `<p>${A.rappel}</p>` : '') +
+          ol(`Quel est le rôle de la variable <code>${A.cpt}</code> ?`, `Compléter le tableau des valeurs de ${A.head.slice(1).map(h => `<code>${h}</code>`).join(' et ')} à chaque passage dans la boucle.`,
+            'Qu\'affiche le programme ?', `Que se passerait-il si la ligne <code>${A.del}</code> était supprimée ?`),
         steps: [
-          ['1. Rôle de n', '<p><code>n</code> est un compteur de boucle : il compte le nombre de passages.</p>'],
-          ['2. Tableau', table(['Passage', 'n', 'x'], [['départ', 0, A], ...rows.map(r => [r[0], r[0], r[1]])]) +
-            `<p>La boucle s'arrête quand x ≥ ${B}.</p>`],
-          ['3. Affichage', `<p>Le programme affiche <b>${n} ${x}</b>.</p>`],
-          ['4. Sans la mise à jour', '<p>x ne changerait jamais : la condition resterait vraie et la boucle serait infinie.</p>']
+          [`1. Rôle de ${A.cpt}`, `<p>${A.role}</p>`],
+          ['2. Tableau', table(A.head, A.rows) + `<p>La boucle s'arrête quand ${A.stop}.</p>`],
+          ['3. Affichage', `<p>Le programme affiche <b>${A.out}</b>.</p>`],
+          ['4. Sans la mise à jour', `<p>${A.rdel}</p>`]
         ]
       };
     }
@@ -2468,24 +2692,65 @@ print(n, x)</pre>` +
     title: 'Bras robotisé : déplacer des objets avec une boucle',
     support: 'TP Bras robotisé réel (Blockly)',
     gen() {
+      // Chaque version : une boucle « pour », des coordonnées qui dépendent linéairement de i
       const n = rnd(3, 8, 1), x0 = rnd(150, 220, 5), y0 = rnd(-80, 0, 5), d = rnd(30, 60, 5), x1 = rnd(150, 220, 5), y1 = rnd(80, 160, 5), d2 = rnd(30, 60, 5), k = rnd(2, n, 1);
+      const ALGO = [
+        () => ({
+          obj: 'gomme', objs: 'gommes',
+          intro: `Des gommes sont alignées tous les ${v(d, 'mm')} à partir du point (${x0} ; ${y0}). Le bras doit les déposer tous les ${v(d2, 'mm')}
+          à partir du point (${x1} ; ${y1}).`,
+          prise: `MoveTo(${x0} + i × ${d}, ${y0})`, depose: `JumpTo(${x1} + i × ${d2}, ${y1})`,
+          qk: 'prise', rk: M(`x = ${x0} + ${k - 1} \\times ${d} = \\boxed{${x0 + (k - 1) * d}} \\qquad y = \\boxed{${y0}}`),
+          rn: M(`x = ${x1} + ${n - 1} \\times ${d2} = \\boxed{${x1 + (n - 1) * d2}} \\qquad y = \\boxed{${y1}}`)
+        }),
+        () => ({
+          obj: 'pièce', objs: 'pièces',
+          intro: `Un convoyeur amène les pièces une par une au point (${x0} ; ${y0}). Le bras doit les ranger sur un plateau, en ligne, tous les ${v(d2, 'mm')}
+          à partir du point (${x1} ; ${y1}), en s'éloignant selon l'axe y.`,
+          prise: `MoveTo(${x0}, ${y0})`, depose: `JumpTo(${x1}, ${y1} + i × ${d2})`,
+          qk: 'dépose', rk: M(`x = \\boxed{${x1}} \\qquad y = ${y1} + ${k - 1} \\times ${d2} = \\boxed{${y1 + (k - 1) * d2}}`),
+          rn: M(`x = \\boxed{${x1}} \\qquad y = ${y1} + ${n - 1} \\times ${d2} = \\boxed{${y1 + (n - 1) * d2}}`)
+        }),
+        (() => {
+          const z0 = rnd(5, 15, 5), h = rnd(20, 30, 5);
+          return () => ({
+            obj: 'cube', objs: 'cubes',
+            intro: `Des cubes de ${v(h, 'mm')} de côté sont alignés tous les ${v(d, 'mm')} à partir du point (${x0} ; ${y0} ; ${z0}). Le bras doit les empiler au point
+          (${x1} ; ${y1}) : le premier est posé à la hauteur z = ${z0} mm, chaque cube suivant sur le précédent.`,
+            prise: `MoveTo(${x0} + i × ${d}, ${y0}, ${z0})`, depose: `JumpTo(${x1}, ${y1}, ${z0} + i × ${h})`,
+            qk: 'prise', rk: M(`x = ${x0} + ${k - 1} \\times ${d} = \\boxed{${x0 + (k - 1) * d}} \\qquad y = \\boxed{${y0}} \\qquad z = \\boxed{${z0}}`),
+            rn: M(`x = \\boxed{${x1}} \\qquad y = \\boxed{${y1}} \\qquad z = ${z0} + ${n - 1} \\times ${h} = \\boxed{${z0 + (n - 1) * h}}`)
+          });
+        })(),
+        (() => {
+          const xd = x1 + (n - 1) * d2;
+          return () => ({
+            obj: 'gomme', objs: 'gommes',
+            intro: `Des gommes sont alignées tous les ${v(d, 'mm')} à partir du point (${x0} ; ${y0}). Le bras doit les déposer tous les ${v(d2, 'mm')}
+          à partir du point (${xd} ; ${y1}), en revenant vers le robot (x diminue).`,
+            prise: `MoveTo(${x0} + i × ${d}, ${y0})`, depose: `JumpTo(${xd} − i × ${d2}, ${y1})`,
+            qk: 'prise', rk: M(`x = ${x0} + ${k - 1} \\times ${d} = \\boxed{${x0 + (k - 1) * d}} \\qquad y = \\boxed{${y0}}`),
+            rn: M(`x = ${xd} - ${n - 1} \\times ${d2} = \\boxed{${x1}} \\qquad y = \\boxed{${y1}}`)
+          });
+        })()
+      ];
+      const A = pickNew('bras', ALGO)(), O = A.obj, Os = A.objs, fem = O !== 'cube', le = fem ? 'la' : 'le', no = fem ? 'la dernière' : 'le dernier';
       return {
-        statement: `<p>Des gommes sont alignées tous les ${v(d, 'mm')} à partir du point (${x0} ; ${y0}). Le bras doit les déposer tous les ${v(d2, 'mm')}
-          à partir du point (${x1} ; ${y1}). Les coordonnées sont en mm. Programme :</p>
+        statement: `<p>${A.intro} Les coordonnées sont en mm. Programme :</p>
 <pre class="code">pour i allant de 0 à ${n - 1} :
-    # va prendre la gomme
-    MoveTo(${x0} + i × ${d}, ${y0})
+    # va prendre ${le} ${O}
+    ${A.prise}
     fermer la pince
-    # va la déposer
-    JumpTo(${x1} + i × ${d2}, ${y1})
+    # va ${le} déposer
+    ${A.depose}
     ouvrir la pince</pre>` +
-          ol('Combien de gommes le programme déplace-t-il ?', `Quelles sont les coordonnées de prise de la gomme n° ${k} ?`,
-            'Où la dernière gomme est-elle déposée ?', 'Pourquoi utilise-t-on JumpTo plutôt que MoveTo pour aller déposer la gomme ?'),
+          ol(`Combien de ${Os} le programme déplace-t-il ?`, `Quelles sont les coordonnées de ${A.qk} ${fem ? 'de la' : 'du'} ${O} n° ${k} ?`,
+            `Où ${no} ${O} est-${fem ? 'elle' : 'il'} ${fem ? 'déposée' : 'déposé'} ?`, `Pourquoi utilise-t-on JumpTo plutôt que MoveTo pour aller déposer ${le} ${O} ?`),
         steps: [
-          ['1. Nombre de gommes', `<p>i prend les valeurs de 0 à ${n - 1}, soit <b>${n} gommes</b>.</p>`],
-          [`2. Gomme n° ${k}`, `<p>La gomme n° ${k} correspond à i = ${k - 1} :</p>` + M(`x = ${x0} + ${k - 1} \\times ${d} = \\boxed{${x0 + (k - 1) * d}} \\qquad y = \\boxed{${y0}}`)],
-          ['3. Dernière dépose', `<p>Pour i = ${n - 1} :</p>` + M(`x = ${x1} + ${n - 1} \\times ${d2} = \\boxed{${x1 + (n - 1) * d2}} \\qquad y = \\boxed{${y1}}`)],
-          ['4. JumpTo', '<p>JumpTo monte d\'abord à la verticale avant de se déplacer : cela évite de heurter les objets voisins. MoveTo va en ligne droite.</p>']
+          [`1. Nombre de ${Os}`, `<p>i prend les valeurs de 0 à ${n - 1}, soit <b>${n} ${Os}</b>.</p>`],
+          [`2. ${O[0].toUpperCase() + O.slice(1)} n° ${k}`, `<p>${fem ? 'La' : 'Le'} ${O} n° ${k} correspond à i = ${k - 1} :</p>` + A.rk],
+          [`3. ${fem ? 'Dernière' : 'Dernier'} ${O}`, `<p>Pour i = ${n - 1} :</p>` + A.rn],
+          ['4. JumpTo', `<p>JumpTo monte d'abord à la verticale avant de se déplacer : cela évite de heurter les objets voisins${O === 'cube' ? ' et la pile déjà construite' : ''}. MoveTo va en ligne droite.</p>`]
         ]
       };
     }

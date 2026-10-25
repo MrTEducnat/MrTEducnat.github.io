@@ -274,6 +274,9 @@ const rnd = (a, b, step = 1) => {
   return +(a + step * Math.floor(Math.random() * (n + 1))).toFixed(6);
 };
 const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+// Tirage d'une version d'exercice différente de la précédente (clé = nom de l'exercice)
+const _vu = {};
+const pickNew = (k, arr) => { let i; do i = Math.floor(Math.random() * arr.length); while (arr.length > 1 && i === _vu[k]); _vu[k] = i; return arr[i]; };
 
 // Nombre au format français (texte)
 const fr = (x, d = 2) => Number(x).toLocaleString('fr-FR', { maximumFractionDigits: d });
@@ -1475,17 +1478,20 @@ const EXOS = [
     title: 'Trace d\'un algorigramme',
     support: 'Annales : 2022_Métropole, 2023_Métropole',
     gen() {
-      const Cmax = rnd(5, 9, 1), N0 = rnd(Cmax - 3, Cmax - 1, 1), ev = Array.from({ length: rnd(7, 9, 1) }, () => Math.random() < 0.65 ? 'E' : 'S');
-      let nb = N0, ref = 0; const rows = [];
-      ev.forEach((e, i) => {
-        let act;
-        if (e === 'E') { if (nb < Cmax) { nb++; act = 'entrée acceptée'; } else { ref++; act = 'refus (voyant rouge)'; } }
-        else if (nb > 0) { nb--; act = 'sortie'; } else act = 'aucune action';
-        rows.push([i + 1, e === 'E' ? 'Entrée' : 'Sortie', act, nb]);
-      });
-      return {
-        statement: `<p>Un tourniquet compte les personnes présentes dans une salle de capacité maximale ${v(Cmax)}. Algorithme :</p>
-<pre class="code">nb ← ${N0}
+      // Chaque version : une variable mise à jour sur une suite d'événements de deux ou trois types, avec des conditions et un comptage
+      const ALGO = [
+        () => {
+          const Cmax = rnd(5, 9, 1), N0 = rnd(Cmax - 3, Cmax - 1, 1), ev = Array.from({ length: rnd(7, 9, 1) }, () => Math.random() < 0.65 ? 'E' : 'S');
+          let nb = N0, ref = 0; const rows = [];
+          ev.forEach((e, i) => {
+            let act;
+            if (e === 'E') { if (nb < Cmax) { nb++; act = 'acceptée'; } else { ref++; act = 'refusée'; } }
+            else if (nb > 0) { nb--; act = 'sortie'; } else act = 'aucune';
+            rows.push([i + 1, e, act, nb]);
+          });
+          return {
+            intro: `Un tourniquet compte les personnes présentes dans une salle de capacité maximale ${v(Cmax)}.`, x: 'nb', x0: N0,
+            code: `nb ← ${N0}
 POUR chaque passage détecté FAIRE
     SI passage = Entrée ALORS
         SI nb &lt; ${Cmax} ALORS
@@ -1499,12 +1505,110 @@ POUR chaque passage détecté FAIRE
             nb ← nb − 1
         FIN SI
     FIN SI
-FIN POUR</pre><p>Passages détectés dans l'ordre : ${v(ev.join(' '))} (E = entrée, S = sortie).</p>` +
-          ol('Compléter la trace de l\'algorithme (valeur de nb après chaque passage).', 'Quelle est la valeur finale de nb ?', 'Combien d\'entrées ont été refusées ?'),
+FIN POUR`,
+            evt: `Passages détectés dans l'ordre : ${v(ev.join(' '))} (E = entrée, S = sortie).`,
+            rows, fin: nb, q3: 'Combien d\'entrées ont été refusées ?', t3: 'Refus', r3: `<b>${ref}</b> entrée(s) refusée(s).`
+          };
+        },
+        () => {
+          const L0 = rnd(1, 3, 1), Lmax = rnd(L0 + 2, 8, 1), ev = Array.from({ length: rnd(7, 9, 1) }, () => Math.random() < 0.65 ? 'A' : 'S');
+          let L = L0, ref = 0; const rows = [];
+          ev.forEach((e, i) => {
+            let act;
+            if (e === 'A') { if (L > 0) { L--; act = 'barrière levée'; } else { ref++; act = 'COMPLET'; } }
+            else if (L < Lmax) { L++; act = 'sortie'; } else act = 'aucune';
+            rows.push([i + 1, e, act, L]);
+          });
+          return {
+            intro: `L'entrée d'un parking de ${v(Lmax)} places affiche le nombre de places libres L. Au départ, ${v(L0)} places sont libres.`, x: 'L', x0: L0,
+            code: `L ← ${L0}
+POUR chaque véhicule détecté FAIRE
+    SI véhicule = Arrivée ALORS
+        SI L &gt; 0 ALORS
+            L ← L − 1
+            lever la barrière
+        SINON
+            afficher « COMPLET »
+        FIN SI
+    SINON
+        SI L &lt; ${Lmax} ALORS
+            L ← L + 1
+        FIN SI
+    FIN SI
+FIN POUR`,
+            evt: `Véhicules détectés dans l'ordre : ${v(ev.join(' '))} (A = arrivée, S = sortie).`,
+            rows, fin: L, q3: 'Combien de fois « COMPLET » a-t-il été affiché ?', t3: 'COMPLET', r3: `« COMPLET » a été affiché <b>${ref}</b> fois.`
+          };
+        },
+        () => {
+          const C = rnd(3, 4, 1), N0 = rnd(0, C - 1, 1), ev = Array.from({ length: rnd(8, 10, 1) }, () => Math.random() < 0.75 ? 'B' : 'D');
+          let nb = N0, ct = 0, rb = 0; const rows = [];
+          ev.forEach((e, i) => {
+            let act;
+            if (e === 'B') { nb++; act = 'en carton'; if (nb === C) { ct++; nb = 0; act = 'carton fermé'; } }
+            else { rb++; act = 'éjectée'; }
+            rows.push([i + 1, e, act, nb]);
+          });
+          return {
+            intro: `Une machine range des pièces dans des cartons de ${v(C)} pièces. Une caméra trie les pièces : les pièces défectueuses sont éjectées.
+          Au départ, le carton en cours contient déjà ${v(N0)} pièce(s).`, x: 'nb', x0: N0,
+            code: `nb ← ${N0}
+cartons ← 0
+POUR chaque pièce détectée FAIRE
+    SI pièce = Bonne ALORS
+        nb ← nb + 1
+        SI nb = ${C} ALORS
+            fermer le carton
+            cartons ← cartons + 1
+            nb ← 0
+        FIN SI
+    SINON
+        éjecter la pièce
+    FIN SI
+FIN POUR`,
+            evt: `Pièces détectées dans l'ordre : ${v(ev.join(' '))} (B = bonne, D = défectueuse).`,
+            rows, fin: nb, q3: 'Combien de cartons ont été fermés ? Combien de pièces ont été éjectées ?', t3: 'Cartons et rebuts',
+            r3: `<b>${ct}</b> carton(s) fermé(s) et <b>${rb}</b> pièce(s) éjectée(s).`
+          };
+        },
+        () => {
+          const P = pick([1, 1.5, 2]), ev = Array.from({ length: rnd(7, 9, 1) }, (_, i) => i < 2 ? pick(['0,5', '1']) : pick(['0,5', '1', '1', 'B', 'B']));
+          let cr = 0, nb = 0, ref = 0; const rows = [];
+          ev.forEach((e, i) => {
+            let act;
+            if (e !== 'B') { cr += e === '1' ? 1 : 0.5; act = 'ajout'; }
+            else if (cr >= P) { cr -= P; nb++; act = 'servie'; }
+            else { ref++; act = 'refus'; }
+            rows.push([i + 1, e === 'B' ? 'B' : e + ' €', act, fr(cr, 2)]);
+          });
+          return {
+            intro: `Un distributeur de boissons accepte les pièces de 0,50 € et de 1 €. Une boisson coûte ${v(P, '€', 2)}.`, x: 'crédit', x0: 0,
+            code: `crédit ← 0
+POUR chaque événement FAIRE
+    SI événement = pièce ALORS
+        crédit ← crédit + valeur
+    SINON
+        SI crédit ≥ ${fr(P, 2)} ALORS
+            servir une boisson
+            crédit ← crédit − ${fr(P, 2)}
+        SINON
+            afficher « insuffisant »
+        FIN SI
+    FIN SI
+FIN POUR`,
+            evt: `Événements dans l'ordre : ${v(ev.join(' '))} (0,5 et 1 = pièce, valeur en €, B = appui sur le bouton).`,
+            rows, fin: `${fr(cr, 2)} €`, q3: 'Combien de boissons ont été servies ?', t3: 'Boissons', r3: `<b>${nb}</b> boisson(s) servie(s), et ${ref} refus pour crédit insuffisant.`
+          };
+        }
+      ];
+      const A = pickNew('algorigramme', ALGO)();
+      return {
+        statement: `<p>${A.intro} Algorithme :</p><pre class="code">${A.code}</pre><p>${A.evt}</p>` +
+          ol(`Compléter la trace de l'algorithme (valeur de ${A.x} après chaque événement).`, `Quelle est la valeur finale de ${A.x} ?`, A.q3),
         steps: [
-          ['1. Trace', table(['Passage', 'Type', 'Action', 'nb'], [['départ', '', '', N0], ...rows])],
-          ['2. Valeur finale', `<p>nb = <b>${nb}</b>.</p>`],
-          ['3. Refus', `<p><b>${ref}</b> entrée(s) refusée(s).</p>`]
+          ['1. Trace', table(['N°', 'Type', 'Action', A.x], [['', 'départ', '', A.x0], ...A.rows])],
+          ['2. Valeur finale', `<p>${A.x} = <b>${A.fin}</b>.</p>`],
+          [`3. ${A.t3}`, `<p>${A.r3}</p>`]
         ]
       };
     }
@@ -1514,33 +1618,45 @@ FIN POUR</pre><p>Passages détectés dans l'ordre : ${v(ev.join(' '))} (E = entr
     title: 'Trace d\'un programme Arduino',
     support: 'BO 4.3.5 (C++) · annales : 2024_Métropole, 2025_Métropole',
     gen() {
-      const seuil = rnd(24, 32, 0.5), N = rnd(120, 280, 1), U = N * 5 / 1024, T = (U - 0.5) * 100, on = T > seuil;
-      const Ns = Math.floor((seuil / 100 + 0.5) * 1024 / 5) + 1;
+      // Chaque version : un capteur linéaire V = a + b × X, un seuil, un actionneur en tout ou rien
+      const S = pickNew('arduino', [
+        { cap: 'capteur de température MCP9700', loi: '0,5 V + 10 mV/°C × T', X: 'T', un: '°C', gr: 'Température', a: 0.5, b: 0.01, aT: '0{,}5', bT: '0{,}01',
+          c: '(U - 0.5) * 100.0', inv: '\\frac{U - 0{,}5}{0{,}01} = (U - 0{,}5) \\times 100', s: [24, 32, 0.5], d: 1, sup: true, act: 'Un ventilateur', le: 'le ventilateur', pin: 8, del: 1000 },
+        { cap: 'capteur de température LM35', loi: '10 mV/°C × T', X: 'T', un: '°C', gr: 'Température', a: 0, b: 0.01, aT: '', bT: '0{,}01',
+          c: 'U * 100.0', inv: '\\frac{U}{0{,}01} = U \\times 100', s: [24, 27, 0.5], d: 1, sup: false, act: 'La résistance chauffante d\'un aquarium', le: 'la résistance chauffante', pin: 7, del: 500 },
+        { cap: 'capteur de luminosité', loi: '4 mV/lx × E', X: 'E', un: 'lx', gr: 'Éclairement', a: 0, b: 0.004, aT: '', bT: '0{,}004',
+          c: 'U * 250.0', inv: '\\frac{U}{0{,}004} = U \\times 250', s: [200, 600, 50], d: 0, sup: false, act: 'L\'éclairage d\'un couloir', le: 'l\'éclairage', pin: 9, del: 2000 },
+        { cap: 'capteur d\'humidité HIH-4000', loi: '0,8 V + 31 mV/% × HR', X: 'HR', un: '%', gr: 'Humidité', a: 0.8, b: 0.031, aT: '0{,}8', bT: '0{,}031',
+          c: '(U - 0.8) / 0.031', inv: '\\frac{U - 0{,}8}{0{,}031}', s: [55, 70, 1], d: 0, sup: true, act: 'Un déshumidificateur', le: 'le déshumidificateur', pin: 6, del: 5000 }
+      ]);
+      const seuil = rnd(...S.s), Xv = seuil * rnd(0.6, 1.4, 0.01), N = Math.min(1023, Math.max(1, Math.round((S.a + S.b * Xv) * 1024 / 5)));
+      const U = N * 5 / 1024, X = (U - S.a) / S.b, on = S.sup ? X > seuil : X < seuil, Us = S.a + S.b * seuil, q = +(Us * 1024 / 5).toFixed(6);
+      const Ns = S.sup ? Math.floor(q) + 1 : Math.ceil(q) - 1, sT = fr(seuil, S.d).replace(/\s/g, ''), Le = S.le[0].toUpperCase() + S.le.slice(1);
       return {
-        statement: `<p>Un capteur de température MCP9700 (V<sub>out</sub> = 0,5 V + 10 mV/°C × T) est relié à l'entrée A0 d'une carte Arduino Uno (CAN 10 bits, 0-5 V).
-          Un ventilateur est commandé par la broche 8.</p>
-<pre class="code">const float SEUIL = <span class="v">${fr(seuil, 1).replace(',', '.')}</span>;
+        statement: `<p>Un ${S.cap} (V<sub>out</sub> = ${S.loi}) est relié à l'entrée A0 d'une carte Arduino Uno (CAN 10 bits, 0-5 V).
+          ${S.act} est commandé${S.le.startsWith('la') ? 'e' : ''} par la broche ${S.pin}.</p>
+<pre class="code">const float SEUIL = <span class="v">${sT.replace(',', '.')}</span>;
 
 void loop() {
   int N = analogRead(A0);
   float U = N * 5.0 / 1024.0;
-  float T = (U - 0.5) * 100.0;
-  if (T &gt; SEUIL) {
-    digitalWrite(8, HIGH);
+  float ${S.X} = ${S.c};
+  if (${S.X} ${S.sup ? '&gt;' : '&lt;'} SEUIL) {
+    digitalWrite(${S.pin}, HIGH);
   } else {
-    digitalWrite(8, LOW);
+    digitalWrite(${S.pin}, LOW);
   }
-  delay(1000);
+  delay(${S.del});
 }</pre>` +
-          ol(`analogRead(A0) renvoie ${v(N)}. Calculer U.`, 'Calculer T et justifier la formule utilisée dans le programme.', 'Le ventilateur est-il en marche ?',
-            'À partir de quelle valeur de N le ventilateur se met-il en marche ?', 'Toutes les combien de temps la mesure est-elle refaite ?'),
+          ol(`analogRead(A0) renvoie ${v(N)}. Calculer U.`, `Calculer ${S.X} et justifier la formule utilisée dans le programme.`, `${Le} est-${S.le.startsWith('la') ? 'elle' : 'il'} en marche ?`,
+            `Pour quelles valeurs de N ${S.le} est-${S.le.startsWith('la') ? 'elle' : 'il'} en marche ?`, 'Toutes les combien de temps la mesure est-elle refaite ?'),
         steps: [
           ['1. Tension', M(`U = ${N} \\times \\frac{5}{1024} = \\boxed{${tx(U, 4)}${u('V')}}`)],
-          ['2. Température', M(`U = 0{,}5 + 0{,}01 \\times T \\;\\Rightarrow\\; T = \\frac{U - 0{,}5}{0{,}01} = (U - 0{,}5) \\times 100 = \\boxed{${tx(T, 2)}${u('°C')}}`)],
-          ['3. Ventilateur', `<p>${fr(T, 2)} °C ${on ? '>' : '≤'} ${fr(seuil, 1)} °C : la broche 8 est mise à <b>${on ? 'HIGH, le ventilateur tourne' : 'LOW, le ventilateur est arrêté'}</b>.</p>`],
-          ['4. Seuil en N', M(`U_s = 0{,}5 + 0{,}01 \\times ${tx(seuil, 1)} = ${tx(seuil / 100 + 0.5, 3)}${u('V')} \\qquad N = \\frac{${tx(seuil / 100 + 0.5, 3)} \\times 1024}{5} = ${tx((seuil / 100 + 0.5) * 1024 / 5, 1)}`) +
-            `<p>Le ventilateur démarre pour N ≥ <b>${Ns}</b> (T doit dépasser strictement le seuil).</p>`],
-          ['5. Période', '<p>delay(1000) : une mesure toutes les <b>1 000 ms = 1 s</b> environ.</p>']
+          [`2. ${S.gr}`, M(`U = ${S.aT ? S.aT + ' + ' : ''}${S.bT} \\times ${S.X} \\;\\Rightarrow\\; ${S.X} = ${S.inv} = \\boxed{${tx(X, 2)}${u(S.un)}}`)],
+          [`3. ${Le}`, `<p>${fr(X, 2)} ${S.un} ${X > seuil ? '>' : X < seuil ? '<' : '='} ${sT} ${S.un} : la broche ${S.pin} est mise à <b>${on ? `HIGH, ${S.le} est en marche` : `LOW, ${S.le} est à l'arrêt`}</b>.</p>`],
+          ['4. Seuil en N', M(`U_s = ${S.aT ? S.aT + ' + ' : ''}${S.bT} \\times ${tx(seuil, S.d)} = ${tx(Us, 4)}${u('V')} \\qquad N = \\frac{${tx(Us, 4)} \\times 1024}{5} = ${tx(q, 1)}`) +
+            `<p>${Le} est en marche pour N ${S.sup ? '≥' : '≤'} <b>${Ns}</b> (${S.X} doit être strictement ${S.sup ? 'supérieur' : 'inférieur'} au seuil).</p>`],
+          ['5. Période', `<p>delay(${S.del}) : une mesure toutes les <b>${fr(S.del, 0)} ms = ${fr(S.del / 1000, 1)} s</b> environ.</p>`]
         ]
       };
     }
@@ -1550,28 +1666,103 @@ void loop() {
     title: 'Trace d\'un programme Python',
     support: 'BO 4.3.5 (Python) · annale : 2025_Métropole_remplacement',
     gen() {
-      const Tmin = rnd(30, 36, 1), Tmax = Tmin + rnd(3, 6, 1), mes = Array.from({ length: 6 }, () => +rnd(Tmin - 3, Tmax + 3, 0.5).toFixed(1));
-      const al = mes.map(t => (t < Tmin || t > Tmax) ? 1 : 0), nb = al.reduce((a, b) => a + b, 0), t0 = pick(mes);
-      return {
-        statement: `<p>Le script suivant surveille la température d'un digesteur :</p>
-<pre class="code">def check_alarm(T, Tmin, Tmax):
+      // Chaque version : une fonction appliquée à chaque élément d'une liste, un comptage ou un cumul, quatre questions
+      const py = x => Number.isInteger(x) ? x + '.0' : String(x), liste = (n, L) => `${n} = [${L.slice(0, 3).join(', ')},\n${' '.repeat(n.length + 4)}${L.slice(3).join(', ')}]`;
+      const ALGO = [
+        () => {
+          const Tmin = rnd(30, 36, 1), Tmax = Tmin + rnd(3, 6, 1), mes = Array.from({ length: 6 }, () => +rnd(Tmin - 3, Tmax + 3, 0.5).toFixed(1));
+          const al = mes.map(t => (t < Tmin || t > Tmax) ? 1 : 0), nb = al.reduce((a, b) => a + b, 0), t0 = pick(mes);
+          return {
+            intro: 'Le script suivant surveille la température d\'un digesteur :', f: 'check_alarm',
+            code: `def check_alarm(T, Tmin, Tmax):
     if T &lt; Tmin or T &gt; Tmax:
         return 1
     return 0
 
-mesures = [${mes.slice(0, 3).map(String).join(', ')},
-           ${mes.slice(3).map(String).join(', ')}]
+${liste('mesures', mes.map(String))}
 nb = 0
 for T in mesures:
     nb = nb + check_alarm(T, ${Tmin}, ${Tmax})
-print("Alarmes :", nb)</pre>` +
-          ol(`Que renvoie check_alarm(${String(t0)}, ${Tmin}, ${Tmax}) ?`, 'Pour chaque mesure, indiquer la valeur renvoyée par check_alarm.', 'Qu\'affiche le programme ?',
-            'Quel est le rôle de la fonction check_alarm ?'),
+print("Alarmes :", nb)`,
+            call: `check_alarm(${String(t0)}, ${Tmin}, ${Tmax})`,
+            r1: `${String(t0)} ${t0 < Tmin ? '< ' + Tmin : t0 > Tmax ? '> ' + Tmax : `est entre ${Tmin} et ${Tmax}`} : la fonction renvoie <b>${(t0 < Tmin || t0 > Tmax) ? 1 : 0}</b>.`,
+            head: ['T', ...mes.map(String)], row: ['check_alarm', ...al], out: `Alarmes : ${nb}`,
+            role: `Elle renvoie 1 si la température sort de la plage autorisée [${Tmin} ; ${Tmax}], 0 sinon. C'est un sous-programme réutilisable.`
+          };
+        },
+        () => {
+          const U1 = rnd(11.5, 11.9, 0.1), U2 = +(U1 + rnd(0.3, 0.6, 0.1)).toFixed(1), mes = Array.from({ length: 6 }, () => +rnd(U1 - 0.5, U2 + 0.6, 0.1).toFixed(1));
+          const et = x => x < U1 ? '"vide"' : x < U2 ? '"faible"' : '"ok"', res = mes.map(et), nb = res.filter(r => r !== '"ok"').length, t0 = pick(mes);
+          return {
+            intro: 'Le script suivant contrôle la tension des batteries 12 V d\'un parc de vélos électriques :', f: 'etat',
+            code: `def etat(U):
+    if U &lt; ${U1}:
+        return "vide"
+    elif U &lt; ${U2}:
+        return "faible"
+    return "ok"
+
+${liste('tensions', mes.map(String))}
+nb = 0
+for U in tensions:
+    if etat(U) != "ok":
+        nb = nb + 1
+print("A recharger :", nb)`,
+            call: `etat(${t0})`,
+            r1: `${t0} ${t0 < U1 ? `< ${U1}` : t0 < U2 ? `≥ ${U1} mais < ${U2}` : `≥ ${U2}`} : la fonction renvoie <b>${et(t0)}</b>.`,
+            head: ['U', ...mes.map(String)], row: ['etat', ...res], out: `A recharger : ${nb}`,
+            role: `Elle classe une batterie selon sa tension : « vide » sous ${fr(U1, 1)} V, « faible » entre ${fr(U1, 1)} V et ${fr(U2, 1)} V, « ok » au-delà. Le programme compte les batteries à recharger.`
+          };
+        },
+        () => {
+          const lim = pick([30, 50, 70]), mes = Array.from({ length: 6 }, () => rnd(Math.round(lim / 3.6) - 6, Math.round(lim / 3.6) + 6, 1));
+          const kmh = mes.map(x => +(x * 3.6).toFixed(1)), nb = kmh.filter(x => x > lim).length, t0 = pick(mes);
+          return {
+            intro: `Un radar pédagogique mesure la vitesse des véhicules en m/s dans une zone limitée à ${v(lim, 'km/h')}. Script :`, f: 'en_kmh',
+            code: `def en_kmh(v):
+    return v * 3.6
+
+${liste('vitesses', mes.map(String))}
+exces = 0
+for v in vitesses:
+    if en_kmh(v) &gt; ${lim}:
+        exces = exces + 1
+print("Excès :", exces)`,
+            call: `en_kmh(${t0})`,
+            r1: `${t0} × 3,6 = ${fr(t0 * 3.6, 1)} : la fonction renvoie <b>${py(+(t0 * 3.6).toFixed(1))}</b>.`,
+            head: ['v (m/s)', ...mes], row: ['en_kmh', ...kmh.map(x => fr(x, 1))], out: `Excès : ${nb}`,
+            role: 'Elle convertit une vitesse de m/s en km/h. On multiplie par 3,6 car 1 m/s = 3 600 m en 1 h = 3,6 km/h. Le programme compte les véhicules au-dessus de la limite.'
+          };
+        },
+        () => {
+          const mes = Array.from({ length: 6 }, () => rnd(0.5, 8, 0.5)), P = mes.map(x => 230 * x), tot = P.reduce((a, b) => a + b, 0), t0 = pick(mes);
+          return {
+            intro: 'Le script suivant calcule la puissance absorbée par les appareils branchés sur une même ligne 230 V, à partir de leurs courants (en A) :', f: 'puissance',
+            code: `def puissance(I):
+    return 230 * I
+
+${liste('courants', mes.map(py))}
+total = 0
+for I in courants:
+    total = total + puissance(I)
+print("Puissance totale :", total)`,
+            call: `puissance(${py(t0)})`,
+            r1: `230 × ${fr(t0, 1)} = ${fr(230 * t0, 0)} : la fonction renvoie <b>${py(230 * t0)}</b> (en W).`,
+            head: ['I (A)', ...mes.map(x => fr(x, 1))], row: ['puissance', ...P.map(x => fr(x, 0))], out: `Puissance totale : ${py(tot)}`,
+            role: `Elle calcule la puissance P = U × I d'un appareil sous U = 230 V. Le programme fait la somme : ${fr(tot, 0)} W au total (Python affiche ${py(tot)} car les courants sont des nombres à virgule).`
+          };
+        }
+      ];
+      const A = pickNew('python', ALGO)();
+      return {
+        statement: `<p>${A.intro}</p><pre class="code">${A.code}</pre>` +
+          ol(`Que renvoie ${A.call} ?`, `Pour chaque valeur de la liste, indiquer la valeur renvoyée par ${A.f}.`, 'Qu\'affiche le programme ?',
+            `Quel est le rôle de la fonction ${A.f} ?`),
         steps: [
-          ['1. Appel', `<p>${String(t0)} ${t0 < Tmin ? '< ' + Tmin : t0 > Tmax ? '> ' + Tmax : `est entre ${Tmin} et ${Tmax}`} : la fonction renvoie <b>${(t0 < Tmin || t0 > Tmax) ? 1 : 0}</b>.</p>`],
-          ['2. Mesures', table(['T', ...mes.map(String)], [['check_alarm', ...al]])],
-          ['3. Affichage', `<p>Le programme affiche <b>Alarmes : ${nb}</b>.</p>`],
-          ['4. Rôle', `<p>Elle renvoie 1 si la température sort de la plage autorisée [${Tmin} ; ${Tmax}], 0 sinon. C'est un sous-programme réutilisable.</p>`]
+          ['1. Appel', `<p>${A.r1}</p>`],
+          ['2. Valeurs', table([A.head[0], `${A.f}(…)`], A.head.slice(1).map((x, j) => [x, A.row[j + 1]]))],
+          ['3. Affichage', `<p>Le programme affiche <b>${A.out}</b>.</p>`],
+          ['4. Rôle', `<p>${A.role}</p>`]
         ]
       };
     }
