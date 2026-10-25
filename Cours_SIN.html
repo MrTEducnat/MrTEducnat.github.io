@@ -828,13 +828,44 @@ const EXOS = [
     title: 'Trames, modèle OSI et services réseau',
     support: 'Programme SIN, chapitres 3.4.3 et 5.3.4 · annales : 2022_Mayotte, 2025_Polynésie, 2025_Métropole',
     body:
-      P('Les données échangées sur un réseau voyagent dans des trames qui ajoutent, à chaque niveau, les informations nécessaires à leur acheminement. Cette fiche présente l\'encapsulation, le modèle OSI, les services et les ports utilisés, et le calcul d\'un temps de transfert en Wi-Fi.') +
-      H('1. Encapsulation') +
-      P('Une requête web voyage emballée dans plusieurs en-têtes successifs, chacun ajouté par une couche du modèle :') +
+      P('Les données échangées sur un réseau voyagent dans des trames qui ajoutent, à chaque niveau, les informations nécessaires à leur acheminement. Cette fiche présente le modèle OSI, l\'encapsulation, les services et les ports utilisés, et le calcul d\'un temps de transfert en Wi-Fi.') +
+      H('1. Modèle OSI') +
+      P('Le modèle OSI découpe une communication en 7 <b>couches</b>. Chaque couche rend un service à la couche du dessus et utilise celle du dessous, sans se soucier de la façon dont les autres travaillent : on peut changer de câble (couche 1) sans modifier le navigateur web (couche 7).') +
+      table(['Couche', 'Rôle', 'Exemples'], [['7 Application', 'service rendu à l\'utilisateur', 'HTTP, FTP, DNS, DHCP, Modbus TCP'], ['6 Présentation', 'format des données, chiffrement, compression', 'TLS, JPEG, ASCII'],
+        ['5 Session', 'ouverture et fermeture du dialogue', 'ouverture d\'une session'], ['4 Transport', 'découpage en segments, ports, fiabilité', 'TCP (fiable), UDP (rapide)'],
+        ['3 Réseau', 'adressage logique et routage', 'IP, ICMP ; routeur'], ['2 Liaison de données', 'adresses physiques (MAC), contrôle d\'erreurs', 'Ethernet, Wi-Fi ; switch'], ['1 Physique', 'transmission des bits', 'câble, fibre, ondes radio']]) +
+      UL('Les <b>couches hôtes</b> (7 à 4) ne sont traitées que par les deux machines qui communiquent.', 'Les <b>couches médias</b> (3 à 1) sont aussi traitées par les équipements du réseau traversés : switch (couche 2), routeur (couche 3).',
+        'Le modèle <b>TCP/IP</b>, utilisé en pratique, regroupe ces couches en 4 : application (7 à 5), transport (4), internet (3) et accès réseau (2 et 1).') +
+      H('2. Encapsulation') +
+      P('À l\'émission, chaque couche reçoit de la couche du dessus un bloc de données, le <b>SDU</b> (<i>Service Data Unit</i>), qu\'elle ne lit pas. Elle lui ajoute son <b>en-tête</b> (H pour <i>header</i>) et forme ainsi sa propre unité de données, la <b>PDU</b> (<i>Protocol Data Unit</i>), qu\'elle passe à la couche du dessous. La couche liaison ajoute aussi un en-queue (DF), qui contient un code de contrôle d\'erreur ; la couche physique envoie enfin la trame bit par bit.') +
+      (() => {
+        // Les 7 couches à gauche ; à droite, la PDU de chaque couche : en-têtes ajoutés devant les données (D), SDU en pointillés
+        const HD = ['AH', 'PH', 'SH', 'TH', 'NH', 'DH'], NOM = ['APDU', 'PPDU', 'SPDU', 'TPDU ou segment', 'paquet', 'trame', 'bits'];
+        const CO = ['Application', 'Présentation', 'Session', 'Transport', 'Réseau', 'Liaison', 'Physique'], X = k => 288 - 22 * (k + 1), box = (x, t, cl) => `<rect class="${cl}" x="${x}" y="${t}" width="22" height="20"/>`;
+        let g = box(288, 10, 'flow') + dT(299, 24, 'D', 'middle', 11) + dT(282, 24, 'données à envoyer', 'end', 11);
+        CO.forEach((c, i) => {
+          const y = 36 + i * 40;
+          g += `<rect class="thin" style="fill:var(--surface)" x="24" y="${y}" width="98" height="32" rx="4"/>` +
+            (i === 5 ? dT(73, y + 14, 'Liaison', 'middle', 12) + dT(73, y + 27, 'de données', 'middle', 12) : dT(73, y + 21, c, 'middle', 12));
+          if (i === 6) g += `<rect class="thin" x="156" y="${y + 3}" width="176" height="20"/>` + dT(244, y + 17, '0101 1100 1001 0011 1010 0101', 'middle', 11);
+          else {
+            if (i > 0) g += `<rect class="c3" x="${X(i - 1) - 2}" y="${y + 1}" width="${310 - X(i - 1) + 4}" height="24"/>`;
+            g += box(288, y + 3, 'flow') + dT(299, y + 17, 'D', 'middle', 11);
+            for (let k = 0; k <= i; k++) g += box(X(k), y + 3, 'fillv') + dT(X(k) + 11, y + 17, HD[k], 'middle', 10);
+            if (i === 5) g += box(310, y + 3, 'fillv') + dT(321, y + 17, 'DF', 'middle', 10);
+          }
+          g += dT(332, y + 36, NOM[i], 'end', 11);
+        });
+        g += `<line class="c2" style="stroke-width:3" x1="16" y1="36" x2="16" y2="188"/><line class="c1" style="stroke-width:3" x1="16" y1="196" x2="16" y2="308"/>` +
+          `<text transform="translate(11 112) rotate(-90)" text-anchor="middle" style="font-size:11px">couches hôtes</text><text transform="translate(11 252) rotate(-90)" text-anchor="middle" style="font-size:11px">couches médias</text>` +
+          dT(14, 334, 'D : données ; AH… DH : en-têtes ajoutés par chaque couche', 'start', 11) + dT(14, 350, 'DF : en-queue de trame (contrôle d\'erreur)', 'start', 11) +
+          dT(14, 366, 'pointillés : SDU = PDU de la couche du dessus', 'start', 11);
+        return dSV(340, 374, g, 'Encapsulation : en descendant les couches, chaque couche ajoute son en-tête à la PDU reçue (son SDU)', 460);
+      })() +
+      P('À la réception, le chemin est inverse : chaque couche lit son en-tête, le retire et passe le reste à la couche du dessus. C\'est la <b>désencapsulation</b>.') +
+      P('En pratique, avec TCP/IP, une requête web voyage ainsi emballée :') +
       CHAIN([['Trame Ethernet', 'MAC dest., MAC source'], ['Paquet IP', 'IP source, IP dest.'], ['Segment TCP / UDP', 'ports'], ['Données', 'HTTP, Modbus TCP…']]) +
       P('Dans une capture (Wireshark), l\'en-tête Ethernet commence par l\'adresse MAC de destination (6 octets) puis la source (6 octets) et le type (08 00 = IPv4). Dans l\'en-tête IP, les adresses source et destination occupent 4 octets chacune, écrits en hexadécimal : C0 A8 00 0A = 192.168.0.10.') +
-      H('2. Modèle OSI') +
-      table(['Couche', 'Équipement ou protocole'], [['7 Application', 'HTTP, FTP, DNS, DHCP, Modbus TCP'], ['4 Transport', 'TCP (fiable), UDP (rapide)'], ['3 Réseau', 'IP, routeur'], ['2 Liaison', 'Ethernet, Wi-Fi, switch'], ['1 Physique', 'câble, fibre, ondes']]) +
       H('3. Services et ports') +
       dSV(340, 140, `<rect class="flow" x="14" y="40" width="96" height="60" rx="8"/><rect class="fillv" x="230" y="40" width="96" height="60" rx="8"/>` + dA(110, 58, 230, 58) + dA(230, 84, 110, 84, 'arrowv') +
         dT(62, 66, 'client', 'middle', 13) + dT(62, 84, '192.168.0.10', 'middle', 11) + dT(278, 66, 'serveur web', 'middle', 13) + dT(278, 84, 'port 80', 'middle', 11) + dT(170, 50, 'requête GET', 'middle', 11) + dT(170, 104, 'page HTML', 'middle', 11),
