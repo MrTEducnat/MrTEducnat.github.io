@@ -1405,7 +1405,7 @@ const EXOS = [
       // 8 octets par ligne pour rester lisible sur téléphone
       const rows = []; for (let i = 0; i < bytes.length; i += 8) rows.push([H2(i).padStart(4, '0'), bytes.slice(i, i + 8).map(H2).join(' ')]);
       return {
-        statement: `<p>Voici le début d'une trame capturée avec Wireshark. Structure : adresse MAC destination (6 octets), adresse MAC source (6 octets), type (2 octets),
+        statement: `<p>Voici le début d'une trame capturée par un analyseur de réseau. Structure : adresse MAC destination (6 octets), adresse MAC source (6 octets), type (2 octets),
           puis l'en-tête IPv4 ; dans cet en-tête, le protocole est à l'octet 23, l'adresse IP source aux octets 26 à 29 et l'adresse IP destination aux octets 30 à 33
           (numérotation à partir de 0).</p>` + `<pre class="code">${rows.map(r => r.join('   ')).join('\n')}</pre>` +
           ol('Relever les adresses MAC destination et source.', 'Que signifie le type 08 00 ? Quel est le protocole de transport (06 = TCP, 11 = UDP) ?',

@@ -865,7 +865,7 @@ const EXOS = [
       P('À la réception, le chemin est inverse : chaque couche lit son en-tête, le retire et passe le reste à la couche du dessus. C\'est la <b>désencapsulation</b>.') +
       P('En pratique, avec TCP/IP, une requête web voyage ainsi emballée :') +
       CHAIN([['Trame Ethernet', 'MAC dest., MAC source'], ['Paquet IP', 'IP source, IP dest.'], ['Segment TCP / UDP', 'ports'], ['Données', 'HTTP, Modbus TCP…']]) +
-      P('Dans une capture (Wireshark), l\'en-tête Ethernet commence par l\'adresse MAC de destination (6 octets) puis la source (6 octets) et le type (08 00 = IPv4). Dans l\'en-tête IP, les adresses source et destination occupent 4 octets chacune, écrits en hexadécimal : C0 A8 00 0A = 192.168.0.10.') +
+      P('Dans une trame capturée par un analyseur de réseau, l\'en-tête Ethernet commence par l\'adresse MAC de destination (6 octets) puis la source (6 octets) et le type (08 00 = IPv4). Dans l\'en-tête IP, les adresses source et destination occupent 4 octets chacune, écrits en hexadécimal : C0 A8 00 0A = 192.168.0.10.') +
       H('3. Services et ports') +
       dSV(340, 140, `<rect class="flow" x="14" y="40" width="96" height="60" rx="8"/><rect class="fillv" x="230" y="40" width="96" height="60" rx="8"/>` + dA(110, 58, 230, 58) + dA(230, 84, 110, 84, 'arrowv') +
         dT(62, 66, 'client', 'middle', 13) + dT(62, 84, '192.168.0.10', 'middle', 11) + dT(278, 66, 'serveur web', 'middle', 13) + dT(278, 84, 'port 80', 'middle', 11) + dT(170, 50, 'requête GET', 'middle', 11) + dT(170, 104, 'page HTML', 'middle', 11),
